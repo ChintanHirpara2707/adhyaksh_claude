@@ -1,0 +1,145 @@
+text,intent,language,script,source,reviewed
+hey assistant kya haal chaal,greet,hinglish,latin,generated,false
+oye hello,greet,hinglish,latin,generated,false
+yo bhai kya chal raha hai,greet,hinglish,latin,generated,false
+good morning yaar,greet,hinglish,latin,generated,false
+are hello bhai,greet,gujlish,latin,generated,false
+kem chho assistant,greet,gujlish,latin,generated,false
+oye su thyu,greet,gujlish,latin,generated,false
+good evening dost,greet,gujlish,latin,generated,false
+bas itna jaan lo ki mera naam Neha hai,set_identity,hinglish,latin,generated,false
+bas itna jaan lo ki mera naam Karan hai,set_identity,hinglish,latin,generated,false
+aap mujhe Neha naam se pukaro,set_identity,hinglish,latin,generated,false
+aap mujhe Raj naam se pukaro,set_identity,hinglish,latin,generated,false
+bas etlu jani lo ke maru naam Chintan che,set_identity,gujlish,latin,generated,false
+bas etlu jani lo ke maru naam Raj che,set_identity,gujlish,latin,generated,false
+tame mane Hiral kahine bolavjo,set_identity,gujlish,latin,generated,false
+tame mane Karan kahine bolavjo,set_identity,gujlish,latin,generated,false
+batao na mera naam kya tha,get_identity,hinglish,latin,generated,false
+tumhe yaad hai main kaun hoon,get_identity,hinglish,latin,generated,false
+zara bolo mera naam,get_identity,hinglish,latin,generated,false
+mera naam yaad hai kya,get_identity,hinglish,latin,generated,false
+kaho ne maru naam shu hatu,get_identity,gujlish,latin,generated,false
+tamne khabar che hu kon chu,get_identity,gujlish,latin,generated,false
+jara bolo maru naam,get_identity,gujlish,latin,generated,false
+maru naam yaad che ke nahi,get_identity,gujlish,latin,generated,false
+ek baat note kar lo meri car Audi hai,memory_save,hinglish,latin,generated,false
+ek baat note kar lo mera dog ka naam Bruno hai,memory_save,hinglish,latin,generated,false
+dhyan rakhna ki meri exam Friday ko hai,memory_save,hinglish,latin,generated,false
+dhyan rakhna ki mera favorite color blue hai,memory_save,hinglish,latin,generated,false
+ek vaat note kari lo mari car Audi che,memory_save,gujlish,latin,generated,false
+ek vaat note kari lo maro favorite color blue che,memory_save,gujlish,latin,generated,false
+dhyan rakhjo ke maro favorite color blue che,memory_save,gujlish,latin,generated,false
+dhyan rakhjo ke maro dog Bruno che,memory_save,gujlish,latin,generated,false
+yaad hai mera dog kya tha,memory_recall,hinglish,latin,generated,false
+yaad hai mera favorite color kya tha,memory_recall,hinglish,latin,generated,false
+zara batao mera bike,memory_recall,hinglish,latin,generated,false
+zara batao mera favorite color,memory_recall,hinglish,latin,generated,false
+yaad che maro room number shu hato,memory_recall,gujlish,latin,generated,false
+yaad che maro car shu hato,memory_recall,gujlish,latin,generated,false
+jara kaho maro car,memory_recall,gujlish,latin,generated,false
+jara kaho maro dog,memory_recall,gujlish,latin,generated,false
+ek nayi file list.txt bana do,file_create,hinglish,latin,generated,false
+ek nayi file data.csv bana do,file_create,hinglish,latin,generated,false
+diary.txt naam se file create kar dena,file_create,hinglish,latin,generated,false
+data.csv naam se file create kar dena,file_create,hinglish,latin,generated,false
+ek navi file data.csv bani do,file_create,gujlish,latin,generated,false
+ek navi file report.txt bani do,file_create,gujlish,latin,generated,false
+notes.txt naam thi file create kari dejo,file_create,gujlish,latin,generated,false
+invoice.docx naam thi file create kari dejo,file_create,gujlish,latin,generated,false
+zara marks.xlsx ka content dikha do,file_read,hinglish,latin,generated,false
+zara todo.docx ka content dikha do,file_read,hinglish,latin,generated,false
+todo.docx khol ke padh do,file_read,hinglish,latin,generated,false
+budget.xlsx khol ke padh do,file_read,hinglish,latin,generated,false
+jara data.csv nu content batavi do,file_read,gujlish,latin,generated,false
+jara plan.docx nu content batavi do,file_read,gujlish,latin,generated,false
+plan.docx kholi ne vanchi apo,file_read,gujlish,latin,generated,false
+marks.xlsx kholi ne vanchi apo,file_read,gujlish,latin,generated,false
+resume.pdf ke end mein ek line jod do,file_update,hinglish,latin,generated,false
+marks.xlsx ke end mein ek line jod do,file_update,hinglish,latin,generated,false
+summary.txt mein kuch aur likh do,file_update,hinglish,latin,generated,false
+marks.xlsx mein kuch aur likh do,file_update,hinglish,latin,generated,false
+diary.txt na end ma ek line umari do,file_update,gujlish,latin,generated,false
+list.txt na end ma ek line umari do,file_update,gujlish,latin,generated,false
+diary.txt ma kai bijun lakhi do,file_update,gujlish,latin,generated,false
+todo.docx ma kai bijun lakhi do,file_update,gujlish,latin,generated,false
+summary.txt ko hamesha ke liye hata do,file_delete,hinglish,latin,generated,false
+report.txt ko hamesha ke liye hata do,file_delete,hinglish,latin,generated,false
+bekaar file invoice.docx delete maar do,file_delete,hinglish,latin,generated,false
+bekaar file diary.txt delete maar do,file_delete,hinglish,latin,generated,false
+marks.xlsx ne kadhi nakho ne,file_delete,gujlish,latin,generated,false
+resume.pdf ne kadhi nakho ne,file_delete,gujlish,latin,generated,false
+bekar file marks.xlsx delete kari do,file_delete,gujlish,latin,generated,false
+bekar file invoice.docx delete kari do,file_delete,gujlish,latin,generated,false
+report.txt kis folder mein padi hai dhundo,file_search,hinglish,latin,generated,false
+resume.pdf kis folder mein padi hai dhundo,file_search,hinglish,latin,generated,false
+zara dekho data.csv kahan hai,file_search,hinglish,latin,generated,false
+zara dekho report.txt kahan hai,file_search,hinglish,latin,generated,false
+summary.txt kai folder ma padi che shodho,file_search,gujlish,latin,generated,false
+diary.txt kai folder ma padi che shodho,file_search,gujlish,latin,generated,false
+jara juo plan.docx kya che,file_search,gujlish,latin,generated,false
+jara juo notes.txt kya che,file_search,gujlish,latin,generated,false
+excel mein letter.docx naam se ek sheet bana do,office_create,hinglish,latin,generated,false
+excel mein minutes.docx naam se ek sheet bana do,office_create,hinglish,latin,generated,false
+word mein letter.docx document tayar karo,office_create,hinglish,latin,generated,false
+word mein report.docx document tayar karo,office_create,hinglish,latin,generated,false
+excel ma report.docx naam thi ek sheet bani do,office_create,gujlish,latin,generated,false
+excel ma sales.xlsx naam thi ek sheet bani do,office_create,gujlish,latin,generated,false
+word ma marks.xlsx document tayar karo,office_create,gujlish,latin,generated,false
+word ma report.docx document tayar karo,office_create,gujlish,latin,generated,false
+zara calculator chala do,app_open,hinglish,latin,generated,false
+zara vs code chala do,app_open,hinglish,latin,generated,false
+chrome on kar do,app_open,hinglish,latin,generated,false
+excel on kar do,app_open,hinglish,latin,generated,false
+jara word chalu kari do,app_open,gujlish,latin,generated,false
+jara notepad chalu kari do,app_open,gujlish,latin,generated,false
+excel on kari do,app_open,gujlish,latin,generated,false
+calculator on kari do,app_open,gujlish,latin,generated,false
+word ko off kar do,app_close,hinglish,latin,generated,false
+paint ko off kar do,app_close,hinglish,latin,generated,false
+chrome ki zarurat nahi ab band kar do,app_close,hinglish,latin,generated,false
+vs code ki zarurat nahi ab band kar do,app_close,hinglish,latin,generated,false
+chrome ne off kari do,app_close,gujlish,latin,generated,false
+notepad ne off kari do,app_close,gujlish,latin,generated,false
+paint ni jarur nathi have bandh kari do,app_close,gujlish,latin,generated,false
+calculator ni jarur nathi have bandh kari do,app_close,gujlish,latin,generated,false
+laptop ki speed kaisi chal rahi hai cpu ram dikhao,system_status,hinglish,latin,generated,false
+check karo system slow to nahi,system_status,hinglish,latin,generated,false
+kitna storage bacha hai,system_status,hinglish,latin,generated,false
+processor ka load batao,system_status,hinglish,latin,generated,false
+laptop ni speed kevi che cpu ram batavo,system_status,gujlish,latin,generated,false
+check karo system slow to nathi,system_status,gujlish,latin,generated,false
+ketlu storage baki che,system_status,gujlish,latin,generated,false
+processor no load batavo,system_status,gujlish,latin,generated,false
+meri file ke document mein project deadline kya bola hai,doc_question,hinglish,latin,generated,false
+meri file ke document mein budget kya bola hai,doc_question,hinglish,latin,generated,false
+pdf se batao methodology,doc_question,hinglish,latin,generated,false
+pdf se batao budget,doc_question,hinglish,latin,generated,false
+mara document ma methodology shu kahyu che,doc_question,gujlish,latin,generated,false
+mara document ma project deadline shu kahyu che,doc_question,gujlish,latin,generated,false
+pdf mathi kaho methodology,doc_question,gujlish,latin,generated,false
+pdf mathi kaho project deadline,doc_question,gujlish,latin,generated,false
+yaar ye batao moon kitni door hai,knowledge_question,hinglish,latin,generated,false
+yaar ye batao python kya hota hai,knowledge_question,hinglish,latin,generated,false
+internet kaise chalta hai zara samjha do,knowledge_question,hinglish,latin,generated,false
+moon kitni door hai zara samjha do,knowledge_question,hinglish,latin,generated,false
+yaar aa kaho gold no bhav kem vadhe che,knowledge_question,gujlish,latin,generated,false
+yaar aa kaho internet kevi rite chale che,knowledge_question,gujlish,latin,generated,false
+moon ketlo dur che jara samjavi do,knowledge_question,gujlish,latin,generated,false
+python shu hoy che jara samjavi do,knowledge_question,gujlish,latin,generated,false
+bhai tum kya kya kar lete ho,help,hinglish,latin,generated,false
+mujhe samajh nahi aa raha kaise use karun,help,hinglish,latin,generated,false
+kuch commands bata do,help,hinglish,latin,generated,false
+madad kar do yaar,help,hinglish,latin,generated,false
+bhai tame shu shu kari lo cho,help,gujlish,latin,generated,false
+mane samajtu nathi kevi rite vaparvu,help,gujlish,latin,generated,false
+kai commands kaho,help,gujlish,latin,generated,false
+madad kari do yaar,help,gujlish,latin,generated,false
+hmm pata nahi yaar,unknown,hinglish,latin,generated,false
+kuch bhi bol raha hu,unknown,hinglish,latin,generated,false
+qazwsx edcrfv,unknown,hinglish,latin,generated,false
+arre chhodo na,unknown,hinglish,latin,generated,false
+hmm khabar nathi yaar,unknown,gujlish,latin,generated,false
+kai pan bolu chu,unknown,gujlish,latin,generated,false
+zxcv bnm,unknown,gujlish,latin,generated,false
+are chhodo ne,unknown,gujlish,latin,generated,false

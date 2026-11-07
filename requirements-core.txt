@@ -1,0 +1,16 @@
+# Lower bounds only. After the first successful install, run `pip freeze` and pin exact versions here.
+# CPU-only PyTorch (installed in Phase P2): pip install torch --index-url https://download.pytorch.org/whl/cpu
+streamlit>=1.46
+numpy
+pandas
+scikit-learn
+openpyxl
+python-docx
+PyMuPDF
+psutil
+send2trash
+python-dotenv
+requests
+matplotlib
+pytest
+pytest-cov

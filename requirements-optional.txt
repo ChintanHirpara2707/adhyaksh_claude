@@ -1,0 +1,4 @@
+# Install only with approval (each may exceed 300 MB).
+# sentence-transformers
+# easyocr
+# ultralytics

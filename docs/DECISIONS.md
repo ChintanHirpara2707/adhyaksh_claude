@@ -1,0 +1,27 @@
+# Decisions
+
+- D-01 Tier A scope confirmed, Tier B deferred.
+- D-02 Windows 11, Python 3.11 assumed.
+- D-03 Single operator, no accounts.
+- D-04 No API key; degraded mode first, LLM code kept ready.
+- D-05 No embedding model; M3 is TF-IDF plus calibrated linear SVM.
+- D-06 Assume 3 GB free disk.
+- D-07 Author reviews Hindi and Gujarati data; generated rows marked UNREVIEWED.
+- A-01 Added adhyaksh/result.py (Result object and error codes); needed by every service, not in the Section 6 tree.
+- A-02 audit_log is append-only through SQLite triggers (UPDATE and DELETE abort). "Delete all my data" deletes the database file.
+- A-03 audit_log.confirmed stores text: none, confirmed or cancelled.
+- A-04 Exactly one audit row per final outcome (ran, failed, blocked, rejected, cancelled). A pending confirmation writes no row.
+- A-05 All tool actions go through safety.policy.run_guarded; authorize() stays a pure function returning Decision.
+- A-06 Theme choice persists in the SQLite settings table (single operator), not in the URL. First visit with no saved choice follows the OS preference through CSS only.
+- A-07 Primary buttons use accent_strong (#A8502F) because white on the specified accent #C96442 is 3.9:1, below WCAG AA 4.5:1. The specified accent stays for focus rings and the active-navigation marker.
+- A-08 Activity and Settings pages use st.table, not st.dataframe, because the dataframe canvas ignores CSS and would leak light colors in dark mode.
+- A-09 Navigation uses st.navigation(position="hidden") plus sidebar page links so the theme switch sits above the links.
+- A-10 TF-IDF retrieval stores no vector blobs (vectors depend on the whole corpus); doc_chunks.embedding is filled only in Gemini mode. Index is rebuilt in memory and cached.
+- A-11 LLM model defaults follow provider documentation checked 2026-11-06 (groq llama-3.1-8b-instant, gemini gemini-3.5-flash-lite, embedding gemini-embedding-001). All three are editable in Settings because names change.
+- A-12 LLM streaming (F01) is not implemented; replies are returned whole.
+- A-13 A recognised voice utterance is processed immediately like a typed message (Streamlit cannot fill the chat input programmatically).
+- A-14 Model selection and tau tuning use the validation split only. The test split and the code-mixed file are used for reporting.
+- A-15 API keys are stored only in the git-ignored .env file or environment, never in the database.
+- A-16 Without send2trash the delete tool moves files to data/trash_fallback (used in the sandbox); on the target send2trash sends them to the Recycle Bin.
+- A-17 Closing an application ends processes this program launched, and on Windows also processes with the allow-listed executable name.
+- A-18 The rule layer also handles referential commands such as "delete it" so they resolve to the last file deterministically.

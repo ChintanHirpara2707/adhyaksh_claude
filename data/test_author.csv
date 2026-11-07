@@ -1,0 +1,29 @@
+text,intent,language,script,source,reviewed
+what is today's date,time_date,en,latin,author,true
+what is current time,time_date,en,latin,author,true
+what is your name,bot_identity,en,latin,author,true
+who are you,bot_identity,en,latin,author,true
+20 + 34 + 63 - 58 Kitna,math,en,latin,author,true
+calculate 20+34,math,en,latin,author,true
+make one text file name called Chintan,file_create,en,latin,author,true
+make a folder called Reports,folder_create,en,latin,author,true
+folder banaen,folder_create,hinglish,latin,author,true
+take a screenshot,screenshot,en,latin,author,true
+open Recycle Bin,special_folder_open,en,latin,author,true
+open file manager,special_folder_open,en,latin,author,true
+open new tab,web_open,en,latin,author,true
+in Chrome open new tab,web_open,en,latin,author,true
+open youtube,web_open,en,latin,author,true
+search google for X,web_open,en,latin,author,true
+open WhatsApp,app_open,en,latin,author,true
+give some details about Sundar Pichai,knowledge_question,en,latin,author,true
+I want react definition,knowledge_question,en,latin,author,true
+who is the CEO of Google,knowledge_question,en,latin,author,true
+Current time is 10:15 AM,unknown,en,latin,author,true
+when I am say my name is Priya,set_identity,en,latin,author,true
+my name is not Priya my name is Chintu,set_identity,en,latin,author,true
+સમય કયો છે,time_date,gu,gujarati,author,true
+આજની તારીખ શું છે,time_date,hi,devanagari,author,true
+कृपया क्रोम खोलो जल्दी,app_open,hi,devanagari,author,true
+કૃપા કરીને નવી ફાઇલ diary.txt બનાવો,file_create,gu,gujarati,author,true
+ફ્રાન્સની રાજધાની શું છે,knowledge_question,gu,gujarati,author,true

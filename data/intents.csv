@@ -1,0 +1,1669 @@
+text,intent,language,script,source,reviewed
+hello,greet,en,latin,generated,false
+hi,greet,en,latin,generated,false
+hey,greet,en,latin,generated,false
+good morning,greet,en,latin,generated,false
+good evening,greet,en,latin,generated,false
+hello assistant,greet,en,latin,generated,false
+hi there,greet,en,latin,generated,false
+hey there,greet,en,latin,generated,false
+good afternoon,greet,en,latin,generated,false
+greetings,greet,en,latin,generated,false
+नमस्ते,greet,hi,devanagari,generated,false
+नमस्कार,greet,hi,devanagari,generated,false
+हेलो,greet,hi,devanagari,generated,false
+हाय,greet,hi,devanagari,generated,false
+सुप्रभात,greet,hi,devanagari,generated,false
+शुभ संध्या,greet,hi,devanagari,generated,false
+नमस्ते सहायक,greet,hi,devanagari,generated,false
+हेलो दोस्त,greet,hi,devanagari,generated,false
+राम राम,greet,hi,devanagari,generated,false
+प्रणाम,greet,hi,devanagari,generated,false
+નમસ્તે,greet,gu,gujarati,generated,false
+કેમ છો,greet,gu,gujarati,generated,false
+હેલો,greet,gu,gujarati,generated,false
+હાય,greet,gu,gujarati,generated,false
+સુપ્રભાત,greet,gu,gujarati,generated,false
+શુભ સંધ્યા,greet,gu,gujarati,generated,false
+નમસ્તે સહાયક,greet,gu,gujarati,generated,false
+જય શ્રી કૃષ્ણ,greet,gu,gujarati,generated,false
+હેલો મિત્ર,greet,gu,gujarati,generated,false
+કેમ છો દોસ્ત,greet,gu,gujarati,generated,false
+namaste,greet,hinglish,latin,generated,false
+hello yaar,greet,hinglish,latin,generated,false
+hi bhai,greet,hinglish,latin,generated,false
+kaise ho,greet,hinglish,latin,generated,false
+good morning dost,greet,hinglish,latin,generated,false
+suprabhat,greet,hinglish,latin,generated,false
+hey kya haal hai,greet,hinglish,latin,generated,false
+ram ram,greet,hinglish,latin,generated,false
+hello assistant ji,greet,hinglish,latin,generated,false
+namaskar,greet,hinglish,latin,generated,false
+kem cho,greet,gujlish,latin,generated,false
+hello dost,greet,gujlish,latin,generated,false
+su chale che,greet,gujlish,latin,generated,false
+good morning mitra,greet,gujlish,latin,generated,false
+jai shree krishna,greet,gujlish,latin,generated,false
+kem chho yaar,greet,gujlish,latin,generated,false
+hey su khabar,greet,gujlish,latin,generated,false
+namaskar mitra,greet,gujlish,latin,generated,false
+"hey, my name is jay please",set_identity,en,latin,generated,false
+please call me Neha please,set_identity,en,latin,generated,false
+"hey, i am your new user Chintan",set_identity,en,latin,generated,false
+please you can call me Neha please,set_identity,en,latin,generated,false
+please my name is Chintan now,set_identity,en,latin,generated,false
+call me Jay please,set_identity,en,latin,generated,false
+"assistant, i am your new user karan now",set_identity,en,latin,generated,false
+you can call me neha now,set_identity,en,latin,generated,false
+"assistant, my name is Meera",set_identity,en,latin,generated,false
+"assistant, call me priya please",set_identity,en,latin,generated,false
+"assistant, i am your new user neha",set_identity,en,latin,generated,false
+"hey, you can call me Raj now",set_identity,en,latin,generated,false
+"assistant, my name is Hiral please",set_identity,en,latin,generated,false
+"assistant, call me pooja now",set_identity,en,latin,generated,false
+मेरा नाम राज है जल्दी,set_identity,hi,devanagari,generated,false
+कृपया मुझे नेहा कहो,set_identity,hi,devanagari,generated,false
+कृपया मैं आपका नया उपयोगकर्ता अमित हूँ जल्दी,set_identity,hi,devanagari,generated,false
+"सुनो, मेरा नाम करण है",set_identity,hi,devanagari,generated,false
+कृपया मुझे करण कहो,set_identity,hi,devanagari,generated,false
+मैं आपका नया उपयोगकर्ता मीरा हूँ,set_identity,hi,devanagari,generated,false
+"सुनो, मेरा नाम राज है अभी",set_identity,hi,devanagari,generated,false
+कृपया मुझे मीरा कहो जल्दी,set_identity,hi,devanagari,generated,false
+मैं आपका नया उपयोगकर्ता राज हूँ,set_identity,hi,devanagari,generated,false
+मेरा नाम राज है अभी,set_identity,hi,devanagari,generated,false
+कृपया मुझे अमित कहो जल्दी,set_identity,hi,devanagari,generated,false
+"सुनो, मैं आपका नया उपयोगकर्ता प्रिया हूँ",set_identity,hi,devanagari,generated,false
+"सुनो, मेरा नाम राज है जल्दी",set_identity,hi,devanagari,generated,false
+मुझे नेहा कहो अभी,set_identity,hi,devanagari,generated,false
+"સાંભળો, મારું નામ કરણ છે",set_identity,gu,gujarati,generated,false
+કૃપા કરીને મને પૂજા કહો,set_identity,gu,gujarati,generated,false
+હું તમારો નવો વપરાશકર્તા મીરા છું જલ્દી,set_identity,gu,gujarati,generated,false
+"સાંભળો, મારું નામ કરણ છે જલ્દી",set_identity,gu,gujarati,generated,false
+"સાંભળો, મને કરણ કહો",set_identity,gu,gujarati,generated,false
+"સાંભળો, હું તમારો નવો વપરાશકર્તા પૂજા છું",set_identity,gu,gujarati,generated,false
+"સાંભળો, મારું નામ મીરા છે",set_identity,gu,gujarati,generated,false
+"સાંભળો, મને હિરલ કહો જલ્દી",set_identity,gu,gujarati,generated,false
+કૃપા કરીને હું તમારો નવો વપરાશકર્તા કરણ છું હમણાં,set_identity,gu,gujarati,generated,false
+"સાંભળો, મારું નામ જય છે જલ્દી",set_identity,gu,gujarati,generated,false
+મને કરણ કહો,set_identity,gu,gujarati,generated,false
+"સાંભળો, હું તમારો નવો વપરાશકર્તા ચિંતન છું હમણાં",set_identity,gu,gujarati,generated,false
+મારું નામ મીરા છે જલ્દી,set_identity,gu,gujarati,generated,false
+કૃપા કરીને મને ચિંતન કહો જલ્દી,set_identity,gu,gujarati,generated,false
+"suno, mera naam Pooja hai jaldi",set_identity,hinglish,latin,generated,false
+"suno, mujhe Jay bulao",set_identity,hinglish,latin,generated,false
+main aapka naya user Raj hoon abhi,set_identity,hinglish,latin,generated,false
+please mera naam amit hai jaldi,set_identity,hinglish,latin,generated,false
+please mujhe priya bulao,set_identity,hinglish,latin,generated,false
+"suno, main aapka naya user Hiral hoon",set_identity,hinglish,latin,generated,false
+please mera naam Hiral hai,set_identity,hinglish,latin,generated,false
+"suno, mujhe raj bulao abhi",set_identity,hinglish,latin,generated,false
+"suno, main aapka naya user Neha hoon jaldi",set_identity,hinglish,latin,generated,false
+please mera naam pooja hai,set_identity,hinglish,latin,generated,false
+"suno, mujhe Jay bulao abhi",set_identity,hinglish,latin,generated,false
+main aapka naya user Meera hoon,set_identity,hinglish,latin,generated,false
+mera naam Jay hai abhi,set_identity,hinglish,latin,generated,false
+mujhe amit bulao,set_identity,hinglish,latin,generated,false
+please maru naam Pooja che,set_identity,gujlish,latin,generated,false
+please mane Jay kaho,set_identity,gujlish,latin,generated,false
+please hu tamaro navo user Priya chu jaldi,set_identity,gujlish,latin,generated,false
+maru naam pooja che atyare,set_identity,gujlish,latin,generated,false
+mane Hiral kaho atyare,set_identity,gujlish,latin,generated,false
+please hu tamaro navo user pooja chu atyare,set_identity,gujlish,latin,generated,false
+maru naam raj che jaldi,set_identity,gujlish,latin,generated,false
+mane Pooja kaho,set_identity,gujlish,latin,generated,false
+hu tamaro navo user Amit chu atyare,set_identity,gujlish,latin,generated,false
+maru naam meera che,set_identity,gujlish,latin,generated,false
+mane karan kaho,set_identity,gujlish,latin,generated,false
+"sambhdo, hu tamaro navo user karan chu",set_identity,gujlish,latin,generated,false
+please maru naam Chintan che jaldi,set_identity,gujlish,latin,generated,false
+please mane amit kaho atyare,set_identity,gujlish,latin,generated,false
+what is my name please,get_identity,en,latin,generated,false
+"hey, who am i please",get_identity,en,latin,generated,false
+do you know my name please,get_identity,en,latin,generated,false
+"hey, tell me my name please",get_identity,en,latin,generated,false
+"hey, what is my name please",get_identity,en,latin,generated,false
+"assistant, who am i please",get_identity,en,latin,generated,false
+"assistant, do you know my name now",get_identity,en,latin,generated,false
+"hey, tell me my name now",get_identity,en,latin,generated,false
+"assistant, what is my name please",get_identity,en,latin,generated,false
+who am i,get_identity,en,latin,generated,false
+please do you know my name now,get_identity,en,latin,generated,false
+"assistant, tell me my name",get_identity,en,latin,generated,false
+please what is my name now,get_identity,en,latin,generated,false
+"assistant, who am i",get_identity,en,latin,generated,false
+कृपया मेरा नाम क्या है अभी,get_identity,hi,devanagari,generated,false
+"सुनो, मैं कौन हूँ",get_identity,hi,devanagari,generated,false
+कृपया क्या तुम्हें मेरा नाम पता है अभी,get_identity,hi,devanagari,generated,false
+कृपया मेरा नाम बताओ,get_identity,hi,devanagari,generated,false
+मेरा नाम क्या है अभी,get_identity,hi,devanagari,generated,false
+कृपया मैं कौन हूँ अभी,get_identity,hi,devanagari,generated,false
+क्या तुम्हें मेरा नाम पता है जल्दी,get_identity,hi,devanagari,generated,false
+मेरा नाम बताओ जल्दी,get_identity,hi,devanagari,generated,false
+कृपया मेरा नाम क्या है जल्दी,get_identity,hi,devanagari,generated,false
+"सुनो, मैं कौन हूँ अभी",get_identity,hi,devanagari,generated,false
+कृपया क्या तुम्हें मेरा नाम पता है जल्दी,get_identity,hi,devanagari,generated,false
+मेरा नाम बताओ अभी,get_identity,hi,devanagari,generated,false
+मेरा नाम क्या है,get_identity,hi,devanagari,generated,false
+"सुनो, मैं कौन हूँ जल्दी",get_identity,hi,devanagari,generated,false
+"સાંભળો, મારું નામ શું છે",get_identity,gu,gujarati,generated,false
+કૃપા કરીને હું કોણ છું જલ્દી,get_identity,gu,gujarati,generated,false
+શું તને મારું નામ ખબર છે જલ્દી,get_identity,gu,gujarati,generated,false
+"સાંભળો, મારું નામ કહો",get_identity,gu,gujarati,generated,false
+મારું નામ શું છે,get_identity,gu,gujarati,generated,false
+કૃપા કરીને હું કોણ છું હમણાં,get_identity,gu,gujarati,generated,false
+શું તને મારું નામ ખબર છે હમણાં,get_identity,gu,gujarati,generated,false
+"સાંભળો, મારું નામ કહો હમણાં",get_identity,gu,gujarati,generated,false
+કૃપા કરીને મારું નામ શું છે જલ્દી,get_identity,gu,gujarati,generated,false
+હું કોણ છું હમણાં,get_identity,gu,gujarati,generated,false
+કૃપા કરીને શું તને મારું નામ ખબર છે હમણાં,get_identity,gu,gujarati,generated,false
+કૃપા કરીને મારું નામ કહો,get_identity,gu,gujarati,generated,false
+કૃપા કરીને મારું નામ શું છે હમણાં,get_identity,gu,gujarati,generated,false
+હું કોણ છું,get_identity,gu,gujarati,generated,false
+mera naam kya hai jaldi,get_identity,hinglish,latin,generated,false
+please main kaun hoon jaldi,get_identity,hinglish,latin,generated,false
+please kya tumhe mera naam pata hai,get_identity,hinglish,latin,generated,false
+"suno, mera naam batao abhi",get_identity,hinglish,latin,generated,false
+mera naam kya hai,get_identity,hinglish,latin,generated,false
+"suno, main kaun hoon jaldi",get_identity,hinglish,latin,generated,false
+kya tumhe mera naam pata hai jaldi,get_identity,hinglish,latin,generated,false
+please mera naam batao jaldi,get_identity,hinglish,latin,generated,false
+"suno, mera naam kya hai abhi",get_identity,hinglish,latin,generated,false
+please main kaun hoon abhi,get_identity,hinglish,latin,generated,false
+kya tumhe mera naam pata hai abhi,get_identity,hinglish,latin,generated,false
+mera naam batao,get_identity,hinglish,latin,generated,false
+"suno, mera naam kya hai",get_identity,hinglish,latin,generated,false
+please main kaun hoon,get_identity,hinglish,latin,generated,false
+maru naam shu che,get_identity,gujlish,latin,generated,false
+"sambhdo, hu kon chu",get_identity,gujlish,latin,generated,false
+"sambhdo, tane maru naam khabar che jaldi",get_identity,gujlish,latin,generated,false
+"sambhdo, maru naam kaho atyare",get_identity,gujlish,latin,generated,false
+"sambhdo, maru naam shu che",get_identity,gujlish,latin,generated,false
+"sambhdo, hu kon chu atyare",get_identity,gujlish,latin,generated,false
+please tane maru naam khabar che atyare,get_identity,gujlish,latin,generated,false
+maru naam kaho jaldi,get_identity,gujlish,latin,generated,false
+"sambhdo, maru naam shu che atyare",get_identity,gujlish,latin,generated,false
+hu kon chu atyare,get_identity,gujlish,latin,generated,false
+tane maru naam khabar che,get_identity,gujlish,latin,generated,false
+please maru naam kaho,get_identity,gujlish,latin,generated,false
+please maru naam shu che,get_identity,gujlish,latin,generated,false
+hu kon chu,get_identity,gujlish,latin,generated,false
+"assistant, remember that my car is Audi",memory_save,en,latin,generated,false
+"hey, my car is Audi now",memory_save,en,latin,generated,false
+"assistant, note down that my room number is 204",memory_save,en,latin,generated,false
+"assistant, save this: my room number is 204",memory_save,en,latin,generated,false
+"assistant, remember that my favorite color is blue please",memory_save,en,latin,generated,false
+"hey, my dog is named bruno",memory_save,en,latin,generated,false
+please note down that my exam is on Friday now,memory_save,en,latin,generated,false
+save this: my car is Audi,memory_save,en,latin,generated,false
+please remember that my bike is a honda,memory_save,en,latin,generated,false
+my favorite color is blue,memory_save,en,latin,generated,false
+"hey, note down that my bike is a Honda now",memory_save,en,latin,generated,false
+"assistant, save this: my car is Audi please",memory_save,en,latin,generated,false
+"assistant, remember that my room number is 204 now",memory_save,en,latin,generated,false
+my room number is 204 please,memory_save,en,latin,generated,false
+"सुनो, याद रखो कि मेरी परीक्षा शुक्रवार को है जल्दी",memory_save,hi,devanagari,generated,false
+मेरा पसंदीदा रंग नीला है जल्दी,memory_save,hi,devanagari,generated,false
+यह नोट करो कि मेरा पसंदीदा रंग नीला है अभी,memory_save,hi,devanagari,generated,false
+कृपया सहेज लो: मेरी परीक्षा शुक्रवार को है अभी,memory_save,hi,devanagari,generated,false
+"सुनो, याद रखो कि मेरा कुत्ता ब्रूनो है जल्दी",memory_save,hi,devanagari,generated,false
+मेरा कुत्ता ब्रूनो है जल्दी,memory_save,hi,devanagari,generated,false
+कृपया यह नोट करो कि मेरा कुत्ता ब्रूनो है जल्दी,memory_save,hi,devanagari,generated,false
+"सुनो, सहेज लो: मेरा कुत्ता ब्रूनो है अभी",memory_save,hi,devanagari,generated,false
+कृपया याद रखो कि मेरा कुत्ता ब्रूनो है,memory_save,hi,devanagari,generated,false
+कृपया मेरी परीक्षा शुक्रवार को है जल्दी,memory_save,hi,devanagari,generated,false
+"सुनो, यह नोट करो कि मेरा कुत्ता ब्रूनो है",memory_save,hi,devanagari,generated,false
+सहेज लो: मेरा कमरा नंबर 204 है,memory_save,hi,devanagari,generated,false
+"सुनो, याद रखो कि मेरा पसंदीदा रंग नीला है जल्दी",memory_save,hi,devanagari,generated,false
+"सुनो, मेरा कमरा नंबर 204 है जल्दी",memory_save,hi,devanagari,generated,false
+કૃપા કરીને યાદ રાખો કે મારી કાર ઓડી છે હમણાં,memory_save,gu,gujarati,generated,false
+"સાંભળો, મારો રૂમ નંબર 204 છે હમણાં",memory_save,gu,gujarati,generated,false
+કૃપા કરીને નોંધ કરો કે મારો કૂતરો બ્રુનો છે જલ્દી,memory_save,gu,gujarati,generated,false
+"સાંભળો, સાચવો: મારી પરીક્ષા શુક્રવારે છે જલ્દી",memory_save,gu,gujarati,generated,false
+"સાંભળો, યાદ રાખો કે મારો ગમતો રંગ વાદળી છે જલ્દી",memory_save,gu,gujarati,generated,false
+કૃપા કરીને મારી કાર ઓડી છે,memory_save,gu,gujarati,generated,false
+નોંધ કરો કે મારી કાર ઓડી છે જલ્દી,memory_save,gu,gujarati,generated,false
+કૃપા કરીને સાચવો: મારી પરીક્ષા શુક્રવારે છે હમણાં,memory_save,gu,gujarati,generated,false
+કૃપા કરીને યાદ રાખો કે મારો ગમતો રંગ વાદળી છે,memory_save,gu,gujarati,generated,false
+મારો ગમતો રંગ વાદળી છે જલ્દી,memory_save,gu,gujarati,generated,false
+કૃપા કરીને નોંધ કરો કે મારી કાર ઓડી છે હમણાં,memory_save,gu,gujarati,generated,false
+કૃપા કરીને સાચવો: મારી પરીક્ષા શુક્રવારે છે,memory_save,gu,gujarati,generated,false
+કૃપા કરીને યાદ રાખો કે મારો રૂમ નંબર 204 છે જલ્દી,memory_save,gu,gujarati,generated,false
+મારો કૂતરો બ્રુનો છે જલ્દી,memory_save,gu,gujarati,generated,false
+"suno, yaad rakhna ki meri exam friday ko hai abhi",memory_save,hinglish,latin,generated,false
+mera dog ka naam bruno hai abhi,memory_save,hinglish,latin,generated,false
+"suno, note kar lo ki mera dog ka naam bruno hai jaldi",memory_save,hinglish,latin,generated,false
+save karo: mera favorite color blue hai abhi,memory_save,hinglish,latin,generated,false
+yaad rakhna ki mera room number 204 hai jaldi,memory_save,hinglish,latin,generated,false
+"suno, mera dog ka naam bruno hai jaldi",memory_save,hinglish,latin,generated,false
+"suno, note kar lo ki mera favorite color blue hai abhi",memory_save,hinglish,latin,generated,false
+save karo: meri exam Friday ko hai,memory_save,hinglish,latin,generated,false
+yaad rakhna ki meri exam friday ko hai jaldi,memory_save,hinglish,latin,generated,false
+please meri exam Friday ko hai,memory_save,hinglish,latin,generated,false
+"suno, note kar lo ki mera dog ka naam bruno hai abhi",memory_save,hinglish,latin,generated,false
+save karo: meri car Audi hai abhi,memory_save,hinglish,latin,generated,false
+please yaad rakhna ki mera room number 204 hai jaldi,memory_save,hinglish,latin,generated,false
+"suno, mera room number 204 hai jaldi",memory_save,hinglish,latin,generated,false
+"sambhdo, yaad rakhjo ke mari car audi che jaldi",memory_save,gujlish,latin,generated,false
+maro room number 204 che jaldi,memory_save,gujlish,latin,generated,false
+"sambhdo, note kari lo ke maro room number 204 che jaldi",memory_save,gujlish,latin,generated,false
+"sambhdo, save karo: maro favorite color blue che",memory_save,gujlish,latin,generated,false
+yaad rakhjo ke maro dog Bruno che atyare,memory_save,gujlish,latin,generated,false
+please maro dog bruno che jaldi,memory_save,gujlish,latin,generated,false
+"sambhdo, note kari lo ke maro room number 204 che",memory_save,gujlish,latin,generated,false
+save karo: mari car Audi che atyare,memory_save,gujlish,latin,generated,false
+yaad rakhjo ke mari exam Friday e che jaldi,memory_save,gujlish,latin,generated,false
+please mari car audi che atyare,memory_save,gujlish,latin,generated,false
+"sambhdo, note kari lo ke maro dog bruno che jaldi",memory_save,gujlish,latin,generated,false
+"sambhdo, save karo: mari exam friday e che jaldi",memory_save,gujlish,latin,generated,false
+yaad rakhjo ke maro favorite color blue che jaldi,memory_save,gujlish,latin,generated,false
+please maro dog Bruno che atyare,memory_save,gujlish,latin,generated,false
+"assistant, what is my room number now",memory_recall,en,latin,generated,false
+please do you remember my bike,memory_recall,en,latin,generated,false
+"hey, tell me my dog please",memory_recall,en,latin,generated,false
+"assistant, what is my car now",memory_recall,en,latin,generated,false
+"assistant, do you remember my bike please",memory_recall,en,latin,generated,false
+please tell me my dog please,memory_recall,en,latin,generated,false
+"hey, what is my bike now",memory_recall,en,latin,generated,false
+"hey, do you remember my room number please",memory_recall,en,latin,generated,false
+tell me my room number now,memory_recall,en,latin,generated,false
+what is my dog,memory_recall,en,latin,generated,false
+"hey, do you remember my dog now",memory_recall,en,latin,generated,false
+"assistant, tell me my car please",memory_recall,en,latin,generated,false
+"hey, what is my car",memory_recall,en,latin,generated,false
+do you remember my bike now,memory_recall,en,latin,generated,false
+कृपया मेरा कार क्या है जल्दी,memory_recall,hi,devanagari,generated,false
+"सुनो, क्या तुम्हें मेरा पसंदीदा रंग याद है अभी",memory_recall,hi,devanagari,generated,false
+मुझे मेरा परीक्षा बताओ जल्दी,memory_recall,hi,devanagari,generated,false
+कृपया मेरा कार क्या है अभी,memory_recall,hi,devanagari,generated,false
+कृपया क्या तुम्हें मेरा कमरा नंबर याद है जल्दी,memory_recall,hi,devanagari,generated,false
+"सुनो, मुझे मेरा कमरा नंबर बताओ जल्दी",memory_recall,hi,devanagari,generated,false
+"सुनो, मेरा पसंदीदा रंग क्या है अभी",memory_recall,hi,devanagari,generated,false
+क्या तुम्हें मेरा पसंदीदा रंग याद है,memory_recall,hi,devanagari,generated,false
+मुझे मेरा पसंदीदा रंग बताओ अभी,memory_recall,hi,devanagari,generated,false
+मेरा पसंदीदा रंग क्या है,memory_recall,hi,devanagari,generated,false
+कृपया क्या तुम्हें मेरा कार याद है जल्दी,memory_recall,hi,devanagari,generated,false
+"सुनो, मुझे मेरा परीक्षा बताओ जल्दी",memory_recall,hi,devanagari,generated,false
+"सुनो, मेरा कुत्ता क्या है",memory_recall,hi,devanagari,generated,false
+क्या तुम्हें मेरा पसंदीदा रंग याद है जल्दी,memory_recall,hi,devanagari,generated,false
+"સાંભળો, મારો ગમતો રંગ શું છે જલ્દી",memory_recall,gu,gujarati,generated,false
+"સાંભળો, શું તને મારો પરીક્ષા યાદ છે જલ્દી",memory_recall,gu,gujarati,generated,false
+મને મારો રૂમ નંબર કહો હમણાં,memory_recall,gu,gujarati,generated,false
+કૃપા કરીને મારો ગમતો રંગ શું છે હમણાં,memory_recall,gu,gujarati,generated,false
+"સાંભળો, શું તને મારો બાઇક યાદ છે",memory_recall,gu,gujarati,generated,false
+કૃપા કરીને મને મારો પરીક્ષા કહો,memory_recall,gu,gujarati,generated,false
+કૃપા કરીને મારો રૂમ નંબર શું છે હમણાં,memory_recall,gu,gujarati,generated,false
+શું તને મારો ગમતો રંગ યાદ છે જલ્દી,memory_recall,gu,gujarati,generated,false
+મને મારો ગમતો રંગ કહો હમણાં,memory_recall,gu,gujarati,generated,false
+મારો બાઇક શું છે હમણાં,memory_recall,gu,gujarati,generated,false
+શું તને મારો બાઇક યાદ છે હમણાં,memory_recall,gu,gujarati,generated,false
+"સાંભળો, મને મારો પરીક્ષા કહો જલ્દી",memory_recall,gu,gujarati,generated,false
+"સાંભળો, મારો રૂમ નંબર શું છે",memory_recall,gu,gujarati,generated,false
+"સાંભળો, શું તને મારો ગમતો રંગ યાદ છે",memory_recall,gu,gujarati,generated,false
+"suno, mera dog kya hai abhi",memory_recall,hinglish,latin,generated,false
+kya tumhe mera favorite color yaad hai jaldi,memory_recall,hinglish,latin,generated,false
+please mujhe mera bike batao jaldi,memory_recall,hinglish,latin,generated,false
+mera bike kya hai,memory_recall,hinglish,latin,generated,false
+please kya tumhe mera exam yaad hai,memory_recall,hinglish,latin,generated,false
+mujhe mera bike batao jaldi,memory_recall,hinglish,latin,generated,false
+mera room number kya hai jaldi,memory_recall,hinglish,latin,generated,false
+"suno, kya tumhe mera car yaad hai abhi",memory_recall,hinglish,latin,generated,false
+please mujhe mera car batao abhi,memory_recall,hinglish,latin,generated,false
+please mera room number kya hai jaldi,memory_recall,hinglish,latin,generated,false
+please kya tumhe mera bike yaad hai abhi,memory_recall,hinglish,latin,generated,false
+"suno, mujhe mera bike batao jaldi",memory_recall,hinglish,latin,generated,false
+mera favorite color kya hai jaldi,memory_recall,hinglish,latin,generated,false
+please kya tumhe mera favorite color yaad hai jaldi,memory_recall,hinglish,latin,generated,false
+maro room number shu che,memory_recall,gujlish,latin,generated,false
+"sambhdo, tane maro exam yaad che",memory_recall,gujlish,latin,generated,false
+"sambhdo, mane maro favorite color kaho atyare",memory_recall,gujlish,latin,generated,false
+"sambhdo, maro exam shu che atyare",memory_recall,gujlish,latin,generated,false
+tane maro dog yaad che jaldi,memory_recall,gujlish,latin,generated,false
+please mane maro car kaho atyare,memory_recall,gujlish,latin,generated,false
+"sambhdo, maro car shu che atyare",memory_recall,gujlish,latin,generated,false
+please tane maro favorite color yaad che jaldi,memory_recall,gujlish,latin,generated,false
+mane maro dog kaho jaldi,memory_recall,gujlish,latin,generated,false
+please maro room number shu che,memory_recall,gujlish,latin,generated,false
+"sambhdo, tane maro room number yaad che",memory_recall,gujlish,latin,generated,false
+"sambhdo, mane maro bike kaho jaldi",memory_recall,gujlish,latin,generated,false
+please maro car shu che jaldi,memory_recall,gujlish,latin,generated,false
+tane maro exam yaad che atyare,memory_recall,gujlish,latin,generated,false
+"assistant, create a file named resume.pdf please",file_create,en,latin,generated,false
+"assistant, make a new file report.txt please",file_create,en,latin,generated,false
+"hey, create plan.docx",file_create,en,latin,generated,false
+"hey, new file called report.txt please",file_create,en,latin,generated,false
+"assistant, create a file named plan.docx please",file_create,en,latin,generated,false
+"hey, make a new file resume.pdf please",file_create,en,latin,generated,false
+"hey, create list.txt",file_create,en,latin,generated,false
+new file called diary.txt now,file_create,en,latin,generated,false
+create a file named report.txt,file_create,en,latin,generated,false
+"assistant, make a new file summary.txt now",file_create,en,latin,generated,false
+"hey, create summary.txt please",file_create,en,latin,generated,false
+"hey, new file called todo.docx",file_create,en,latin,generated,false
+"assistant, create a file named report.txt now",file_create,en,latin,generated,false
+make a new file todo.docx please,file_create,en,latin,generated,false
+data.csv नाम की फाइल बनाओ अभी,file_create,hi,devanagari,generated,false
+कृपया नई फाइल summary.txt बनाओ जल्दी,file_create,hi,devanagari,generated,false
+"सुनो, data.csv बनाओ जल्दी",file_create,hi,devanagari,generated,false
+report.txt नाम की फाइल बनाओ अभी,file_create,hi,devanagari,generated,false
+कृपया नई फाइल todo.docx बनाओ अभी,file_create,hi,devanagari,generated,false
+marks.xlsx बनाओ,file_create,hi,devanagari,generated,false
+"सुनो, resume.pdf नाम की फाइल बनाओ जल्दी",file_create,hi,devanagari,generated,false
+नई फाइल todo.docx बनाओ,file_create,hi,devanagari,generated,false
+कृपया summary.txt बनाओ जल्दी,file_create,hi,devanagari,generated,false
+कृपया list.txt नाम की फाइल बनाओ अभी,file_create,hi,devanagari,generated,false
+कृपया नई फाइल summary.txt बनाओ अभी,file_create,hi,devanagari,generated,false
+budget.xlsx बनाओ,file_create,hi,devanagari,generated,false
+list.txt नाम की फाइल बनाओ अभी,file_create,hi,devanagari,generated,false
+नई फाइल resume.pdf बनाओ अभी,file_create,hi,devanagari,generated,false
+"સાંભળો, budget.xlsx નામની ફાઇલ બનાવો હમણાં",file_create,gu,gujarati,generated,false
+કૃપા કરીને નવી ફાઇલ marks.xlsx બનાવો,file_create,gu,gujarati,generated,false
+"સાંભળો, plan.docx બનાવો જલ્દી",file_create,gu,gujarati,generated,false
+"સાંભળો, diary.txt નામની ફાઇલ બનાવો જલ્દી",file_create,gu,gujarati,generated,false
+"સાંભળો, નવી ફાઇલ summary.txt બનાવો જલ્દી",file_create,gu,gujarati,generated,false
+કૃપા કરીને diary.txt બનાવો,file_create,gu,gujarati,generated,false
+"સાંભળો, diary.txt નામની ફાઇલ બનાવો",file_create,gu,gujarati,generated,false
+કૃપા કરીને નવી ફાઇલ list.txt બનાવો,file_create,gu,gujarati,generated,false
+todo.docx બનાવો જલ્દી,file_create,gu,gujarati,generated,false
+"સાંભળો, marks.xlsx નામની ફાઇલ બનાવો હમણાં",file_create,gu,gujarati,generated,false
+નવી ફાઇલ marks.xlsx બનાવો,file_create,gu,gujarati,generated,false
+report.txt બનાવો,file_create,gu,gujarati,generated,false
+report.txt નામની ફાઇલ બનાવો જલ્દી,file_create,gu,gujarati,generated,false
+કૃપા કરીને નવી ફાઇલ diary.txt બનાવો હમણાં,file_create,gu,gujarati,generated,false
+budget.xlsx naam ki file banao,file_create,hinglish,latin,generated,false
+"suno, nayi file invoice.docx create karo abhi",file_create,hinglish,latin,generated,false
+"suno, summary.txt banao",file_create,hinglish,latin,generated,false
+"suno, report.txt naam ki file banao",file_create,hinglish,latin,generated,false
+"suno, nayi file list.txt create karo",file_create,hinglish,latin,generated,false
+budget.xlsx banao abhi,file_create,hinglish,latin,generated,false
+please diary.txt naam ki file banao jaldi,file_create,hinglish,latin,generated,false
+"suno, nayi file plan.docx create karo",file_create,hinglish,latin,generated,false
+please invoice.docx banao abhi,file_create,hinglish,latin,generated,false
+"suno, report.txt naam ki file banao jaldi",file_create,hinglish,latin,generated,false
+nayi file diary.txt create karo abhi,file_create,hinglish,latin,generated,false
+todo.docx banao jaldi,file_create,hinglish,latin,generated,false
+"suno, budget.xlsx naam ki file banao jaldi",file_create,hinglish,latin,generated,false
+nayi file report.txt create karo jaldi,file_create,hinglish,latin,generated,false
+"sambhdo, summary.txt naam ni file banavo",file_create,gujlish,latin,generated,false
+"sambhdo, navi file summary.txt create karo jaldi",file_create,gujlish,latin,generated,false
+please data.csv banavo,file_create,gujlish,latin,generated,false
+diary.txt naam ni file banavo atyare,file_create,gujlish,latin,generated,false
+"sambhdo, navi file budget.xlsx create karo atyare",file_create,gujlish,latin,generated,false
+diary.txt banavo atyare,file_create,gujlish,latin,generated,false
+list.txt naam ni file banavo,file_create,gujlish,latin,generated,false
+please navi file marks.xlsx create karo,file_create,gujlish,latin,generated,false
+"sambhdo, budget.xlsx banavo atyare",file_create,gujlish,latin,generated,false
+budget.xlsx naam ni file banavo jaldi,file_create,gujlish,latin,generated,false
+navi file budget.xlsx create karo atyare,file_create,gujlish,latin,generated,false
+"sambhdo, diary.txt banavo jaldi",file_create,gujlish,latin,generated,false
+data.csv naam ni file banavo jaldi,file_create,gujlish,latin,generated,false
+navi file diary.txt create karo jaldi,file_create,gujlish,latin,generated,false
+"hey, read data.csv",file_read,en,latin,generated,false
+"assistant, open file invoice.docx and show its content",file_read,en,latin,generated,false
+"assistant, show me what is inside summary.txt now",file_read,en,latin,generated,false
+"hey, display list.txt now",file_read,en,latin,generated,false
+"hey, read todo.docx now",file_read,en,latin,generated,false
+"hey, open file marks.xlsx and show its content",file_read,en,latin,generated,false
+show me what is inside plan.docx please,file_read,en,latin,generated,false
+display list.txt please,file_read,en,latin,generated,false
+"hey, read marks.xlsx now",file_read,en,latin,generated,false
+"assistant, open file data.csv and show its content now",file_read,en,latin,generated,false
+"assistant, show me what is inside diary.txt now",file_read,en,latin,generated,false
+"hey, display budget.xlsx please",file_read,en,latin,generated,false
+"assistant, read plan.docx",file_read,en,latin,generated,false
+"hey, open file diary.txt and show its content please",file_read,en,latin,generated,false
+"सुनो, list.txt पढ़ो जल्दी",file_read,hi,devanagari,generated,false
+notes.txt की सामग्री दिखाओ जल्दी,file_read,hi,devanagari,generated,false
+कृपया फाइल todo.docx में क्या है जल्दी,file_read,hi,devanagari,generated,false
+resume.pdf पढ़ो अभी,file_read,hi,devanagari,generated,false
+list.txt की सामग्री दिखाओ,file_read,hi,devanagari,generated,false
+"सुनो, फाइल marks.xlsx में क्या है जल्दी",file_read,hi,devanagari,generated,false
+notes.txt पढ़ो,file_read,hi,devanagari,generated,false
+"सुनो, report.txt की सामग्री दिखाओ जल्दी",file_read,hi,devanagari,generated,false
+फाइल budget.xlsx में क्या है,file_read,hi,devanagari,generated,false
+todo.docx पढ़ो,file_read,hi,devanagari,generated,false
+"सुनो, plan.docx की सामग्री दिखाओ अभी",file_read,hi,devanagari,generated,false
+कृपया फाइल list.txt में क्या है अभी,file_read,hi,devanagari,generated,false
+कृपया invoice.docx पढ़ो,file_read,hi,devanagari,generated,false
+"सुनो, resume.pdf की सामग्री दिखाओ",file_read,hi,devanagari,generated,false
+કૃપા કરીને marks.xlsx વાંચો હમણાં,file_read,gu,gujarati,generated,false
+કૃપા કરીને summary.txt ની સામગ્રી બતાવો,file_read,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ marks.xlsx માં શું છે,file_read,gu,gujarati,generated,false
+"સાંભળો, resume.pdf વાંચો",file_read,gu,gujarati,generated,false
+કૃપા કરીને summary.txt ની સામગ્રી બતાવો જલ્દી,file_read,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ diary.txt માં શું છે,file_read,gu,gujarati,generated,false
+કૃપા કરીને summary.txt વાંચો,file_read,gu,gujarati,generated,false
+"સાંભળો, list.txt ની સામગ્રી બતાવો",file_read,gu,gujarati,generated,false
+"સાંભળો, ફાઇલ summary.txt માં શું છે",file_read,gu,gujarati,generated,false
+"સાંભળો, invoice.docx વાંચો",file_read,gu,gujarati,generated,false
+કૃપા કરીને report.txt ની સામગ્રી બતાવો હમણાં,file_read,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ summary.txt માં શું છે જલ્દી,file_read,gu,gujarati,generated,false
+"સાંભળો, notes.txt વાંચો જલ્દી",file_read,gu,gujarati,generated,false
+કૃપા કરીને todo.docx ની સામગ્રી બતાવો જલ્દી,file_read,gu,gujarati,generated,false
+report.txt padho jaldi,file_read,hinglish,latin,generated,false
+report.txt ka content dikhao,file_read,hinglish,latin,generated,false
+"suno, file summary.txt mein kya hai jaldi",file_read,hinglish,latin,generated,false
+diary.txt padho,file_read,hinglish,latin,generated,false
+please resume.pdf ka content dikhao,file_read,hinglish,latin,generated,false
+please file summary.txt mein kya hai abhi,file_read,hinglish,latin,generated,false
+"suno, budget.xlsx padho jaldi",file_read,hinglish,latin,generated,false
+please report.txt ka content dikhao abhi,file_read,hinglish,latin,generated,false
+please file budget.xlsx mein kya hai,file_read,hinglish,latin,generated,false
+"suno, diary.txt padho jaldi",file_read,hinglish,latin,generated,false
+"suno, diary.txt ka content dikhao",file_read,hinglish,latin,generated,false
+file resume.pdf mein kya hai,file_read,hinglish,latin,generated,false
+resume.pdf padho,file_read,hinglish,latin,generated,false
+please marks.xlsx ka content dikhao jaldi,file_read,hinglish,latin,generated,false
+report.txt vancho jaldi,file_read,gujlish,latin,generated,false
+"sambhdo, notes.txt nu content batavo jaldi",file_read,gujlish,latin,generated,false
+please file todo.docx ma shu che atyare,file_read,gujlish,latin,generated,false
+notes.txt vancho,file_read,gujlish,latin,generated,false
+"sambhdo, marks.xlsx nu content batavo",file_read,gujlish,latin,generated,false
+"sambhdo, file budget.xlsx ma shu che",file_read,gujlish,latin,generated,false
+diary.txt vancho jaldi,file_read,gujlish,latin,generated,false
+"sambhdo, todo.docx nu content batavo atyare",file_read,gujlish,latin,generated,false
+please file report.txt ma shu che jaldi,file_read,gujlish,latin,generated,false
+report.txt vancho atyare,file_read,gujlish,latin,generated,false
+"sambhdo, list.txt nu content batavo",file_read,gujlish,latin,generated,false
+please file report.txt ma shu che,file_read,gujlish,latin,generated,false
+budget.xlsx vancho,file_read,gujlish,latin,generated,false
+please todo.docx nu content batavo atyare,file_read,gujlish,latin,generated,false
+please add a line to marks.xlsx,file_update,en,latin,generated,false
+"assistant, append text to list.txt please",file_update,en,latin,generated,false
+"assistant, update notes.txt with new content",file_update,en,latin,generated,false
+"assistant, write something into summary.txt now",file_update,en,latin,generated,false
+please add a line to budget.xlsx,file_update,en,latin,generated,false
+append text to data.csv,file_update,en,latin,generated,false
+"assistant, update list.txt with new content please",file_update,en,latin,generated,false
+please write something into plan.docx please,file_update,en,latin,generated,false
+"hey, add a line to invoice.docx please",file_update,en,latin,generated,false
+append text to resume.pdf please,file_update,en,latin,generated,false
+please update report.txt with new content,file_update,en,latin,generated,false
+please write something into list.txt,file_update,en,latin,generated,false
+please add a line to plan.docx please,file_update,en,latin,generated,false
+"hey, append text to budget.xlsx",file_update,en,latin,generated,false
+"सुनो, todo.docx में एक पंक्ति जोड़ो जल्दी",file_update,hi,devanagari,generated,false
+invoice.docx में नया टेक्स्ट लिखो जल्दी,file_update,hi,devanagari,generated,false
+summary.txt को अपडेट करो अभी,file_update,hi,devanagari,generated,false
+"सुनो, data.csv में एक पंक्ति जोड़ो अभी",file_update,hi,devanagari,generated,false
+todo.docx में नया टेक्स्ट लिखो जल्दी,file_update,hi,devanagari,generated,false
+कृपया diary.txt को अपडेट करो अभी,file_update,hi,devanagari,generated,false
+कृपया budget.xlsx में एक पंक्ति जोड़ो जल्दी,file_update,hi,devanagari,generated,false
+"सुनो, budget.xlsx में नया टेक्स्ट लिखो",file_update,hi,devanagari,generated,false
+कृपया notes.txt को अपडेट करो जल्दी,file_update,hi,devanagari,generated,false
+"सुनो, invoice.docx में एक पंक्ति जोड़ो अभी",file_update,hi,devanagari,generated,false
+list.txt में नया टेक्स्ट लिखो अभी,file_update,hi,devanagari,generated,false
+कृपया budget.xlsx को अपडेट करो अभी,file_update,hi,devanagari,generated,false
+कृपया summary.txt में एक पंक्ति जोड़ो अभी,file_update,hi,devanagari,generated,false
+"सुनो, invoice.docx में नया टेक्स्ट लिखो अभी",file_update,hi,devanagari,generated,false
+"સાંભળો, plan.docx માં એક લીટી ઉમેરો જલ્દી",file_update,gu,gujarati,generated,false
+marks.xlsx માં નવું લખાણ લખો જલ્દી,file_update,gu,gujarati,generated,false
+કૃપા કરીને summary.txt અપડેટ કરો હમણાં,file_update,gu,gujarati,generated,false
+notes.txt માં એક લીટી ઉમેરો,file_update,gu,gujarati,generated,false
+કૃપા કરીને data.csv માં નવું લખાણ લખો જલ્દી,file_update,gu,gujarati,generated,false
+"સાંભળો, summary.txt અપડેટ કરો હમણાં",file_update,gu,gujarati,generated,false
+કૃપા કરીને diary.txt માં એક લીટી ઉમેરો,file_update,gu,gujarati,generated,false
+કૃપા કરીને resume.pdf માં નવું લખાણ લખો હમણાં,file_update,gu,gujarati,generated,false
+"સાંભળો, invoice.docx અપડેટ કરો હમણાં",file_update,gu,gujarati,generated,false
+"સાંભળો, plan.docx માં એક લીટી ઉમેરો",file_update,gu,gujarati,generated,false
+"સાંભળો, list.txt માં નવું લખાણ લખો હમણાં",file_update,gu,gujarati,generated,false
+summary.txt અપડેટ કરો જલ્દી,file_update,gu,gujarati,generated,false
+કૃપા કરીને invoice.docx માં એક લીટી ઉમેરો,file_update,gu,gujarati,generated,false
+કૃપા કરીને notes.txt માં નવું લખાણ લખો,file_update,gu,gujarati,generated,false
+"suno, list.txt mein ek line add karo",file_update,hinglish,latin,generated,false
+"suno, budget.xlsx mein naya text likho",file_update,hinglish,latin,generated,false
+"suno, report.txt update karo",file_update,hinglish,latin,generated,false
+"suno, plan.docx mein ek line add karo",file_update,hinglish,latin,generated,false
+please list.txt mein naya text likho abhi,file_update,hinglish,latin,generated,false
+"suno, budget.xlsx update karo",file_update,hinglish,latin,generated,false
+please todo.docx mein ek line add karo,file_update,hinglish,latin,generated,false
+list.txt mein naya text likho jaldi,file_update,hinglish,latin,generated,false
+budget.xlsx update karo jaldi,file_update,hinglish,latin,generated,false
+resume.pdf mein ek line add karo abhi,file_update,hinglish,latin,generated,false
+"suno, todo.docx mein naya text likho jaldi",file_update,hinglish,latin,generated,false
+"suno, list.txt update karo abhi",file_update,hinglish,latin,generated,false
+"suno, budget.xlsx mein ek line add karo abhi",file_update,hinglish,latin,generated,false
+resume.pdf mein naya text likho,file_update,hinglish,latin,generated,false
+please summary.txt ma ek line umero atyare,file_update,gujlish,latin,generated,false
+notes.txt ma navu text lakho atyare,file_update,gujlish,latin,generated,false
+data.csv ma update karo,file_update,gujlish,latin,generated,false
+please diary.txt ma ek line umero atyare,file_update,gujlish,latin,generated,false
+resume.pdf ma navu text lakho atyare,file_update,gujlish,latin,generated,false
+please diary.txt ma update karo atyare,file_update,gujlish,latin,generated,false
+todo.docx ma ek line umero jaldi,file_update,gujlish,latin,generated,false
+"sambhdo, plan.docx ma navu text lakho atyare",file_update,gujlish,latin,generated,false
+budget.xlsx ma update karo atyare,file_update,gujlish,latin,generated,false
+diary.txt ma ek line umero jaldi,file_update,gujlish,latin,generated,false
+please summary.txt ma navu text lakho atyare,file_update,gujlish,latin,generated,false
+please budget.xlsx ma update karo jaldi,file_update,gujlish,latin,generated,false
+"sambhdo, diary.txt ma ek line umero",file_update,gujlish,latin,generated,false
+budget.xlsx ma navu text lakho,file_update,gujlish,latin,generated,false
+please delete diary.txt now,file_delete,en,latin,generated,false
+remove the file notes.txt,file_delete,en,latin,generated,false
+"hey, erase plan.docx",file_delete,en,latin,generated,false
+"assistant, get rid of data.csv now",file_delete,en,latin,generated,false
+please delete invoice.docx please,file_delete,en,latin,generated,false
+"hey, remove the file summary.txt",file_delete,en,latin,generated,false
+"assistant, erase plan.docx please",file_delete,en,latin,generated,false
+"hey, get rid of invoice.docx please",file_delete,en,latin,generated,false
+"hey, delete marks.xlsx please",file_delete,en,latin,generated,false
+remove the file summary.txt,file_delete,en,latin,generated,false
+"assistant, erase plan.docx",file_delete,en,latin,generated,false
+get rid of resume.pdf please,file_delete,en,latin,generated,false
+delete resume.pdf now,file_delete,en,latin,generated,false
+"hey, remove the file resume.pdf please",file_delete,en,latin,generated,false
+"सुनो, resume.pdf हटाओ जल्दी",file_delete,hi,devanagari,generated,false
+फाइल budget.xlsx डिलीट करो,file_delete,hi,devanagari,generated,false
+कृपया resume.pdf मिटा दो,file_delete,hi,devanagari,generated,false
+diary.txt हटाओ अभी,file_delete,hi,devanagari,generated,false
+फाइल resume.pdf डिलीट करो जल्दी,file_delete,hi,devanagari,generated,false
+summary.txt मिटा दो,file_delete,hi,devanagari,generated,false
+कृपया diary.txt हटाओ अभी,file_delete,hi,devanagari,generated,false
+फाइल summary.txt डिलीट करो अभी,file_delete,hi,devanagari,generated,false
+कृपया data.csv मिटा दो,file_delete,hi,devanagari,generated,false
+list.txt हटाओ जल्दी,file_delete,hi,devanagari,generated,false
+"सुनो, फाइल budget.xlsx डिलीट करो",file_delete,hi,devanagari,generated,false
+marks.xlsx मिटा दो जल्दी,file_delete,hi,devanagari,generated,false
+कृपया report.txt हटाओ,file_delete,hi,devanagari,generated,false
+"सुनो, फाइल marks.xlsx डिलीट करो अभी",file_delete,hi,devanagari,generated,false
+કૃપા કરીને resume.pdf કાઢી નાખો,file_delete,gu,gujarati,generated,false
+ફાઇલ marks.xlsx ડિલીટ કરો જલ્દી,file_delete,gu,gujarati,generated,false
+summary.txt ભૂંસી નાખો હમણાં,file_delete,gu,gujarati,generated,false
+કૃપા કરીને plan.docx કાઢી નાખો જલ્દી,file_delete,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ report.txt ડિલીટ કરો હમણાં,file_delete,gu,gujarati,generated,false
+"સાંભળો, diary.txt ભૂંસી નાખો હમણાં",file_delete,gu,gujarati,generated,false
+report.txt કાઢી નાખો જલ્દી,file_delete,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ plan.docx ડિલીટ કરો જલ્દી,file_delete,gu,gujarati,generated,false
+"સાંભળો, report.txt ભૂંસી નાખો",file_delete,gu,gujarati,generated,false
+invoice.docx કાઢી નાખો,file_delete,gu,gujarati,generated,false
+ફાઇલ notes.txt ડિલીટ કરો હમણાં,file_delete,gu,gujarati,generated,false
+diary.txt ભૂંસી નાખો,file_delete,gu,gujarati,generated,false
+કૃપા કરીને list.txt કાઢી નાખો જલ્દી,file_delete,gu,gujarati,generated,false
+ફાઇલ resume.pdf ડિલીટ કરો,file_delete,gu,gujarati,generated,false
+please plan.docx delete karo jaldi,file_delete,hinglish,latin,generated,false
+please file resume.pdf hata do,file_delete,hinglish,latin,generated,false
+please notes.txt mita do,file_delete,hinglish,latin,generated,false
+summary.txt delete karo,file_delete,hinglish,latin,generated,false
+please file summary.txt hata do jaldi,file_delete,hinglish,latin,generated,false
+"suno, report.txt mita do abhi",file_delete,hinglish,latin,generated,false
+"suno, plan.docx delete karo",file_delete,hinglish,latin,generated,false
+file resume.pdf hata do,file_delete,hinglish,latin,generated,false
+list.txt mita do,file_delete,hinglish,latin,generated,false
+please todo.docx delete karo jaldi,file_delete,hinglish,latin,generated,false
+please file data.csv hata do,file_delete,hinglish,latin,generated,false
+"suno, diary.txt mita do abhi",file_delete,hinglish,latin,generated,false
+"suno, marks.xlsx delete karo jaldi",file_delete,hinglish,latin,generated,false
+"suno, file invoice.docx hata do abhi",file_delete,hinglish,latin,generated,false
+please notes.txt ne delete karo,file_delete,gujlish,latin,generated,false
+file invoice.docx kadhi nakho,file_delete,gujlish,latin,generated,false
+please todo.docx bhusi nakho,file_delete,gujlish,latin,generated,false
+please plan.docx ne delete karo,file_delete,gujlish,latin,generated,false
+"sambhdo, file diary.txt kadhi nakho",file_delete,gujlish,latin,generated,false
+please data.csv bhusi nakho atyare,file_delete,gujlish,latin,generated,false
+please data.csv ne delete karo jaldi,file_delete,gujlish,latin,generated,false
+please file summary.txt kadhi nakho jaldi,file_delete,gujlish,latin,generated,false
+"sambhdo, summary.txt bhusi nakho atyare",file_delete,gujlish,latin,generated,false
+resume.pdf ne delete karo jaldi,file_delete,gujlish,latin,generated,false
+file budget.xlsx kadhi nakho,file_delete,gujlish,latin,generated,false
+resume.pdf bhusi nakho atyare,file_delete,gujlish,latin,generated,false
+please marks.xlsx ne delete karo atyare,file_delete,gujlish,latin,generated,false
+please file marks.xlsx kadhi nakho jaldi,file_delete,gujlish,latin,generated,false
+search for diary.txt,file_search,en,latin,generated,false
+find the file resume.pdf,file_search,en,latin,generated,false
+where is diary.txt please,file_search,en,latin,generated,false
+"assistant, look for files named list.txt now",file_search,en,latin,generated,false
+"hey, search for notes.txt please",file_search,en,latin,generated,false
+find the file report.txt please,file_search,en,latin,generated,false
+where is report.txt now,file_search,en,latin,generated,false
+please look for files named invoice.docx please,file_search,en,latin,generated,false
+"hey, search for list.txt now",file_search,en,latin,generated,false
+find the file diary.txt,file_search,en,latin,generated,false
+please where is diary.txt,file_search,en,latin,generated,false
+"assistant, look for files named invoice.docx",file_search,en,latin,generated,false
+please search for data.csv now,file_search,en,latin,generated,false
+please find the file list.txt please,file_search,en,latin,generated,false
+कृपया notes.txt खोजो अभी,file_search,hi,devanagari,generated,false
+कृपया फाइल list.txt कहाँ है अभी,file_search,hi,devanagari,generated,false
+budget.xlsx नाम की फाइलें ढूंढो जल्दी,file_search,hi,devanagari,generated,false
+"सुनो, list.txt खोजो",file_search,hi,devanagari,generated,false
+"सुनो, फाइल report.txt कहाँ है अभी",file_search,hi,devanagari,generated,false
+"सुनो, report.txt नाम की फाइलें ढूंढो जल्दी",file_search,hi,devanagari,generated,false
+report.txt खोजो जल्दी,file_search,hi,devanagari,generated,false
+कृपया फाइल notes.txt कहाँ है अभी,file_search,hi,devanagari,generated,false
+diary.txt नाम की फाइलें ढूंढो जल्दी,file_search,hi,devanagari,generated,false
+"सुनो, plan.docx खोजो जल्दी",file_search,hi,devanagari,generated,false
+फाइल marks.xlsx कहाँ है जल्दी,file_search,hi,devanagari,generated,false
+कृपया report.txt नाम की फाइलें ढूंढो जल्दी,file_search,hi,devanagari,generated,false
+diary.txt खोजो जल्दी,file_search,hi,devanagari,generated,false
+फाइल summary.txt कहाँ है,file_search,hi,devanagari,generated,false
+"સાંભળો, diary.txt શોધો",file_search,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ summary.txt ક્યાં છે હમણાં,file_search,gu,gujarati,generated,false
+diary.txt નામની ફાઇલો શોધો,file_search,gu,gujarati,generated,false
+કૃપા કરીને summary.txt શોધો હમણાં,file_search,gu,gujarati,generated,false
+ફાઇલ diary.txt ક્યાં છે જલ્દી,file_search,gu,gujarati,generated,false
+marks.xlsx નામની ફાઇલો શોધો હમણાં,file_search,gu,gujarati,generated,false
+notes.txt શોધો જલ્દી,file_search,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ invoice.docx ક્યાં છે હમણાં,file_search,gu,gujarati,generated,false
+કૃપા કરીને notes.txt નામની ફાઇલો શોધો,file_search,gu,gujarati,generated,false
+"સાંભળો, marks.xlsx શોધો હમણાં",file_search,gu,gujarati,generated,false
+કૃપા કરીને ફાઇલ list.txt ક્યાં છે હમણાં,file_search,gu,gujarati,generated,false
+કૃપા કરીને report.txt નામની ફાઇલો શોધો જલ્દી,file_search,gu,gujarati,generated,false
+notes.txt શોધો હમણાં,file_search,gu,gujarati,generated,false
+"સાંભળો, ફાઇલ list.txt ક્યાં છે હમણાં",file_search,gu,gujarati,generated,false
+"suno, resume.pdf search karo",file_search,hinglish,latin,generated,false
+please file diary.txt kahan hai,file_search,hinglish,latin,generated,false
+"suno, notes.txt naam ki files dhundo",file_search,hinglish,latin,generated,false
+please budget.xlsx search karo,file_search,hinglish,latin,generated,false
+file marks.xlsx kahan hai,file_search,hinglish,latin,generated,false
+report.txt naam ki files dhundo jaldi,file_search,hinglish,latin,generated,false
+marks.xlsx search karo jaldi,file_search,hinglish,latin,generated,false
+"suno, file marks.xlsx kahan hai abhi",file_search,hinglish,latin,generated,false
+please resume.pdf naam ki files dhundo jaldi,file_search,hinglish,latin,generated,false
+summary.txt search karo jaldi,file_search,hinglish,latin,generated,false
+please file marks.xlsx kahan hai abhi,file_search,hinglish,latin,generated,false
+"suno, diary.txt naam ki files dhundo jaldi",file_search,hinglish,latin,generated,false
+please todo.docx search karo,file_search,hinglish,latin,generated,false
+please file report.txt kahan hai jaldi,file_search,hinglish,latin,generated,false
+"sambhdo, plan.docx ne search karo",file_search,gujlish,latin,generated,false
+"sambhdo, file data.csv kya che",file_search,gujlish,latin,generated,false
+please invoice.docx naam ni files shodho,file_search,gujlish,latin,generated,false
+marks.xlsx ne search karo atyare,file_search,gujlish,latin,generated,false
+please file budget.xlsx kya che jaldi,file_search,gujlish,latin,generated,false
+list.txt naam ni files shodho,file_search,gujlish,latin,generated,false
+"sambhdo, data.csv ne search karo jaldi",file_search,gujlish,latin,generated,false
+please file marks.xlsx kya che jaldi,file_search,gujlish,latin,generated,false
+please diary.txt naam ni files shodho,file_search,gujlish,latin,generated,false
+diary.txt ne search karo,file_search,gujlish,latin,generated,false
+"sambhdo, file todo.docx kya che atyare",file_search,gujlish,latin,generated,false
+please marks.xlsx naam ni files shodho jaldi,file_search,gujlish,latin,generated,false
+please summary.txt ne search karo,file_search,gujlish,latin,generated,false
+please file invoice.docx kya che jaldi,file_search,gujlish,latin,generated,false
+please create an excel sheet named sales.xlsx now,office_create,en,latin,generated,false
+make a word document called letter.docx please,office_create,en,latin,generated,false
+please generate a spreadsheet minutes.docx,office_create,en,latin,generated,false
+"hey, write a new word file names.xlsx now",office_create,en,latin,generated,false
+"assistant, open excel and write 5 names in 5 rows",office_create,en,latin,generated,false
+create an excel sheet named marks.xlsx please,office_create,en,latin,generated,false
+make a word document called minutes.docx please,office_create,en,latin,generated,false
+"assistant, generate a spreadsheet letter.docx now",office_create,en,latin,generated,false
+please write a new word file names.xlsx now,office_create,en,latin,generated,false
+"hey, open excel and write 5 names in 5 rows please",office_create,en,latin,generated,false
+"hey, create an excel sheet named marks.xlsx now",office_create,en,latin,generated,false
+"hey, make a word document called letter.docx",office_create,en,latin,generated,false
+"assistant, generate a spreadsheet marks.xlsx now",office_create,en,latin,generated,false
+please write a new word file names.xlsx,office_create,en,latin,generated,false
+कृपया marks.xlsx नाम की एक्सेल शीट बनाओ जल्दी,office_create,hi,devanagari,generated,false
+कृपया letter.docx नाम का वर्ड डॉक्यूमेंट बनाओ अभी,office_create,hi,devanagari,generated,false
+"सुनो, names.xlsx स्प्रेडशीट तैयार करो अभी",office_create,hi,devanagari,generated,false
+एक्सेल खोलो और 5 पंक्तियों में 5 नाम लिखो जल्दी,office_create,hi,devanagari,generated,false
+कृपया names.xlsx नाम की एक्सेल शीट बनाओ जल्दी,office_create,hi,devanagari,generated,false
+कृपया sales.xlsx नाम का वर्ड डॉक्यूमेंट बनाओ अभी,office_create,hi,devanagari,generated,false
+letter.docx स्प्रेडशीट तैयार करो जल्दी,office_create,hi,devanagari,generated,false
+कृपया एक्सेल खोलो और 5 पंक्तियों में 5 नाम लिखो अभी,office_create,hi,devanagari,generated,false
+sales.xlsx नाम की एक्सेल शीट बनाओ जल्दी,office_create,hi,devanagari,generated,false
+कृपया report.docx नाम का वर्ड डॉक्यूमेंट बनाओ अभी,office_create,hi,devanagari,generated,false
+sales.xlsx स्प्रेडशीट तैयार करो अभी,office_create,hi,devanagari,generated,false
+"सुनो, एक्सेल खोलो और 5 पंक्तियों में 5 नाम लिखो जल्दी",office_create,hi,devanagari,generated,false
+marks.xlsx नाम की एक्सेल शीट बनाओ,office_create,hi,devanagari,generated,false
+कृपया marks.xlsx नाम का वर्ड डॉक्यूमेंट बनाओ जल्दी,office_create,hi,devanagari,generated,false
+કૃપા કરીને report.docx નામની એક્સેલ શીટ બનાવો હમણાં,office_create,gu,gujarati,generated,false
+"સાંભળો, letter.docx નામનો વર્ડ દસ્તાવેજ બનાવો જલ્દી",office_create,gu,gujarati,generated,false
+"સાંભળો, sales.xlsx સ્પ્રેડશીટ તૈયાર કરો હમણાં",office_create,gu,gujarati,generated,false
+એક્સેલ ખોલો અને 5 હરોળમાં 5 નામ લખો જલ્દી,office_create,gu,gujarati,generated,false
+કૃપા કરીને minutes.docx નામની એક્સેલ શીટ બનાવો,office_create,gu,gujarati,generated,false
+letter.docx નામનો વર્ડ દસ્તાવેજ બનાવો હમણાં,office_create,gu,gujarati,generated,false
+કૃપા કરીને report.docx સ્પ્રેડશીટ તૈયાર કરો,office_create,gu,gujarati,generated,false
+"સાંભળો, એક્સેલ ખોલો અને 5 હરોળમાં 5 નામ લખો",office_create,gu,gujarati,generated,false
+letter.docx નામની એક્સેલ શીટ બનાવો હમણાં,office_create,gu,gujarati,generated,false
+letter.docx નામનો વર્ડ દસ્તાવેજ બનાવો,office_create,gu,gujarati,generated,false
+"સાંભળો, letter.docx સ્પ્રેડશીટ તૈયાર કરો હમણાં",office_create,gu,gujarati,generated,false
+એક્સેલ ખોલો અને 5 હરોળમાં 5 નામ લખો હમણાં,office_create,gu,gujarati,generated,false
+"સાંભળો, names.xlsx નામની એક્સેલ શીટ બનાવો જલ્દી",office_create,gu,gujarati,generated,false
+report.docx નામનો વર્ડ દસ્તાવેજ બનાવો,office_create,gu,gujarati,generated,false
+please marks.xlsx naam ki excel sheet banao,office_create,hinglish,latin,generated,false
+"suno, sales.xlsx naam ka word document banao",office_create,hinglish,latin,generated,false
+"suno, sales.xlsx spreadsheet taiyar karo jaldi",office_create,hinglish,latin,generated,false
+"suno, excel kholo aur 5 rows mein 5 naam likho",office_create,hinglish,latin,generated,false
+"suno, marks.xlsx naam ki excel sheet banao abhi",office_create,hinglish,latin,generated,false
+"suno, minutes.docx naam ka word document banao",office_create,hinglish,latin,generated,false
+please minutes.docx spreadsheet taiyar karo,office_create,hinglish,latin,generated,false
+please excel kholo aur 5 rows mein 5 naam likho abhi,office_create,hinglish,latin,generated,false
+please report.docx naam ki excel sheet banao abhi,office_create,hinglish,latin,generated,false
+please minutes.docx naam ka word document banao jaldi,office_create,hinglish,latin,generated,false
+"suno, letter.docx spreadsheet taiyar karo abhi",office_create,hinglish,latin,generated,false
+please excel kholo aur 5 rows mein 5 naam likho,office_create,hinglish,latin,generated,false
+please marks.xlsx naam ki excel sheet banao abhi,office_create,hinglish,latin,generated,false
+please marks.xlsx naam ka word document banao abhi,office_create,hinglish,latin,generated,false
+please sales.xlsx naam ni excel sheet banavo jaldi,office_create,gujlish,latin,generated,false
+letter.docx naam no word document banavo jaldi,office_create,gujlish,latin,generated,false
+please report.docx spreadsheet taiyar karo jaldi,office_create,gujlish,latin,generated,false
+excel kholo ane 5 rows ma 5 naam lakho jaldi,office_create,gujlish,latin,generated,false
+letter.docx naam ni excel sheet banavo,office_create,gujlish,latin,generated,false
+letter.docx naam no word document banavo,office_create,gujlish,latin,generated,false
+please names.xlsx spreadsheet taiyar karo atyare,office_create,gujlish,latin,generated,false
+please excel kholo ane 5 rows ma 5 naam lakho atyare,office_create,gujlish,latin,generated,false
+"sambhdo, letter.docx naam ni excel sheet banavo",office_create,gujlish,latin,generated,false
+please letter.docx naam no word document banavo jaldi,office_create,gujlish,latin,generated,false
+"sambhdo, letter.docx spreadsheet taiyar karo",office_create,gujlish,latin,generated,false
+"sambhdo, excel kholo ane 5 rows ma 5 naam lakho jaldi",office_create,gujlish,latin,generated,false
+"sambhdo, sales.xlsx naam ni excel sheet banavo atyare",office_create,gujlish,latin,generated,false
+"sambhdo, sales.xlsx naam no word document banavo jaldi",office_create,gujlish,latin,generated,false
+open word now,app_open,en,latin,generated,false
+launch chrome,app_open,en,latin,generated,false
+start chrome now,app_open,en,latin,generated,false
+"hey, run vs code for me",app_open,en,latin,generated,false
+please open chrome please,app_open,en,latin,generated,false
+please launch excel now,app_open,en,latin,generated,false
+"assistant, start word now",app_open,en,latin,generated,false
+run calculator for me,app_open,en,latin,generated,false
+"hey, open vs code please",app_open,en,latin,generated,false
+please launch vs code,app_open,en,latin,generated,false
+start word now,app_open,en,latin,generated,false
+"hey, run notepad for me please",app_open,en,latin,generated,false
+please open notepad now,app_open,en,latin,generated,false
+please launch vs code now,app_open,en,latin,generated,false
+कृपया क्रोम खोलो जल्दी,app_open,hi,devanagari,generated,false
+कृपया पेंट चालू करो,app_open,hi,devanagari,generated,false
+क्रोम शुरू करो अभी,app_open,hi,devanagari,generated,false
+कैलकुलेटर खोलो अभी,app_open,hi,devanagari,generated,false
+"सुनो, क्रोम चालू करो जल्दी",app_open,hi,devanagari,generated,false
+"सुनो, नोटपैड शुरू करो",app_open,hi,devanagari,generated,false
+नोटपैड खोलो जल्दी,app_open,hi,devanagari,generated,false
+नोटपैड चालू करो अभी,app_open,hi,devanagari,generated,false
+"सुनो, कैलकुलेटर शुरू करो अभी",app_open,hi,devanagari,generated,false
+कृपया क्रोम खोलो अभी,app_open,hi,devanagari,generated,false
+"सुनो, कैलकुलेटर चालू करो जल्दी",app_open,hi,devanagari,generated,false
+कृपया कैलकुलेटर शुरू करो,app_open,hi,devanagari,generated,false
+पेंट खोलो अभी,app_open,hi,devanagari,generated,false
+"सुनो, कैलकुलेटर चालू करो अभी",app_open,hi,devanagari,generated,false
+કેલ્ક્યુલેટર ખોલો હમણાં,app_open,gu,gujarati,generated,false
+"સાંભળો, નોટપેડ ચાલુ કરો હમણાં",app_open,gu,gujarati,generated,false
+પેઇન્ટ શરૂ કરો,app_open,gu,gujarati,generated,false
+નોટપેડ ખોલો,app_open,gu,gujarati,generated,false
+ક્રોમ ચાલુ કરો જલ્દી,app_open,gu,gujarati,generated,false
+કૃપા કરીને ક્રોમ શરૂ કરો જલ્દી,app_open,gu,gujarati,generated,false
+ક્રોમ ખોલો જલ્દી,app_open,gu,gujarati,generated,false
+કૃપા કરીને નોટપેડ ચાલુ કરો,app_open,gu,gujarati,generated,false
+ક્રોમ શરૂ કરો,app_open,gu,gujarati,generated,false
+"સાંભળો, કેલ્ક્યુલેટર ખોલો હમણાં",app_open,gu,gujarati,generated,false
+"સાંભળો, ક્રોમ ચાલુ કરો",app_open,gu,gujarati,generated,false
+કૃપા કરીને કેલ્ક્યુલેટર શરૂ કરો જલ્દી,app_open,gu,gujarati,generated,false
+કૃપા કરીને ક્રોમ ખોલો જલ્દી,app_open,gu,gujarati,generated,false
+ક્રોમ ચાલુ કરો,app_open,gu,gujarati,generated,false
+please paint kholo jaldi,app_open,hinglish,latin,generated,false
+"suno, word chalu karo",app_open,hinglish,latin,generated,false
+please vs code start karo abhi,app_open,hinglish,latin,generated,false
+please chrome kholo jaldi,app_open,hinglish,latin,generated,false
+please chrome chalu karo jaldi,app_open,hinglish,latin,generated,false
+"suno, word start karo jaldi",app_open,hinglish,latin,generated,false
+excel kholo jaldi,app_open,hinglish,latin,generated,false
+vs code chalu karo abhi,app_open,hinglish,latin,generated,false
+notepad start karo,app_open,hinglish,latin,generated,false
+please excel kholo,app_open,hinglish,latin,generated,false
+"suno, chrome chalu karo jaldi",app_open,hinglish,latin,generated,false
+please paint start karo,app_open,hinglish,latin,generated,false
+notepad kholo,app_open,hinglish,latin,generated,false
+calculator chalu karo jaldi,app_open,hinglish,latin,generated,false
+please chrome kholi do,app_open,gujlish,latin,generated,false
+notepad chalu kari do atyare,app_open,gujlish,latin,generated,false
+please calculator sharu karo atyare,app_open,gujlish,latin,generated,false
+"sambhdo, excel kholi do",app_open,gujlish,latin,generated,false
+please notepad chalu kari do jaldi,app_open,gujlish,latin,generated,false
+notepad sharu karo jaldi,app_open,gujlish,latin,generated,false
+please excel kholi do atyare,app_open,gujlish,latin,generated,false
+chrome chalu kari do atyare,app_open,gujlish,latin,generated,false
+word sharu karo,app_open,gujlish,latin,generated,false
+word kholi do,app_open,gujlish,latin,generated,false
+please chrome chalu kari do atyare,app_open,gujlish,latin,generated,false
+chrome sharu karo atyare,app_open,gujlish,latin,generated,false
+paint kholi do jaldi,app_open,gujlish,latin,generated,false
+"sambhdo, excel chalu kari do atyare",app_open,gujlish,latin,generated,false
+close vs code please,app_close,en,latin,generated,false
+quit excel please,app_close,en,latin,generated,false
+please stop notepad,app_close,en,latin,generated,false
+"assistant, shut down chrome please",app_close,en,latin,generated,false
+"assistant, close calculator please",app_close,en,latin,generated,false
+"assistant, quit paint now",app_close,en,latin,generated,false
+please stop chrome please,app_close,en,latin,generated,false
+"assistant, shut down word please",app_close,en,latin,generated,false
+"hey, close calculator now",app_close,en,latin,generated,false
+"assistant, quit paint please",app_close,en,latin,generated,false
+"assistant, stop vs code now",app_close,en,latin,generated,false
+"hey, shut down word now",app_close,en,latin,generated,false
+please close paint,app_close,en,latin,generated,false
+"hey, quit chrome please",app_close,en,latin,generated,false
+"सुनो, नोटपैड बंद करो",app_close,hi,devanagari,generated,false
+कृपया कैलकुलेटर से बाहर निकलो अभी,app_close,hi,devanagari,generated,false
+क्रोम रोक दो अभी,app_close,hi,devanagari,generated,false
+पेंट बंद करो जल्दी,app_close,hi,devanagari,generated,false
+"सुनो, कैलकुलेटर से बाहर निकलो जल्दी",app_close,hi,devanagari,generated,false
+पेंट रोक दो,app_close,hi,devanagari,generated,false
+कृपया क्रोम बंद करो,app_close,hi,devanagari,generated,false
+कृपया पेंट से बाहर निकलो,app_close,hi,devanagari,generated,false
+"सुनो, क्रोम रोक दो",app_close,hi,devanagari,generated,false
+कैलकुलेटर बंद करो अभी,app_close,hi,devanagari,generated,false
+क्रोम से बाहर निकलो जल्दी,app_close,hi,devanagari,generated,false
+"सुनो, पेंट रोक दो अभी",app_close,hi,devanagari,generated,false
+कृपया कैलकुलेटर बंद करो,app_close,hi,devanagari,generated,false
+कृपया क्रोम से बाहर निकलो अभी,app_close,hi,devanagari,generated,false
+પેઇન્ટ બંધ કરો જલ્દી,app_close,gu,gujarati,generated,false
+કૃપા કરીને ક્રોમ માંથી બહાર નીકળો હમણાં,app_close,gu,gujarati,generated,false
+"સાંભળો, પેઇન્ટ રોકી દો જલ્દી",app_close,gu,gujarati,generated,false
+ક્રોમ બંધ કરો,app_close,gu,gujarati,generated,false
+પેઇન્ટ માંથી બહાર નીકળો જલ્દી,app_close,gu,gujarati,generated,false
+કૃપા કરીને પેઇન્ટ રોકી દો જલ્દી,app_close,gu,gujarati,generated,false
+"સાંભળો, નોટપેડ બંધ કરો જલ્દી",app_close,gu,gujarati,generated,false
+કૃપા કરીને કેલ્ક્યુલેટર માંથી બહાર નીકળો જલ્દી,app_close,gu,gujarati,generated,false
+ક્રોમ રોકી દો,app_close,gu,gujarati,generated,false
+કૃપા કરીને પેઇન્ટ બંધ કરો,app_close,gu,gujarati,generated,false
+કેલ્ક્યુલેટર માંથી બહાર નીકળો હમણાં,app_close,gu,gujarati,generated,false
+કૃપા કરીને ક્રોમ રોકી દો,app_close,gu,gujarati,generated,false
+"સાંભળો, નોટપેડ બંધ કરો હમણાં",app_close,gu,gujarati,generated,false
+ક્રોમ માંથી બહાર નીકળો હમણાં,app_close,gu,gujarati,generated,false
+excel band karo abhi,app_close,hinglish,latin,generated,false
+"suno, chrome se bahar niklo",app_close,hinglish,latin,generated,false
+calculator ruk do abhi,app_close,hinglish,latin,generated,false
+notepad band karo jaldi,app_close,hinglish,latin,generated,false
+please notepad se bahar niklo,app_close,hinglish,latin,generated,false
+paint ruk do,app_close,hinglish,latin,generated,false
+"suno, chrome band karo jaldi",app_close,hinglish,latin,generated,false
+vs code se bahar niklo jaldi,app_close,hinglish,latin,generated,false
+notepad ruk do,app_close,hinglish,latin,generated,false
+paint band karo,app_close,hinglish,latin,generated,false
+"suno, excel se bahar niklo",app_close,hinglish,latin,generated,false
+"suno, notepad ruk do abhi",app_close,hinglish,latin,generated,false
+chrome band karo,app_close,hinglish,latin,generated,false
+"suno, chrome se bahar niklo jaldi",app_close,hinglish,latin,generated,false
+please paint bandh karo,app_close,gujlish,latin,generated,false
+vs code mathi bahar niklo jaldi,app_close,gujlish,latin,generated,false
+"sambhdo, word roki do",app_close,gujlish,latin,generated,false
+"sambhdo, paint bandh karo",app_close,gujlish,latin,generated,false
+please calculator mathi bahar niklo jaldi,app_close,gujlish,latin,generated,false
+"sambhdo, vs code roki do jaldi",app_close,gujlish,latin,generated,false
+word bandh karo,app_close,gujlish,latin,generated,false
+vs code mathi bahar niklo atyare,app_close,gujlish,latin,generated,false
+please chrome roki do atyare,app_close,gujlish,latin,generated,false
+"sambhdo, notepad bandh karo",app_close,gujlish,latin,generated,false
+please paint mathi bahar niklo,app_close,gujlish,latin,generated,false
+"sambhdo, excel roki do jaldi",app_close,gujlish,latin,generated,false
+please vs code bandh karo,app_close,gujlish,latin,generated,false
+"sambhdo, calculator mathi bahar niklo jaldi",app_close,gujlish,latin,generated,false
+"assistant, show system status please",system_status,en,latin,generated,false
+"assistant, how is my cpu usage now",system_status,en,latin,generated,false
+"assistant, check ram and disk now",system_status,en,latin,generated,false
+"assistant, system health report now",system_status,en,latin,generated,false
+"hey, how much memory is free",system_status,en,latin,generated,false
+please what is the cpu load,system_status,en,latin,generated,false
+"assistant, show system status",system_status,en,latin,generated,false
+please how is my cpu usage now,system_status,en,latin,generated,false
+"hey, check ram and disk please",system_status,en,latin,generated,false
+"hey, system health report",system_status,en,latin,generated,false
+"assistant, how much memory is free please",system_status,en,latin,generated,false
+"assistant, what is the cpu load",system_status,en,latin,generated,false
+"hey, show system status please",system_status,en,latin,generated,false
+please how is my cpu usage please,system_status,en,latin,generated,false
+"सुनो, सिस्टम की स्थिति दिखाओ जल्दी",system_status,hi,devanagari,generated,false
+सीपीयू उपयोग कितना है,system_status,hi,devanagari,generated,false
+"सुनो, रैम और डिस्क जांचो",system_status,hi,devanagari,generated,false
+कृपया सिस्टम हेल्थ रिपोर्ट अभी,system_status,hi,devanagari,generated,false
+कितनी मेमोरी खाली है अभी,system_status,hi,devanagari,generated,false
+"सुनो, सीपीयू लोड कितना है जल्दी",system_status,hi,devanagari,generated,false
+"सुनो, सिस्टम की स्थिति दिखाओ अभी",system_status,hi,devanagari,generated,false
+कृपया सीपीयू उपयोग कितना है,system_status,hi,devanagari,generated,false
+रैम और डिस्क जांचो,system_status,hi,devanagari,generated,false
+कृपया सिस्टम हेल्थ रिपोर्ट,system_status,hi,devanagari,generated,false
+कृपया कितनी मेमोरी खाली है,system_status,hi,devanagari,generated,false
+सीपीयू लोड कितना है जल्दी,system_status,hi,devanagari,generated,false
+कृपया सिस्टम की स्थिति दिखाओ जल्दी,system_status,hi,devanagari,generated,false
+कृपया सीपीयू उपयोग कितना है जल्दी,system_status,hi,devanagari,generated,false
+સિસ્ટમની સ્થિતિ બતાવો જલ્દી,system_status,gu,gujarati,generated,false
+"સાંભળો, સીપીયુ વપરાશ કેટલો છે",system_status,gu,gujarati,generated,false
+કૃપા કરીને રેમ અને ડિસ્ક તપાસો હમણાં,system_status,gu,gujarati,generated,false
+"સાંભળો, સિસ્ટમ હેલ્થ રિપોર્ટ હમણાં",system_status,gu,gujarati,generated,false
+કૃપા કરીને કેટલી મેમરી ખાલી છે,system_status,gu,gujarati,generated,false
+કૃપા કરીને સીપીયુ લોડ કેટલો છે હમણાં,system_status,gu,gujarati,generated,false
+"સાંભળો, સિસ્ટમની સ્થિતિ બતાવો હમણાં",system_status,gu,gujarati,generated,false
+કૃપા કરીને સીપીયુ વપરાશ કેટલો છે,system_status,gu,gujarati,generated,false
+રેમ અને ડિસ્ક તપાસો હમણાં,system_status,gu,gujarati,generated,false
+કૃપા કરીને સિસ્ટમ હેલ્થ રિપોર્ટ જલ્દી,system_status,gu,gujarati,generated,false
+કેટલી મેમરી ખાલી છે જલ્દી,system_status,gu,gujarati,generated,false
+"સાંભળો, સીપીયુ લોડ કેટલો છે હમણાં",system_status,gu,gujarati,generated,false
+કૃપા કરીને સિસ્ટમની સ્થિતિ બતાવો હમણાં,system_status,gu,gujarati,generated,false
+સીપીયુ વપરાશ કેટલો છે હમણાં,system_status,gu,gujarati,generated,false
+system status dikhao jaldi,system_status,hinglish,latin,generated,false
+please cpu usage kitna hai jaldi,system_status,hinglish,latin,generated,false
+please ram aur disk check karo,system_status,hinglish,latin,generated,false
+"suno, system health report do jaldi",system_status,hinglish,latin,generated,false
+"suno, kitni memory khaali hai abhi",system_status,hinglish,latin,generated,false
+please cpu load kitna hai jaldi,system_status,hinglish,latin,generated,false
+please system status dikhao abhi,system_status,hinglish,latin,generated,false
+cpu usage kitna hai,system_status,hinglish,latin,generated,false
+ram aur disk check karo abhi,system_status,hinglish,latin,generated,false
+"suno, system health report do",system_status,hinglish,latin,generated,false
+"suno, kitni memory khaali hai",system_status,hinglish,latin,generated,false
+"suno, cpu load kitna hai",system_status,hinglish,latin,generated,false
+"suno, system status dikhao abhi",system_status,hinglish,latin,generated,false
+please cpu usage kitna hai,system_status,hinglish,latin,generated,false
+please system status batavo,system_status,gujlish,latin,generated,false
+cpu usage ketlo che,system_status,gujlish,latin,generated,false
+ram ane disk check karo,system_status,gujlish,latin,generated,false
+system health report apo jaldi,system_status,gujlish,latin,generated,false
+"sambhdo, ketli memory khali che jaldi",system_status,gujlish,latin,generated,false
+please cpu load ketlo che jaldi,system_status,gujlish,latin,generated,false
+please system status batavo atyare,system_status,gujlish,latin,generated,false
+"sambhdo, cpu usage ketlo che jaldi",system_status,gujlish,latin,generated,false
+"sambhdo, ram ane disk check karo jaldi",system_status,gujlish,latin,generated,false
+please system health report apo atyare,system_status,gujlish,latin,generated,false
+"sambhdo, ketli memory khali che",system_status,gujlish,latin,generated,false
+"sambhdo, cpu load ketlo che atyare",system_status,gujlish,latin,generated,false
+"sambhdo, system status batavo jaldi",system_status,gujlish,latin,generated,false
+please cpu usage ketlo che jaldi,system_status,gujlish,latin,generated,false
+"assistant, what does the document say about the budget now",doc_question,en,latin,generated,false
+"hey, according to my pdf, what is the main findings now",doc_question,en,latin,generated,false
+search my documents for the main findings,doc_question,en,latin,generated,false
+please what does the document say about the project deadline,doc_question,en,latin,generated,false
+"assistant, according to my pdf, what is the budget please",doc_question,en,latin,generated,false
+"assistant, search my documents for the project deadline please",doc_question,en,latin,generated,false
+please what does the document say about the safety rules,doc_question,en,latin,generated,false
+"please according to my pdf, what is the safety rules please",doc_question,en,latin,generated,false
+search my documents for the safety rules now,doc_question,en,latin,generated,false
+please what does the document say about the budget,doc_question,en,latin,generated,false
+"hey, according to my pdf, what is the budget please",doc_question,en,latin,generated,false
+please search my documents for the project deadline,doc_question,en,latin,generated,false
+"hey, what does the document say about the methodology",doc_question,en,latin,generated,false
+"assistant, according to my pdf, what is the safety rules now",doc_question,en,latin,generated,false
+"सुनो, दस्तावेज़ में निष्कर्ष के बारे में क्या लिखा है अभी",doc_question,hi,devanagari,generated,false
+"सुनो, मेरी पीडीएफ के अनुसार कार्यप्रणाली क्या है",doc_question,hi,devanagari,generated,false
+कृपया मेरे दस्तावेज़ों में बजट खोजो अभी,doc_question,hi,devanagari,generated,false
+दस्तावेज़ में परियोजना की समय सीमा के बारे में क्या लिखा है,doc_question,hi,devanagari,generated,false
+मेरी पीडीएफ के अनुसार परियोजना की समय सीमा क्या है अभी,doc_question,hi,devanagari,generated,false
+मेरे दस्तावेज़ों में बजट खोजो अभी,doc_question,hi,devanagari,generated,false
+"सुनो, दस्तावेज़ में मुख्य निष्कर्ष के बारे में क्या लिखा है अभी",doc_question,hi,devanagari,generated,false
+कृपया मेरी पीडीएफ के अनुसार कार्यप्रणाली क्या है,doc_question,hi,devanagari,generated,false
+कृपया मेरे दस्तावेज़ों में मुख्य निष्कर्ष खोजो जल्दी,doc_question,hi,devanagari,generated,false
+"सुनो, दस्तावेज़ में मुख्य निष्कर्ष के बारे में क्या लिखा है",doc_question,hi,devanagari,generated,false
+"सुनो, मेरी पीडीएफ के अनुसार मुख्य निष्कर्ष क्या है",doc_question,hi,devanagari,generated,false
+कृपया मेरे दस्तावेज़ों में बजट खोजो,doc_question,hi,devanagari,generated,false
+"सुनो, दस्तावेज़ में निष्कर्ष के बारे में क्या लिखा है",doc_question,hi,devanagari,generated,false
+"सुनो, मेरी पीडीएफ के अनुसार परियोजना की समय सीमा क्या है",doc_question,hi,devanagari,generated,false
+દસ્તાવેજમાં મુખ્ય તારણો વિશે શું લખ્યું છે,doc_question,gu,gujarati,generated,false
+કૃપા કરીને મારી પીડીએફ મુજબ બજેટ શું છે જલ્દી,doc_question,gu,gujarati,generated,false
+કૃપા કરીને મારા દસ્તાવેજોમાં નિષ્કર્ષ શોધો,doc_question,gu,gujarati,generated,false
+"સાંભળો, દસ્તાવેજમાં પદ્ધતિ વિશે શું લખ્યું છે જલ્દી",doc_question,gu,gujarati,generated,false
+"સાંભળો, મારી પીડીએફ મુજબ નિષ્કર્ષ શું છે જલ્દી",doc_question,gu,gujarati,generated,false
+"સાંભળો, મારા દસ્તાવેજોમાં પદ્ધતિ શોધો હમણાં",doc_question,gu,gujarati,generated,false
+કૃપા કરીને દસ્તાવેજમાં પ્રોજેક્ટની સમયમર્યાદા વિશે શું લખ્યું છે જલ્દી,doc_question,gu,gujarati,generated,false
+"સાંભળો, મારી પીડીએફ મુજબ નિષ્કર્ષ શું છે હમણાં",doc_question,gu,gujarati,generated,false
+મારા દસ્તાવેજોમાં બજેટ શોધો જલ્દી,doc_question,gu,gujarati,generated,false
+દસ્તાવેજમાં પ્રોજેક્ટની સમયમર્યાદા વિશે શું લખ્યું છે જલ્દી,doc_question,gu,gujarati,generated,false
+"સાંભળો, મારી પીડીએફ મુજબ મુખ્ય તારણો શું છે",doc_question,gu,gujarati,generated,false
+"સાંભળો, મારા દસ્તાવેજોમાં નિષ્કર્ષ શોધો",doc_question,gu,gujarati,generated,false
+કૃપા કરીને દસ્તાવેજમાં પદ્ધતિ વિશે શું લખ્યું છે,doc_question,gu,gujarati,generated,false
+મારી પીડીએફ મુજબ પદ્ધતિ શું છે હમણાં,doc_question,gu,gujarati,generated,false
+please document mein budget ke baare mein kya likha hai jaldi,doc_question,hinglish,latin,generated,false
+please meri pdf ke according conclusion kya hai abhi,doc_question,hinglish,latin,generated,false
+please mere documents mein budget search karo,doc_question,hinglish,latin,generated,false
+document mein conclusion ke baare mein kya likha hai jaldi,doc_question,hinglish,latin,generated,false
+please meri pdf ke according project deadline kya hai jaldi,doc_question,hinglish,latin,generated,false
+please mere documents mein methodology search karo,doc_question,hinglish,latin,generated,false
+please document mein project deadline ke baare mein kya likha hai jaldi,doc_question,hinglish,latin,generated,false
+meri pdf ke according budget kya hai abhi,doc_question,hinglish,latin,generated,false
+"suno, mere documents mein conclusion search karo",doc_question,hinglish,latin,generated,false
+please document mein conclusion ke baare mein kya likha hai abhi,doc_question,hinglish,latin,generated,false
+"suno, meri pdf ke according project deadline kya hai abhi",doc_question,hinglish,latin,generated,false
+"suno, mere documents mein safety rules search karo",doc_question,hinglish,latin,generated,false
+please document mein main findings ke baare mein kya likha hai,doc_question,hinglish,latin,generated,false
+please meri pdf ke according main findings kya hai,doc_question,hinglish,latin,generated,false
+document ma safety rules vishe shu lakhyu che,doc_question,gujlish,latin,generated,false
+"sambhdo, mari pdf mujab methodology shu che",doc_question,gujlish,latin,generated,false
+"sambhdo, mara documents ma conclusion shodho atyare",doc_question,gujlish,latin,generated,false
+please document ma project deadline vishe shu lakhyu che atyare,doc_question,gujlish,latin,generated,false
+mari pdf mujab project deadline shu che,doc_question,gujlish,latin,generated,false
+mara documents ma project deadline shodho jaldi,doc_question,gujlish,latin,generated,false
+"sambhdo, document ma conclusion vishe shu lakhyu che",doc_question,gujlish,latin,generated,false
+please mari pdf mujab main findings shu che atyare,doc_question,gujlish,latin,generated,false
+"sambhdo, mara documents ma project deadline shodho atyare",doc_question,gujlish,latin,generated,false
+document ma conclusion vishe shu lakhyu che atyare,doc_question,gujlish,latin,generated,false
+"sambhdo, mari pdf mujab main findings shu che jaldi",doc_question,gujlish,latin,generated,false
+please mara documents ma safety rules shodho atyare,doc_question,gujlish,latin,generated,false
+please document ma main findings vishe shu lakhyu che jaldi,doc_question,gujlish,latin,generated,false
+"sambhdo, mari pdf mujab budget shu che jaldi",doc_question,gujlish,latin,generated,false
+"assistant, who wrote Hamlet now",knowledge_question,en,latin,generated,false
+"assistant, what is the capital of France please please",knowledge_question,en,latin,generated,false
+please quick question: how fast is light please,knowledge_question,en,latin,generated,false
+how do airplanes fly,knowledge_question,en,latin,generated,false
+"assistant, who wrote hamlet please now",knowledge_question,en,latin,generated,false
+please quick question: how fast is light now,knowledge_question,en,latin,generated,false
+what is machine learning,knowledge_question,en,latin,generated,false
+"assistant, why is the sky blue please now",knowledge_question,en,latin,generated,false
+"hey, quick question: explain photosynthesis please",knowledge_question,en,latin,generated,false
+"hey, what is the capital of France now",knowledge_question,en,latin,generated,false
+"hey, explain photosynthesis please",knowledge_question,en,latin,generated,false
+please quick question: explain photosynthesis now,knowledge_question,en,latin,generated,false
+what is the capital of france now,knowledge_question,en,latin,generated,false
+"assistant, why is the sky blue please",knowledge_question,en,latin,generated,false
+फ्रांस की राजधानी क्या है,knowledge_question,hi,devanagari,generated,false
+"सुनो, हैमलेट किसने लिखा कृपया अभी",knowledge_question,hi,devanagari,generated,false
+"सुनो, एक सवाल: ब्लैक होल के बारे में बताओ",knowledge_question,hi,devanagari,generated,false
+कृपया फ्रांस की राजधानी क्या है,knowledge_question,hi,devanagari,generated,false
+आसमान नीला क्यों होता है कृपया,knowledge_question,hi,devanagari,generated,false
+एक सवाल: प्रकाश की गति कितनी है अभी,knowledge_question,hi,devanagari,generated,false
+"सुनो, फ्रांस की राजधानी क्या है",knowledge_question,hi,devanagari,generated,false
+"सुनो, हवाई जहाज कैसे उड़ता है कृपया जल्दी",knowledge_question,hi,devanagari,generated,false
+"सुनो, एक सवाल: प्रकाश संश्लेषण समझाओ अभी",knowledge_question,hi,devanagari,generated,false
+फ्रांस की राजधानी क्या है जल्दी,knowledge_question,hi,devanagari,generated,false
+"सुनो, प्रकाश की गति कितनी है कृपया जल्दी",knowledge_question,hi,devanagari,generated,false
+"सुनो, एक सवाल: प्रकाश की गति कितनी है अभी",knowledge_question,hi,devanagari,generated,false
+"सुनो, हैमलेट किसने लिखा अभी",knowledge_question,hi,devanagari,generated,false
+"सुनो, हैमलेट किसने लिखा कृपया जल्दी",knowledge_question,hi,devanagari,generated,false
+"સાંભળો, મશીન લર્નિંગ શું છે",knowledge_question,gu,gujarati,generated,false
+"સાંભળો, ફ્રાન્સની રાજધાની શું છે કૃપા કરીને હમણાં",knowledge_question,gu,gujarati,generated,false
+"સાંભળો, એક સવાલ: ફ્રાન્સની રાજધાની શું છે હમણાં",knowledge_question,gu,gujarati,generated,false
+ફ્રાન્સની રાજધાની શું છે જલ્દી,knowledge_question,gu,gujarati,generated,false
+બ્લેક હોલ વિશે કહો કૃપા કરીને જલ્દી,knowledge_question,gu,gujarati,generated,false
+"સાંભળો, એક સવાલ: બ્લેક હોલ વિશે કહો હમણાં",knowledge_question,gu,gujarati,generated,false
+આકાશ વાદળી કેમ હોય છે હમણાં,knowledge_question,gu,gujarati,generated,false
+કૃપા કરીને પ્રકાશની ગતિ કેટલી છે કૃપા કરીને હમણાં,knowledge_question,gu,gujarati,generated,false
+એક સવાલ: પ્રકાશસંશ્લેષણ સમજાવો હમણાં,knowledge_question,gu,gujarati,generated,false
+"સાંભળો, આકાશ વાદળી કેમ હોય છે જલ્દી",knowledge_question,gu,gujarati,generated,false
+કૃપા કરીને વિમાન કેવી રીતે ઉડે છે કૃપા કરીને હમણાં,knowledge_question,gu,gujarati,generated,false
+"સાંભળો, એક સવાલ: હેમલેટ કોણે લખ્યું",knowledge_question,gu,gujarati,generated,false
+કૃપા કરીને મશીન લર્નિંગ શું છે જલ્દી,knowledge_question,gu,gujarati,generated,false
+"સાંભળો, હેમલેટ કોણે લખ્યું કૃપા કરીને હમણાં",knowledge_question,gu,gujarati,generated,false
+light ki speed kitni hoti hai,knowledge_question,hinglish,latin,generated,false
+"suno, airplane kaise udta hai please",knowledge_question,hinglish,latin,generated,false
+please ek sawal: machine learning kya hai,knowledge_question,hinglish,latin,generated,false
+"suno, photosynthesis samjhao jaldi",knowledge_question,hinglish,latin,generated,false
+"suno, aasman neela kyun hota hai please jaldi",knowledge_question,hinglish,latin,generated,false
+"suno, ek sawal: black hole ke baare mein batao jaldi",knowledge_question,hinglish,latin,generated,false
+black hole ke baare mein batao abhi,knowledge_question,hinglish,latin,generated,false
+photosynthesis samjhao please abhi,knowledge_question,hinglish,latin,generated,false
+please ek sawal: machine learning kya hai abhi,knowledge_question,hinglish,latin,generated,false
+"suno, black hole ke baare mein batao abhi",knowledge_question,hinglish,latin,generated,false
+"suno, airplane kaise udta hai please abhi",knowledge_question,hinglish,latin,generated,false
+ek sawal: france ki capital kya hai,knowledge_question,hinglish,latin,generated,false
+"suno, france ki capital kya hai abhi",knowledge_question,hinglish,latin,generated,false
+"suno, black hole ke baare mein batao please jaldi",knowledge_question,hinglish,latin,generated,false
+please hamlet koe lakhyu,knowledge_question,gujlish,latin,generated,false
+please airplane kevi rite ude che please,knowledge_question,gujlish,latin,generated,false
+"sambhdo, ek sawal: light ni speed ketli che jaldi",knowledge_question,gujlish,latin,generated,false
+please airplane kevi rite ude che jaldi,knowledge_question,gujlish,latin,generated,false
+france ni capital shu che please atyare,knowledge_question,gujlish,latin,generated,false
+ek sawal: photosynthesis samjavo,knowledge_question,gujlish,latin,generated,false
+please light ni speed ketli che,knowledge_question,gujlish,latin,generated,false
+please machine learning shu che please jaldi,knowledge_question,gujlish,latin,generated,false
+"sambhdo, ek sawal: france ni capital shu che atyare",knowledge_question,gujlish,latin,generated,false
+please light ni speed ketli che jaldi,knowledge_question,gujlish,latin,generated,false
+"sambhdo, aakash vadlu kem hoy che please atyare",knowledge_question,gujlish,latin,generated,false
+please ek sawal: photosynthesis samjavo,knowledge_question,gujlish,latin,generated,false
+hamlet koe lakhyu jaldi,knowledge_question,gujlish,latin,generated,false
+machine learning shu che please jaldi,knowledge_question,gujlish,latin,generated,false
+please help,help,en,latin,generated,false
+please what can you do,help,en,latin,generated,false
+show me the commands now,help,en,latin,generated,false
+"hey, how do i use you please",help,en,latin,generated,false
+list your features please,help,en,latin,generated,false
+i need help,help,en,latin,generated,false
+"hey, help",help,en,latin,generated,false
+"hey, what can you do please",help,en,latin,generated,false
+"hey, show me the commands",help,en,latin,generated,false
+"hey, how do i use you",help,en,latin,generated,false
+please list your features now,help,en,latin,generated,false
+"assistant, i need help now",help,en,latin,generated,false
+help now,help,en,latin,generated,false
+please what can you do please,help,en,latin,generated,false
+मदद अभी,help,hi,devanagari,generated,false
+कृपया तुम क्या कर सकते हो,help,hi,devanagari,generated,false
+कमांड दिखाओ,help,hi,devanagari,generated,false
+"सुनो, तुम्हें कैसे इस्तेमाल करूँ",help,hi,devanagari,generated,false
+अपनी सुविधाएँ बताओ जल्दी,help,hi,devanagari,generated,false
+"सुनो, मुझे मदद चाहिए जल्दी",help,hi,devanagari,generated,false
+"सुनो, मदद",help,hi,devanagari,generated,false
+तुम क्या कर सकते हो जल्दी,help,hi,devanagari,generated,false
+कृपया कमांड दिखाओ जल्दी,help,hi,devanagari,generated,false
+तुम्हें कैसे इस्तेमाल करूँ अभी,help,hi,devanagari,generated,false
+अपनी सुविधाएँ बताओ अभी,help,hi,devanagari,generated,false
+मुझे मदद चाहिए अभी,help,hi,devanagari,generated,false
+"सुनो, मदद अभी",help,hi,devanagari,generated,false
+कृपया तुम क्या कर सकते हो जल्दी,help,hi,devanagari,generated,false
+કૃપા કરીને મદદ હમણાં,help,gu,gujarati,generated,false
+"સાંભળો, તું શું કરી શકે હમણાં",help,gu,gujarati,generated,false
+કૃપા કરીને આદેશો બતાવો,help,gu,gujarati,generated,false
+"સાંભળો, તને કેવી રીતે વાપરું જલ્દી",help,gu,gujarati,generated,false
+"સાંભળો, તારી સુવિધાઓ કહો હમણાં",help,gu,gujarati,generated,false
+"સાંભળો, મને મદદ જોઈએ હમણાં",help,gu,gujarati,generated,false
+"સાંભળો, મદદ હમણાં",help,gu,gujarati,generated,false
+તું શું કરી શકે હમણાં,help,gu,gujarati,generated,false
+આદેશો બતાવો,help,gu,gujarati,generated,false
+"સાંભળો, તને કેવી રીતે વાપરું",help,gu,gujarati,generated,false
+કૃપા કરીને તારી સુવિધાઓ કહો,help,gu,gujarati,generated,false
+કૃપા કરીને મને મદદ જોઈએ હમણાં,help,gu,gujarati,generated,false
+"સાંભળો, મદદ",help,gu,gujarati,generated,false
+કૃપા કરીને તું શું કરી શકે હમણાં,help,gu,gujarati,generated,false
+please madad jaldi,help,hinglish,latin,generated,false
+please tum kya kar sakte ho abhi,help,hinglish,latin,generated,false
+commands dikhao,help,hinglish,latin,generated,false
+"suno, tumhe kaise use karun",help,hinglish,latin,generated,false
+please apne features batao abhi,help,hinglish,latin,generated,false
+mujhe help chahiye jaldi,help,hinglish,latin,generated,false
+madad jaldi,help,hinglish,latin,generated,false
+tum kya kar sakte ho,help,hinglish,latin,generated,false
+please commands dikhao abhi,help,hinglish,latin,generated,false
+please tumhe kaise use karun,help,hinglish,latin,generated,false
+apne features batao abhi,help,hinglish,latin,generated,false
+"suno, mujhe help chahiye abhi",help,hinglish,latin,generated,false
+"suno, madad jaldi",help,hinglish,latin,generated,false
+please tum kya kar sakte ho,help,hinglish,latin,generated,false
+madad karo jaldi,help,gujlish,latin,generated,false
+tame shu kari shako,help,gujlish,latin,generated,false
+please commands batavo jaldi,help,gujlish,latin,generated,false
+"sambhdo, tamne kevi rite vaparu jaldi",help,gujlish,latin,generated,false
+please tamara features kaho jaldi,help,gujlish,latin,generated,false
+"sambhdo, mane help joiye atyare",help,gujlish,latin,generated,false
+madad karo,help,gujlish,latin,generated,false
+"sambhdo, tame shu kari shako atyare",help,gujlish,latin,generated,false
+"sambhdo, commands batavo atyare",help,gujlish,latin,generated,false
+please tamne kevi rite vaparu jaldi,help,gujlish,latin,generated,false
+tamara features kaho,help,gujlish,latin,generated,false
+please mane help joiye jaldi,help,gujlish,latin,generated,false
+"sambhdo, madad karo atyare",help,gujlish,latin,generated,false
+"sambhdo, tame shu kari shako",help,gujlish,latin,generated,false
+hmm,unknown,en,latin,generated,false
+ok then,unknown,en,latin,generated,false
+blah blah,unknown,en,latin,generated,false
+qwerty,unknown,en,latin,generated,false
+umm,unknown,en,latin,generated,false
+lol,unknown,en,latin,generated,false
+random words here,unknown,en,latin,generated,false
+asdfgh,unknown,en,latin,generated,false
+हम्म,unknown,hi,devanagari,generated,false
+ठीक है,unknown,hi,devanagari,generated,false
+अरे यार,unknown,hi,devanagari,generated,false
+कुछ नहीं,unknown,hi,devanagari,generated,false
+पता नहीं,unknown,hi,devanagari,generated,false
+बस ऐसे ही,unknown,hi,devanagari,generated,false
+ऊं ऊं,unknown,hi,devanagari,generated,false
+छोड़ो,unknown,hi,devanagari,generated,false
+હમ્મ,unknown,gu,gujarati,generated,false
+બરાબર,unknown,gu,gujarati,generated,false
+અરે યાર,unknown,gu,gujarati,generated,false
+કંઈ નહીં,unknown,gu,gujarati,generated,false
+ખબર નથી,unknown,gu,gujarati,generated,false
+બસ એમ જ,unknown,gu,gujarati,generated,false
+ઊં ઊં,unknown,gu,gujarati,generated,false
+છોડો,unknown,gu,gujarati,generated,false
+hmm theek hai,unknown,hinglish,latin,generated,false
+arre yaar,unknown,hinglish,latin,generated,false
+kuch nahi,unknown,hinglish,latin,generated,false
+pata nahi,unknown,hinglish,latin,generated,false
+bas aise hi,unknown,hinglish,latin,generated,false
+oho,unknown,hinglish,latin,generated,false
+chalo ji,unknown,hinglish,latin,generated,false
+kuch bhi,unknown,hinglish,latin,generated,false
+hmm barabar,unknown,gujlish,latin,generated,false
+are yaar,unknown,gujlish,latin,generated,false
+kai nahi,unknown,gujlish,latin,generated,false
+khabar nathi,unknown,gujlish,latin,generated,false
+bas em j,unknown,gujlish,latin,generated,false
+are wah,unknown,gujlish,latin,generated,false
+chalo ne,unknown,gujlish,latin,generated,false
+kai pan,unknown,gujlish,latin,generated,false
+send an email to John,out_of_scope,en,latin,generated,false
+make a phone call,out_of_scope,en,latin,generated,false
+send a text message,out_of_scope,en,latin,generated,false
+post on Facebook,out_of_scope,en,latin,generated,false
+tweet this,out_of_scope,en,latin,generated,false
+order a pizza,out_of_scope,en,latin,generated,false
+book a flight,out_of_scope,en,latin,generated,false
+reserve a hotel room,out_of_scope,en,latin,generated,false
+call an Uber,out_of_scope,en,latin,generated,false
+transfer money,out_of_scope,en,latin,generated,false
+pay my bill,out_of_scope,en,latin,generated,false
+withdraw cash,out_of_scope,en,latin,generated,false
+buy bitcoin,out_of_scope,en,latin,generated,false
+trade stocks,out_of_scope,en,latin,generated,false
+send a WhatsApp message,out_of_scope,en,latin,generated,false
+make a video call,out_of_scope,en,latin,generated,false
+record a video,out_of_scope,en,latin,generated,false
+edit a photo,out_of_scope,en,latin,generated,false
+convert currency,out_of_scope,en,latin,generated,false
+calculate my taxes,out_of_scope,en,latin,generated,false
+file my tax return,out_of_scope,en,latin,generated,false
+book a doctor appointment,out_of_scope,en,latin,generated,false
+order medicine,out_of_scope,en,latin,generated,false
+book a train ticket,out_of_scope,en,latin,generated,false
+recharge my phone,out_of_scope,en,latin,generated,false
+pay electricity bill,out_of_scope,en,latin,generated,false
+send money to friend,out_of_scope,en,latin,generated,false
+create an email account,out_of_scope,en,latin,generated,false
+reset my password,out_of_scope,en,latin,generated,false
+unlock my phone,out_of_scope,en,latin,generated,false
+track my package,out_of_scope,en,latin,generated,false
+cancel my subscription,out_of_scope,en,latin,generated,false
+refund my order,out_of_scope,en,latin,generated,false
+change my flight,out_of_scope,en,latin,generated,false
+check-in for flight,out_of_scope,en,latin,generated,false
+fly a drone,out_of_scope,en,latin,generated,false
+cook dinner,out_of_scope,en,latin,generated,false
+wash clothes,out_of_scope,en,latin,generated,false
+clean the house,out_of_scope,en,latin,generated,false
+mow the lawn,out_of_scope,en,latin,generated,false
+water plants,out_of_scope,en,latin,generated,false
+walk the dog,out_of_scope,en,latin,generated,false
+feed the cat,out_of_scope,en,latin,generated,false
+go to the gym,out_of_scope,en,latin,generated,false
+play cricket,out_of_scope,en,latin,generated,false
+watch a movie,out_of_scope,en,latin,generated,false
+listen to songs,out_of_scope,en,latin,generated,false
+sing a song,out_of_scope,en,latin,generated,false
+dance,out_of_scope,en,latin,generated,false
+paint a picture,out_of_scope,en,latin,generated,false
+write a novel,out_of_scope,en,latin,generated,false
+publish a book,out_of_scope,en,latin,generated,false
+sell my car,out_of_scope,en,latin,generated,false
+buy a house,out_of_scope,en,latin,generated,false
+rent an apartment,out_of_scope,en,latin,generated,false
+get a loan,out_of_scope,en,latin,generated,false
+open a bank account,out_of_scope,en,latin,generated,false
+close my bank account,out_of_scope,en,latin,generated,false
+order food online,out_of_scope,en,latin,generated,false
+book a table at restaurant,out_of_scope,en,latin,generated,false
+call a plumber,out_of_scope,en,latin,generated,false
+call an electrician,out_of_scope,en,latin,generated,false
+book a salon appointment,out_of_scope,en,latin,generated,false
+get a haircut,out_of_scope,en,latin,generated,false
+book a movie ticket,out_of_scope,en,latin,generated,false
+book a bus ticket,out_of_scope,en,latin,generated,false
+book a cab,out_of_scope,en,latin,generated,false
+pay credit card bill,out_of_scope,en,latin,generated,false
+apply for passport,out_of_scope,en,latin,generated,false
+apply for visa,out_of_scope,en,latin,generated,false
+order a cake,out_of_scope,en,latin,generated,false
+send flowers,out_of_scope,en,latin,generated,false
+send a gift,out_of_scope,en,latin,generated,false
+fix my laptop,out_of_scope,en,latin,generated,false
+repair my phone,out_of_scope,en,latin,generated,false
+install an app,out_of_scope,en,latin,generated,false
+format my computer,out_of_scope,en,latin,generated,false
+create a virus,out_of_scope,en,latin,generated,false
+buy weapons,out_of_scope,en,latin,generated,false
+hack an account,out_of_scope,en,latin,generated,false
+track someone's location,out_of_scope,en,latin,generated,false
+create a fake id,out_of_scope,en,latin,generated,false
+break a password,out_of_scope,en,latin,generated,false
+मुझे ईमेल भेजनी है,out_of_scope,hi,devanagari,generated,false
+फोन कॉल करना है,out_of_scope,hi,devanagari,generated,false
+पिज़्ज़ा ऑर्डर करना है,out_of_scope,hi,devanagari,generated,false
+फ्लाइट बुक करनी है,out_of_scope,hi,devanagari,generated,false
+होटल रिज़र्व करना है,out_of_scope,hi,devanagari,generated,false
+पैसे ट्रांसफर करने हैं,out_of_scope,hi,devanagari,generated,false
+बिजली का बिल भरना है,out_of_scope,hi,devanagari,generated,false
+फोन रिचार्ज करना है,out_of_scope,hi,devanagari,generated,false
+डॉक्टर की अपॉइंटमेंट बुक करनी है,out_of_scope,hi,devanagari,generated,false
+ट्रेन टिकट बुक करना है,out_of_scope,hi,devanagari,generated,false
+पासपोर्ट बनवाना है,out_of_scope,hi,devanagari,generated,false
+बैंक खाता खुलवाना है,out_of_scope,hi,devanagari,generated,false
+लोन लेना है,out_of_scope,hi,devanagari,generated,false
+कार बेचनी है,out_of_scope,hi,devanagari,generated,false
+घर किराए पर लेना है,out_of_scope,hi,devanagari,generated,false
+फोन रिपेयर करना है,out_of_scope,hi,devanagari,generated,false
+वायरस बनाना है,out_of_scope,hi,devanagari,generated,false
+पासवर्ड तोड़ना है,out_of_scope,hi,devanagari,generated,false
+किसी की लोकेशन ट्रैक करना है,out_of_scope,hi,devanagari,generated,false
+नकली आईडी बनवाना है,out_of_scope,hi,devanagari,generated,false
+ઇમેઇલ મોકલવું છે,out_of_scope,gu,gujarati,generated,false
+ફોન કોલ કરવું છે,out_of_scope,gu,gujarati,generated,false
+પિઝા ઓર્ડર કરવું છે,out_of_scope,gu,gujarati,generated,false
+ફ્લાઇટ બુક કરવી છે,out_of_scope,gu,gujarati,generated,false
+હોટેલ રિઝર્વ કરવું છે,out_of_scope,gu,gujarati,generated,false
+પૈસા ટ્રાન્સફર કરવા છે,out_of_scope,gu,gujarati,generated,false
+બીજલીનો બિલ ભરવો છે,out_of_scope,gu,gujarati,generated,false
+ફોન રિચાર્જ કરવો છે,out_of_scope,gu,gujarati,generated,false
+ડોક્ટરની એપૉિંટમેન્ટ બુક કરવી છે,out_of_scope,gu,gujarati,generated,false
+ટ્રેન ટિકિટ બુક કરવી છે,out_of_scope,gu,gujarati,generated,false
+પાસપોર્ટ બનાવવો છે,out_of_scope,gu,gujarati,generated,false
+બેંક ખાતું ખોલવું છે,out_of_scope,gu,gujarati,generated,false
+લોન લેવું છે,out_of_scope,gu,gujarati,generated,false
+કાર વેચવી છે,out_of_scope,gu,gujarati,generated,false
+ઘર ભાડે લેવું છે,out_of_scope,gu,gujarati,generated,false
+ફોન રિપેર કરવું છે,out_of_scope,gu,gujarati,generated,false
+વાઇરસ બનાવવું છે,out_of_scope,gu,gujarati,generated,false
+પાસવર્ડ તોડવો છે,out_of_scope,gu,gujarati,generated,false
+email bhejna hai,out_of_scope,hinglish,latin,generated,false
+phone call karna hai,out_of_scope,hinglish,latin,generated,false
+pizza order karna hai,out_of_scope,hinglish,latin,generated,false
+flight book karna hai,out_of_scope,hinglish,latin,generated,false
+hotel book karna hai,out_of_scope,hinglish,latin,generated,false
+paisa transfer karna hai,out_of_scope,hinglish,latin,generated,false
+bijli ka bill bharna hai,out_of_scope,hinglish,latin,generated,false
+phone recharge karna hai,out_of_scope,hinglish,latin,generated,false
+doctor appointment book karna hai,out_of_scope,hinglish,latin,generated,false
+train ticket book karna hai,out_of_scope,hinglish,latin,generated,false
+passport banwana hai,out_of_scope,hinglish,latin,generated,false
+bank account khulwana hai,out_of_scope,hinglish,latin,generated,false
+loan lena hai,out_of_scope,hinglish,latin,generated,false
+car bechna hai,out_of_scope,hinglish,latin,generated,false
+ghar bhade par lena hai,out_of_scope,hinglish,latin,generated,false
+phone repair karna hai,out_of_scope,hinglish,latin,generated,false
+virus banana hai,out_of_scope,hinglish,latin,generated,false
+password todna hai,out_of_scope,hinglish,latin,generated,false
+email moklavu che,out_of_scope,gujlish,latin,generated,false
+phone call karvu che,out_of_scope,gujlish,latin,generated,false
+pizza order karvu che,out_of_scope,gujlish,latin,generated,false
+flight book karvi che,out_of_scope,gujlish,latin,generated,false
+hotel reserve karvu che,out_of_scope,gujlish,latin,generated,false
+paisa transfer karvo che,out_of_scope,gujlish,latin,generated,false
+bijli no bill bharvo che,out_of_scope,gujlish,latin,generated,false
+phone recharge karvo che,out_of_scope,gujlish,latin,generated,false
+doctor appointment book karvi che,out_of_scope,gujlish,latin,generated,false
+train ticket book karvi che,out_of_scope,gujlish,latin,generated,false
+passport banavvo che,out_of_scope,gujlish,latin,generated,false
+bank account kholvu che,out_of_scope,gujlish,latin,generated,false
+loan levu che,out_of_scope,gujlish,latin,generated,false
+car vechvi che,out_of_scope,gujlish,latin,generated,false
+ghar bade par levu che,out_of_scope,gujlish,latin,generated,false
+phone repair karvu che,out_of_scope,gujlish,latin,generated,false
+virus banavu che,out_of_scope,gujlish,latin,generated,false
+password todvo che,out_of_scope,gujlish,latin,generated,false
+what is today's date,time_date,en,latin,generated,false
+what is the current time,time_date,en,latin,generated,false
+tell me today's date,time_date,en,latin,generated,false
+show me the time,time_date,en,latin,generated,false
+what is the date today,time_date,en,latin,generated,false
+current time please,time_date,en,latin,generated,false
+what day is it,time_date,en,latin,generated,false
+what time is it now,time_date,en,latin,generated,false
+आज की तारीख क्या है,time_date,hi,devanagari,generated,false
+समय क्या है,time_date,hi,devanagari,generated,false
+आज की तारीख बताओ,time_date,hi,devanagari,generated,false
+कृपया समय बताइए,time_date,hi,devanagari,generated,false
+आज कौन सी तारीख है,time_date,hi,devanagari,generated,false
+समय बताओ,time_date,hi,devanagari,generated,false
+आज की तारीख क्या है अभी,time_date,hi,devanagari,generated,false
+कितने बजे हैं,time_date,hi,devanagari,generated,false
+આજની તારીખ શું છે,time_date,gu,gujarati,generated,false
+સમય કયો છે,time_date,gu,gujarati,generated,false
+આજની તારીખ કહો,time_date,gu,gujarati,generated,false
+કૃપા કરીને સમય કહો,time_date,gu,gujarati,generated,false
+આજ કયો દિવસ છે,time_date,gu,gujarati,generated,false
+સમય કહો,time_date,gu,gujarati,generated,false
+આજની તારીખ શું છે હમણાં,time_date,gu,gujarati,generated,false
+કેટલો વાગ્યે થયો છે,time_date,gu,gujarati,generated,false
+aaj ki date kya hai,time_date,hinglish,latin,generated,false
+samay kya hai,time_date,hinglish,latin,generated,false
+aaj ki tarikh batao,time_date,hinglish,latin,generated,false
+time batao please,time_date,hinglish,latin,generated,false
+aaj ki date kya hai abhi,time_date,hinglish,latin,generated,false
+kitne baje hain,time_date,hinglish,latin,generated,false
+today ki date batao,time_date,hinglish,latin,generated,false
+current time kya hai,time_date,hinglish,latin,generated,false
+aajni tarikh shu che,time_date,gujlish,latin,generated,false
+samay shu che,time_date,gujlish,latin,generated,false
+aajni tarikh kaho,time_date,gujlish,latin,generated,false
+samay kaho please,time_date,gujlish,latin,generated,false
+aajni tarikh shu che atyare,time_date,gujlish,latin,generated,false
+ketlo vage thayo che,time_date,gujlish,latin,generated,false
+today ni tarikh shu che,time_date,gujlish,latin,generated,false
+current time shu che,time_date,gujlish,latin,generated,false
+what is your name,bot_identity,en,latin,generated,false
+who are you,bot_identity,en,latin,generated,false
+tell me your name,bot_identity,en,latin,generated,false
+what's your name,bot_identity,en,latin,generated,false
+are you ADHYAKSH,bot_identity,en,latin,generated,false
+your name please,bot_identity,en,latin,generated,false
+who are you assistant,bot_identity,en,latin,generated,false
+what do they call you,bot_identity,en,latin,generated,false
+आपका नाम क्या है,bot_identity,hi,devanagari,generated,false
+तुम कौन हो,bot_identity,hi,devanagari,generated,false
+अपना नाम बताओ,bot_identity,hi,devanagari,generated,false
+तुम्हारा नाम क्या है,bot_identity,hi,devanagari,generated,false
+आप कौन हैं,bot_identity,hi,devanagari,generated,false
+नाम क्या है,bot_identity,hi,devanagari,generated,false
+आपका नाम बताइए,bot_identity,hi,devanagari,generated,false
+तुम कौन सा सहायक हो,bot_identity,hi,devanagari,generated,false
+તમારું નામ શું છે,bot_identity,gu,gujarati,generated,false
+તું કોણ છે,bot_identity,gu,gujarati,generated,false
+તમારું નામ કહો,bot_identity,gu,gujarati,generated,false
+તમે કોણ છો,bot_identity,gu,gujarati,generated,false
+નામ શું છે,bot_identity,gu,gujarati,generated,false
+તમારું નામ કહો જલ્દી,bot_identity,gu,gujarati,generated,false
+તમે કયા સહાયક છો,bot_identity,gu,gujarati,generated,false
+aapka naam kya hai,bot_identity,hinglish,latin,generated,false
+tum kaun ho,bot_identity,hinglish,latin,generated,false
+apna naam batao,bot_identity,hinglish,latin,generated,false
+tumhara naam kya hai,bot_identity,hinglish,latin,generated,false
+aap kaun hain,bot_identity,hinglish,latin,generated,false
+naam kya hai,bot_identity,hinglish,latin,generated,false
+aapka naam bataiye,bot_identity,hinglish,latin,generated,false
+tum kaunsa assistant ho,bot_identity,hinglish,latin,generated,false
+tamaru naam shu che,bot_identity,gujlish,latin,generated,false
+tame kon chu,bot_identity,gujlish,latin,generated,false
+tamaru naam kaho,bot_identity,gujlish,latin,generated,false
+tame kon cho,bot_identity,gujlish,latin,generated,false
+naam shu che,bot_identity,gujlish,latin,generated,false
+tamaru naam kaho atyare,bot_identity,gujlish,latin,generated,false
+tame kayo sahayak chu,bot_identity,gujlish,latin,generated,false
+make a folder called Reports,folder_create,en,latin,generated,false
+create a folder named Projects,folder_create,en,latin,generated,false
+make folder Documents,folder_create,en,latin,generated,false
+create folder Backup,folder_create,en,latin,generated,false
+make a new folder,folder_create,en,latin,generated,false
+create a directory called Work,folder_create,en,latin,generated,false
+make folder Notes,folder_create,en,latin,generated,false
+create folder Archive,folder_create,en,latin,generated,false
+रिपोर्ट्स नाम का फोल्डर बनाओ,folder_create,hi,devanagari,generated,false
+प्रोजेक्ट्स नाम का फ़ोल्डर बनाएं,folder_create,hi,devanagari,generated,false
+डॉक्यूमेंट्स फोल्डर बनाओ,folder_create,hi,devanagari,generated,false
+बैकअप फ़ोल्डर बनाएं,folder_create,hi,devanagari,generated,false
+नया फोल्डर बनाओ,folder_create,hi,devanagari,generated,false
+वर्क नाम की डायरेक्टरी बनाएं,folder_create,hi,devanagari,generated,false
+नोट्स फोल्डर बनाओ,folder_create,hi,devanagari,generated,false
+आर्काइव फ़ोल्डर बनाएं,folder_create,hi,devanagari,generated,false
+રિપોર્ટ્સ નામનું ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+પ્રોજેક્ટ્સ નામનું ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+ડૉક્યુમેન્ટ્સ ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+બેકઅપ ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+નવું ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+વર્ક નામની ડિરેક્ટરી બનાવો,folder_create,gu,gujarati,generated,false
+નોટ્સ ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+આર્કાઈવ ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+reports naam ka folder banao,folder_create,hinglish,latin,generated,false
+projects naam ka folder banao,folder_create,hinglish,latin,generated,false
+documents folder banao,folder_create,hinglish,latin,generated,false
+backup folder banao,folder_create,hinglish,latin,generated,false
+naya folder banao,folder_create,hinglish,latin,generated,false
+work naam ki directory banao,folder_create,hinglish,latin,generated,false
+notes folder banao,folder_create,hinglish,latin,generated,false
+archive folder banao,folder_create,hinglish,latin,generated,false
+reports naam nu folder banavo,folder_create,gujlish,latin,generated,false
+projects naam nu folder banavo,folder_create,gujlish,latin,generated,false
+documents folder banavo,folder_create,gujlish,latin,generated,false
+backup folder banavo,folder_create,gujlish,latin,generated,false
+navu folder banavo,folder_create,gujlish,latin,generated,false
+work naam ni directory banavo,folder_create,gujlish,latin,generated,false
+notes folder banavo,folder_create,gujlish,latin,generated,false
+archive folder banavo,folder_create,gujlish,latin,generated,false
+take a screenshot,screenshot,en,latin,generated,false
+capture the screen,screenshot,en,latin,generated,false
+take screenshot now,screenshot,en,latin,generated,false
+capture screenshot,screenshot,en,latin,generated,false
+screenshot please,screenshot,en,latin,generated,false
+grab a screenshot,screenshot,en,latin,generated,false
+screen capture,screenshot,en,latin,generated,false
+take a screen shot,screenshot,en,latin,generated,false
+स्क्रीनशॉट लें,screenshot,hi,devanagari,generated,false
+स्क्रीन कैप्चर करें,screenshot,hi,devanagari,generated,false
+स्क्रीनशॉट लें अभी,screenshot,hi,devanagari,generated,false
+स्क्रीनशॉट लीजिए,screenshot,hi,devanagari,generated,false
+स्क्रीन कैप्चर कीजिए,screenshot,hi,devanagari,generated,false
+स्क्रीनशॉट लो,screenshot,hi,devanagari,generated,false
+स्क्रीनशॉट कैप्चर करें,screenshot,hi,devanagari,generated,false
+स्क्रीन फोटो लो,screenshot,hi,devanagari,generated,false
+સ્ક્રીનશૉટ લો,screenshot,gu,gujarati,generated,false
+સ્ક્રીન કેપ્ચર કરો,screenshot,gu,gujarati,generated,false
+સ્ક્રીનશૉટ લો હમણાં,screenshot,gu,gujarati,generated,false
+સ્ક્રીનશૉટ કેપ્ચર કરો,screenshot,gu,gujarati,generated,false
+સ્ક્રીન કેપ્ચર કરો જલ્દી,screenshot,gu,gujarati,generated,false
+સ્ક્રીનશૉટ આપો,screenshot,gu,gujarati,generated,false
+સ્ક્રીન ફોટો લો,screenshot,gu,gujarati,generated,false
+સ્ક્રીન કેપ્ચર લો,screenshot,gu,gujarati,generated,false
+screenshot le lo,screenshot,hinglish,latin,generated,false
+screen capture karo,screenshot,hinglish,latin,generated,false
+screenshot le lo abhi,screenshot,hinglish,latin,generated,false
+screenshot lijiye,screenshot,hinglish,latin,generated,false
+screen capture kijiye,screenshot,hinglish,latin,generated,false
+screenshot lo,screenshot,hinglish,latin,generated,false
+screenshot capture karo,screenshot,hinglish,latin,generated,false
+screen photo lo,screenshot,hinglish,latin,generated,false
+screenshot lo atyare,screenshot,gujlish,latin,generated,false
+screenshot aapo,screenshot,gujlish,latin,generated,false
+screen capture karo jaldi,screenshot,gujlish,latin,generated,false
+screenshot apo,screenshot,gujlish,latin,generated,false
+screen capture lo,screenshot,gujlish,latin,generated,false
+open Recycle Bin,special_folder_open,en,latin,generated,false
+open file manager,special_folder_open,en,latin,generated,false
+open Downloads,special_folder_open,en,latin,generated,false
+open Documents,special_folder_open,en,latin,generated,false
+open Desktop,special_folder_open,en,latin,generated,false
+open the Downloads folder,special_folder_open,en,latin,generated,false
+open file explorer,special_folder_open,en,latin,generated,false
+open Documents folder,special_folder_open,en,latin,generated,false
+रीसायकल बिन खोलें,special_folder_open,hi,devanagari,generated,false
+फ़ाइल मैनेजर खोलें,special_folder_open,hi,devanagari,generated,false
+डाउनलोड्स खोलें,special_folder_open,hi,devanagari,generated,false
+दस्तावेज़ खोलें,special_folder_open,hi,devanagari,generated,false
+डेस्कटॉप खोलें,special_folder_open,hi,devanagari,generated,false
+डाउनलोड्स फ़ोल्डर खोलें,special_folder_open,hi,devanagari,generated,false
+फ़ाइल एक्सप्लोरर खोलें,special_folder_open,hi,devanagari,generated,false
+दस्तावेज़ फ़ोल्डर खोलें,special_folder_open,hi,devanagari,generated,false
+રિસાયકલ બિન ખોલો,special_folder_open,gu,gujarati,generated,false
+ફાઇલ મેનેજર ખોલો,special_folder_open,gu,gujarati,generated,false
+ડાઉનલોડ્સ ખોલો,special_folder_open,gu,gujarati,generated,false
+દસ્તાવેજો ખોલો,special_folder_open,gu,gujarati,generated,false
+ડેસ્કટોપ ખોલો,special_folder_open,gu,gujarati,generated,false
+ડાઉનલોડ્સ ફોલ્ડર ખોલો,special_folder_open,gu,gujarati,generated,false
+ફાઇલ એક્સપ્લોરર ખોલો,special_folder_open,gu,gujarati,generated,false
+દસ્તાવેજો ફોલ્ડર ખોલો,special_folder_open,gu,gujarati,generated,false
+recycle bin kholo,special_folder_open,hinglish,latin,generated,false
+file manager kholo,special_folder_open,hinglish,latin,generated,false
+downloads kholo,special_folder_open,hinglish,latin,generated,false
+documents kholo,special_folder_open,hinglish,latin,generated,false
+desktop kholo,special_folder_open,hinglish,latin,generated,false
+downloads folder kholo,special_folder_open,hinglish,latin,generated,false
+file explorer kholo,special_folder_open,hinglish,latin,generated,false
+documents folder kholo,special_folder_open,hinglish,latin,generated,false
+open new tab,web_open,en,latin,generated,false
+open youtube,web_open,en,latin,generated,false
+search google for X,web_open,en,latin,generated,false
+in Chrome open new tab,web_open,en,latin,generated,false
+open a new tab,web_open,en,latin,generated,false
+search google for weather,web_open,en,latin,generated,false
+open google,web_open,en,latin,generated,false
+browse the web,web_open,en,latin,generated,false
+नया टैब खोलें,web_open,hi,devanagari,generated,false
+यूट्यूब खोलें,web_open,hi,devanagari,generated,false
+गूगल पर खोजें,web_open,hi,devanagari,generated,false
+क्रोम में नया टैब खोलें,web_open,hi,devanagari,generated,false
+एक नया टैब खोलें,web_open,hi,devanagari,generated,false
+गूगल पर मौसम खोजें,web_open,hi,devanagari,generated,false
+गूगल खोलें,web_open,hi,devanagari,generated,false
+वेब ब्राउज़ करें,web_open,hi,devanagari,generated,false
+નવો ટેબ ખોલો,web_open,gu,gujarati,generated,false
+યુટ્યુબ ખોલો,web_open,gu,gujarati,generated,false
+ગૂગલ પર શોધો,web_open,gu,gujarati,generated,false
+ક્રોમમાં નવો ટેબ ખોલો,web_open,gu,gujarati,generated,false
+એક નવો ટેબ ખોલો,web_open,gu,gujarati,generated,false
+ગૂગલ પર હવામાન શોધો,web_open,gu,gujarati,generated,false
+ગૂગલ ખોલો,web_open,gu,gujarati,generated,false
+વેબ બ્રાઉઝ કરો,web_open,gu,gujarati,generated,false
+naya tab kholo,web_open,hinglish,latin,generated,false
+youtube kholo,web_open,hinglish,latin,generated,false
+google pe search karo,web_open,hinglish,latin,generated,false
+chrome mein naya tab kholo,web_open,hinglish,latin,generated,false
+ek naya tab kholo,web_open,hinglish,latin,generated,false
+google pe weather search karo,web_open,hinglish,latin,generated,false
+google kholo,web_open,hinglish,latin,generated,false
+web browse karo,web_open,hinglish,latin,generated,false
+navo tab kholo,web_open,gujlish,latin,generated,false
+google pe shodho,web_open,gujlish,latin,generated,false
+chrome ma navo tab kholo,web_open,gujlish,latin,generated,false
+ek navo tab kholo,web_open,gujlish,latin,generated,false
+google pe havaman shodho,web_open,gujlish,latin,generated,false
+whats ur name,bot_identity,en,latin,generated,false
+what's ur name,bot_identity,en,latin,generated,false
+tell me ur name,bot_identity,en,latin,generated,false
+wat is the time,time_date,en,latin,generated,false
+what is current time now,time_date,en,latin,generated,false
+today date please,time_date,en,latin,generated,false
+opn chrom,app_open,en,latin,generated,false
+launch calc,app_open,en,latin,generated,false
+start notepad please,app_open,en,latin,generated,false
+run paint,app_open,en,latin,generated,false
+नोटपैड चालू करो,app_open,hi,devanagari,generated,false
+mak file report.txt,file_create,en,latin,generated,false
+create file list.txt please,file_create,en,latin,generated,false
+new file todo.docx now,file_create,en,latin,generated,false
+creat folder work,folder_create,en,latin,generated,false
+make new folder Backup,folder_create,en,latin,generated,false
+directory named Projects create,folder_create,en,latin,generated,false
+tak screenshot,screenshot,en,latin,generated,false
+capture scrren,screenshot,en,latin,generated,false
+screen shot please,screenshot,en,latin,generated,false
+open recyclebin,special_folder_open,en,latin,generated,false
+open my documents,special_folder_open,en,latin,generated,false
+open desktop folder,special_folder_open,en,latin,generated,false
+opn youtube,web_open,en,latin,generated,false
+search google for cricket score,web_open,en,latin,generated,false
+open new tab please,web_open,en,latin,generated,false
+sundar pichai details,knowledge_question,en,latin,generated,false
+who is ceo of google,knowledge_question,en,latin,generated,false
+react definition please,knowledge_question,en,latin,generated,false
+why is the sky blue,knowledge_question,en,latin,generated,false
+सुंदर पिचाइ के बारे में बताओ,knowledge_question,hi,devanagari,generated,false
+गूगल के सीईओ कौन हैं,knowledge_question,hi,devanagari,generated,false
+मशीन लर्निंग क्या है,knowledge_question,hi,devanagari,generated,false
+ફ્રાન્સની રાજધાની શું છે,knowledge_question,gu,gujarati,generated,false
+મશીન લર્નિંગ શું છે,knowledge_question,gu,gujarati,generated,false
+પરિસ શું છે,knowledge_question,gu,gujarati,generated,false
+open the recycle bin,special_folder_open,en,latin,generated,false
+open my downloads,special_folder_open,en,latin,generated,false
+open documents folder now,special_folder_open,en,latin,generated,false
+open file manager window,special_folder_open,en,latin,generated,false
+open my desktop,special_folder_open,en,latin,generated,false
+open downloads folder please,special_folder_open,en,latin,generated,false
+रीसायकल बिन खोलो अभी,special_folder_open,hi,devanagari,generated,false
+डाउनलोड्स फोल्डर खोलो,special_folder_open,hi,devanagari,generated,false
+डेस्कटॉप खोलो जल्दी,special_folder_open,hi,devanagari,generated,false
+फाइल मैनेजर खोलो जल्दी,special_folder_open,hi,devanagari,generated,false
+मेरे दस्तावेज खोलो,special_folder_open,hi,devanagari,generated,false
+રિસાયકલ બિન ખોલો હમણાં,special_folder_open,gu,gujarati,generated,false
+ડેસ્કટોપ ખોલો જલ્દી,special_folder_open,gu,gujarati,generated,false
+ફાઇલ મેનેજર ખોલો જલ્દી,special_folder_open,gu,gujarati,generated,false
+મારા દસ્તાવેજો ખોલો,special_folder_open,gu,gujarati,generated,false
+open WhatsApp,app_open,en,latin,generated,false
+launch Spotify,app_open,en,latin,generated,false
+start Edge,app_open,en,latin,generated,false
+open Brave,app_open,en,latin,generated,false
+run Snipping Tool,app_open,en,latin,generated,false
+launch WhatsApp,app_open,en,latin,generated,false
+start Spotify,app_open,en,latin,generated,false
+open Edge browser,app_open,en,latin,generated,false
+launch Brave browser,app_open,en,latin,generated,false
+व्हाट्सऐप खोलो,app_open,hi,devanagari,generated,false
+स्पोटिफाई चालू करो,app_open,hi,devanagari,generated,false
+एज खोलो,app_open,hi,devanagari,generated,false
+ब्रेव खोलो,app_open,hi,devanagari,generated,false
+स्निपिंग टूल खोलो,app_open,hi,devanagari,generated,false
+फाइल एक्सप्लोरर खोलो,app_open,hi,devanagari,generated,false
+વ્હાટ્સએપ ખોલો,app_open,gu,gujarati,generated,false
+સ્પોટિફાઈ ચાલુ કરો,app_open,gu,gujarati,generated,false
+એજ ખોલો,app_open,gu,gujarati,generated,false
+બ્રેવ ખોલો,app_open,gu,gujarati,generated,false
+સ્નિપિંગ ટૂલ ખોલો,app_open,gu,gujarati,generated,false
+spotify chalo,app_open,hinglish,latin,generated,false
+edge kholo,app_open,hinglish,latin,generated,false
+brave kholo,app_open,hinglish,latin,generated,false
+snipping tool kholo,app_open,hinglish,latin,generated,false
+whatsapp kholo,app_open,gujlish,latin,generated,false
+spotify chalu,app_open,gujlish,latin,generated,false
+snipping tool khalu,app_open,gujlish,latin,generated,false
+file explorer khalu,app_open,gujlish,latin,generated,false

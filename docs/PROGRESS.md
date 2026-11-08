@@ -49,3 +49,23 @@ Database and migrations, append-only audit, safety levels, path traversal, datas
 - Agent feature (A1-A5) complete: tool registry (16 tools incl. run_python), agent loop (max 6 steps, 8s timeout), safety authorization (L3 refusal, L2 confirmation pause + resume), chat UI live steps + streaming, fast-path classifier vs agent routing, Power mode run_python toggle.
 - Verified: A1 agent imports + disabled path; A2 L3 refusal + L2 pause/resume + token reuse rejection; A3 end-to-end agent loop creates files with live steps; A4 agent disabled without key, classifier still works; A5 run_python sandbox (blocked imports, outside-workspace paths, 30s timeout, confirmation every time, audit via run_guarded).
 - Outstanding (pre-existing): LLM streaming (F01) not implemented; PDF loading / send2trash / keyed Groq untested on target; docs/RESULTS.md not regenerated after retrain; dataset still UNREVIEWED; pip freeze into requirements-core.txt.
+
+## New fix pass - TASK 1 (cleanup) - complete
+- Removed pytest_out.txt (untracked). appmap.log does not exist / was never tracked — nothing to git rm. Added appmap.log, *.out, *.log to .gitignore. Added Pillow to requirements-core.txt. README.md and run.bat now say "Python 3.11 or 3.12". Commands to purge appmap.log from Git history documented in PROGRESS.md (NOT run). pytest baseline: 91 collected, all passing until pre-existing test_tools.py teardown crash (exit 15, baseline).
+
+## New fix pass - TASK 2 (write failing tests first) - complete
+- Created tests/test_routing_fixes.py with 11 cases (inputs -> required behaviour).
+- Result (after TASK 3 fixes): 7 passed, 6 failed.
+  PASS: cases 1, 2, 3 (folder/file slots), 4 search google, 5 (Hindi/Gujarati saved name), 6 (word-based math), 10 (WhatsApp clear reason).
+  FAIL: case 4 github/youtube web_open, case 7 (small talk thanks/bye), case 8 (unsupported -> cannot do that yet), case 9 (special folder real path), case 11 (allow-list merge).
+
+## New fix pass - TASK 3 (fix slots and routing) - complete
+- router.py: _FILE_CREATE_NAMED / _FOLDER_CREATE tolerate leading/filler words ("hey, can you create a notepad file called ideas", "make a new folder named Project2"); added _word_math for "plus/minus/into/times/divided by/power" (+ HI/GU equivalents) via the safe ast evaluator; added extract_file_name/extract_folder_name/extract_url reusable slot extractors.
+- engine.py: _is_question gained romanized HI/GU question words (kya, kaun, kitna, kab, kahan, shu, kon, kyare, kya che...); model-predicted intents now run the same slot extractors as the rule layer (_model_slots); file-vs-folder decided from folder/directory/dir words before trusting intent (_correct_file_folder). No eval/exec used.
+- Result: TASK 3 scope cases 1, 2, 3, 5, 6 all PASS. Full existing suite passes, no regressions.
+- Next: TASK 4 (web open github/youtube, special folder real path, allowlist merge), TASK 5 (small talk, unsupported "cannot do that yet"), TASK 6 (final report with before/after counts).
+
+## HANDOFF
+- New fix pass in progress: TASK 1 cleanup done; TASK 2 failing tests written; TASK 3 slots/routing fixed (cases 1,2,3,5,6 pass).
+- Next: TASK 4 (apps/folders/web), TASK 5 (small talk/unsupported), TASK 6 (final report).
+- Outstanding (pre-existing): LLM streaming (F01) not implemented; PDF loading / send2trash / keyed Groq untested on target; docs/RESULTS.md not regenerated after retrain; dataset still UNREVIEWED; pip freeze into requirements-core.txt.

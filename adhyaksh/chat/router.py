@@ -53,6 +53,33 @@ def _extract_math(text: str):
     return None
 
 
+_WORD_OP_MAP = (
+    ("divided by", "/"), ("power", "**"), ("into", "*"), ("times", "*"),
+    ("multiplied by", "*"), ("multiplied into", "*"), ("minus", "-"),
+    ("plus", "+"), ("का गुणा", "*"), ("घात", "**"), ("गुणा", "*"), ("गुना", "*"),
+    ("भाग", "/"), ("माइनस", "-"), ("प्लस", "+"), ("ઘાત", "**"),
+    ("ગુણાકાર", "*"), ("ગુણા", "*"), ("ભાગ", "/"), ("માઇનસ", "-"), ("પ્લસ", "+"),
+)
+
+
+def _word_math(text: str):
+    """Evaluate word-based arithmetic like '5 plus 7', '6 into 7', '2 power 3'."""
+    s = text.casefold()
+    for word, sym in _WORD_OP_MAP:
+        s = s.replace(word, sym)
+    s = re.sub(r"[^0-9.\+\-\*/\(\)\^ ]", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    expr = s.replace("^", "**")
+    expr = re.sub(r"(?<=[\d)\s])x(?=[\d(\s])", "*", expr)
+    if not re.search(r"\d", expr) or not re.search(r"[+\-*/\*\^]", expr.lstrip("-")):
+        return None
+    try:
+        value = safe_eval(expr)
+        return expr, round(value, 6)
+    except ValueError:
+        return None
+
+
 @dataclass
 class Rule:
     intent: str
@@ -69,11 +96,11 @@ _TIME_DATE = re.compile(r"^(?:what is|what's|tell me|show me|please)?\s*(?:the\s
                         r"(?P<kind>today'?s?\s*date|current\s*time|the\s*time|the\s*date|time|date)"
                         r"[\s?.!]*$", re.IGNORECASE)
 _FILE_CREATE_NAMED = re.compile(
-    r"^(?:create|make|new)\s+(?:one\s+)?(?:a\s+)?(?:text\s+)?file\s+(?:name|named|called)(?:\s+(?:called|named))?\s+(.+?)[\s?.!]*$",
+    r"(?:create|make|new)\s+(?:one\s+)?(?:a\s+)?(?:\w*\s+)*file\s+(?:name|named|called)(?:\s+(?:called|named))?\s+(.+?)[\s?.!]*$",
     re.IGNORECASE)
 _FOLDER_CREATE = re.compile(
-    r"^(?:make|create)\s+(?:a\s+)?(?:folder|directory)\s+(?:called|named)\s+(.+?)[\s?.!]*$"
-    r"|^folder\s+banaen[\s?.!]*$", re.IGNORECASE)
+    r"^(?:create|make|new)\s+(?:one\s+)?(?:a\s+)?(?:new\s+)?(?:folder|directory|dir)\s+(?:called|named)\s+(.+?)[\s?.!]*$"
+    r"|^(?:folder|directory|dir)\s+(?:बनाओ|बनावो|banaen|बनवा)[\s?.!]*$", re.IGNORECASE)
 _SCREENSHOT = re.compile(r"^(?:take|capture)\s+(?:a\s+)?screenshot[\s?.!]*$", re.IGNORECASE)
 _SPECIAL_FOLDER = re.compile(
     r"^(?:open)\s+(recycle\s*bin|recyclebin|downloads|documents|desktop|file\s*manager|file\s*explorer|explorer)[\s?.!]*$",
@@ -113,7 +140,11 @@ def match_rules(text: str) -> Rule | None:
     if found:
         expr, value = found
         return Rule("math", {"expr": expr, "value": value})
-    m = _FILE_CREATE_NAMED.match(t)
+    found = _word_math(t)
+    if found:
+        expr, value = found
+        return Rule("math", {"expr": expr, "value": value})
+    m = _FILE_CREATE_NAMED.search(t)
     if m:
         return Rule("file_create", {"file": m.group(1).strip()})
     m = _FOLDER_CREATE.match(t)
@@ -195,6 +226,46 @@ def find_folder_name(text: str) -> str | None:
     """Return the folder name after 'called'/'named', else None."""
     m = _FOLDER_NAMED.search(text)
     return m.group(1).strip() if m else None
+
+
+def extract_file_name(text: str) -> str | None:
+    """Filename slot: token after name/named/called, or a token with an extension.
+
+    Filler words (make, one, a, file, text, name, named, called) are never
+    taken as the name.
+    """
+    m = _FILE_CREATE_NAMED.search(text)
+    if m:
+        return m.group(1).strip()
+    f = find_file(text)
+    return f
+
+
+def extract_folder_name(text: str) -> str | None:
+    """Folder slot: token after folder...called/named, else None."""
+    m = _FOLDER_CREATE.match(text)
+    if m:
+        name = m.group(1)
+        if name:
+            return name.strip()
+        return None
+    return find_folder_name(text)
+
+
+def extract_url(text: str) -> str | None:
+    """URL slot for web_open."""
+    m = _WEB_OPEN.match(text)
+    if m:
+        low = text.casefold()
+        if "youtube" in low:
+            return "youtube.com"
+        elif "new tab" in low:
+            return "about:newtab"
+        elif "search google for" in low:
+            return "https://www.google.com/search?q=" + re.sub(r".*?search google for\s+", "", low)
+        else:
+            return "about:newtab"
+    return None
 
 
 _CONTENT = re.compile(r"(?:with(?: the)? (?:content|text)|saying|that says|:)\s*(.+)$", re.IGNORECASE | re.DOTALL)

@@ -42,8 +42,12 @@ def _ctx_for(text: str, intent: str, token: str | None = None) -> dict:
 _EN_QW = {"what","who","where","when","why","how","which","whose","whom","can","could","would","should",
           "do","does","did","is","are","was","were","will","am","may","might","shall","tell","show",
           "please","give","i want","i want to","define","definition"}
-_HI_QW = {"क्या","कौन","कहाँ","कैसे","क्यों","किस","कौनसा","कितना","कितनी"}
-_GU_QW = {"શું","કોણ","ક્યાં","કેવી","કેમ","શું","કયો","કયા","કેટલું","કેટલી"}
+_HI_QW = {"क्या","कौन","कहाँ","कैसे","क्यों","किस","कौनसा","कितना","कितनी",
+          "kya","kaun","kahan","kaise","kyun","kis","kitna","kitni","kab","kya hai",
+          "kaun hai","kahan hai","kitna hai","kya che","kaun che","kitna che"}
+_GU_QW = {"શું","કોણ","ક્યાં","કેવી","કેમ","શું","કયો","કયા","કેટલું","કેટલી",
+          "shu","kon","kyare","kevi","kem","shu che","kon che","kitlo che","kitli che",
+          "kya che","kaun che","shu thay che"}
 _DATE_WORDS = re.compile(r"\b(date|today|tarikh|तारीख|તારીખ)\b", re.IGNORECASE)
 
 
@@ -77,6 +81,47 @@ def _looks_multi_step(text: str) -> bool:
              "remember", "save", "take", "screenshot", "show", "status", "close",
              "लिखो", "खोलो", "ढूंढो", "याद", "स्क्रीनशॉट", "बनाओ"]
     return sum(1 for v in verbs if v in low) >= 2
+
+
+_FOLDER_WORD = re.compile(r"\b(folder|directory|dir)\b(?!\.\w)", re.IGNORECASE)
+
+
+def _correct_file_folder(intent: str, slots: dict, text: str) -> tuple[str, dict]:
+    """Decide file vs folder from folder-words in the text before trusting the intent."""
+    slots = dict(slots)
+    if _FOLDER_WORD.search(text):
+        if intent == "file_create":
+            intent = "folder_create"
+            if "file" in slots and not slots.get("folder"):
+                slots["folder"] = slots.pop("file")
+    return intent, slots
+
+
+def _model_slots(intent: str, text: str) -> dict:
+    """Extract slots for a model-predicted intent, using the same extractors
+    as the rule layer (filename, folder name, URL, app). Verbs and filler
+    words are never taken as the name."""
+    if intent in ("file_create", "file_read", "file_update", "file_delete", "file_search"):
+        f = router.extract_file_name(text)
+        return {"file": f} if f else {}
+    if intent == "folder_create":
+        f = router.extract_folder_name(text)
+        return {"folder": f} if f else {}
+    if intent == "web_open":
+        u = router.extract_url(text)
+        return {"url": u} if u else {}
+    if intent in ("app_open", "app_close"):
+        a = router.find_app(text)
+        return {"app": a} if a else {}
+    if intent == "special_folder_open":
+        fo = router.find_special_folder(text)
+        return {"folder": fo} if fo else {}
+    if intent == "time_date":
+        return {"kind": _time_date_kind(text)}
+    if intent == "set_identity":
+        name, conf = identity.extract_name(text)
+        return {"name": name, "conf": conf} if name else {}
+    return {}
 
 
 def _agent_dispatch(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Reply:
@@ -391,7 +436,8 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Repl
         return _dispatch(p["intent"], text, slots, ctx, convo_id, lang)
     rule = router.match_rules(text)
     if rule:
-        return _dispatch(rule.intent, text, rule.slots, ctx, convo_id, lang)
+        intent, slots = _correct_file_folder(rule.intent, rule.slots, text)
+        return _dispatch(intent, text, slots, ctx, convo_id, lang)
     intent, conf, gap = registry.predict(text)
     if intent == "unknown" and conf == 0.0 and not registry.available():
         return _Reply("No trained model is active. Run: python -m adhyaksh.nlu.train --all", "unknown", 0.0)
@@ -410,7 +456,9 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Repl
         return r
     if _looks_multi_step(text) and agent_enabled:
         return _agent_dispatch(text, ctx, convo_id, lang)
-    r = _dispatch(intent, text, {}, ctx, convo_id, lang)
+    # Model path: extract slots using the same extractors as the rule layer.
+    intent, slots = _correct_file_folder(intent, _model_slots(intent, text), text)
+    r = _dispatch(intent, text, slots, ctx, convo_id, lang)
     r.conf = conf
     return r
 

@@ -12,5 +12,6 @@ send2trash
 python-dotenv
 requests
 matplotlib
+Pillow
 pytest
 pytest-cov

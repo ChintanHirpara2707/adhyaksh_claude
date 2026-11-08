@@ -4,7 +4,7 @@ Private, local-first, multilingual (English, Hindi, Gujarati, code-mixed) deskto
 Status: v0.7.0, all Tier A phases built. See docs/PROGRESS.md for what is verified and what is UNTESTED ON TARGET.
 
 ## Requirements
-Windows 10/11 (primary), Python 3.11, about 1.5 GB free disk.
+Windows 10/11 (primary), Python 3.11 or 3.12, about 1.5 GB free disk.
 
 ## Install and run
 Windows: double-click run.bat. Others: ./run.sh

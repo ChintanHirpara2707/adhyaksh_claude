@@ -17,3 +17,5 @@ models/*
 appmap.log
 *.out
 *.log
+pytest_*.txt
+*_dbg.txt

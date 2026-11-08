@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import urllib.parse
 
 import pytest
 
@@ -133,3 +134,73 @@ def test_clarifying_url_slot_is_resolved():
     assert r["intent"] == "web_open", (r["reply"], r)
     assert "github.com" in r["reply"], r["reply"]
     assert context.get(cid).pending_slot is None
+
+
+# ---------------------------------------------------------------------------
+# TASK B: Web parser guard rails
+# ---------------------------------------------------------------------------
+
+_FILE_EXT = ("txt", "pdf", "docx", "doc", "xlsx", "xls", "csv", "pptx", "png",
+             "jpg", "jpeg", "py", "md", "zip", "json")
+
+
+@pytest.mark.parametrize("text", [
+    "open notes.txt",
+    "open report.xlsx",
+    "open my notes.txt file",
+    "open budget.pdf",
+    "open notes.md",
+])
+def test_file_extension_is_a_file_not_a_site(text):
+    """A token with a known file extension is a file, never a website."""
+    rule = router.parse_web_command(text)
+    assert rule is None or rule.intent != "web_open", (text, rule)
+
+
+_FILE_SEARCH_CASES = [
+    ("search my files for budget", "file_search"),
+    ("search report.txt", "file_search"),
+    ("search for files named budget", "file_search"),
+    ("search in downloads folder", "file_search"),
+]
+
+
+@pytest.mark.parametrize("text,intent", _FILE_SEARCH_CASES)
+def test_local_search_is_file_search(text, intent):
+    """Search requests mentioning files/folders/drive/my are local searches."""
+    rule = router.parse_web_command(text)
+    assert rule is not None and rule.intent == intent, (text, rule)
+
+
+_QUERY_PRESERVE_CASES = [
+    ("search how do I fix this error", "how do I fix this error"),
+    ("search how do I fix this error karo", "how do I fix this error"),
+    ("please search how do I fix this error", "how do I fix this error"),
+    ("search for how do I fix this error", "how do I fix this error"),
+]
+
+
+@pytest.mark.parametrize("text,expected_query", _QUERY_PRESERVE_CASES)
+def test_query_words_preserved(text, expected_query):
+    """Query keeps every word; fillers removed only as whole words at start."""
+    rule = router.parse_web_command(text)
+    assert rule is not None and rule.intent == "web_open", (text, rule)
+    url = rule.slots.get("url", "")
+    assert urllib.parse.quote_plus(expected_query) in url, (text, url)
+
+
+_HINGLISH_CASES = [
+    ("chrome mein youtube kholo", "youtube.com"),
+    ("youtube khol do", "youtube.com"),
+    ("github kholo", "github.com"),
+    ("gmail ખોલો", "gmail.com"),
+    ("google par python search karo", "https://www.google.com/search?q=python"),
+]
+
+
+@pytest.mark.parametrize("text,expected_url", _HINGLISH_CASES)
+def test_hinglish_gujlish_web(text, expected_url):
+    """Hinglish and Gujlish word order opens the site or search."""
+    rule = router.parse_web_command(text)
+    assert rule is not None and rule.intent == "web_open", (text, rule)
+    assert rule.slots.get("url") == expected_url, (text, rule.slots.get("url"))

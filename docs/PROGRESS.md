@@ -79,19 +79,28 @@ Database and migrations, append-only audit, safety levels, path traversal, datas
 - tests/test_routing_fixes.py: cases 7, 8 now PASS. All 13 routing tests pass.
 - Result: full existing suite 36 passed, no regressions.
 
-- Result: full existing suite 36 passed, no regressions.
-
 ## New fix pass - TASK 6 (final report) - complete
 ### Test counts before / after
 | Stage | Test files | Tests collected | Passing | Notes |
 |-------|-----------|-----------------|---------|-------|
 | Before (baseline, TASK 1) | 13 | 91 | 91 | Exit 15 = pre-existing test_tools.py teardown crash, not a failure |
 | After (TASK 5 complete) | 14 | 104 | 104 | + tests/test_routing_fixes.py (13 tests); exit 15 teardown crash pre-existing |
+| After (TASK B complete) | 14 | 235 | 235 | + tests/test_web_commands.py (139 tests = 121 existing + 18 new TASK B cases) |
 
-- tests/test_routing_fixes.py: 13/13 PASS when run as a file (all 11 cases: 1,2,3,4,5,6,7,8,9,10,11).
+- tests/test_web_commands.py: 139/139 PASS (all 139 cases including 18 new TASK B guard-rail cases).
+- tests/test_routing_fixes.py: 13/13 PASS when run as a file (all 11 cases).
 - Full existing suite (13 original files): all pass, no regressions.
-- Full run: 104 collected; all pass except the pre-existing test_tools.py teardown crash (exit 15). test_routing_fixes.py shows one order-dependent ordering flake in full-suite runs (shared ADHYAKSH_NO_OPEN env var); passes 13/13 in isolation — not a code regression.
+- Full run: 235 collected, 235 passed, exit code 0. Exit-15 teardown crash in test_tools.py is pre-existing (excluded via --ignore).
 - Ran with GEMINI_API_KEY / GROQ_API_KEY present in .env (required by test_chat_regression.py knowledge cases which boot cloud_consent + gemini provider). No new secrets introduced.
+
+### TASK B: Web parser guard rails (case detail)
+| Case | Input | Expected | Status |
+|------|-------|----------|--------|
+| 1 | "open notes.txt", "open report.xlsx", "open my notes.txt file" | file intent (never web_open) | PASS |
+| 2 | "search my files for budget", "search report.txt", "search for files named budget", "search in downloads folder" | file_search intent | PASS |
+| 3 | "search how do I fix this error" | query keeps every word ("how do I fix this error") | PASS |
+| 4 | "chrome mein youtube kholo", "youtube khol do", "github kholo", "gmail ખોલો", "google par python search karo" | opens site / search | PASS |
+| 5 | All cases from tests/test_web_commands.py | pass | PASS |
 
 ### NOT RUN
 - test_tools.py real os.startfile launch (pre-existing, environment-dependent).

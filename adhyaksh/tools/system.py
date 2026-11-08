@@ -69,8 +69,6 @@ def web_open(url: str, *, ctx: dict | None = None) -> Result:
         url = "https://" + url
 
     def go() -> Result:
-        import sys as _sys
-        print(f"DEBUG web_open url={url!r} ADHYAKSH_NO_OPEN={os.environ.get('ADHYAKSH_NO_OPEN')!r}", file=_sys.stderr)
         if os.environ.get("ADHYAKSH_NO_OPEN"):
             return Result.success({"url": url, "opened": False, "note": "open disabled in tests"})
         try:

@@ -107,8 +107,34 @@ _WEB_APPS = {
     "file explorer", "file manager",
 }
 
-# Filler words that may wrap a web request and must be stripped from a query.
-_WEB_FILLERS = ("please", "can you", "chrome mein", "in chrome", "karo", "kar", "do", "ne")
+# Known file extensions: a token with one of these is a file, never a site.
+_FILE_EXTENSIONS = ("txt", "pdf", "docx", "doc", "xlsx", "xls", "csv", "pptx",
+                    "png", "jpg", "jpeg", "py", "md", "zip", "json")
+
+# Filler words removed only as whole words at the START of the text.
+_LEADING_FILLERS = ("please", "can you", "chrome mein", "in chrome")
+
+# Trailing request verbs removed only at the END of the text (longest first).
+_TRAILING_VERBS = (
+    "khar do", "kholo ne", "khol do", "kholo",
+    "ખોલો ને", "ખોલો", "karo", "do", "ne",
+)
+
+# Search-engine prefixes stripped from the start of a query.
+_SEARCH_PREFIXES = ("google par", "par", "on google")
+
+# Markers that make a search request a local file search.
+_LOCAL_SEARCH_MARKERS = ("my", "files", "file", "folder", "folders", "drive",
+                         "document", "documents")
+
+
+def _has_file_extension(text: str) -> bool:
+    """True if text contains a token with a known file extension."""
+    low = text.casefold()
+    for ext in _FILE_EXTENSIONS:
+        if re.search(rf"\b[\w-]+\.{re.escape(ext)}\b", low):
+            return True
+    return False
 
 
 def _normalize_text(text: str) -> str:
@@ -121,6 +147,36 @@ def _normalize_text(text: str) -> str:
     t = t.strip().rstrip(".!?।")
     t = re.sub(r"\s*dot\s+(com|in|org)\b", r".\1", t, flags=re.IGNORECASE)
     return t
+
+
+def _strip_leading_fillers(text: str) -> str:
+    """Remove leading filler words/phrases (whole words at the start only)."""
+    for filler in _LEADING_FILLERS:
+        text = re.sub(rf"^{re.escape(filler)}\s+", "", text, flags=re.IGNORECASE)
+    return " ".join(text.split())
+
+
+def _strip_trailing_verbs(text: str) -> str:
+    """Remove trailing request verbs (e.g. ``karo``, ``kholo``) at the end."""
+    for verb in _TRAILING_VERBS:
+        text = re.sub(rf"\s+{re.escape(verb)}\s*$", "", text, flags=re.IGNORECASE)
+    return " ".join(text.split())
+
+
+def _strip_search_prefix(query: str) -> str:
+    """Strip search-engine prefixes (``google par``, ``par``) from a query."""
+    for prefix in _SEARCH_PREFIXES:
+        query = re.sub(rf"^{re.escape(prefix)}\s+", "", query, flags=re.IGNORECASE)
+    return " ".join(query.split())
+
+
+def _is_local_search(query: str) -> bool:
+    """True if a search request refers to local files/folders rather than Google."""
+    low = query.casefold()
+    for marker in _LOCAL_SEARCH_MARKERS:
+        if re.search(rf"\b{re.escape(marker)}\b", low):
+            return True
+    return _has_file_extension(query)
 
 
 def _normalize_site(site: str) -> str | None:
@@ -143,19 +199,18 @@ def _normalize_site(site: str) -> str | None:
 
 
 def parse_web_command(text: str):
-    """Parse a web command into a :class:`Rule` with intent ``web_open``.
+    """Parse a web command into a :class:`Rule` with intent ``web_open`` or
+    ``file_search``.
 
     This is the ONE function used by both the rule path and the model path.
-    It never fails with ``could not tell which website``: when a web verb is
-    present but no URL/site/query can be extracted, it returns
-    ``Rule("web_open", {})`` so the engine can ask a clarifying question and
-    keep a pending slot. Returns ``None`` when the text is not a web command.
+    When a web verb is present but no URL/site/query can be extracted, it
+    returns ``Rule("web_open", {})`` so the engine can ask a clarifying
+    question and keep a pending slot. Returns ``None`` when the text is not a
+    web command (for example a file name with an extension).
     """
     t = _normalize_text(text)
     # strip leading fillers ("please search...", "can you open...", "chrome mein open...")
-    for filler in _WEB_FILLERS:
-        t = re.sub(rf"^{re.escape(filler)}\s+", "", t, flags=re.IGNORECASE)
-    t = " ".join(t.split())
+    t = _strip_leading_fillers(t)
     low = t.casefold()
 
     # "new tab" alone -> default browser at google.
@@ -169,35 +224,67 @@ def parse_web_command(text: str):
         t, re.IGNORECASE)
     if m:
         query = " ".join(m.group("query").split())
+        query = _strip_trailing_verbs(query)
+        query = _strip_search_prefix(query)
         if query:
             return Rule("web_open", {
                 "url": "https://www.google.com/search?q=" + urllib.parse.quote_plus(query)})
         return Rule("web_open", {})
 
-    # search (for) X (on google) (in a new tab)
+    # search (for) X (on google) (in a new tab) -> Google search, unless it
+    # mentions files/folders/drive/my or has a file extension (local search).
     m = re.match(
-        r"(?:search(?:\s+for)?|search\s+karo|શોધો|शोधो|खोजो)\s+(?P<query>.+?)"
-        r"(?:\s+on\s+google)?(?:\s+in\s+a\s+new\s+tab)?[.!?।]*$",
+        r"(?:search\s+karo|search(?:\s+for)?|શોધો|शोधो|खोजो)\s+(?P<query>.+?)"
+        r"(?:\s+in\s+a\s+new\s+tab)?[.!?।]*$",
         t, re.IGNORECASE)
     if m:
-        query = m.group("query")
-        for filler in _WEB_FILLERS:
-            query = re.sub(rf"\b{re.escape(filler)}\b", "", query, flags=re.IGNORECASE)
-        query = " ".join(query.split())
+        query = _strip_trailing_verbs(m.group("query"))
+        query = _strip_leading_fillers(query)
+        query = _strip_search_prefix(query)
+        if _is_local_search(query):
+            return Rule("file_search", {"query": query})
         if query:
             return Rule("web_open", {
                 "url": "https://www.google.com/search?q=" + urllib.parse.quote_plus(query)})
         return Rule("web_open", {})
 
-    # open/go to <site>
+    # trailing search verb (hinglish): "python search karo", "google par python search karo"
+    m = re.match(r"(?P<query>.+?)\s+search\s+karo[.!?।]*$", t, re.IGNORECASE)
+    if m:
+        query = _strip_trailing_verbs(m.group("query"))
+        query = _strip_search_prefix(query)
+        if _is_local_search(query):
+            return Rule("file_search", {"query": query})
+        if query:
+            return Rule("web_open", {
+                "url": "https://www.google.com/search?q=" + urllib.parse.quote_plus(query)})
+        return Rule("web_open", {})
+
+    # open/go to <site> (optional trailing verb: "youtube khol do")
     m = re.match(
-        r"(?:open|go\s+to|खोलो\s+ने|खोलो|ખોલો\s+ને|ખોલો|શોધો|खोजो)\s+(?P<site>.+?)"
+        r"(?:open|go\s+to|खोलो\s+ने|खोलो|ખોલો\s+ને|ખોલો)\s+(?P<rest>.+?)"
         r"(?:\s+in\s+a\s+new\s+tab)?[.!?।]*$", t, re.IGNORECASE)
     if m:
-        site = _normalize_site(m.group("site"))
-        if site and site.casefold() not in _WEB_APPS:
-            return Rule("web_open", {"url": site})
+        site = _strip_trailing_verbs(m.group("rest"))
+        if _has_file_extension(site):
+            # A token with a file extension is a file, never a website.
+            return None
+        site_url = _normalize_site(site)
+        if site_url and site_url.casefold() not in _WEB_APPS:
+            return Rule("web_open", {"url": site_url})
         # A known application name: defer to the app rule.
+        return None
+
+    # <site> <trailing verb> (hinglish/gujlish word order): "youtube kholo",
+    # "gmail ખોલો". Only treat as a site if it resolves to a known site or
+    # contains a dot, so we never hijack a plain search query.
+    m = re.match(
+        r"(?P<site>.+?)\s+(?:khar do|khol do|kholo ne|kholo|ખોલો ને|ખોલો)"
+        r"[.!?।]*$", t, re.IGNORECASE)
+    if m:
+        site_url = _normalize_site(m.group("site"))
+        if site_url and site_url.casefold() not in _WEB_APPS:
+            return Rule("web_open", {"url": site_url})
         return None
 
     # Bare web verb with no site/query -> clarifying question.

@@ -94,6 +94,26 @@ TEMPLATES: dict[str, dict[str, str]] = {
                           "model. You can search the web: {link}"},
     "blocked": {"en": "This action is not permitted. Reason: {reason}."},
     "cancelled": {"en": "Action cancelled."},
+    "smalltalk_thanks": {
+        "en": "You're welcome.",
+        "hi": "आपका स्वागत है।",
+        "gu": "તમારું સ્વાગત છે.",
+    },
+    "smalltalk_bye": {
+        "en": "Goodbye. Have a good day.",
+        "hi": "अलविदा। आपका दिन शुभ रहे।",
+        "gu": "અલવિદા. તમારો દિવસ શુભ રહે.",
+    },
+    "smalltalk_how_are_you": {
+        "en": "I am doing well, thank you. How can I help you?",
+        "hi": "मैं ठीक हूँ, धन्यवाद। मैं आपकी कैसे सहायता कर सकता हूँ?",
+        "gu": "હું બરાબર છું, આભાર. હું તમને કેવી રીતે મદદ કરી શકું?",
+    },
+    "cannot_do_yet": {
+        "en": "I cannot do that yet. {capabilities}",
+        "hi": "मैं अभी वह काम नहीं कर सकता। {capabilities}",
+        "gu": "હું હજી એ કામ કરી શકતો નથી. {capabilities}",
+    },
 }
 
 

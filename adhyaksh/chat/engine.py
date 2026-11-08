@@ -163,6 +163,15 @@ def _error_reply(res: Result, lang: str) -> str:
     return _t("error", lang, reason=res.message.rstrip(".") or "unknown error")
 
 
+_CAPABILITIES = ("I can create, read, update, delete and search files; create Excel and Word files; "
+                 "open and close allowed applications; take screenshots; check system status; "
+                 "remember facts; and answer questions from your documents or the web.")
+
+
+def _cannot_do_yet(lang: str) -> str:
+    return _t("cannot_do_yet", lang, capabilities=_CAPABILITIES)
+
+
 class _Reply:
     def __init__(self, text: str, intent: str, conf: float = 1.0, action: str = "", confirmation: dict | None = None,
                  sources: list | None = None):
@@ -202,6 +211,13 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         return _Reply(_t("greet", lang), intent)
     if intent == "bot_identity":
         return _Reply("I am ADHYAKSH.", "bot_identity")
+    if intent == "smalltalk":
+        kind = slots.get("kind", "thanks")
+        if kind == "thanks":
+            return _Reply(_t("smalltalk_thanks", lang), "smalltalk")
+        if kind == "bye":
+            return _Reply(_t("smalltalk_bye", lang), "smalltalk")
+        return _Reply(_t("smalltalk_how_are_you", lang), "smalltalk")
     if intent == "time_date":
         now = datetime.now()
         kind = slots.get("kind") or _time_date_kind(text)
@@ -319,7 +335,9 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         return _llm_answer(text, convo_id, lang, "knowledge_question")
     if intent == "knowledge_question":
         return _llm_answer(text, convo_id, lang, intent)
-    return _Reply(_t("unknown", lang), "unknown")
+    if intent == "out_of_scope":
+        return _Reply(_cannot_do_yet(lang), "out_of_scope")
+    return _Reply(_cannot_do_yet(lang), "unknown")
 
 
 def _file_intent(intent: str, text: str, slots: dict, ctx: context.Context, lang: str, c: dict) -> _Reply:
@@ -452,7 +470,7 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Repl
             r = _llm_answer(text, convo_id, lang, "knowledge_question")
             r.conf = conf
             return r
-        r = _Reply(_t("unknown", lang), "unknown", conf, action="low_confidence")
+        r = _Reply(_cannot_do_yet(lang), "unknown", conf, action="low_confidence")
         return r
     if _looks_multi_step(text) and agent_enabled:
         return _agent_dispatch(text, ctx, convo_id, lang)

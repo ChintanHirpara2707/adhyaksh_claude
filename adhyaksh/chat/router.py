@@ -109,6 +109,10 @@ _WEB_OPEN = re.compile(
     r"^(?:open\s+new\s+tab|open\s+(?P<site>[\w.]+(?:\s+[\w.]+)?)\s+in\s+a\s+new\s+tab|open\s+youtube|"
     r"search\s+google\s+for\s+(?P<query>.+)|in\s+chrome\s+open\s+new\s+tab)[\s?.!]*$",
     re.IGNORECASE)
+_SMALLTALK = re.compile(
+    r"^(thanks|thank you|thanks a lot|bye|goodbye|see you|how are you|how are you doing|"
+    r"धन्यवाद|शुक्रिया|अलविदा|ठीक है|कैसा हो|कैसे हो|"
+    r"આભાર|અલવિદા|સારાં|કેમ છો)[\s?.!]*$", re.IGNORECASE)
 _REF = re.compile(r"^(delete|remove|erase|read|open|show)\s+(it|that|this)(\s+file)?[\s.!]*$", re.IGNORECASE)
 _REF_INTENT = {"delete": "file_delete", "remove": "file_delete", "erase": "file_delete", "read": "file_read",
                "open": "file_read", "show": "file_read"}
@@ -168,6 +172,14 @@ def match_rules(text: str) -> Rule | None:
     m = _WEB_OPEN.match(t)
     if m:
         return Rule("web_open", {"url": _web_url(t)})
+    m = _SMALLTALK.match(t)
+    if m:
+        kind = m.group(1).casefold()
+        if kind in ("thanks", "thank you", "thanks a lot", "धन्यवाद", "शुक्रिया", "આભાર"):
+            return Rule("smalltalk", {"kind": "thanks"})
+        if kind in ("bye", "goodbye", "see you", "अलविदा", "અલવિદા"):
+            return Rule("smalltalk", {"kind": "bye"})
+        return Rule("smalltalk", {"kind": "how_are_you"})
     name, conf = identity.extract_name(t)
     if name:
         return Rule("set_identity", {"name": name, "conf": conf})

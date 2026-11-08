@@ -106,7 +106,8 @@ _SPECIAL_FOLDER = re.compile(
     r"^(?:open)\s+(recycle\s*bin|recyclebin|downloads|documents|desktop|file\s*manager|file\s*explorer|explorer)[\s?.!]*$",
     re.IGNORECASE)
 _WEB_OPEN = re.compile(
-    r"^(?:open\s+new\s+tab|open\s+youtube|search\s+google\s+for\s+.+|in\s+chrome\s+open\s+new\s+tab)[\s?.!]*$",
+    r"^(?:open\s+new\s+tab|open\s+(?P<site>[\w.]+(?:\s+[\w.]+)?)\s+in\s+a\s+new\s+tab|open\s+youtube|"
+    r"search\s+google\s+for\s+(?P<query>.+)|in\s+chrome\s+open\s+new\s+tab)[\s?.!]*$",
     re.IGNORECASE)
 _REF = re.compile(r"^(delete|remove|erase|read|open|show)\s+(it|that|this)(\s+file)?[\s.!]*$", re.IGNORECASE)
 _REF_INTENT = {"delete": "file_delete", "remove": "file_delete", "erase": "file_delete", "read": "file_read",
@@ -166,16 +167,7 @@ def match_rules(text: str) -> Rule | None:
         return Rule("special_folder_open", {"folder": m.group(1)})
     m = _WEB_OPEN.match(t)
     if m:
-        low = t.casefold()
-        if "youtube" in low:
-            url = "youtube.com"
-        elif "new tab" in low:
-            url = "about:newtab"
-        elif "search google for" in low:
-            url = "https://www.google.com/search?q=" + re.sub(r".*?search google for\s+", "", low)
-        else:
-            url = "about:newtab"
-        return Rule("web_open", {"url": url})
+        return Rule("web_open", {"url": _web_url(t)})
     name, conf = identity.extract_name(t)
     if name:
         return Rule("set_identity", {"name": name, "conf": conf})
@@ -252,20 +244,27 @@ def extract_folder_name(text: str) -> str | None:
     return find_folder_name(text)
 
 
+def _web_url(text: str) -> str | None:
+    """Resolve a web_open URL from the user text."""
+    m = _WEB_OPEN.match(text)
+    if not m:
+        return None
+    low = text.casefold()
+    if m.group("site"):
+        site = m.group("site").strip().replace(" ", ".")
+        return site if "." in site else site + ".com"
+    if "youtube" in low:
+        return "youtube.com"
+    if "new tab" in low:
+        return "about:newtab"
+    if m.group("query"):
+        return "https://www.google.com/search?q=" + m.group("query").strip()
+    return "about:newtab"
+
+
 def extract_url(text: str) -> str | None:
     """URL slot for web_open."""
-    m = _WEB_OPEN.match(text)
-    if m:
-        low = text.casefold()
-        if "youtube" in low:
-            return "youtube.com"
-        elif "new tab" in low:
-            return "about:newtab"
-        elif "search google for" in low:
-            return "https://www.google.com/search?q=" + re.sub(r".*?search google for\s+", "", low)
-        else:
-            return "about:newtab"
-    return None
+    return _web_url(text)
 
 
 _CONTENT = re.compile(r"(?:with(?: the)? (?:content|text)|saying|that says|:)\s*(.+)$", re.IGNORECASE | re.DOTALL)

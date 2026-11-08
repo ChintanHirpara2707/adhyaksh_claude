@@ -68,11 +68,12 @@ def default_special_folders() -> dict[str, str]:
     """Windows special folders: friendly name -> shell command or user-profile subfolder."""
     if os.name != "nt":
         return {}
+    home = str(Path.home())
     return {
         "recycle bin": "shell:RecycleBinFolder",
-        "downloads": "Downloads",
-        "documents": "Documents",
-        "desktop": "Desktop",
+        "downloads": str(Path.home() / "Downloads"),
+        "documents": str(Path.home() / "Documents"),
+        "desktop": str(Path.home() / "Desktop"),
         "explorer": "explorer.exe",
     }
 

@@ -55,17 +55,25 @@ Database and migrations, append-only audit, safety levels, path traversal, datas
 
 ## New fix pass - TASK 2 (write failing tests first) - complete
 - Created tests/test_routing_fixes.py with 11 cases (inputs -> required behaviour).
-- Result (after TASK 3 fixes): 7 passed, 6 failed.
-  PASS: cases 1, 2, 3 (folder/file slots), 4 search google, 5 (Hindi/Gujarati saved name), 6 (word-based math), 10 (WhatsApp clear reason).
-  FAIL: case 4 github/youtube web_open, case 7 (small talk thanks/bye), case 8 (unsupported -> cannot do that yet), case 9 (special folder real path), case 11 (allow-list merge).
+- Result (after TASK 4 fixes): 9 passed, 2 failed.
+  PASS: cases 1, 2, 3 (folder/file slots), 4 (web open github/youtube/google), 5 (Hindi/Gujarati saved name), 6 (word-based math), 9 (special folder real path), 10 (WhatsApp clear reason), 11 (allow-list merge).
+  FAIL: case 7 (small talk thanks/bye), case 8 (unsupported -> cannot do that yet).
 
 ## New fix pass - TASK 3 (fix slots and routing) - complete
 - router.py: _FILE_CREATE_NAMED / _FOLDER_CREATE tolerate leading/filler words ("hey, can you create a notepad file called ideas", "make a new folder named Project2"); added _word_math for "plus/minus/into/times/divided by/power" (+ HI/GU equivalents) via the safe ast evaluator; added extract_file_name/extract_folder_name/extract_url reusable slot extractors.
 - engine.py: _is_question gained romanized HI/GU question words (kya, kaun, kitna, kab, kahan, shu, kon, kyare, kya che...); model-predicted intents now run the same slot extractors as the rule layer (_model_slots); file-vs-folder decided from folder/directory/dir words before trusting intent (_correct_file_folder). No eval/exec used.
 - Result: TASK 3 scope cases 1, 2, 3, 5, 6 all PASS. Full existing suite passes, no regressions.
-- Next: TASK 4 (web open github/youtube, special folder real path, allowlist merge), TASK 5 (small talk, unsupported "cannot do that yet"), TASK 6 (final report with before/after counts).
+
+## New fix pass - TASK 4 (apps/folders/web) - complete
+- router.py: _WEB_OPEN now handles "open <site> in a new tab" -> site.com (e.g. "open github in a new tab" -> github.com) via shared _web_url(); used by both match_rules and extract_url.
+- config.py: default_special_folders() resolves downloads/documents/desktop to real Path.home() subfolders; recycle bin stays shell:RecycleBinFolder, explorer stays explorer.exe.
+- apps.py: allowlist() merges saved list with new defaults (saved wins, missing defaults added: edge, brave, spotify); open_app() falls back to whatsapp: URI when WhatsApp.exe isn't found.
+- tests/test_routing_fixes.py: cases 4, 9, 10, 11 now PASS (6/6).
+- Manual check on this machine: web URLs github.com/youtube.com/google search all OK; special folders Downloads/Documents/Desktop OK (real paths exist); recycle bin = shell URI (expected), explorer.exe = launched by Windows name (expected); allowlist merges edge/brave/whatsapp. Actual os.startfile launch not performed to avoid opening apps in this environment.
+- Result: full existing suite 83 passed, no regressions.
+- Next: TASK 5 (small talk thanks/bye -> case 7; unsupported "cannot do that yet" -> case 8), TASK 6 (final report with before/after counts).
 
 ## HANDOFF
-- New fix pass in progress: TASK 1 cleanup done; TASK 2 failing tests written; TASK 3 slots/routing fixed (cases 1,2,3,5,6 pass).
-- Next: TASK 4 (apps/folders/web), TASK 5 (small talk/unsupported), TASK 6 (final report).
+- New fix pass in progress: TASK 1 cleanup done; TASK 2 failing tests written; TASK 3 slots/routing fixed; TASK 4 apps/folders/web fixed.
+- Next: TASK 5 (small talk + unsupported replies), TASK 6 (final report).
 - Outstanding (pre-existing): LLM streaming (F01) not implemented; PDF loading / send2trash / keyed Groq untested on target; docs/RESULTS.md not regenerated after retrain; dataset still UNREVIEWED; pip freeze into requirements-core.txt.

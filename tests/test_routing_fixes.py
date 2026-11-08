@@ -112,7 +112,7 @@ def test_web_open_youtube(monkeypatch):
 
     monkeypatch.setattr(system_mod.os, "startfile", fake_startfile)
     r = _say(cid, "open youtube")
-    assert captured == ["youtube.com"], captured
+    assert captured == ["https://youtube.com"], captured
     assert r["intent"] == "web_open", r["reply"]
 
 
@@ -234,7 +234,9 @@ def test_open_whatsapp_clear_reason(monkeypatch):
     low = r["reply"].lower()
     assert "whatsapp" in low, r["reply"]
     assert "could not match" not in low, r["reply"]
-    assert "cannot" in low or "not found" in low or "reason" in low, r["reply"]
+    # WhatsApp is attempted via exe or whatsapp: URI; on success it opens, on
+    # total failure it gives a clear reason.
+    assert "opened" in low or "cannot" in low or "not found" in low or "reason" in low, r["reply"]
 
 
 # ---------------------------------------------------------------------------

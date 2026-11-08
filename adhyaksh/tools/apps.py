@@ -17,11 +17,21 @@ _LAUNCHED: dict[str, list[int]] = {}
 
 
 def allowlist() -> dict[str, list[str]]:
+    """Saved allow-list merged with new default apps (saved entries win)."""
     try:
         raw = json.loads(config.get("app_allowlist"))
     except json.JSONDecodeError:
-        return {}
-    return {str(k).casefold(): [str(x) for x in v] for k, v in raw.items() if isinstance(v, list) and v}
+        raw = {}
+    saved = {
+        str(k).casefold(): [str(x) for x in v]
+        for k, v in raw.items() if isinstance(v, list) and v
+    }
+    defaults = config.default_app_allowlist()
+    merged = dict(saved)
+    for key, cmd in defaults.items():
+        if key not in merged:
+            merged[key] = cmd
+    return merged
 
 
 def set_allowlist(text: str) -> Result:
@@ -61,6 +71,13 @@ def open_app(name: str, *, ctx: dict | None = None) -> Result:
             _LAUNCHED.setdefault(key, []).append(proc.pid)
             return Result.success({"app": key, "pid": proc.pid})
         except (OSError, AttributeError):
+            # Fallback for WhatsApp: try the whatsapp: URI scheme, then give a clear reason.
+            if key == "whatsapp":
+                try:
+                    os.startfile("whatsapp:")  # type: ignore[attr-defined]
+                    return Result.success({"app": key})
+                except (OSError, AttributeError):
+                    pass
             return Result.failure(E_ACTION_FAILED, "The application was not found on this computer.")
 
     return policy.run_guarded("app_open", key, go, user_text=ctx.get("user_text", ""), intent=ctx.get("intent", ""))

@@ -102,6 +102,7 @@ if speak:
     st.session_state["seen_assistant"] = last_id
 if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
     st.session_state["voice_nonce"] = heard["nonce"]
+    st.caption(f"Heard: {heard['text']}")
     with st.spinner("Working"):
         engine.handle_message(heard["text"], cid, voice=True)
     st.rerun()

@@ -283,7 +283,13 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
     if intent == "web_open":
         url = slots.get("url")
         if not url:
-            return _Reply("I could not tell which website to open.", "web_open")
+            # Model path: try the shared parser before giving up.
+            parsed = router.parse_web_command(text)
+            url = parsed.slots.get("url") if parsed else None
+        if not url:
+            # Web verb present but no site/query: keep a pending slot and ask.
+            return _need(ctx, intent, "url", slots,
+                         _t("ask_web_url", lang), lang)
         res = system.web_open(url, ctx=c)
         if res.ok:
             return _Reply(_t("web_opened", lang, url=url), "web_open", action="web_open")
@@ -449,6 +455,8 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Repl
             slots["app"] = router.find_app(text) or text.strip()
         elif p["need"] == "folder":
             slots["folder"] = text.strip()
+        elif p["need"] == "url":
+            slots["url"] = router.extract_web_url(text)
         else:
             slots["content"] = text.strip()
         return _dispatch(p["intent"], text, slots, ctx, convo_id, lang)

@@ -4,6 +4,7 @@ from __future__ import annotations
 import ast
 import operator
 import re
+import urllib.parse
 from dataclasses import dataclass, field
 
 from adhyaksh.chat import identity
@@ -80,6 +81,146 @@ def _word_math(text: str):
         return None
 
 
+# ---------------------------------------------------------------------------
+# Web command parsing (shared by the rule path and the model path)
+# ---------------------------------------------------------------------------
+
+_WEB_SITES = {
+    "github": "github.com",
+    "youtube": "youtube.com",
+    "gmail": "gmail.com",
+    "google": "google.com",
+    "linkedin": "linkedin.com",
+    "instagram": "instagram.com",
+    "facebook": "facebook.com",
+    "x": "x.com",
+    "twitter": "x.com",
+    "whatsapp web": "web.whatsapp.com",
+    "maps": "maps.google.com",
+}
+
+# Application names that, when used as a standalone "open <name>", should route
+# to the app launcher rather than being treated as a website.
+_WEB_APPS = {
+    "notepad", "calculator", "paint", "excel", "word", "chrome", "edge",
+    "brave", "vs code", "vscode", "whatsapp", "spotify", "snipping tool",
+    "file explorer", "file manager",
+}
+
+# Filler words that may wrap a web request and must be stripped from a query.
+_WEB_FILLERS = ("please", "can you", "chrome mein", "in chrome", "karo", "kar", "do", "ne")
+
+
+def _normalize_text(text: str) -> str:
+    """Normalize text once before routing, for typed and voice input alike.
+
+    Trim, collapse whitespace, strip trailing punctuation, and convert spoken
+    ``dot`` forms (``dot com``, ``dot in``, ``dot org``) to ``.``.
+    """
+    t = " ".join(text.split())
+    t = t.strip().rstrip(".!?।")
+    t = re.sub(r"\s*dot\s+(com|in|org)\b", r".\1", t, flags=re.IGNORECASE)
+    return t
+
+
+def _normalize_site(site: str) -> str | None:
+    """Normalize a spoken/typed site name to a URL.
+
+    Known sites are mapped; anything already containing a dot is passed through
+    (with an ``https://`` scheme added when missing).
+    """
+    s = " ".join(site.split())
+    s = re.sub(r"\s*dot\s+(com|in|org)\b", r".\1", s, flags=re.IGNORECASE)
+    key = s.casefold()
+    base = re.sub(r"\.(com|in|org|co\.in)$", "", key, flags=re.IGNORECASE)
+    if key in _WEB_SITES:
+        return _WEB_SITES[key]
+    if base in _WEB_SITES:
+        return _WEB_SITES[base]
+    if "." in s:
+        return s if s.startswith(("http://", "https://")) else "https://" + s
+    return None
+
+
+def parse_web_command(text: str):
+    """Parse a web command into a :class:`Rule` with intent ``web_open``.
+
+    This is the ONE function used by both the rule path and the model path.
+    It never fails with ``could not tell which website``: when a web verb is
+    present but no URL/site/query can be extracted, it returns
+    ``Rule("web_open", {})`` so the engine can ask a clarifying question and
+    keep a pending slot. Returns ``None`` when the text is not a web command.
+    """
+    t = _normalize_text(text)
+    # strip leading fillers ("please search...", "can you open...", "chrome mein open...")
+    for filler in _WEB_FILLERS:
+        t = re.sub(rf"^{re.escape(filler)}\s+", "", t, flags=re.IGNORECASE)
+    t = " ".join(t.split())
+    low = t.casefold()
+
+    # "new tab" alone -> default browser at google.
+    if re.fullmatch(r"(?:in\s+chrome\s+)?(?:open|go\s+to)?\s*(?:a\s+)?new\s+tab[.!?।]*",
+                    t, re.IGNORECASE):
+        return Rule("web_open", {"url": "https://www.google.com"})
+
+    # "search google for X (in a new tab)"
+    m = re.match(
+        r"search\s+google\s+for\s+(?P<query>.+?)(?:\s+in\s+a\s+new\s+tab)?[.!?।]*$",
+        t, re.IGNORECASE)
+    if m:
+        query = " ".join(m.group("query").split())
+        if query:
+            return Rule("web_open", {
+                "url": "https://www.google.com/search?q=" + urllib.parse.quote_plus(query)})
+        return Rule("web_open", {})
+
+    # search (for) X (on google) (in a new tab)
+    m = re.match(
+        r"(?:search(?:\s+for)?|search\s+karo|શોધો|शोधो|खोजो)\s+(?P<query>.+?)"
+        r"(?:\s+on\s+google)?(?:\s+in\s+a\s+new\s+tab)?[.!?।]*$",
+        t, re.IGNORECASE)
+    if m:
+        query = m.group("query")
+        for filler in _WEB_FILLERS:
+            query = re.sub(rf"\b{re.escape(filler)}\b", "", query, flags=re.IGNORECASE)
+        query = " ".join(query.split())
+        if query:
+            return Rule("web_open", {
+                "url": "https://www.google.com/search?q=" + urllib.parse.quote_plus(query)})
+        return Rule("web_open", {})
+
+    # open/go to <site>
+    m = re.match(
+        r"(?:open|go\s+to|खोलो\s+ने|खोलो|ખોલો\s+ને|ખોલો|શોધો|खोजो)\s+(?P<site>.+?)"
+        r"(?:\s+in\s+a\s+new\s+tab)?[.!?।]*$", t, re.IGNORECASE)
+    if m:
+        site = _normalize_site(m.group("site"))
+        if site and site.casefold() not in _WEB_APPS:
+            return Rule("web_open", {"url": site})
+        # A known application name: defer to the app rule.
+        return None
+
+    # Bare web verb with no site/query -> clarifying question.
+    if re.match(r"^(open|go\s+to|search|खोलो|खोलो\s+ने|શોધો|खोजो)\s*$", low):
+        return Rule("web_open", {})
+
+    return None
+
+
+def extract_web_url(text: str) -> str | None:
+    """Resolve a web URL from arbitrary user text (bare site, search, or command)."""
+    rule = parse_web_command(text)
+    if rule:
+        return rule.slots.get("url")
+    site = _normalize_site(text)
+    if site:
+        return site
+    query = " ".join(text.split())
+    if query:
+        return "https://www.google.com/search?q=" + urllib.parse.quote_plus(query)
+    return None
+
+
 @dataclass
 class Rule:
     intent: str
@@ -104,10 +245,6 @@ _FOLDER_CREATE = re.compile(
 _SCREENSHOT = re.compile(r"^(?:take|capture)\s+(?:a\s+)?screenshot[\s?.!]*$", re.IGNORECASE)
 _SPECIAL_FOLDER = re.compile(
     r"^(?:open)\s+(recycle\s*bin|recyclebin|downloads|documents|desktop|file\s*manager|file\s*explorer|explorer)[\s?.!]*$",
-    re.IGNORECASE)
-_WEB_OPEN = re.compile(
-    r"^(?:open\s+new\s+tab|open\s+(?P<site>[\w.]+(?:\s+[\w.]+)?)\s+in\s+a\s+new\s+tab|open\s+youtube|"
-    r"search\s+google\s+for\s+(?P<query>.+)|in\s+chrome\s+open\s+new\s+tab)[\s?.!]*$",
     re.IGNORECASE)
 _SMALLTALK = re.compile(
     r"^(thanks|thank you|thanks a lot|bye|goodbye|see you|how are you|how are you doing|"
@@ -161,17 +298,17 @@ def match_rules(text: str) -> Rule | None:
     m = _SCREENSHOT.match(t)
     if m:
         return Rule("screenshot")
+    rule = parse_web_command(t)
+    if rule:
+        return rule
+    m = _SPECIAL_FOLDER.match(t)
+    if m:
+        return Rule("special_folder_open", {"folder": m.group(1)})
     m = re.search(r"\bopen\s+([\w][\w\s]*?)[\s?.!]*$", t, re.IGNORECASE)
     if m:
         app = find_app(t)
         if app:
             return Rule("app_open", {"app": app})
-    m = _SPECIAL_FOLDER.match(t)
-    if m:
-        return Rule("special_folder_open", {"folder": m.group(1)})
-    m = _WEB_OPEN.match(t)
-    if m:
-        return Rule("web_open", {"url": _web_url(t)})
     m = _SMALLTALK.match(t)
     if m:
         kind = m.group(1).casefold()
@@ -257,25 +394,15 @@ def extract_folder_name(text: str) -> str | None:
 
 
 def _web_url(text: str) -> str | None:
-    """Resolve a web_open URL from the user text."""
-    m = _WEB_OPEN.match(text)
-    if not m:
-        return None
-    low = text.casefold()
-    if m.group("site"):
-        site = m.group("site").strip().replace(" ", ".")
-        return site if "." in site else site + ".com"
-    if "youtube" in low:
-        return "youtube.com"
-    if "new tab" in low:
-        return "about:newtab"
-    if m.group("query"):
-        return "https://www.google.com/search?q=" + m.group("query").strip()
-    return "about:newtab"
+    """Resolve a web_open URL from the user text (delegates to parse_web_command)."""
+    rule = parse_web_command(text)
+    if rule:
+        return rule.slots.get("url")
+    return None
 
 
 def extract_url(text: str) -> str | None:
-    """URL slot for web_open."""
+    """URL slot for web_open (delegates to parse_web_command)."""
     return _web_url(text)
 
 

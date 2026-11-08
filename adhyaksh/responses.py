@@ -94,6 +94,9 @@ TEMPLATES: dict[str, dict[str, str]] = {
                           "model. You can search the web: {link}"},
     "blocked": {"en": "This action is not permitted. Reason: {reason}."},
     "cancelled": {"en": "Action cancelled."},
+    "ask_web_url": {"en": "Which website, or what should I search for?",
+                    "hi": "कौन सी वेबसाइट खोलूं, या क्या खोजूं?",
+                    "gu": "કયી વેબસાઇટ ખોલવી, અથવા શું શોધવું?"},
     "smalltalk_thanks": {
         "en": "You're welcome.",
         "hi": "आपका स्वागत है।",

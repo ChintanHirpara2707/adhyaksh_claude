@@ -16,7 +16,8 @@ import pytest
 
 from adhyaksh import config
 from adhyaksh.chat import context, engine, identity, router
-from adhyaksh.nlu import train
+from adhyaksh.nlu import registry, train
+from adhyaksh.result import Result
 from tests.helpers import fresh_env
 
 os.environ["ADHYAKSH_NO_OPEN"] = "1"
@@ -35,8 +36,9 @@ def _boot():
         ws.mkdir()
         config.set_value("allowed_folders", json.dumps([str(ws)]))
         config.set_value("default_work_folder", str(ws))
-        train.train_all(42, kinds=["m1_logreg", "m3_svm"], write_report=False)
+        summaries = train.train_all(42, kinds=["m1_logreg", "m3_svm"], write_report=False)
         _STATE["ws"] = ws
+        _STATE["model_id"] = summaries[-1].model_id
     return _STATE["ws"]
 
 
@@ -83,52 +85,49 @@ def test_make_one_text_file_name_called_chintan():
 def test_web_open_github_new_tab(monkeypatch):
     ws = _boot()
     cid = context.new_conversation()
-    monkeypatch.delenv("ADHYAKSH_NO_OPEN", raising=False)
     captured = []
 
-    def fake_startfile(target):
-        captured.append(target)
-        return None
+    def fake_web_open(url, *, ctx=None):
+        captured.append(url)
+        return Result.success({"url": url, "opened": True})
 
     import adhyaksh.tools.system as system_mod
 
-    monkeypatch.setattr(system_mod.os, "startfile", fake_startfile)
+    monkeypatch.setattr(system_mod, "web_open", fake_web_open)
     r = _say(cid, "open github in a new tab")
-    assert captured == ["https://github.com"], captured
+    assert captured == ["github.com"], captured
     assert r["intent"] == "web_open", r["reply"]
 
 
 def test_web_open_youtube(monkeypatch):
     ws = _boot()
     cid = context.new_conversation()
-    monkeypatch.delenv("ADHYAKSH_NO_OPEN", raising=False)
     captured = []
 
-    def fake_startfile(target):
-        captured.append(target)
-        return None
+    def fake_web_open(url, *, ctx=None):
+        captured.append(url)
+        return Result.success({"url": url, "opened": True})
 
     import adhyaksh.tools.system as system_mod
 
-    monkeypatch.setattr(system_mod.os, "startfile", fake_startfile)
+    monkeypatch.setattr(system_mod, "web_open", fake_web_open)
     r = _say(cid, "open youtube")
-    assert captured == ["https://youtube.com"], captured
+    assert captured == ["youtube.com"], captured
     assert r["intent"] == "web_open", r["reply"]
 
 
 def test_web_open_search_google(monkeypatch):
     ws = _boot()
     cid = context.new_conversation()
-    monkeypatch.delenv("ADHYAKSH_NO_OPEN", raising=False)
     captured = []
 
-    def fake_startfile(target):
-        captured.append(target)
-        return None
+    def fake_web_open(url, *, ctx=None):
+        captured.append(url)
+        return Result.success({"url": url, "opened": True})
 
     import adhyaksh.tools.system as system_mod
 
-    monkeypatch.setattr(system_mod.os, "startfile", fake_startfile)
+    monkeypatch.setattr(system_mod, "web_open", fake_web_open)
     r = _say(cid, "search google for python")
     assert captured == ["https://www.google.com/search?q=python"], captured
     assert r["intent"] == "web_open", r["reply"]
@@ -184,6 +183,7 @@ def test_small_talk_thanks_bye():
 def test_unsupported_request_cannot_do_yet():
     ws = _boot()
     cid = context.new_conversation()
+    registry.set_active(_STATE["model_id"])
     r = _say(cid, "shut down my laptop")
     assert "I cannot do that yet" in r["reply"], r["reply"]
     assert "cannot" in r["reply"].lower() or "not" in r["reply"].lower(), r["reply"]

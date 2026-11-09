@@ -9,8 +9,10 @@ import json
 import pytest
 
 from adhyaksh import config
-from adhyaksh.result import E_ACTION_FAILED
+from adhyaksh.llm import base as llm
+from adhyaksh.result import E_ACTION_FAILED, Result
 from adhyaksh.tools import system
+from tests.helpers import fresh_env
 
 
 def _set_provider(provider: str) -> None:
@@ -189,3 +191,101 @@ def test_fetch_page_truncates_long_output(monkeypatch):
     assert res.ok
     assert len(res.data["text"]) <= 20000 + 20, len(res.data["text"])
     assert res.data["text"].endswith("... (truncated)")
+
+
+# ---------------------------------------------------------------------------
+# Agent-level web sources
+# ---------------------------------------------------------------------------
+
+
+def _make_fake_llm(responses):
+    """Return a fake llm.ask_with_tools that yields the given responses in order."""
+    calls = {"n": 0}
+
+    def fake_ask_with_tools(messages, tools, timeout=8.0):
+        calls["n"] += 1
+        idx = calls["n"] - 1
+        if idx >= len(responses):
+            return Result.success({"tool_calls": [], "text": "Done."})
+        return Result.success(responses[idx])
+
+    return fake_ask_with_tools
+
+
+def test_agent_web_search_includes_sources(monkeypatch):
+    """When web_search is used, the reply ends with a Sources: list."""
+    from adhyaksh import config
+    from adhyaksh.agent import runner as agent_runner
+    from adhyaksh.chat import context
+
+    base = fresh_env()
+    cid = context.new_conversation()
+    config.set_value("cloud_consent", "true")
+    config.set_value("llm_provider", "groq")
+    monkeypatch.setattr(llm, "api_key", lambda provider: "fake-key")
+    fake_llm = _make_fake_llm([
+        {"tool_calls": [{"name": "web_search", "arguments": {"query": "test"}}], "text": ""},
+        {"tool_calls": [], "text": "Here is what I found."},
+    ])
+    monkeypatch.setattr(llm, "ask_with_tools", fake_llm)
+
+    monkeypatch.setattr(system, "_http_get", lambda url, timeout=8: (
+        '<div class="result"><a class="result__a" href="https://example.com/page">'
+        'Example</a><div class="result__snippet">A snippet.</div></div>'
+    ))
+    _set_provider("duckduckgo")
+
+    res = agent_runner.run("search for example", cid, "en")
+    assert res["reply"], res
+    assert "Sources:" in res["reply"], res["reply"]
+    assert "https://example.com/page" in res["reply"], res["reply"]
+
+
+def test_agent_fetch_page_includes_sources(monkeypatch):
+    """When fetch_page is used, the reply includes the source URL."""
+    from adhyaksh import config
+    from adhyaksh.agent import runner as agent_runner
+    from adhyaksh.chat import context
+
+    base = fresh_env()
+    cid = context.new_conversation()
+    config.set_value("cloud_consent", "true")
+    config.set_value("llm_provider", "groq")
+    monkeypatch.setattr(llm, "api_key", lambda provider: "fake-key")
+    fake_llm = _make_fake_llm([
+        {"tool_calls": [{"name": "fetch_page", "arguments": {"url": "https://example.com/page"}}], "text": ""},
+        {"tool_calls": [], "text": "The page says hello."},
+    ])
+    monkeypatch.setattr(llm, "ask_with_tools", fake_llm)
+
+    monkeypatch.setattr(system, "fetch_page", lambda url, *, ctx=None: Result.success({
+        "text": "Hello world",
+        "url": "https://example.com/page",
+        "site": "example.com",
+    }))
+
+    res = agent_runner.run("read https://example.com/page", cid, "en")
+    assert res["reply"], res
+    assert "Sources:" in res["reply"], res["reply"]
+    assert "https://example.com/page" in res["reply"], res["reply"]
+
+
+def test_agent_no_web_tools_no_sources(monkeypatch):
+    """When no web tools are used, no Sources: section is added."""
+    from adhyaksh import config
+    from adhyaksh.agent import runner as agent_runner
+    from adhyaksh.chat import context
+
+    base = fresh_env()
+    cid = context.new_conversation()
+    config.set_value("cloud_consent", "true")
+    config.set_value("llm_provider", "groq")
+    monkeypatch.setattr(llm, "api_key", lambda provider: "fake-key")
+    fake_llm = _make_fake_llm([
+        {"tool_calls": [], "text": "Just a regular answer."},
+    ])
+    monkeypatch.setattr(llm, "ask_with_tools", fake_llm)
+
+    res = agent_runner.run("hello", cid, "en")
+    assert res["reply"], res
+    assert "Sources:" not in res["reply"], res["reply"]

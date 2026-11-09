@@ -62,7 +62,7 @@ def _data_block(tool_name: str, arguments: dict, result: Result) -> str:
     else:
         data = result.data or {}
         for key in ("path", "url", "folder", "app", "content", "answer", "matches",
-                    "items", "cpu", "ram", "disk", "moved_to", "opened"):
+                    "items", "results", "cpu", "ram", "disk", "moved_to", "opened"):
             if key in data and data[key] is not None:
                 value = data[key]
                 if isinstance(value, list):
@@ -93,6 +93,7 @@ def _build_system_prompt() -> str:
         "5. Stop after you have enough information to answer; do not call tools "
         "pointlessly.\n"
         "6. Reply in the same language as the user.\n"
+        "7. If web search returns no results, say so explicitly instead of guessing.\n"
     )
 
 
@@ -357,6 +358,25 @@ def run(text: str, convo_id: int, lang: str) -> dict:
     for kind, payload in run_stream(text, convo_id, lang):
         if kind == "result":
             final = payload
+    if final is not None:
+        # Collect sources from web tool results
+        sources: list[str] = []
+        import re
+        for step in final.get("steps", []):
+            result_text = step.get("result", "")
+            tool_name = step.get("tool", "")
+            if tool_name == "web_search":
+                for m in re.finditer(r"'url'\s*:\s*'([^']+)'", result_text):
+                    url = m.group(1)
+                    if url not in sources:
+                        sources.append(url)
+            elif tool_name == "fetch_page":
+                for m in re.finditer(r"url:\s*(https?://[^\s]+)", result_text):
+                    url = m.group(1)
+                    if url not in sources:
+                        sources.append(url)
+        if sources:
+            final["reply"] = (final.get("reply") or "") + "\n\nSources:\n" + "\n".join(f"- {url}" for url in sources)
     return final or {"reply": None, "steps": [], "confirmation": None,
                      "disabled": True, "reason": "Agent unavailable."}
 

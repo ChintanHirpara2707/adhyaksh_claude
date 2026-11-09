@@ -16,6 +16,9 @@ class GroqProvider(Provider):
         r = requests.post(URL, timeout=timeout, headers={"Authorization": f"Bearer {api_key('groq')}"},
                           json={"model": self.model(), "max_tokens": MAX_TOKENS,
                                 "messages": [{"role": "user", "content": prompt}]})
+        if r.status_code == 429:
+            from adhyaksh.result import E_RATE_LIMIT
+            raise RateLimitError("Rate limit exceeded")
         r.raise_for_status()
         return r.json()["choices"][0]["message"]["content"]
 
@@ -26,6 +29,9 @@ class GroqProvider(Provider):
 
         r = requests.post(URL, timeout=timeout, headers={"Authorization": f"Bearer {api_key('groq')}"},
                           json={"model": self.model(), "messages": messages, "tools": tools})
+        if r.status_code == 429:
+            from adhyaksh.result import E_RATE_LIMIT
+            raise RateLimitError("Rate limit exceeded")
         r.raise_for_status()
         data = r.json()
         tool_calls: list[dict] = []

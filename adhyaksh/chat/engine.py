@@ -13,7 +13,7 @@ from adhyaksh.llm import base as llm
 from adhyaksh.memory import store
 from adhyaksh.nlu import registry
 from adhyaksh.rag import answerer
-from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
+from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, E_RATE_LIMIT, Result)
 from adhyaksh.safety import policy
 from adhyaksh.tools import apps, files, office, system
 
@@ -193,15 +193,17 @@ def _need(ctx: context.Context, intent: str, need: str, slots: dict, question: s
 
 
 def _llm_answer(text: str, convo_id: int, lang: str, intent: str) -> _Reply:
-    if not config.get_bool("cloud_consent"):
-        return _Reply(_t("llm_blocked", lang, link=llm.search_link(text)), intent)
+    if not config.get_bool("cloud_consent") or llm.get_provider() is None:
+        return _Reply(_cannot_do_yet(lang), "unknown")
     turns = context.history(convo_id)
     prompt = "Answer briefly and factually.\n" + "\n".join(f"{m['role']}: {m['content']}" for m in turns[-8:-1]) + f"\nuser: {text}"
     res = llm.ask(prompt)
     if res.ok:
         return _Reply(res.data, intent, action="llm")
+    if res.error_code == E_RATE_LIMIT:
+        return _Reply("Rate limit exceeded. Please try again later.", "unknown", 0.0)
     if res.error_code == E_NO_API_KEY:
-        return _Reply(_t("llm_unavailable", lang, link=llm.search_link(text)), intent)
+        return _Reply(_cannot_do_yet(lang), "unknown")
     return _Reply(_t("error", lang, reason=res.message.rstrip(".")) + " " + llm.search_link(text), intent)
 
 
@@ -337,9 +339,11 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         res = answerer.answer(text)
         if res.data.get("found"):
             return _Reply(res.data["answer"], intent, action="doc_answer", sources=res.data["sources"])
-        # No indexed documents or below the retrieval threshold -> knowledge answerer.
-        return _llm_answer(text, convo_id, lang, "knowledge_question")
+        # No indexed documents or below the retrieval threshold
+        return _Reply(_t("doc_not_found", lang), intent)
     if intent == "knowledge_question":
+        if not config.get_bool("cloud_consent") or llm.get_provider() is None:
+            return _Reply(_cannot_do_yet(lang), "unknown")
         return _llm_answer(text, convo_id, lang, intent)
     if intent == "out_of_scope":
         return _Reply(_cannot_do_yet(lang), "out_of_scope")

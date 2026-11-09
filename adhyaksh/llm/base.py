@@ -13,7 +13,7 @@ from adhyaksh import config
 from adhyaksh.llm import cache
 from adhyaksh.result import E_BLOCKED, E_NO_API_KEY, E_TIMEOUT, Result
 
-PROVIDERS = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY"}
+PROVIDERS = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "ollama": ""}
 MAX_TOKENS = 400
 ENV_FILE = config.ROOT / ".env"
 
@@ -50,6 +50,11 @@ def set_key(provider: str, key: str) -> None:
 
 def search_link(query: str) -> str:
     return "https://www.google.com/search?q=" + urllib.parse.quote(query)
+
+
+class RateLimitError(Exception):
+    """Raised when the LLM provider returns a rate-limit error (HTTP 429)."""
+    pass
 
 
 class Provider(ABC):
@@ -105,11 +110,14 @@ class Provider(ABC):
 
 def get_provider() -> Provider | None:
     name = config.get("llm_provider")
-    if name not in PROVIDERS or not api_key(name):
+    if name not in PROVIDERS:
+        return None
+    if name != "ollama" and not api_key(name):
         return None
     from adhyaksh.llm.gemini import GeminiProvider
     from adhyaksh.llm.groq import GroqProvider
-    return {"groq": GroqProvider, "gemini": GeminiProvider}[name]()
+    from adhyaksh.llm.ollama import OllamaProvider
+    return {"groq": GroqProvider, "gemini": GeminiProvider, "ollama": OllamaProvider}[name]()
 
 
 def ask(prompt: str, timeout: float = 8.0) -> Result:
@@ -119,7 +127,10 @@ def ask(prompt: str, timeout: float = 8.0) -> Result:
     provider = get_provider()
     if provider is None:
         return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
-    return provider.complete(prompt, timeout=timeout)
+    try:
+        return provider.complete(prompt, timeout=timeout)
+    except RateLimitError:
+        return Result.failure(E_RATE_LIMIT, "Rate limit exceeded. Please try again later.")
 
 
 def ask_with_tools(
@@ -136,4 +147,7 @@ def ask_with_tools(
     provider = get_provider()
     if provider is None:
         return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
-    return provider.complete_with_tools(messages, tools, timeout=timeout)
+    try:
+        return provider.complete_with_tools(messages, tools, timeout=timeout)
+    except RateLimitError:
+        return Result.failure(E_RATE_LIMIT, "Rate limit exceeded. Please try again later.")

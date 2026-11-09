@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 
 from adhyaksh import config
-from adhyaksh.llm.base import MAX_TOKENS, Provider, api_key
+from adhyaksh.llm.base import MAX_TOKENS, Provider, api_key, RateLimitError
 
 BASE = "https://generativelanguage.googleapis.com/v1beta/models/"
 
@@ -18,6 +18,9 @@ class GeminiProvider(Provider):
                           headers={"x-goog-api-key": api_key("gemini")},
                           json={"contents": [{"parts": [{"text": prompt}]}],
                                 "generationConfig": {"maxOutputTokens": MAX_TOKENS}})
+        if r.status_code == 429:
+            from adhyaksh.result import E_RATE_LIMIT
+            raise RateLimitError("Rate limit exceeded")
         r.raise_for_status()
         return "".join(p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"])
 

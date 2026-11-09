@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import re
 import time
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -136,6 +137,18 @@ def _disabled_result(reason: str) -> dict:
     }
 
 
+def _increment_agent_call_count():
+    """Increment the daily agent call counter."""
+    today = date.today().isoformat()
+    stored_date = config.get("agent_calls_date")
+    count = int(config.get("agent_calls_today") or "0")
+    if stored_date != today:
+        count = 0
+        config.set_value("agent_calls_date", today)
+    count += 1
+    config.set_value("agent_calls_today", str(count))
+
+
 def _agent_loop(text: str, convo_id: int, lang: str) -> Iterator[tuple[str, dict]]:
     """Yield ``("step", step_dict)`` for each tool step, then ``("result",
     final_dict)`` with the completed loop result."""
@@ -146,6 +159,8 @@ def _agent_loop(text: str, convo_id: int, lang: str) -> Iterator[tuple[str, dict
             "Agent mode needs a language-model API key and cloud consent "
             "enabled in Settings."))
         return
+
+    _increment_agent_call_count()
 
     ctx = tool_registry._make_ctx(text, "agent")
     history = context.history(convo_id)

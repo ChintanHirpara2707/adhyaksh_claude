@@ -95,6 +95,10 @@ DEFAULTS: dict[str, str] = {
     "doc_min_score": "0.15",
     "power_mode": "false",
     "web_search_provider": "duckduckgo",
+    "agent_calls_today": "0",
+    "agent_calls_date": "",
+    "ollama_model": "",
+    "ollama_base_url": "http://localhost:11434",
 }
 
 

@@ -110,10 +110,10 @@ Database and migrations, append-only audit, safety levels, path traversal, datas
 - PDF loading, send2trash, keyed Groq/Gemini network calls (pre-existing, environment-dependent).
 
 ## HANDOFF
-- New fix pass complete: TASK 1 cleanup; TASK 2 failing tests written; TASK 3 slots/routing fixed; TASK 4 apps/folders/web fixed; TASK 5 small talk + unsupported fixed; TASK 6 final report done.
-- Agent feature (A1-A6) complete: tool registry (16 tools incl. run_python), agent loop (max 6 steps, 8s timeout), safety authorization (L3 refusal, L2 confirmation pause + resume), chat UI live steps + streaming, fast-path classifier vs agent routing, Power mode run_python toggle, web search/fetch_page tools, knowledge answers with sources.
+- Fix Pass (TASKS 1-8) complete: tests/test_chat_regression.py 15/15 PASS. All 13 existing test files pass; exit-15 teardown crash in test_tools is pre-existing (baseline).
+- Agent feature (A1-A7) complete: tool registry (18 tools incl. run_python, web_search, fetch_page), agent loop (max 6 steps, 8s timeout), safety authorization (L3 refusal, L2 confirmation pause + resume), chat UI live steps + streaming, fast-path classifier vs agent routing, Power mode run_python toggle, web search/fetch_page tools with citations, knowledge answers with sources, quota/rate-limit handling, offline fallback, optional Ollama provider.
 - tests/test_chat_regression.py: 15/15 PASS (all 15 cases). tests/test_web_commands.py: 139/139 PASS. tests/test_web_search.py: 15/15 PASS. tests/test_agent_injection.py: 1/1 PASS. Full existing suite passes with no regressions.
-- Next: A7 (quota and offline handling: run_python quota, rate-limit errors, offline fallback).
+- Next: A8 (voice integration).
 - Outstanding (pre-existing): LLM streaming (F01) not implemented; PDF loading / send2trash / keyed Groq untested on target; docs/RESULTS.md not regenerated after retrain; dataset still UNREVIEWED; pip freeze into requirements-core.txt.
 
 ## Agent feature (A1-A5)

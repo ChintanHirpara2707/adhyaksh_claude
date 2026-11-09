@@ -58,6 +58,18 @@ class Provider(ABC):
     @abstractmethod
     def _call(self, prompt: str, timeout: float) -> str: ...
 
+    @abstractmethod
+    def complete_with_tools(
+        self, messages: list[dict], tools: list[dict], timeout: float = 8.0
+    ) -> Result:
+        """Send messages with tool schemas and return parsed tool calls.
+
+        Returns Result with data = list of {"name": str, "arguments": dict}
+        tool calls. Empty list means the model did not request any tool calls
+        (it produced a text answer instead).
+        """
+        ...
+
     def complete(self, prompt: str, stream: bool = False, timeout: float = 8.0) -> Result:
         """Timeout 8 s, one retry, cached per prompt. stream is accepted but not implemented."""
         import requests
@@ -81,6 +93,12 @@ class Provider(ABC):
         code = E_TIMEOUT if last == "timeout" else "E_LLM_FAILED"
         return Result.failure(code, f"The language model did not respond: {last}.")
 
+    def ask_with_tools(
+        self, messages: list[dict], tools: list[dict], timeout: float = 8.0
+    ) -> Result:
+        """Send messages with tool schemas and return parsed tool calls."""
+        return self.complete_with_tools(messages, tools, timeout=timeout)
+
     def model(self) -> str:
         return config.get(f"{self.name}_model")
 
@@ -102,3 +120,20 @@ def ask(prompt: str, timeout: float = 8.0) -> Result:
     if provider is None:
         return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
     return provider.complete(prompt, timeout=timeout)
+
+
+def ask_with_tools(
+    messages: list[dict], tools: list[dict], timeout: float = 8.0
+) -> Result:
+    """Send messages with tool schemas and return parsed tool calls.
+
+    Returns Result with data = list of {"name": str, "arguments": dict}
+    tool calls. Empty list means the model did not request any tool calls
+    (it produced a text answer instead).
+    """
+    if not config.get_bool("cloud_consent"):
+        return Result.failure(E_BLOCKED, "Cloud use is not enabled in Settings.")
+    provider = get_provider()
+    if provider is None:
+        return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
+    return provider.complete_with_tools(messages, tools, timeout=timeout)

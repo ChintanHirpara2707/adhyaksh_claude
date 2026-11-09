@@ -22,17 +22,17 @@ def _boot():
 
 
 def _make_fake_llm(responses):
-    """Return a fake llm.ask that yields the given responses in order."""
+    """Return a fake llm.ask_with_tools that yields the given responses in order."""
     calls = {"n": 0}
 
-    def fake_ask(prompt, timeout=8.0):
+    def fake_ask_with_tools(messages, tools, timeout=8.0):
         calls["n"] += 1
         idx = calls["n"] - 1
         if idx >= len(responses):
-            return Result.success("ANSWER: Done.")
+            return Result.success({"tool_calls": [], "text": "Done."})
         return Result.success(responses[idx])
 
-    return fake_ask
+    return fake_ask_with_tools
 
 
 def test_page_injection_does_not_trigger_delete(monkeypatch):
@@ -44,10 +44,10 @@ def test_page_injection_does_not_trigger_delete(monkeypatch):
     config.set_value("llm_provider", "groq")
     monkeypatch.setattr(llm, "api_key", lambda provider: "fake-key")
     fake_llm = _make_fake_llm([
-        'TOOL: {"tool": "fetch_page", "arguments": {"url": "https://example.com/evil"}}',
-        "ANSWER: The page says hello.",
+        {"tool_calls": [{"name": "fetch_page", "arguments": {"url": "https://example.com/evil"}}], "text": ""},
+        {"tool_calls": [], "text": "The page says hello."},
     ])
-    monkeypatch.setattr(llm, "ask", fake_llm)
+    monkeypatch.setattr(llm, "ask_with_tools", fake_llm)
 
     deleted = []
 

@@ -288,14 +288,6 @@ def _doc_question(arguments: dict, ctx: dict) -> Result:
     return answerer.answer(arguments["question"])
 
 
-def _web_search(arguments: dict, ctx: dict) -> Result:
-    return system.web_search(arguments["query"], ctx=ctx)
-
-
-def _fetch_page(arguments: dict, ctx: dict) -> Result:
-    return system.fetch_page(arguments["url"], ctx=ctx)
-
-
 # ---------------------------------------------------------------------------
 # Registration
 # ---------------------------------------------------------------------------
@@ -497,34 +489,6 @@ register(
     },
     0,
     _doc_question,
-)
-
-register(
-    "web_search",
-    "Search the web and return a list of results (title, URL, snippet).",
-    {
-        "type": "object",
-        "properties": {
-            "query": {"type": "string", "description": "Search query."},
-        },
-        "required": ["query"],
-    },
-    0,
-    _web_search,
-)
-
-register(
-    "fetch_page",
-    "Fetch a webpage and return its cleaned text content. L0 read-only.",
-    {
-        "type": "object",
-        "properties": {
-            "url": {"type": "string", "description": "URL to fetch (http/https only)."},
-        },
-        "required": ["url"],
-    },
-    0,
-    _fetch_page,
 )
 
 register(

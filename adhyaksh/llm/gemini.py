@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import json
-
 from adhyaksh import config
-from adhyaksh.llm.base import MAX_TOKENS, Provider, api_key, RateLimitError
+from adhyaksh.llm.base import MAX_TOKENS, Provider, api_key
 
 BASE = "https://generativelanguage.googleapis.com/v1beta/models/"
 
@@ -18,48 +16,8 @@ class GeminiProvider(Provider):
                           headers={"x-goog-api-key": api_key("gemini")},
                           json={"contents": [{"parts": [{"text": prompt}]}],
                                 "generationConfig": {"maxOutputTokens": MAX_TOKENS}})
-        if r.status_code == 429:
-            from adhyaksh.result import E_RATE_LIMIT
-            raise RateLimitError("Rate limit exceeded")
         r.raise_for_status()
         return "".join(p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"])
-
-    def complete_with_tools(
-        self, messages: list[dict], tools: list[dict], timeout: float = 8.0
-    ) -> Result:
-        import requests
-
-        # Convert messages to Gemini format
-        contents = []
-        for m in messages:
-            role = "model" if m["role"] == "assistant" else "user"
-            contents.append({"role": role, "parts": [{"text": m["content"]}]})
-
-        # Convert tools to Gemini function declarations
-        function_declarations = []
-        for tool in tools:
-            function_declarations.append({
-                "name": tool.get("name", ""),
-                "description": tool.get("description", ""),
-                "parameters": tool.get("parameters", {}),
-            })
-
-        r = requests.post(f"{BASE}{self.model()}:generateContent", timeout=timeout,
-                          headers={"x-goog-api-key": api_key("gemini")},
-                          json={"contents": contents, "tools": [{"functionDeclarations": function_declarations}],
-                                "generationConfig": {"maxOutputTokens": MAX_TOKENS}})
-        r.raise_for_status()
-        data = r.json()
-        tool_calls: list[dict] = []
-        text = ""
-        for candidate in data.get("candidates", []):
-            for part in candidate.get("content", {}).get("parts", []):
-                if "functionCall" in part:
-                    fc = part["functionCall"]
-                    tool_calls.append({"name": fc.get("name", ""), "arguments": fc.get("args", {})})
-                elif "text" in part:
-                    text = part.get("text", "") or ""
-        return Result.success({"tool_calls": tool_calls, "text": text})
 
 
 def embed(texts: list[str], timeout: float = 8.0) -> list[list[float]]:

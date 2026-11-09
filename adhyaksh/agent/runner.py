@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import re
 import time
-from datetime import date, datetime
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -63,7 +62,7 @@ def _data_block(tool_name: str, arguments: dict, result: Result) -> str:
     else:
         data = result.data or {}
         for key in ("path", "url", "folder", "app", "content", "answer", "matches",
-                    "items", "results", "cpu", "ram", "disk", "moved_to", "opened"):
+                    "items", "cpu", "ram", "disk", "moved_to", "opened"):
             if key in data and data[key] is not None:
                 value = data[key]
                 if isinstance(value, list):
@@ -94,7 +93,6 @@ def _build_system_prompt() -> str:
         "5. Stop after you have enough information to answer; do not call tools "
         "pointlessly.\n"
         "6. Reply in the same language as the user.\n"
-        "7. If web search returns no results, say so explicitly instead of guessing.\n"
     )
 
 
@@ -137,18 +135,6 @@ def _disabled_result(reason: str) -> dict:
     }
 
 
-def _increment_agent_call_count():
-    """Increment the daily agent call counter."""
-    today = date.today().isoformat()
-    stored_date = config.get("agent_calls_date")
-    count = int(config.get("agent_calls_today") or "0")
-    if stored_date != today:
-        count = 0
-        config.set_value("agent_calls_date", today)
-    count += 1
-    config.set_value("agent_calls_today", str(count))
-
-
 def _agent_loop(text: str, convo_id: int, lang: str) -> Iterator[tuple[str, dict]]:
     """Yield ``("step", step_dict)`` for each tool step, then ``("result",
     final_dict)`` with the completed loop result."""
@@ -160,8 +146,6 @@ def _agent_loop(text: str, convo_id: int, lang: str) -> Iterator[tuple[str, dict
             "enabled in Settings."))
         return
 
-    _increment_agent_call_count()
-
     ctx = tool_registry._make_ctx(text, "agent")
     history = context.history(convo_id)
 
@@ -170,14 +154,13 @@ def _agent_loop(text: str, convo_id: int, lang: str) -> Iterator[tuple[str, dict
         messages.append({"role": m["role"], "content": m["content"]})
     messages.append({"role": "user", "content": text})
 
-    tools = tool_registry.schemas()
-
     step_no = 0
     while step_no < MAX_STEPS:
         step_no += 1
-
-        # Try native tool calling first
-        res = llm.ask_with_tools(messages, tools, timeout=TIMEOUT)
+        prompt = "\n".join(f"{r['role']}: {r['content']}" for r in messages)
+        t0 = time.perf_counter()
+        res = llm.ask(prompt, timeout=TIMEOUT)
+        latency = (time.perf_counter() - t0) * 1000
         if not res.ok:
             yield ("result", {
                 "reply": f"I could not complete that request. {res.message}",
@@ -187,169 +170,65 @@ def _agent_loop(text: str, convo_id: int, lang: str) -> Iterator[tuple[str, dict
             })
             return
 
-        data = res.data
-        tool_calls = data.get("tool_calls", [])
-        text_response = data.get("text", "") or ""
-
-        if tool_calls:
-            # Execute the first tool call
-            call = tool_calls[0]
-            tool_name = call.get("name")
-            arguments = call.get("arguments", {}) or {}
-
-            tool = tool_registry.get(tool_name)
-            if tool is None:
-                block = f"TOOL ERROR: unknown tool '{tool_name}'."
-                messages.append({"role": "tool", "content": block})
-                steps.append({"n": step_no, "tool": tool_name, "target": "",
-                              "status": "error", "result": block, "latency_ms": 0.0})
-                yield ("step", steps[-1])
-                continue
-
-            target = (arguments.get("target") or arguments.get("path")
-                      or arguments.get("folder") or arguments.get("url") or "")
-            step = {"n": step_no, "tool": tool_name, "target": str(target),
-                    "status": "running", "result": "", "latency_ms": 0.0,
-                    "label": _step_label(tool_name, str(target))}
-            steps.append(step)
-            yield ("step", step)
-
-            result = tool_registry._guarded(tool, arguments, ctx, tool.fn)
-            status = "ok" if result.ok else ("confirm" if result.error_code == E_NEEDS_CONFIRM else "error")
-            block = _data_block(tool.name, arguments, result)
-            step["status"] = status
-            step["result"] = block
-            yield ("step", step)
-
-            if result.error_code == E_NEEDS_CONFIRM:
-                yield ("result", {
-                    "reply": None,
-                    "steps": steps,
-                    "confirmation": result.data,
-                    "disabled": False,
-                })
-                return
-
-            messages.append({"role": "tool", "content": block})
-        elif text_response:
-            # Model gave a text answer (no tool calls)
+        model_text = (res.data or "").strip()
+        call = _parse_tool_call(model_text)
+        if call is None:
+            answer = _extract_answer(model_text) or model_text
             yield ("result", {
-                "reply": text_response,
+                "reply": answer,
                 "steps": steps,
                 "confirmation": None,
                 "disabled": False,
             })
             return
-        else:
-            # Neither tool calls nor text - fall back to text protocol
-            prompt = "\n".join(f"{r['role']}: {r['content']}" for r in messages)
-            res2 = llm.ask(prompt, timeout=TIMEOUT)
-            if not res2.ok:
-                yield ("result", {
-                    "reply": f"I could not complete that request. {res2.message}",
-                    "steps": steps,
-                    "confirmation": None,
-                    "disabled": False,
-                })
-                return
-            model_text = (res2.data or "").strip()
-            call = _parse_tool_call(model_text)
-            if call is None:
-                answer = _extract_answer(model_text) or model_text
-                yield ("result", {
-                    "reply": answer,
-                    "steps": steps,
-                    "confirmation": None,
-                    "disabled": False,
-                })
-                return
 
-            # Process text-based tool call with retry for invalid JSON
-            tool_name = call.get("tool")
-            arguments = call.get("arguments", {}) or {}
-            if isinstance(arguments, str):
-                try:
-                    arguments = json.loads(arguments)
-                except json.JSONDecodeError:
-                    # Retry once with repair message
-                    messages.append({"role": "user", "content": "The tool arguments you provided were not valid JSON. Please provide valid JSON arguments."})
-                    prompt = "\n".join(f"{r['role']}: {r['content']}" for r in messages)
-                    res3 = llm.ask(prompt, timeout=TIMEOUT)
-                    if not res3.ok:
-                        yield ("result", {
-                            "reply": f"I could not complete that request. {res3.message}",
-                            "steps": steps,
-                            "confirmation": None,
-                            "disabled": False,
-                        })
-                        return
-                    model_text2 = (res3.data or "").strip()
-                    call2 = _parse_tool_call(model_text2)
-                    if call2 is None:
-                        answer = _extract_answer(model_text2) or model_text2
-                        yield ("result", {
-                            "reply": answer,
-                            "steps": steps,
-                            "confirmation": None,
-                            "disabled": False,
-                        })
-                        return
-                    arguments = call2.get("arguments", {}) or {}
-                    if isinstance(arguments, str):
-                        try:
-                            arguments = json.loads(arguments)
-                        except json.JSONDecodeError:
-                            yield ("result", {
-                                "reply": "I could not parse the tool arguments.",
-                                "steps": steps,
-                                "confirmation": None,
-                                "disabled": False,
-                            })
-                            return
-
-            tool = tool_registry.get(tool_name)
-            if tool is None:
-                block = f"TOOL ERROR: unknown tool '{tool_name}'."
-                messages.append({"role": "tool", "content": block})
-                steps.append({"n": step_no, "tool": tool_name, "target": "",
-                              "status": "error", "result": block, "latency_ms": 0.0})
-                yield ("step", steps[-1])
-                continue
-
-            target = (arguments.get("target") or arguments.get("path")
-                      or arguments.get("folder") or arguments.get("url") or "")
-            step = {"n": step_no, "tool": tool_name, "target": str(target),
-                    "status": "running", "result": "", "latency_ms": 0.0,
-                    "label": _step_label(tool_name, str(target))}
-            steps.append(step)
-            yield ("step", step)
-
-            result = tool_registry._guarded(tool, arguments, ctx, tool.fn)
-            status = "ok" if result.ok else ("confirm" if result.error_code == E_NEEDS_CONFIRM else "error")
-            block = _data_block(tool.name, arguments, result)
-            step["status"] = status
-            step["result"] = block
-            yield ("step", step)
-
-            if result.error_code == E_NEEDS_CONFIRM:
-                yield ("result", {
-                    "reply": None,
-                    "steps": steps,
-                    "confirmation": result.data,
-                    "disabled": False,
-                })
-                return
-
+        tool_name = call.get("tool")
+        arguments = call.get("arguments", {}) or {}
+        tool = tool_registry.get(tool_name)
+        if tool is None:
+            block = f"TOOL ERROR: unknown tool '{tool_name}'."
             messages.append({"role": "tool", "content": block})
+            steps.append({"n": step_no, "tool": tool_name, "target": "",
+                          "status": "error", "result": block, "latency_ms": round(latency, 1)})
+            yield ("step", steps[-1])
+            continue
+
+        target = (arguments.get("target") or arguments.get("path")
+                  or arguments.get("folder") or arguments.get("url") or "")
+        step = {"n": step_no, "tool": tool_name, "target": str(target),
+                "status": "running", "result": "", "latency_ms": round(latency, 1),
+                "label": _step_label(tool_name, str(target))}
+        steps.append(step)
+        yield ("step", step)
+
+        result: Result = tool_registry._guarded(tool, arguments, ctx, tool.fn)
+        status = "ok" if result.ok else ("confirm" if result.error_code == E_NEEDS_CONFIRM else "error")
+        block = _data_block(tool_name, arguments, result)
+        step["status"] = status
+        step["result"] = block
+        yield ("step", step)
+
+        if result.error_code == E_NEEDS_CONFIRM:
+            yield ("result", {
+                "reply": None,
+                "steps": steps,
+                "confirmation": result.data,
+                "disabled": False,
+            })
+            return
+
+        messages.append({"role": "tool", "content": block})
 
     # Max steps reached: ask the model to conclude from what it has seen.
     messages.append({"role": "system", "content": "You have reached the step limit. "
-                                                   "Give your best answer now."})
-    res = llm.ask("\n".join(f"{r['role']}: {r['content']}" for r in messages), timeout=TIMEOUT)
+                                                   "Give your best answer now using ANSWER:."})
+    prompt = "\n".join(f"{r['role']}: {r['content']}" for r in messages)
+    res = llm.ask(prompt, timeout=TIMEOUT)
     answer = _extract_answer(res.data or "") or (res.data or "I could not complete that.")
     yield ("result", {"reply": answer, "steps": steps, "confirmation": None,
                       "disabled": False})
-                
+
+
 def run_stream(text: str, convo_id: int, lang: str) -> Iterator[tuple[str, dict]]:
     """Generator yielding each agent step live, then the final result.
 
@@ -373,25 +252,6 @@ def run(text: str, convo_id: int, lang: str) -> dict:
     for kind, payload in run_stream(text, convo_id, lang):
         if kind == "result":
             final = payload
-    if final is not None:
-        # Collect sources from web tool results
-        sources: list[str] = []
-        import re
-        for step in final.get("steps", []):
-            result_text = step.get("result", "")
-            tool_name = step.get("tool", "")
-            if tool_name == "web_search":
-                for m in re.finditer(r"'url'\s*:\s*'([^']+)'", result_text):
-                    url = m.group(1)
-                    if url not in sources:
-                        sources.append(url)
-            elif tool_name == "fetch_page":
-                for m in re.finditer(r"url:\s*(https?://[^\s]+)", result_text):
-                    url = m.group(1)
-                    if url not in sources:
-                        sources.append(url)
-        if sources:
-            final["reply"] = (final.get("reply") or "") + "\n\nSources:\n" + "\n".join(f"- {url}" for url in sources)
     return final or {"reply": None, "steps": [], "confirmation": None,
                      "disabled": True, "reason": "Agent unavailable."}
 

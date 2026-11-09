@@ -92,14 +92,6 @@ if pending:
         engine.confirm(cid, choice == "confirm")
         st.rerun()
 
-# Show confirmation card for agent L2 actions (file overwrite/delete via agent)
-agent_pending = context.get(cid).pending_agent_confirm
-if agent_pending:
-    choice = ui.confirmation_card(agent_pending["action"].replace("_", " "), agent_pending["target"], key=f"agent_c_{agent_pending['token']}")
-    if choice:
-        engine.confirm(cid, choice == "confirm")
-        st.rerun()
-
 last = next((m for m in reversed(history) if m["role"] == "assistant"), None)
 last_id = last["id"] if last else 0
 st.session_state.setdefault("seen_assistant", last_id)

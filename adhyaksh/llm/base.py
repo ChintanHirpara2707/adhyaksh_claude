@@ -13,7 +13,7 @@ from adhyaksh import config
 from adhyaksh.llm import cache
 from adhyaksh.result import E_BLOCKED, E_NO_API_KEY, E_TIMEOUT, Result
 
-PROVIDERS = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "ollama": ""}
+PROVIDERS = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY"}
 MAX_TOKENS = 400
 ENV_FILE = config.ROOT / ".env"
 
@@ -52,28 +52,11 @@ def search_link(query: str) -> str:
     return "https://www.google.com/search?q=" + urllib.parse.quote(query)
 
 
-class RateLimitError(Exception):
-    """Raised when the LLM provider returns a rate-limit error (HTTP 429)."""
-    pass
-
-
 class Provider(ABC):
     name = ""
 
     @abstractmethod
     def _call(self, prompt: str, timeout: float) -> str: ...
-
-    @abstractmethod
-    def complete_with_tools(
-        self, messages: list[dict], tools: list[dict], timeout: float = 8.0
-    ) -> Result:
-        """Send messages with tool schemas and return parsed tool calls.
-
-        Returns Result with data = list of {"name": str, "arguments": dict}
-        tool calls. Empty list means the model did not request any tool calls
-        (it produced a text answer instead).
-        """
-        ...
 
     def complete(self, prompt: str, stream: bool = False, timeout: float = 8.0) -> Result:
         """Timeout 8 s, one retry, cached per prompt. stream is accepted but not implemented."""
@@ -98,26 +81,17 @@ class Provider(ABC):
         code = E_TIMEOUT if last == "timeout" else "E_LLM_FAILED"
         return Result.failure(code, f"The language model did not respond: {last}.")
 
-    def ask_with_tools(
-        self, messages: list[dict], tools: list[dict], timeout: float = 8.0
-    ) -> Result:
-        """Send messages with tool schemas and return parsed tool calls."""
-        return self.complete_with_tools(messages, tools, timeout=timeout)
-
     def model(self) -> str:
         return config.get(f"{self.name}_model")
 
 
 def get_provider() -> Provider | None:
     name = config.get("llm_provider")
-    if name not in PROVIDERS:
-        return None
-    if name != "ollama" and not api_key(name):
+    if name not in PROVIDERS or not api_key(name):
         return None
     from adhyaksh.llm.gemini import GeminiProvider
     from adhyaksh.llm.groq import GroqProvider
-    from adhyaksh.llm.ollama import OllamaProvider
-    return {"groq": GroqProvider, "gemini": GeminiProvider, "ollama": OllamaProvider}[name]()
+    return {"groq": GroqProvider, "gemini": GeminiProvider}[name]()
 
 
 def ask(prompt: str, timeout: float = 8.0) -> Result:
@@ -127,27 +101,4 @@ def ask(prompt: str, timeout: float = 8.0) -> Result:
     provider = get_provider()
     if provider is None:
         return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
-    try:
-        return provider.complete(prompt, timeout=timeout)
-    except RateLimitError:
-        return Result.failure(E_RATE_LIMIT, "Rate limit exceeded. Please try again later.")
-
-
-def ask_with_tools(
-    messages: list[dict], tools: list[dict], timeout: float = 8.0
-) -> Result:
-    """Send messages with tool schemas and return parsed tool calls.
-
-    Returns Result with data = list of {"name": str, "arguments": dict}
-    tool calls. Empty list means the model did not request any tool calls
-    (it produced a text answer instead).
-    """
-    if not config.get_bool("cloud_consent"):
-        return Result.failure(E_BLOCKED, "Cloud use is not enabled in Settings.")
-    provider = get_provider()
-    if provider is None:
-        return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
-    try:
-        return provider.complete_with_tools(messages, tools, timeout=timeout)
-    except RateLimitError:
-        return Result.failure(E_RATE_LIMIT, "Rate limit exceeded. Please try again later.")
+    return provider.complete(prompt, timeout=timeout)

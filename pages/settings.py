@@ -44,8 +44,6 @@ with st.form("llm"):
     existing = llm.api_key(provider) if provider else ""
     key = st.text_input("API key", type="password", placeholder=llm.mask(existing) if existing else "Not set")
     groq_model = st.text_input("Groq model", value=config.get("groq_model"))
-    st.caption("Smaller models (e.g. 8B and below) work poorly for tool calling; "
-               "use a larger model for reliable agent behaviour.")
     gemini_model = st.text_input("Gemini model", value=config.get("gemini_model"))
     embed_model = st.text_input("Gemini embedding model", value=config.get("embedding_model"))
     consent = st.checkbox("Allow sending questions and passages to the selected provider", value=config.get_bool("cloud_consent"))

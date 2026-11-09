@@ -94,6 +94,7 @@ DEFAULTS: dict[str, str] = {
     "gemini_model": "gemini-3.5-flash-lite",  # per Google docs, checked 2026-11-06; editable in Settings
     "doc_min_score": "0.15",
     "power_mode": "false",
+    "web_search_provider": "duckduckgo",
 }
 
 

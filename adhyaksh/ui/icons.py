@@ -7,6 +7,7 @@ PAGE_ICONS = {
     "model_lab": ":material/science:",
     "activity": ":material/history:",
     "settings": ":material/settings:",
+    "vision": ":material/camera:",
 }
 
 

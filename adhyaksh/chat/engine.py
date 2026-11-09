@@ -439,7 +439,8 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Repl
         return _Reply(_t("cancelled", lang), "set_identity")
     # Explicit agent invocation: "agent: <request>"
     if low.startswith("agent:"):
-        return _agent_dispatch(low[len("agent:"):].strip(), ctx, convo_id, lang)
+        agent_text = text.strip()[len("agent:"):].strip()
+        return _agent_dispatch(agent_text, ctx, convo_id, lang)
     ctx.pending_confirm = None
     ctx.pending_agent_confirm = None
     ctx.pending_name = None

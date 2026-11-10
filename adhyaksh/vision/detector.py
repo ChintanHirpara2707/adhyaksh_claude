@@ -1,16 +1,20 @@
 """Object detection with Ultralytics YOLOv8 (lazy import, cached models)."""
 from __future__ import annotations
 
+import hashlib
 import io
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageStat
 
 from adhyaksh import config
 
 _MAX_BYTES = 10 * 1024 * 1024
 _MODELS: dict[str, object] = {}
 _CLASSIFIER: object | None = None
+_DETECT_CACHE: dict[str, list[dict]] = {}
+_CLASSIFY_CACHE: dict[str, list[dict] | str] = {}
+_RAW_CACHE: dict[str, list[dict]] = {}
 
 DETECTION_MODELS = {
     "fast": "yolov8n.pt",
@@ -18,12 +22,16 @@ DETECTION_MODELS = {
     "accurate": "yolov8m.pt",
 }
 CLASSIFIER_MODEL = "yolov8n-cls.pt"
-_MODEL_DIR = Path("models")
+
+
+def _model_dir() -> Path:
+    return config.models_dir()
 
 
 def _model_path(name: str) -> Path:
-    _MODEL_DIR.mkdir(parents=True, exist_ok=True)
-    return _MODEL_DIR / name
+    d = _model_dir()
+    d.mkdir(parents=True, exist_ok=True)
+    return d / name
 
 
 def _load_detection(choice: str):
@@ -94,6 +102,9 @@ def detect(image_bytes: bytes, conf: float = 0.4, imgsz: int = 640,
     kind = _image_kind(image_bytes)
     if kind not in ("jpeg", "png", "webp"):
         return [{"error": "Unsupported file type. Use JPG, PNG or WEBP."}]
+    cache_key = f"{hashlib.sha1(image_bytes).hexdigest()}:{conf}:{imgsz}:{model_choice}"
+    if cache_key in _DETECT_CACHE:
+        return _DETECT_CACHE[cache_key]
     try:
         model = _load_detection(model_choice)
     except ImportError:
@@ -118,36 +129,41 @@ def detect(image_bytes: bytes, conf: float = 0.4, imgsz: int = 640,
                 "confidence": float(box.conf[0]),
                 "box": [float(v) for v in box.xyxy[0]],
             })
+    _DETECT_CACHE[cache_key] = detections
     return detections
 
 
-def detect_raw(image_bytes: bytes, model_choice: str = "balanced") -> list[dict]:
+def detect_raw(image_bytes: bytes, model_choice: str = "balanced",
+               imgsz: int = 640) -> list[dict]:
     """Return raw detections at confidence 0.05 (top 5 by confidence)."""
-    dets = detect(image_bytes, conf=0.05, model_choice=model_choice)
+    cache_key = f"{hashlib.sha1(image_bytes).hexdigest()}:0.05:{imgsz}:{model_choice}:raw"
+    if cache_key in _RAW_CACHE:
+        return _RAW_CACHE[cache_key]
+    dets = detect(image_bytes, conf=0.05, imgsz=imgsz, model_choice=model_choice)
     error = [d for d in dets if "error" in d]
     if error:
         return []
     dets_sorted = sorted(dets, key=lambda d: d["confidence"], reverse=True)
-    return dets_sorted[:5]
+    result = dets_sorted[:5]
+    _RAW_CACHE[cache_key] = result
+    return result
 
 
 def average_brightness(image_bytes: bytes) -> float | None:
     """Return average brightness 0-255, or None if unreadable."""
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert("L")
-        try:
-            pixels = list(img.get_flattened_data())  # Pillow >= 14
-        except AttributeError:
-            pixels = list(img.getdata())  # older Pillow
-        if not pixels:
-            return None
-        return sum(pixels) / len(pixels)
+        stat = ImageStat.Stat(img)
+        return float(stat.mean[0])
     except Exception:
         return None
 
 
 def classify(image_bytes: bytes, imgsz: int = 640) -> list[dict] | str:
     """Run YOLOv8 classification fallback. Returns top guesses or an error string."""
+    cache_key = f"{hashlib.sha1(image_bytes).hexdigest()}:{imgsz}:classify"
+    if cache_key in _CLASSIFY_CACHE:
+        return _CLASSIFY_CACHE[cache_key]
     try:
         model = _load_classifier()
     except ImportError:
@@ -175,4 +191,5 @@ def classify(image_bytes: bytes, imgsz: int = 640) -> list[dict] | str:
                 "label": names.get(int(cls), str(cls)),
                 "confidence": float(conf),
             })
+    _CLASSIFY_CACHE[cache_key] = guesses
     return guesses

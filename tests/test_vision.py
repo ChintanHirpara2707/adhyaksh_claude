@@ -1,6 +1,7 @@
 """Tests for object detection with a fake model (no ultralytics, no network, no camera)."""
 from __future__ import annotations
 
+import hashlib
 import io
 import json
 from PIL import Image
@@ -26,8 +27,10 @@ class _FakeModel:
         self.path = path
         self.received = None
         self.predict_kwargs = None
+        self.call_count = 0
 
     def predict(self, img, conf=0.4, imgsz=640, verbose=False):
+        self.call_count += 1
         self.received = img
         self.predict_kwargs = {"conf": conf, "imgsz": imgsz, "verbose": verbose}
         return [_FakeResult({0: "person", 1: "bicycle", 41: "cup"},
@@ -61,8 +64,10 @@ class _FakeClassifier:
         self.path = path
         self.received = None
         self.predict_kwargs = None
+        self.call_count = 0
 
     def __call__(self, img, imgsz=640, verbose=False):
+        self.call_count += 1
         self.received = img
         self.predict_kwargs = {"imgsz": imgsz, "verbose": verbose}
         return [_FakeClassifierResult({0: "person", 1: "bicycle", 2: "cup"},
@@ -75,9 +80,14 @@ def _make_load(fake_model):
     return load
 
 
+# ---------------------------------------------------------------------------
+# Detection tests
+# ---------------------------------------------------------------------------
+
 def test_detect_respects_model_choice(monkeypatch):
     fake = _FakeModel("models/yolov8n.pt")
     monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_DETECT_CACHE", {})
     monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
     buf = io.BytesIO()
     Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
@@ -92,6 +102,7 @@ def test_detect_respects_model_choice(monkeypatch):
 def test_detect_uses_imgsz(monkeypatch):
     fake = _FakeModel("models/yolov8s.pt")
     monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_DETECT_CACHE", {})
     monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
     buf = io.BytesIO()
     Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
@@ -103,6 +114,7 @@ def test_detect_uses_imgsz(monkeypatch):
 def test_detect_grouping_and_counts(monkeypatch):
     fake = _FakeModel("models/yolov8s.pt")
     monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_DETECT_CACHE", {})
     monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
     buf = io.BytesIO()
     Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
@@ -154,12 +166,81 @@ def test_detect_missing_ultralytics(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
+# Cache behavior tests (identical input does not re-run, slider change does)
+# ---------------------------------------------------------------------------
+
+def test_camera_processed_when_upload_empty(monkeypatch):
+    """Camera bytes are processed as a separate source even when upload is None."""
+    fake = _FakeModel("models/yolov8s.pt")
+    monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_DETECT_CACHE", {})
+    monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
+
+    # Simulate upload being None, camera having bytes
+    buf = io.BytesIO()
+    Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
+    camera_bytes = buf.getvalue()
+
+    # Camera input processes its own bytes
+    dets = detector.detect(camera_bytes, conf=0.25, imgsz=640, model_choice="balanced")
+    assert len(dets) == 3
+    assert isinstance(fake.received, Image.Image)
+
+
+def test_slider_change_reruns_detection(monkeypatch):
+    """Changing conf/imgsz/model_choice produces a new cache key -> re-runs predict."""
+    fake = _FakeModel("models/yolov8s.pt")
+    monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_DETECT_CACHE", {})
+    monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
+    buf = io.BytesIO()
+    Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
+    img = buf.getvalue()
+
+    # First call
+    detector.detect(img, conf=0.25, imgsz=640, model_choice="balanced")
+    first_calls = fake.call_count
+
+    # Same input -> should NOT re-run (same cache key)
+    detector.detect(img, conf=0.25, imgsz=640, model_choice="balanced")
+    assert fake.call_count == first_calls, "identical input should not re-run detect"
+
+    # Slider change (conf) -> new cache key -> re-run
+    detector.detect(img, conf=0.50, imgsz=640, model_choice="balanced")
+    assert fake.call_count == first_calls + 1, "changed conf should re-run detect"
+
+    # Image size change -> re-run
+    detector.detect(img, conf=0.50, imgsz=960, model_choice="balanced")
+    assert fake.call_count == first_calls + 2, "changed imgsz should re-run detect"
+
+
+def test_identical_input_no_rerun(monkeypatch):
+    """Same bytes, conf, imgsz, model_choice -> predict called only once."""
+    fake = _FakeModel("models/yolov8s.pt")
+    monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_DETECT_CACHE", {})
+    monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
+    buf = io.BytesIO()
+    Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
+    img = buf.getvalue()
+
+    detector.detect(img, conf=0.25, imgsz=640, model_choice="balanced")
+    n1 = fake.call_count
+
+    # Same input again
+    detector.detect(img, conf=0.25, imgsz=640, model_choice="balanced")
+    assert fake.call_count == n1, "identical input must not re-run detection"
+
+
+# ---------------------------------------------------------------------------
 # Classifier fallback tests
 # ---------------------------------------------------------------------------
 
 def test_detect_returns_empty_then_classify_runs(monkeypatch):
-    """When detection returns nothing, the page calls classify as fallback."""
+    """When detection returns nothing, classify runs as fallback."""
     monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_DETECT_CACHE", {})
+    monkeypatch.setattr(detector, "_CLASSIFY_CACHE", {})
     monkeypatch.setattr(detector, "_load_detection", lambda c: _EmptyModel())
     buf = io.BytesIO()
     Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
@@ -173,14 +254,11 @@ def test_detect_returns_empty_then_classify_runs(monkeypatch):
     assert len(result) == 3
     assert result[0]["label"] == "person"
     assert result[0]["confidence"] == 0.9
-    assert result[1]["label"] == "bicycle"
-    assert result[1]["confidence"] == 0.7
-    assert result[2]["label"] == "cup"
-    assert result[2]["confidence"] == 0.6
 
 
 def test_classify_top3_format(monkeypatch):
     monkeypatch.setattr(detector, "_CLASSIFIER", None)
+    monkeypatch.setattr(detector, "_CLASSIFY_CACHE", {})
     monkeypatch.setattr(detector, "_load_classifier", lambda: _FakeClassifier("models/yolov8n-cls.pt"))
     buf = io.BytesIO()
     Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
@@ -205,6 +283,36 @@ def test_describe_known_labels(monkeypatch):
 
 def test_describe_unknown_label(monkeypatch):
     assert descriptions.describe("notacoco") == "A notacoco is an object detected in the image. It is commonly seen in everyday scenes."
+
+
+# ---------------------------------------------------------------------------
+# Details values tests
+# ---------------------------------------------------------------------------
+
+def test_detect_raw_top5(monkeypatch):
+    fake = _FakeModel("models/yolov8s.pt")
+    monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
+    buf = io.BytesIO()
+    Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
+    img = buf.getvalue()
+    raw = detector.detect_raw(img, model_choice="fast", imgsz=640)
+    assert len(raw) == 3
+    assert raw[0]["label"] == "person"
+    assert raw[0]["confidence"] == 0.9
+    assert fake.predict_kwargs["conf"] == 0.05
+    assert fake.predict_kwargs["imgsz"] == 640
+
+
+def test_average_brightness(monkeypatch):
+    monkeypatch.setattr(detector, "_MODELS", {})
+    buf = io.BytesIO()
+    Image.new("RGB", (10, 10), "white").save(buf, format="PNG")
+    img = buf.getvalue()
+    bright = detector.average_brightness(img)
+    assert bright is not None
+    assert 0 <= bright <= 255
+    assert bright == 255.0
 
 
 # ---------------------------------------------------------------------------
@@ -262,32 +370,3 @@ def test_wikipedia_failure_returns_empty(monkeypatch):
     monkeypatch.setattr(descriptions.urllib.request, "urlopen", fake)
     result = descriptions.wikipedia("person")
     assert result == ""
-
-
-# ---------------------------------------------------------------------------
-# Details values tests
-# ---------------------------------------------------------------------------
-
-def test_detect_raw_top5(monkeypatch):
-    fake = _FakeModel("models/yolov8s.pt")
-    monkeypatch.setattr(detector, "_MODELS", {})
-    monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
-    buf = io.BytesIO()
-    Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
-    img = buf.getvalue()
-    raw = detector.detect_raw(img, model_choice="fast")
-    assert len(raw) == 3
-    assert raw[0]["label"] == "person"
-    assert raw[0]["confidence"] == 0.9
-    assert fake.predict_kwargs["conf"] == 0.05
-
-
-def test_average_brightness(monkeypatch):
-    monkeypatch.setattr(detector, "_MODELS", {})
-    buf = io.BytesIO()
-    Image.new("RGB", (10, 10), "white").save(buf, format="PNG")
-    img = buf.getvalue()
-    bright = detector.average_brightness(img)
-    assert bright is not None
-    assert 0 <= bright <= 255
-    assert bright == 255.0

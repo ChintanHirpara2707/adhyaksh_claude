@@ -98,23 +98,18 @@ button[data-baseweb="tab"][aria-selected="true"]{{color:var(--text)}}
 """
 
 
-def sidebar_header(key_suffix: str = "") -> str:
-    """Brand and Light/Dark switch at the top of the sidebar. Returns the saved theme.
-
-    ``key_suffix`` makes the toggle key unique per page so multiple pages can each
-    render their own header without colliding on ``st.session_state`` keys.
-    """
+def sidebar_header() -> str:
+    """Brand and Light/Dark switch at the top of the sidebar. Returns the saved theme."""
     import streamlit as st
 
     from adhyaksh import config
 
     saved = config.get("theme")
-    toggle_key = f"theme_toggle{key_suffix}"
-    if toggle_key not in st.session_state:
-        st.session_state[toggle_key] = saved == "dark"
+    if "theme_toggle" not in st.session_state:
+        st.session_state["theme_toggle"] = saved == "dark"
     with st.sidebar:
         st.markdown('<p class="adhy-brand">ADHYAKSH</p>', unsafe_allow_html=True)
-        is_dark = st.toggle("Dark mode", key=toggle_key)
+        is_dark = st.toggle("Dark mode", key="theme_toggle")
     chosen = "dark" if is_dark else "light"
     if is_dark != (saved == "dark"):
         config.set_value("theme", chosen)

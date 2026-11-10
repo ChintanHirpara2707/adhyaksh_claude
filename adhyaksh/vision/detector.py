@@ -1,7 +1,10 @@
 """Object detection with Ultralytics YOLOv8n (lazy import, cached model)."""
 from __future__ import annotations
 
+import io
 from pathlib import Path
+
+from PIL import Image
 
 _MAX_BYTES = 10 * 1024 * 1024
 _MODEL = None
@@ -45,7 +48,11 @@ def detect(image_bytes: bytes, conf: float = 0.4) -> list[dict]:
     except Exception as exc:  # download or load failure
         return [{"error": f"Model load failed: {exc}"}]
     try:
-        results = model(image_bytes, conf=conf, verbose=False)
+        img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    except Exception:
+        return [{"error": "The image could not be read."}]
+    try:
+        results = model.predict(img, conf=conf, verbose=False)
     except Exception as exc:
         return [{"error": f"Detection failed: {exc}"}]
     detections: list[dict] = []

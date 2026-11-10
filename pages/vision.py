@@ -12,6 +12,17 @@ from adhyaksh.vision import detector, descriptions
 ui.page_header("Object Detection", "Detect objects in a camera snapshot or uploaded image.")
 theme.inject(config.get("theme") or "light")
 
+MODEL_CHOICES = {"fast": "Fast (yolov8n)", "balanced": "Balanced (yolov8s)", "accurate": "Accurate (yolov8m)"}
+
+col_model, col_imgsz = st.columns(2)
+with col_model:
+    model_choice = st.selectbox("Detection model", list(MODEL_CHOICES),
+                                format_func=lambda k: MODEL_CHOICES[k],
+                                index=list(MODEL_CHOICES).index(config.get("vision_model") or "balanced"))
+with col_imgsz:
+    imgsz = st.selectbox("Image size", [640, 960],
+                         index=[640, 960].index(int(config.get("vision_imgsz") or "640")))
+
 conf = st.slider("Confidence threshold", 0.10, 0.80, 0.25, 0.05)
 
 tab_camera, tab_upload = st.tabs(["Camera", "Upload image"])
@@ -33,7 +44,7 @@ cur = state.setdefault(active, {"bytes": None, "detections": None})
 if image is not None:
     b = image.getvalue()
     if cur.get("bytes") != b:
-        detections = detector.detect(b, conf=conf)
+        detections = detector.detect(b, conf=conf, imgsz=imgsz, model_choice=model_choice)
         state[active] = {"bytes": b, "detections": detections}
     else:
         detections = cur.get("detections")
@@ -66,3 +77,19 @@ else:
                 f"**{label}** — {len(items)} found, best confidence {best['confidence']:.0%}.\n"
                 f"{descriptions.describe(label)}{wiki}"
             )
+
+# Classifier fallback: only when detection found nothing
+if image is not None and detections is not None and len(detections) == 0:
+    fallback = detector.classify(state[active]["bytes"], imgsz=imgsz)
+    if isinstance(fallback, str):
+        st.info(fallback)
+    elif fallback:
+        st.markdown("**Closest match** — best guess for the main object in the image:")
+        for g in fallback[:3]:
+            wiki = descriptions.wikipedia(g["label"])
+            st.markdown(
+                f"**{g['label']}** — {g['confidence']:.0%}.\n"
+                f"{descriptions.describe(g['label'])}{wiki}"
+            )
+    else:
+        st.info("No objects found. Try better light, or move the camera closer to the object.")

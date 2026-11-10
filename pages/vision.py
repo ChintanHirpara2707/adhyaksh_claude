@@ -93,3 +93,31 @@ if image is not None and detections is not None and len(detections) == 0:
             )
     else:
         st.info("No objects found. Try better light, or move the camera closer to the object.")
+
+# Collapsible Details section
+if image is not None:
+    b = state[active]["bytes"]
+    img = Image.open(io.BytesIO(b)).convert("RGB")
+    w, h = img.size
+    bright = detector.average_brightness(b)
+    raw = detector.detect_raw(b, model_choice=model_choice)
+    camera_bytes = len(b) if active == "camera" else None
+    model_name = detector.DETECTION_MODELS.get(model_choice, model_choice)
+    with st.expander("Details", expanded=False):
+        st.markdown(f"- Size: {w} × {h} pixels")
+        st.markdown(f"- File size: {len(b)} bytes")
+        if bright is not None:
+            st.markdown(f"- Average brightness: {bright:.0f} / 255")
+        else:
+            st.markdown("- Average brightness: unreadable")
+        st.markdown(f"- Model: {model_name}")
+        st.markdown(f"- Confidence threshold: {conf:.0%}")
+        if camera_bytes is not None:
+            st.markdown(f"- Camera bytes read: {camera_bytes}")
+        st.markdown("**Raw detections (confidence ≥ 0.05, top 5):**")
+        if raw:
+            for d in raw:
+                st.markdown(f"  - {d['label']} — {d['confidence']:.0%}")
+        else:
+            st.markdown("  - none")
+

@@ -121,6 +121,31 @@ def detect(image_bytes: bytes, conf: float = 0.4, imgsz: int = 640,
     return detections
 
 
+def detect_raw(image_bytes: bytes, model_choice: str = "balanced") -> list[dict]:
+    """Return raw detections at confidence 0.05 (top 5 by confidence)."""
+    dets = detect(image_bytes, conf=0.05, model_choice=model_choice)
+    error = [d for d in dets if "error" in d]
+    if error:
+        return []
+    dets_sorted = sorted(dets, key=lambda d: d["confidence"], reverse=True)
+    return dets_sorted[:5]
+
+
+def average_brightness(image_bytes: bytes) -> float | None:
+    """Return average brightness 0-255, or None if unreadable."""
+    try:
+        img = Image.open(io.BytesIO(image_bytes)).convert("L")
+        try:
+            pixels = list(img.get_flattened_data())  # Pillow >= 14
+        except AttributeError:
+            pixels = list(img.getdata())  # older Pillow
+        if not pixels:
+            return None
+        return sum(pixels) / len(pixels)
+    except Exception:
+        return None
+
+
 def classify(image_bytes: bytes, imgsz: int = 640) -> list[dict] | str:
     """Run YOLOv8 classification fallback. Returns top guesses or an error string."""
     try:

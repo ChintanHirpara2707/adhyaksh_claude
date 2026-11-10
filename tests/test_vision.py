@@ -262,3 +262,32 @@ def test_wikipedia_failure_returns_empty(monkeypatch):
     monkeypatch.setattr(descriptions.urllib.request, "urlopen", fake)
     result = descriptions.wikipedia("person")
     assert result == ""
+
+
+# ---------------------------------------------------------------------------
+# Details values tests
+# ---------------------------------------------------------------------------
+
+def test_detect_raw_top5(monkeypatch):
+    fake = _FakeModel("models/yolov8s.pt")
+    monkeypatch.setattr(detector, "_MODELS", {})
+    monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
+    buf = io.BytesIO()
+    Image.new("RGB", (10, 10), "red").save(buf, format="PNG")
+    img = buf.getvalue()
+    raw = detector.detect_raw(img, model_choice="fast")
+    assert len(raw) == 3
+    assert raw[0]["label"] == "person"
+    assert raw[0]["confidence"] == 0.9
+    assert fake.predict_kwargs["conf"] == 0.05
+
+
+def test_average_brightness(monkeypatch):
+    monkeypatch.setattr(detector, "_MODELS", {})
+    buf = io.BytesIO()
+    Image.new("RGB", (10, 10), "white").save(buf, format="PNG")
+    img = buf.getvalue()
+    bright = detector.average_brightness(img)
+    assert bright is not None
+    assert 0 <= bright <= 255
+    assert bright == 255.0

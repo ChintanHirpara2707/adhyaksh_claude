@@ -18,6 +18,11 @@ from adhyaksh.safety import policy
 from adhyaksh.tools import apps, files, office, system
 
 MAX_MESSAGE = 2000
+OS_INTENTS = {
+    "file_create", "file_read", "file_update", "file_delete", "file_search",
+    "folder_create", "office_create", "app_open", "app_close",
+    "special_folder_open", "web_open", "screenshot", "system_status",
+}
 YES = {"yes", "y", "confirm", "yes please", "haan", "ha", "हाँ", "हां", "હા", "ok confirm"}
 NO = {"no", "n", "cancel", "nahi", "nahin", "na", "नहीं", "ના", "નહીં", "nope"}
 EXAMPLE_NAME = "names.xlsx"
@@ -174,9 +179,9 @@ def _cannot_do_yet(lang: str) -> str:
 
 class _Reply:
     def __init__(self, text: str, intent: str, conf: float = 1.0, action: str = "", confirmation: dict | None = None,
-                 sources: list | None = None):
+                 sources: list | None = None, suggest_mode: str | None = None):
         self.text, self.intent, self.conf, self.action = text, intent, conf, action
-        self.confirmation, self.sources = confirmation, sources or []
+        self.confirmation, self.sources, self.suggest_mode = confirmation, sources or [], suggest_mode
 
 
 def _confirm_reply(res: Result, lang: str, ctx: context.Context, retry, intent: str, shown: str) -> _Reply:
@@ -205,8 +210,11 @@ def _llm_answer(text: str, convo_id: int, lang: str, intent: str) -> _Reply:
     return _Reply(_t("error", lang, reason=res.message.rstrip(".")) + " " + llm.search_link(text), intent)
 
 
-def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_id: int, lang: str) -> _Reply:
+def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_id: int, lang: str,
+              mode: str = "cowork") -> _Reply:
     c = _ctx_for(text, intent)
+    if mode == "chat" and intent in OS_INTENTS:
+        return _Reply(_t("needs_cowork", lang), intent, action="needs_cowork", suggest_mode="cowork")
     if intent == "greet":
         return _Reply(_t("greet", lang), intent)
     if intent == "bot_identity":
@@ -425,7 +433,7 @@ def confirm(conversation_id: int, accept: bool) -> Result:
     return Result.success({"reply": r.text, "intent": r.intent, "action": r.action, "confirmation": None})
 
 
-def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Reply:
+def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: str = "cowork") -> _Reply:
     low = text.strip().casefold().rstrip(".!")
     if ctx.pending_agent_confirm and low in YES | NO:
         return _finish_agent_confirmation(ctx, low in YES, convo_id, lang)
@@ -459,11 +467,11 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Repl
             slots["url"] = router.extract_web_url(text)
         else:
             slots["content"] = text.strip()
-        return _dispatch(p["intent"], text, slots, ctx, convo_id, lang)
+        return _dispatch(p["intent"], text, slots, ctx, convo_id, lang, mode=mode)
     rule = router.match_rules(text)
     if rule:
         intent, slots = _correct_file_folder(rule.intent, rule.slots, text)
-        return _dispatch(intent, text, slots, ctx, convo_id, lang)
+        return _dispatch(intent, text, slots, ctx, convo_id, lang, mode=mode)
     intent, conf, gap = registry.predict(text)
     if intent == "unknown" and conf == 0.0 and not registry.available():
         return _Reply("No trained model is active. Run: python -m adhyaksh.nlu.train --all", "unknown", 0.0)
@@ -484,12 +492,12 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Repl
         return _agent_dispatch(text, ctx, convo_id, lang)
     # Model path: extract slots using the same extractors as the rule layer.
     intent, slots = _correct_file_folder(intent, _model_slots(intent, text), text)
-    r = _dispatch(intent, text, slots, ctx, convo_id, lang)
+    r = _dispatch(intent, text, slots, ctx, convo_id, lang, mode=mode)
     r.conf = conf
     return r
 
 
-def handle_message(text: str, conversation_id: int, voice: bool = False) -> Result:
+def handle_message(text: str, conversation_id: int, voice: bool = False, mode: str = "cowork") -> Result:
     """Process one user message and return reply, intent, confidence, action, timing."""
     t0 = time.perf_counter()
     text = (text or "").strip()[:MAX_MESSAGE]
@@ -499,11 +507,14 @@ def handle_message(text: str, conversation_id: int, voice: bool = False) -> Resu
     context.save_message(conversation_id, "user", text)
     ctx = context.get(conversation_id)
     try:
-        r = _process(text, ctx, conversation_id, lang)
+        r = _process(text, ctx, conversation_id, lang, mode=mode)
     except Exception as exc:  # never raise to the UI for expected failures
         r = _Reply(_t("error", lang, reason=f"internal error ({type(exc).__name__})"), "error", 0.0)
     ms = (time.perf_counter() - t0) * 1000
     context.save_message(conversation_id, "assistant", r.text, r.intent, r.conf, ms)
-    return Result.success({"reply": r.text, "intent": r.intent, "confidence": round(r.conf, 3), "action": r.action,
-                           "latency_ms": round(ms, 1), "confirmation": r.confirmation, "sources": r.sources,
-                           "lang": lang, "voice": voice})
+    result = {"reply": r.text, "intent": r.intent, "confidence": round(r.conf, 3), "action": r.action,
+              "latency_ms": round(ms, 1), "confirmation": r.confirmation, "sources": r.sources,
+              "lang": lang, "voice": voice, "mode": mode}
+    if r.suggest_mode is not None:
+        result["suggest_mode"] = r.suggest_mode
+    return Result.success(result)

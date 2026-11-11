@@ -117,6 +117,11 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "hi": "मैं अभी वह काम नहीं कर सकता। {capabilities}",
         "gu": "હું હજી એ કામ કરી શકતો નથી. {capabilities}",
     },
+    "needs_cowork": {
+        "en": "That action needs Cowork mode. Switch to Cowork to run it.",
+        "hi": "यह क्रिया करने के लिए कॉर्क मोड की आवश्यकता है। कॉर्क मोड पर स्विच करें।",
+        "gu": "આ ક્રિયા ચલાવવા માટે કોર્ક મોડની જરૂર છે. કોર્ક મોડ પર સ્વિચ કરો.",
+    },
 }
 
 

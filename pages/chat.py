@@ -105,40 +105,39 @@ if speak:
 if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
     st.session_state["voice_nonce"] = heard["nonce"]
     st.caption(f"Heard: {heard['text']}")
+    st.session_state["suggest_switch"] = False
     with st.spinner("Working"):
         result = engine.handle_message(heard["text"], cid, voice=True, mode=mode)
     if result.data and result.data.get("suggest_mode") == "cowork":
-        st.markdown(result.data["reply"])
-        if st.button("Switch to Cowork", key="switch_cowork_voice"):
-            st.session_state["mode"] = "cowork"
-            st.rerun()
+        st.session_state["suggest_switch"] = True
     st.rerun()
 
-# Mode toggle: small segmented control directly above the chat input.
+# Mode toggle: small control directly above the chat input.
 st.divider()
-caption = ("Cowork: can open apps and work with your files."
+if mode == "chat" and st.session_state.get("suggest_switch"):
+    st.info("That action needs Cowork mode. Switch to Cowork to run it.")
+    if st.button("Switch to Cowork", key="switch_cowork"):
+        st.session_state["mode"] = "cowork"
+        st.session_state["mode_toggle"] = "Cowork"
+        st.session_state["suggest_switch"] = False
+        st.rerun()
+st.caption("Cowork: can open apps and work with your files."
            if mode == "cowork" else "Chat: answers and information only.")
-st.caption(caption)
-try:
-    chosen = st.segmented_control("Mode", ["Chat", "Cowork"],
-                                  index=0 if mode == "chat" else 1,
-                                  key="mode_toggle")
-except AttributeError:
-    chosen = st.radio("Mode", ["Chat", "Cowork"],
-                      index=0 if mode == "chat" else 1,
-                      horizontal=True, key="mode_toggle")
+chosen = st.radio("Mode", ["Chat", "Cowork"],
+                  index=0 if mode == "chat" else 1,
+                  horizontal=True, key="mode_toggle",
+                  label_visibility="collapsed")
 new_mode = chosen.lower()
 if new_mode != mode:
     st.session_state["mode"] = new_mode
+    st.session_state["suggest_switch"] = False
     st.rerun()
 
 prompt = st.chat_input("Type a command")
 if prompt:
+    st.session_state["suggest_switch"] = False
     with st.spinner("Working"):
         result = engine.handle_message(prompt, cid, mode=mode)
     if result.data and result.data.get("suggest_mode") == "cowork":
-        st.markdown(result.data["reply"])
-        if st.button("Switch to Cowork", key="switch_cowork_text"):
-            st.session_state["mode"] = "cowork"
-            st.rerun()
+        st.session_state["suggest_switch"] = True
     st.rerun()

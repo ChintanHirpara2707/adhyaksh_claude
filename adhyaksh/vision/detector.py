@@ -133,18 +133,14 @@ def detect(image_bytes: bytes, conf: float = 0.4, imgsz: int = 640,
     return detections
 
 
-def detect_raw(image_bytes: bytes, model_choice: str = "balanced",
-               imgsz: int = 640) -> list[dict]:
+def detect_raw(image_bytes: bytes, model_choice: str = "balanced", imgsz: int = 640) -> list[dict]:
     """Return raw detections at confidence 0.05 (top 5 by confidence)."""
-    cache_key = f"{hashlib.sha1(image_bytes).hexdigest()}:0.05:{imgsz}:{model_choice}:raw"
-    if cache_key in _RAW_CACHE:
-        return _RAW_CACHE[cache_key]
     dets = detect(image_bytes, conf=0.05, imgsz=imgsz, model_choice=model_choice)
     error = [d for d in dets if "error" in d]
     if error:
         return []
     dets_sorted = sorted(dets, key=lambda d: d["confidence"], reverse=True)
-    result = dets_sorted[:5]
+    return dets_sorted[:5]
     _RAW_CACHE[cache_key] = result
     return result
 

@@ -102,7 +102,7 @@ def render(key: str, file) -> None:
     # Collapsible Details section
     w, h = img.size
     bright = detector.average_brightness(image_bytes)
-    raw = detector.detect_raw(image_bytes, model_choice=model_choice, imgsz=imgsz)
+    raw = detector.detect_raw(image_bytes, model_choice=model_choice)
     camera_bytes = len(image_bytes) if key == "camera" else None
     model_name = detector.DETECTION_MODELS.get(model_choice, model_choice)
     with st.expander("Details", expanded=False):

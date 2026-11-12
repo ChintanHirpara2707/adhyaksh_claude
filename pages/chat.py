@@ -66,26 +66,26 @@ for m in history:
                     st.rerun()
 
 # Show the agent steps live (collapsible), attached to the latest turn.
-ctx = context.get(cid)
-steps = ctx.agent_steps or []
-if steps:
-    with st.expander("Agent steps", expanded=True):
-        for s in steps:
-            label = s.get("label") or s.get("tool") or "step"
-            target = s.get("target") or ""
-            st.markdown(f"**{label}** — {target or '—'}")
-            status = s.get("status", "")
-            if status == "ok":
-                st.success("done")
-            elif status == "confirm":
-                st.info("awaiting confirmation")
-            elif status == "error":
-                st.error("error")
-            else:
-                st.caption("running…")
-            result = s.get("result", "")
-            if result:
-                st.code(result)
+# ctx = context.get(cid)
+# steps = ctx.agent_steps or []
+# if steps:
+#     with st.expander("Agent steps", expanded=True):
+#         for s in steps:
+#             label = s.get("label") or s.get("tool") or "step"
+#             target = s.get("target") or ""
+#             st.markdown(f"**{label}** — {target or '—'}")
+#             status = s.get("status", "")
+#             if status == "ok":
+#                 st.success("done")
+#             elif status == "confirm":
+#                 st.info("awaiting confirmation")
+#             elif status == "error":
+#                 st.error("error")
+#             else:
+#                 st.caption("running…")
+#             result = s.get("result", "")
+#             if result:
+#                 st.code(result)
 
 pending = context.get(cid).pending_confirm
 if pending:

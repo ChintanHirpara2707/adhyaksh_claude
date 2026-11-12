@@ -17,7 +17,8 @@ def _boot() -> bool:
 _boot()
 
 PAGES = [("chat", "Chat"), ("documents", "Documents"), ("memory", "Memory"), ("tools", "Tools"),
-         ("model_lab", "Model Lab"), ("activity", "Activity"), ("settings", "Settings"), ("vision", "Object Detection")]
+         ("model_lab", "Model Lab"), ("activity", "Activity"), ("settings", "Settings"),
+         ("vision", "Object Detection"), ("performance", "PC Performance")]
 pages = [
     st.Page(f"pages/{slug}.py", title=title, icon=icons.page_icon(slug), url_path=slug,
             default=(slug == "chat"))

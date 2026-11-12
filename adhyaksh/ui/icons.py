@@ -8,7 +8,9 @@ PAGE_ICONS = {
     "activity": ":material/history:",
     "settings": ":material/settings:",
     "vision": ":material/camera:",
+    "performance": ":material/speed:",
 }
+
 
 
 def page_icon(slug: str) -> str:

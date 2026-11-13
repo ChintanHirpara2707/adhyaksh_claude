@@ -509,11 +509,16 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
         else:
             slots["content"] = text.strip()
         return _dispatch(p["intent"], text, slots, ctx, convo_id, lang, mode=mode)
-    rule = router.match_rules(text)
+    rule = router.understand(text)
     if rule:
         intent, slots = _correct_file_folder(rule.intent, rule.slots, text)
         return _dispatch(intent, text, slots, ctx, convo_id, lang, mode=mode)
     intent, conf, gap = registry.predict(text)
+    cleaned = router.clean_command(text)
+    if cleaned != text:
+        c_intent, c_conf, c_gap = registry.predict(cleaned)
+        if c_conf > conf:
+            intent, conf, gap, text = c_intent, c_conf, c_gap, cleaned
     if intent == "unknown" and conf == 0.0 and not registry.available():
         return _Reply("No trained model is active. Run: python -m adhyaksh.nlu.train --all", "unknown", 0.0)
     threshold = config.get_float("confidence_threshold")

@@ -1,6 +1,6 @@
 """Intent dataset: generation, validation, loading and splitting.
 
-CLI: python -m adhyaksh.nlu.dataset generate|validate|report
+CLI: python -m adhyaksh.nlu.dataset generate|augment|validate|report
 All generated rows are marked reviewed=false until the author confirms them.
 """
 from __future__ import annotations
@@ -449,6 +449,111 @@ def balance_report(path: Path | str = TRAIN_CSV) -> str:
     return "\n".join(lines)
 
 
+# ---------------------------------------------------------------------------
+# Extra paraphrases (synonyms, fillers, spoken style) appended by `augment`.
+# They never replace existing rows, so author and corrected examples are kept.
+# ---------------------------------------------------------------------------
+EXTRA_TEMPLATES: dict[str, dict[str, list[str]]] = {
+    "app_open": {
+        "en": ["fire up {a}", "bring up {a}", "can you open {a}", "i need {a}", "get {a} running", "load {a}"],
+        "hinglish": ["{a} on karo", "zara {a} khol do", "{a} chalu kar do", "mujhe {a} chahiye"],
+        "gujlish": ["{a} on karo", "jara {a} kholi do", "mane {a} joiye che", "{a} chalu karjo"],
+        "hi": ["{a} को खोलिए", "ज़रा {a} चालू कर दो"], "gu": ["{a} ખોલી આપો", "જરા {a} ચાલુ કરી દો"]},
+    "app_close": {
+        "en": ["kill {a}", "exit {a}", "terminate {a}", "i am done with {a}", "turn off {a}", "close down {a}"],
+        "hinglish": ["{a} band kar do", "{a} off karo", "{a} ko hata do screen se", "{a} ka kaam khatam, band karo"],
+        "gujlish": ["{a} bandh kari do", "{a} off karo", "{a} nu kam puru, bandh karo", "{a} bandh karjo"],
+        "hi": ["{a} को बंद कर दो", "{a} बंद कर दीजिए"], "gu": ["{a} બંધ કરી દો", "{a} બંધ કરજો"]},
+    "screenshot": {
+        "en": ["grab a screenshot", "capture my screen", "snap the screen", "take a screen capture",
+               "screenshot please", "save what is on my screen as an image"],
+        "hinglish": ["screenshot lo", "screen ka photo le lo", "screenshot le lo yaar", "screen capture karo"],
+        "gujlish": ["screenshot lo", "screen no photo lai lo", "screenshot kari lo", "screen capture karo"],
+        "hi": ["स्क्रीनशॉट लो", "स्क्रीन की फोटो ले लो", "स्क्रीन कैप्चर करो"],
+        "gu": ["સ્ક્રીનશોટ લો", "સ્ક્રીનનો ફોટો લઈ લો", "સ્ક્રીન કેપ્ચર કરો"]},
+    "system_status": {
+        "en": ["is my laptop slow", "how is my pc doing", "how much storage is left", "check battery and cpu",
+               "what is eating my ram", "give me a performance summary"],
+        "hinglish": ["laptop slow kyun hai check karo", "pc ki health dikhao", "kitna storage bacha hai",
+                     "cpu aur ram ka status batao"],
+        "gujlish": ["laptop slow kem che check karo", "pc ni health batavo", "ketlu storage baki che",
+                    "cpu ane ram nu status kaho"],
+        "hi": ["लैपटॉप धीमा क्यों है जांचो", "पीसी की सेहत दिखाओ"], "gu": ["લેપટોપ ધીમું કેમ છે તપાસો", "પીસીની હેલ્થ બતાવો"]},
+    "time_date": {
+        "en": ["what time is it", "what is today's date", "tell me the time", "what day is it today",
+               "current time please", "date today"],
+        "hinglish": ["kitne baje hain", "aaj ki date kya hai", "time kya hua hai", "aaj kaun sa din hai"],
+        "gujlish": ["ketla vagya", "aajni date shu che", "time shu thayo", "aaje kyo divas che"],
+        "hi": ["अभी कितने बजे हैं", "आज की तारीख क्या है", "समय बताओ"],
+        "gu": ["અત્યારે કેટલા વાગ્યા છે", "આજની તારીખ શું છે", "સમય કહો"]},
+    "memory_save": {
+        "en": ["keep in mind that {x}", "note that {x}", "please remember {x}", "don't forget {x}"],
+        "hinglish": ["yaad rakho {x}", "ye note kar lo {x}", "bhulna mat {x}"],
+        "gujlish": ["yaad rakho {x}", "aa note kari lo {x}", "bhulta nahi {x}"],
+        "hi": ["यह याद रखना {x}", "भूलना मत {x}"], "gu": ["આ યાદ રાખજો {x}", "ભૂલતા નહીં {x}"]},
+    "memory_recall": {
+        "en": ["what did i tell you about my {t}", "remind me of my {t}", "recall my {t}"],
+        "hinglish": ["maine apne {t} ke baare mein kya bataya tha", "mere {t} ki yaad dilao"],
+        "gujlish": ["me mara {t} vishe shu kahyu hatu", "mara {t} ni yaad apavo"],
+        "hi": ["मैंने अपने {t} के बारे में क्या बताया था"], "gu": ["મેં મારા {t} વિશે શું કહ્યું હતું"]},
+    "file_create": {
+        "en": ["make a file called {f}", "touch {f}", "i need a new file {f}", "start a new file {f}"],
+        "hinglish": ["ek nayi file {f} bana do", "{f} naam ki file taiyar karo"],
+        "gujlish": ["ek navi file {f} bani do", "{f} naam ni file taiyar karo"],
+        "hi": ["{f} नाम की नई फाइल तैयार करो"], "gu": ["{f} નામની નવી ફાઇલ તૈયાર કરો"]},
+    "file_read": {
+        "en": ["show me {f}", "view {f}", "cat {f}", "print the contents of {f}", "let me see {f}"],
+        "hinglish": ["{f} dikha do", "{f} mein kya likha hai dikhao"],
+        "gujlish": ["{f} batavi do", "{f} ma shu lakhyu che te batavo"],
+        "hi": ["{f} दिखा दो", "{f} में क्या लिखा है"], "gu": ["{f} બતાવી દો", "{f} માં શું લખ્યું છે"]},
+    "file_delete": {
+        "en": ["trash {f}", "wipe {f}", "i don't need {f} anymore, delete it", "remove {f} permanently"],
+        "hinglish": ["{f} ko trash karo", "{f} ki ab zarurat nahi, delete karo"],
+        "gujlish": ["{f} ne trash karo", "{f} ni have jarur nathi, delete karo"],
+        "hi": ["{f} को ट्रैश करो", "{f} अब नहीं चाहिए, हटा दो"], "gu": ["{f} ને ટ્રેશ કરો", "{f} હવે નથી જોઈતી, કાઢી નાખો"]},
+    "file_search": {
+        "en": ["locate {f}", "find {f} on my computer", "do i have a file called {f}", "look up {f}"],
+        "hinglish": ["{f} kahan rakhi hai", "mere computer mein {f} dhundo"],
+        "gujlish": ["{f} kya rakhi che", "mara computer ma {f} shodho"],
+        "hi": ["{f} कहाँ रखी है", "मेरे कंप्यूटर में {f} ढूंढो"], "gu": ["{f} ક્યાં મૂકી છે", "મારા કમ્પ્યુટરમાં {f} શોધો"]},
+    "knowledge_question": {
+        "en": ["explain {q}", "i am curious: {q}", "can you tell me, {q}", "help me understand: {q}"],
+        "hinglish": ["batao {q}", "ek cheez samjhao, {q}"], "gujlish": ["kaho {q}", "ek vaat samjavo, {q}"],
+        "hi": ["बताइए, {q}", "समझाइए, {q}"], "gu": ["કહો, {q}", "સમજાવો, {q}"]},
+    "help": {
+        "en": ["what are you capable of", "what commands do you support", "how does this assistant work"],
+        "hinglish": ["tum kya kya kar sakte ho", "ye assistant kaise kaam karta hai"],
+        "gujlish": ["tame shu shu kari shako", "aa assistant kevi rite kaam kare"],
+        "hi": ["तुम क्या क्या कर सकते हो"], "gu": ["તું શું શું કરી શકે"]},
+}
+
+
+def augment(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_CSV, seed: int = 7,
+            per_template: int = 6) -> int:
+    """Append EXTRA_TEMPLATES rows to the training CSV. Existing rows are kept; duplicates and
+    anything already in the test file are skipped. Returns the number of rows added."""
+    rng = random.Random(seed)
+    df = load(path)
+    seen = set(df["text"].str.lower().str.strip()) | set(load(test_path)["text"].str.lower().str.strip())
+    rows = df.to_dict("records")
+    added = 0
+    for intent, by_lang in EXTRA_TEMPLATES.items():
+        for lang, templates in by_lang.items():
+            for tpl in templates:
+                cands = list(dict.fromkeys(_candidates(tpl, lang, POOLS[lang], False)))
+                rng.shuffle(cands)
+                for text in cands[:per_template]:
+                    key = text.lower().strip()
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    rows.append({"text": text, "intent": intent, "language": lang, "script": script_of(text),
+                                 "source": "generated", "reviewed": "false"})
+                    added += 1
+    write_csv(rows, path)
+    return added
+
+
 def main(argv: list[str]) -> int:
     cmd = argv[0] if argv else ""
     if cmd == "generate":
@@ -457,6 +562,9 @@ def main(argv: list[str]) -> int:
         write_csv(test, TEST_CSV)
         print(f"wrote {len(train)} training rows and {len(test)} code-mixed test rows")
         return 0
+    if cmd == "augment":
+        print(f"added {augment()} rows")
+        return 0
     if cmd == "validate":
         errs = validate()
         print("\n".join(errs) if errs else "dataset valid")
@@ -464,7 +572,7 @@ def main(argv: list[str]) -> int:
     if cmd == "report":
         print(balance_report())
         return 0
-    print("Usage: python -m adhyaksh.nlu.dataset generate|validate|report")
+    print("Usage: python -m adhyaksh.nlu.dataset generate|augment|validate|report")
     return 2
 
 

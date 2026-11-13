@@ -519,3 +519,120 @@ def find_count(text: str, default: int = 5) -> int:
 
 def has_pronoun(text: str) -> bool:
     return bool(_PRONOUN.search(text))
+
+
+# ---------------------------------------------------------------------------
+# Command understanding: politeness stripping, synonym and typo tolerant rules.
+# Used only after match_rules() found nothing, so earlier behaviour is unchanged.
+# ---------------------------------------------------------------------------
+
+_LEAD_NOISE = re.compile(
+    r"^(?:(?:hey|hi|hello|ok|okay|yo|oye|arre|are|so|well|listen|suno|sambhdo)[\s,]+)?"
+    r"(?:(?:adhyaksh|assistant|jarvis)[\s,]+)?"
+    r"(?:(?:please|pls|plz|kindly|zara|jara|can you|could you|would you|will you|can u|i want you to|"
+    r"i want to|i need to|i would like to|i'd like to|let's|lets|go ahead and|just|mujhe|mane|"
+    r"कृपया|ज़रा|जरा|सुनो|કૃપા કરીને|જરા|સાંભળો)[\s,]+)+", re.IGNORECASE)
+_TAIL_NOISE = re.compile(
+    r"(?:[\s,]+(?:please|pls|plz|now|jaldi|abhi|atyare|yaar|bhai|dost|for me|right now|thanks|thank you|"
+    r"जल्दी|अभी|कृपया|જલ્દી|હમણાં|કૃપા કરીને))+[\s.!?।]*$", re.IGNORECASE)
+
+
+def clean_command(text: str) -> str:
+    """Drop greetings, politeness and filler around a command ('hey assistant, can you open notepad please')."""
+    t = " ".join(text.split())
+    t = _LEAD_NOISE.sub("", t)
+    t = _TAIL_NOISE.sub("", t)
+    return t.strip() or text.strip()
+
+
+def find_app_fuzzy(text: str) -> str | None:
+    """Like find_app, but tolerates typos ('notpad', 'calculater', 'crome')."""
+    import difflib
+    app = find_app(text)
+    if app:
+        return app
+    names = list(apps.allowlist()) + list(apps.ALIASES.values())
+    singles = {n: n for n in names if " " not in n}
+    for tok in re.findall(r"[a-z]{4,}", text.casefold()):
+        close = difflib.get_close_matches(tok, list(singles), n=1, cutoff=0.8)
+        if close:
+            return singles[close[0]]
+    return None
+
+
+_OPEN_V = (r"(?:open|launch|start|run|fire\s+up|boot\s+up|bring\s+up|khol(?:o|\s+do)?|chalu\s+karo|"
+           r"shuru\s+karo|खोलो|चालू\s+करो|शुरू\s+करो|ખોલો|ચાલુ\s+કરો|શરૂ\s+કરો)")
+_CLOSE_V = (r"(?:close|quit|exit|kill|terminate|stop|shut\s*down|band\s+karo|bandh\s+karo|"
+            r"बंद\s+करो|બંધ\s+કરો)")
+_APP_VERB_FIRST = re.compile(rf"^(?P<v>{_OPEN_V}|{_CLOSE_V})\s+(?:the\s+|my\s+)?(?P<rest>.+?)[\s.!?।]*$", re.IGNORECASE)
+_APP_VERB_LAST = re.compile(
+    r"^(?P<rest>.+?)\s+(?P<v>khol\s+do|kholo|khol|chalu\s+kar(?:o|\s+do)|chalu\s+kari\s+do|start\s+karo|"
+    r"band\s+kar(?:o|\s+do)|bandh\s+kar(?:o|\s+do)|bandh\s+kari\s+do|off\s+kar(?:o|\s+do)|"
+    r"खोलो|चालू\s+करो|बंद\s+करो|ખોલો|ચાલુ\s+કરો|બંધ\s+કરો)[\s.!?।]*$", re.IGNORECASE)
+_SCREENSHOT_X = re.compile(
+    r"\b(?:(?:take|capture|grab|snap|get)\s+(?:a\s+|the\s+|my\s+)?(?:screenshot|screen\s*shot|screen\s*capture|screen)|"
+    r"screen\s*shot\s+(?:lo|le\s+lo|karo|kari\s+lo|lo\s+ne)|screen\s*capture\s+karo)\b|"
+    r"स्क्रीनशॉट\s+(?:लो|लें)|સ્ક્રીનશોટ\s+લો", re.IGNORECASE)
+_STATUS_X = re.compile(
+    r"\b(?:cpu|ram|disk|storage|processor|battery|system\s+(?:status|health|info)|pc\s+(?:status|health|speed)|"
+    r"laptop\s+(?:slow|speed|health)|computer\s+(?:slow|status|health))\b", re.IGNORECASE)
+_STATUS_ACT = re.compile(r"\b(?:usage|load|status|free|left|space|check|show|how|kitna|kitni|ketlo|ketli|dikhao|"
+                         r"batao|batavo|slow|health|speed|report)\b", re.IGNORECASE)
+_TIME_X = re.compile(r"\b(?:what\s+time|time\s+kya|kitne\s+baje|kya\s+baje|ketla\s+vage|ketla\s+vaage|"
+                     r"current\s+time|time\s+now)\b|कितने\s+बजे|समय\s+क्या|કેટલા\s+વાગ્યા|સમય\s+શું", re.IGNORECASE)
+_DATE_X = re.compile(r"\b(?:what(?:'s|\s+is)\s+(?:the\s+)?(?:date|day)|today'?s\s+date|aaj\s+ki\s+(?:tarikh|date)|"
+                     r"aaj\s+kaun\s+sa\s+din|aaj\s+nu\s+(?:tarikh|date)|date\s+kya|tarikh\s+kya)\b|"
+                     r"आज\s+की\s+तारीख|આજની\s+તારીખ", re.IGNORECASE)
+_REMEMBER_X = re.compile(r"^(?:remember|note\s+down|note|keep\s+in\s+mind|yaad\s+rakh(?:o|na|jo)|याद\s+रखो|યાદ\s+રાખો)"
+                         r"\s+(?:that\s+|ki\s+|ke\s+|कि\s+|કે\s+)?(?P<fact>\S.+)$", re.IGNORECASE)
+_RECALL_X = re.compile(r"^(?:do\s+you\s+(?:remember|recall)|can\s+you\s+(?:remember|recall)|recall|"
+                       r"what\s+did\s+i\s+(?:tell|say|ask)|yaad\s+hai)\b", re.IGNORECASE)
+_FILE_VERB = re.compile(
+    r"^(?P<v>show|view|display|print|cat|read|open|delete|remove|erase|trash|find|locate|search(?:\s+for)?|"
+    r"where\s+is|create|make|new|touch)\s+(?:me\s+)?(?:the\s+|a\s+|an\s+|new\s+)?(?:file\s+|named\s+|called\s+)?(?P<f>\S+?)[\s.!?।]*$",
+    re.IGNORECASE)
+_FILE_V_INTENT = {"show": "file_read", "view": "file_read", "display": "file_read", "print": "file_read",
+                  "cat": "file_read", "read": "file_read", "open": "file_read", "delete": "file_delete",
+                  "remove": "file_delete", "erase": "file_delete", "trash": "file_delete",
+                  "find": "file_search", "locate": "file_search", "search": "file_search",
+                  "search for": "file_search", "where is": "file_search", "create": "file_create",
+                  "make": "file_create", "new": "file_create", "touch": "file_create"}
+
+
+def match_extended(text: str) -> Rule | None:
+    """Synonym-, filler- and typo-tolerant rules for apps, files, screenshots, status, time and memory."""
+    t = " ".join(text.split())
+    m = _FILE_VERB.match(t)
+    if m and FILE_RE.fullmatch(m.group("f")):
+        v = re.sub(r"\s+", " ", m.group("v").casefold())
+        return Rule(_FILE_V_INTENT[v], {"file": m.group("f")})
+    m = _APP_VERB_FIRST.match(t) or _APP_VERB_LAST.match(t)
+    if m and not _has_file_extension(t):
+        app = find_app_fuzzy(m.group("rest"))
+        if app:
+            is_close = re.match(_CLOSE_V, m.group("v"), re.IGNORECASE) or re.search(
+                r"band|bandh|off|बंद|બંધ", m.group("v"), re.IGNORECASE)
+            return Rule("app_close" if is_close else "app_open", {"app": app})
+    if _SCREENSHOT_X.search(t):
+        return Rule("screenshot")
+    if _STATUS_X.search(t) and _STATUS_ACT.search(t) and not _REMEMBER_X.match(t):
+        return Rule("system_status")
+    if _TIME_X.search(t):
+        return Rule("time_date", {"kind": "time"})
+    if _DATE_X.search(t):
+        return Rule("time_date", {"kind": "date"})
+    if _RECALL_X.match(t):
+        return Rule("memory_recall")
+    if _REMEMBER_X.match(t):
+        return Rule("memory_save")
+    return None
+
+
+def understand(text: str) -> Rule | None:
+    """Rules on the raw text, then on the cleaned text, then the extended rules on both."""
+    cleaned = clean_command(text)
+    for candidate in dict.fromkeys([text.strip(), cleaned]):
+        rule = match_rules(candidate) or match_extended(candidate)
+        if rule:
+            return rule
+    return None

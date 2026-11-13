@@ -1,0 +1,400 @@
+id,section,utterance,expected_intent,expected_outcome,language
+C001,chat/identity,hello there,greet,,en
+C002,chat/identity,hey assistant good morning,greet,,en
+C003,chat/identity,helo,greet,,en
+C004,chat/identity,नमस्कार दोस्त,greet,,hi
+C005,chat/identity,કેમ છો મિત્ર,greet,,gu
+C006,chat/identity,arre bhai namaste,greet,,hinglish
+C007,chat/identity,kem chho dost,greet,,gujlish
+C008,chat/identity,my name is Rohan,set_identity,,en
+C009,chat/identity,please call me Dev,set_identity,,en
+C010,chat/identity,u can call me Sam ok,set_identity,,en
+C011,chat/identity,मुझे सुरेश बुलाओ,set_identity,,hi
+C012,chat/identity,મને કિશન કહો,set_identity,,gu
+C013,chat/identity,mera naam Vikram hai yaar,set_identity,,hinglish
+C014,chat/identity,maru naam Hardik che,set_identity,,gujlish
+C015,chat/identity,what's my name,get_identity,,en
+C016,chat/identity,do u remember who i am,get_identity,,en
+C017,chat/identity,क्या आपको मेरा नाम याद है,get_identity,,hi
+C018,chat/identity,મારું નામ યાદ છે તમને,get_identity,,gu
+C019,chat/identity,batao na mera naam kya hai,get_identity,,hinglish
+C020,chat/identity,maru naam kaho ne,get_identity,,gujlish
+C021,chat/identity,tell me who you are,bot_identity,,en
+C022,chat/identity,may i know your name assistant,bot_identity,,en
+C023,chat/identity,thanks a lot,smalltalk,,en
+C024,chat/identity,ok bye,smalltalk,,en
+C025,chat/identity,धन्यवाद,smalltalk,,hi
+C026,chat/identity,આભાર,smalltalk,,gu
+C027,chat/identity,how are you yaar,smalltalk,,hinglish
+C028,chat/identity,what can you do,help,,en
+C029,chat/identity,help me please,help,,en
+C030,chat/identity,bhai tumhare paas kaun kaun se features hain,help,,hinglish
+C031,chat/identity,tamari pase kya kya suvidha che,help,,gujlish
+C032,chat/identity,मुझे मदद चाहिए,help,,hi
+C033,memory,remember that my locker code is 4471,memory_save,tool:save_fact,en
+C034,memory,please note down my flight is on Monday,memory_save,tool:save_fact,en
+C035,memory,keep in mind my sister likes tulips,memory_save,tool:save_fact,en
+C036,memory,dont forget my wifi password is blue42,memory_save,tool:save_fact,en
+C037,memory,rember that my bus number is 12,memory_save,tool:save_fact,en
+C038,memory,याद रखो कि मेरी चाबी मेज़ पर है,memory_save,tool:save_fact,hi
+C039,memory,यह नोट कर लो मेरा जन्मदिन 5 मार्च है,memory_save,tool:save_fact,hi
+C040,memory,भूलना मत मेरी दवा रात को है,memory_save,tool:save_fact,hi
+C041,memory,યાદ રાખજો કે મારી ચાવી ડ્રોઅરમાં છે,memory_save,tool:save_fact,gu
+C042,memory,આ નોંધ કરો મારી બેગ લાલ છે,memory_save,tool:save_fact,gu
+C043,memory,yaad rakhna meri meeting 5 baje hai,memory_save,tool:save_fact,hinglish
+C044,memory,ye note kar lo ki mera laptop Dell hai,memory_save,tool:save_fact,hinglish
+C045,memory,bhulna mat mera cab 7 baje aayega,memory_save,tool:save_fact,hinglish
+C046,memory,yaad rakhjo maro exam Monday e che,memory_save,tool:save_fact,gujlish
+C047,memory,aa note kari lo mari bike Honda che,memory_save,tool:save_fact,gujlish
+C048,memory,bhulta nahi maru bill 500 nu che,memory_save,tool:save_fact,gujlish
+C049,memory,what is my locker code,memory_recall,tool:recall,en
+C050,memory,do you remember my bus number,memory_recall,tool:recall,en
+C051,memory,remind me what my sister likes,memory_recall,tool:recall,en
+C052,memory,wat did i tell u about my flight,memory_recall,tool:recall,en
+C053,memory,मेरी चाबी कहाँ है,memory_recall,tool:recall,hi
+C054,memory,मैंने अपने जन्मदिन के बारे में क्या बताया था,memory_recall,tool:recall,hi
+C055,memory,મારી ચાવી ક્યાં છે,memory_recall,tool:recall,gu
+C056,memory,મેં મારી બેગ વિશે શું કહ્યું હતું,memory_recall,tool:recall,gu
+C057,memory,meri meeting kitne baje hai yaad hai,memory_recall,tool:recall,hinglish
+C058,memory,mera laptop kaun sa hai batao,memory_recall,tool:recall,hinglish
+C059,memory,maro exam kyare che yaad che,memory_recall,tool:recall,gujlish
+C060,memory,mari bike kaun si che kaho,memory_recall,tool:recall,gujlish
+C061,files,create a file named plan.txt,file_create,tool:create,en
+C062,files,make a new file called notes2.txt,file_create,tool:create,en
+C063,files,pls create todo.txt,file_create,tool:create,en
+C064,files,crate a file budget.txt,file_create,tool:create,en
+C065,files,plan.txt नाम की फाइल बनाओ,file_create,tool:create,hi
+C066,files,diary.txt નામની ફાઇલ બનાવો,file_create,tool:create,gu
+C067,files,ek nayi file ideas.txt bana do,file_create,tool:create,hinglish
+C068,files,navi file ideas.txt banavo,file_create,tool:create,gujlish
+C069,files,read plan.txt,file_read,tool:read,en
+C070,files,show me what is inside notes2.txt,file_read,tool:read,en
+C071,files,could you display todo.txt,file_read,tool:read,en
+C072,files,plan.txt में क्या लिखा है दिखाओ,file_read,tool:read,hi
+C073,files,plan.txt ની સામગ્રી બતાવો,file_read,tool:read,gu
+C074,files,zara todo.txt ka content dikha do,file_read,tool:read,hinglish
+C075,files,todo.txt ma shu lakhyu che batavo,file_read,tool:read,gujlish
+C076,files,add a line to plan.txt saying buy milk,file_update,tool:update,en
+C077,files,"append ""done"" to todo.txt",file_update,tool:update,en
+C078,files,"plan.txt mein ek line jod do ""call mom""",file_update,tool:update,hinglish
+C079,files,"plan.txt में नया टेक्स्ट ""hello"" जोड़ो",file_update,tool:update,hi
+C080,files,"plan.txt ma ek line umero ""ok""",file_update,tool:update,gujlish
+C081,files,delete plan.txt,file_delete,tool:delete,en
+C082,files,please remove the file old.txt,file_delete,tool:delete,en
+C083,files,i dont need notes2.txt anymore delete it,file_delete,tool:delete,en
+C084,files,todo.txt को हटाओ,file_delete,tool:delete,hi
+C085,files,diary.txt કાઢી નાખો,file_delete,tool:delete,gu
+C086,files,old.txt ko mita do,file_delete,tool:delete,hinglish
+C087,files,old.txt ne bhusi nakho,file_delete,tool:delete,gujlish
+C088,files,find budget.xlsx,file_search,tool:search,en
+C089,files,where is resume.pdf,file_search,tool:search,en
+C090,files,look for files named invoice.docx,file_search,tool:search,en
+C091,files,resume.pdf कहाँ है,file_search,tool:search,hi
+C092,files,invoice.docx ક્યાં છે,file_search,tool:search,gu
+C093,files,budget.xlsx kidhar padi hai mere pc me,file_search,tool:search,hinglish
+C094,files,resume.pdf kya rakhi che,file_search,tool:search,gujlish
+C095,files,make a new folder called Photos2,folder_create,tool:create_folder,en
+C096,files,create directory named Projects,folder_create,tool:create_folder,en
+C097,files,ek folder banao jiska naam Notes3 ho,folder_create,tool:create_folder,hinglish
+C098,files,create an excel sheet named marks2.xlsx,office_create,,en
+C099,files,make a word document called letter2.docx,office_create,,en
+C100,files,एक्सेल शीट sales2.xlsx बनाओ,office_create,,hi
+C101,files,વર્ડ દસ્તાવેજ minutes2.docx બનાવો,office_create,,gu
+C102,files,excel mein names2.xlsx naam se sheet bana do,office_create,,hinglish
+C103,apps,open notepad,app_open,tool:open_app,en
+C104,apps,launch the calculator,app_open,tool:open_app,en
+C105,apps,can you please open paint,app_open,tool:open_app,en
+C106,apps,opn notepad,app_open,tool:open_app,en
+C107,apps,start chrome,app_open,tool:open_app,en
+C108,apps,fire up the vscode editor,app_open,tool:open_app,en
+C109,apps,नोटपैड खोलो,app_open,tool:open_app,hi
+C110,apps,कैलकुलेटर चालू करो,app_open,tool:open_app,hi
+C111,apps,નોટપેડ ચાલુ કરી દો,app_open,tool:open_app,gu
+C112,apps,કેલ્ક્યુલેટર ચાલુ કરો,app_open,tool:open_app,gu
+C113,apps,notepad kholo yaar,app_open,tool:open_app,hinglish
+C114,apps,zara calculator chalu kar do,app_open,tool:open_app,hinglish
+C115,apps,mujhe paint chahiye,app_open,tool:open_app,hinglish
+C116,apps,notepad kholi do,app_open,tool:open_app,gujlish
+C117,apps,calculator chalu karo,app_open,tool:open_app,gujlish
+C118,apps,close notepad,app_close,tool:close_app,en
+C119,apps,quit the calculator,app_close,tool:close_app,en
+C120,apps,terminate paint now,app_close,tool:close_app,en
+C121,apps,"finished with chrome, shut it",app_close,tool:close_app,en
+C122,apps,clse notepad,app_close,tool:close_app,en
+C123,apps,नोटपैड बंद करो,app_close,tool:close_app,hi
+C124,apps,કેલ્ક્યુલેટર બંધ કરો,app_close,tool:close_app,gu
+C125,apps,paint ko band kar dena,app_close,tool:close_app,hinglish
+C126,apps,chrome ko off karo,app_close,tool:close_app,hinglish
+C127,apps,notepad ne bandh kari nakho,app_close,tool:close_app,gujlish
+C128,apps,calculator bandh karo,app_close,tool:close_app,gujlish
+C129,apps,pls open youtube site,web_open,tool:web_open,en
+C130,apps,search google for pizza near me,web_open,tool:web_open,en
+C131,apps,go to github.com,web_open,tool:web_open,en
+C132,apps,youtube khol de bhai,web_open,tool:web_open,hinglish
+C133,apps,python tutorial search karo,web_open,tool:web_open,hinglish
+C134,apps,gmail kholi do,web_open,tool:web_open,gujlish
+C135,apps,open downloads folder,special_folder_open,tool:open_special_folder,en
+C136,apps,show me the recycle bin,special_folder_open,tool:open_special_folder,en
+C137,apps,desktop folder kholo na,special_folder_open,tool:open_special_folder,hinglish
+C138,system status,show system status,system_status,tool:status,en
+C139,system status,how is my cpu usage,system_status,tool:status,en
+C140,system status,check ram and disk,system_status,tool:status,en
+C141,system status,"my laptop feels sluggish, check it",system_status,tool:status,en
+C142,system status,free disk space kitni bachi hai,system_status,tool:status,en
+C143,system status,how much memory is free rn,system_status,tool:status,en
+C144,system status,pc health report please,system_status,tool:status,en
+C145,system status,sytem status,system_status,tool:status,en
+C146,system status,सिस्टम की स्थिति दिखाओ,system_status,tool:status,hi
+C147,system status,सीपीयू कितना इस्तेमाल हो रहा है,system_status,tool:status,hi
+C148,system status,कितनी रैम खाली है,system_status,tool:status,hi
+C149,system status,मेरा लैपटॉप धीमा क्यों है,system_status,tool:status,hi
+C150,system status,સિસ્ટમની સ્થિતિ બતાવો,system_status,tool:status,gu
+C151,system status,સીપીયુ વપરાશ કેટલો છે,system_status,tool:status,gu
+C152,system status,કેટલી રેમ ખાલી છે,system_status,tool:status,gu
+C153,system status,લેપટોપ ધીમું કેમ છે,system_status,tool:status,gu
+C154,system status,system status dikhao,system_status,tool:status,hinglish
+C155,system status,cpu kitna use ho raha hai,system_status,tool:status,hinglish
+C156,system status,ram aur disk check karo,system_status,tool:status,hinglish
+C157,system status,drive me kitni jagah khali hai,system_status,tool:status,hinglish
+C158,system status,laptop slow kyun chal raha hai,system_status,tool:status,hinglish
+C159,system status,system status batavo,system_status,tool:status,gujlish
+C160,system status,cpu ketlo vaprai che,system_status,tool:status,gujlish
+C161,system status,ram disk dono ka status do,system_status,tool:status,gujlish
+C162,system status,disk ma ketli jagya khali che,system_status,tool:status,gujlish
+C163,system status,laptop slow kem che,system_status,tool:status,gujlish
+C164,system status,hows the battery and cpu,system_status,tool:status,en
+C165,screenshot,screenshot,screenshot,tool:screenshot,en
+C166,screenshot,grab a screenshot please,screenshot,tool:screenshot,en
+C167,screenshot,capture whatever is on my display,screenshot,tool:screenshot,en
+C168,screenshot,snap the screen now,screenshot,tool:screenshot,en
+C169,screenshot,screen shot,screenshot,tool:screenshot,en
+C170,screenshot,screnshot,screenshot,tool:screenshot,en
+C171,screenshot,store my current screen as a picture,screenshot,tool:screenshot,en
+C172,screenshot,make a screen grab,screenshot,tool:screenshot,en
+C173,screenshot,hey can you take a screenshot for me,screenshot,tool:screenshot,en
+C174,screenshot,स्क्रीन का स्क्रीनशॉट ले लो,screenshot,tool:screenshot,hi
+C175,screenshot,मेरी स्क्रीन की तस्वीर खींचो,screenshot,tool:screenshot,hi
+C176,screenshot,स्क्रीन की कैप्चर कर दो,screenshot,tool:screenshot,hi
+C177,screenshot,कृपया स्क्रीनशॉट ले लीजिए,screenshot,tool:screenshot,hi
+C178,screenshot,સ્ક્રીનનો સ્ક્રીનશોટ લઈ આપો,screenshot,tool:screenshot,gu
+C179,screenshot,સ્ક્રીનની તસવીર લઈ લો,screenshot,tool:screenshot,gu
+C180,screenshot,સ્ક્રીનનું કેપ્ચર કરી આપો,screenshot,tool:screenshot,gu
+C181,screenshot,મારી સ્ક્રીનનો સ્ક્રીનશોટ લો,screenshot,tool:screenshot,gu
+C182,screenshot,ek screenshot kheench lo,screenshot,tool:screenshot,hinglish
+C183,screenshot,screenshot nikal do,screenshot,tool:screenshot,hinglish
+C184,screenshot,screen ka photo kheench do,screenshot,tool:screenshot,hinglish
+C185,screenshot,zara screen capture karo,screenshot,tool:screenshot,hinglish
+C186,screenshot,ss le lo,screenshot,tool:screenshot,hinglish
+C187,screenshot,ek screenshot lai lo,screenshot,tool:screenshot,gujlish
+C188,screenshot,screenshot padi lo,screenshot,tool:screenshot,gujlish
+C189,screenshot,screen ni tasvir lo,screenshot,tool:screenshot,gujlish
+C190,screenshot,jara screen capture karo,screenshot,tool:screenshot,gujlish
+C191,screenshot,mari screen no screenshot lo ne,screenshot,tool:screenshot,gujlish
+C192,time/date,time batao abhi,time_date,,en
+C193,time/date,could you tell me the current time,time_date,,en
+C194,time/date,clock check please,time_date,,en
+C195,time/date,whats the date today,time_date,reply:20,en
+C196,time/date,which weekday is it,time_date,,en
+C197,time/date,todays date,time_date,reply:20,en
+C198,time/date,time pls,time_date,,en
+C199,time/date,wat is the tim now,time_date,,en
+C200,time/date,hey assistant what's the time,time_date,,en
+C201,time/date,इस वक्त क्या बजा है,time_date,,hi
+C202,time/date,आज की डेट बताओ,time_date,reply:20,hi
+C203,time/date,घड़ी में क्या टाइम हुआ,time_date,,hi
+C204,time/date,आज कौन सा दिन है,time_date,,hi
+C205,time/date,હમણાં ટાઇમ શું થયો,time_date,,gu
+C206,time/date,આજે તારીખ કઈ છે,time_date,reply:20,gu
+C207,time/date,અત્યારનો સમય જણાવો,time_date,,gu
+C208,time/date,આજે કયો દિવસ છે,time_date,,gu
+C209,time/date,ghadi mein kya baja hai,time_date,,hinglish
+C210,time/date,today ki tarikh batao,time_date,reply:20,hinglish
+C211,time/date,abhi ka time bata do,time_date,,hinglish
+C212,time/date,aaj konsa weekday hai,time_date,,hinglish
+C213,time/date,abhi kya baje hain yaar,time_date,,hinglish
+C214,time/date,hal ma ketla vaagया,time_date,,gujlish
+C215,time/date,aaj ni tarikh kaho,time_date,reply:20,gujlish
+C216,time/date,atyar nu time kaho,time_date,,gujlish
+C217,time/date,aaje kayo vaar che,time_date,,gujlish
+C218,time/date,atyare time shu thayu che,time_date,,gujlish
+C219,math,what is 7*8,math,reply:56,en
+C220,math,calculate 120 / 4,math,reply:30,en
+C221,math,15 + 27,math,reply:42,en
+C222,math,what's 2 to the power 5,math,reply:32,en
+C223,math,5 plus 7,math,reply:12,en
+C224,math,100 minus 36,math,reply:64,en
+C225,math,9 times 9,math,reply:81,en
+C226,math,compute (3+4)*5,math,reply:35,en
+C227,math,whats 50% of 200,math,reply:100,en
+C228,math,what is 17 mod 5,math,reply:2,en
+C229,math,3 गुणा 6,math,reply:18,hi
+C230,math,10 भाग 2,math,reply:5,hi
+C231,math,8 प्लस 9,math,reply:17,hi
+C232,math,20 माइनस 5,math,reply:15,hi
+C233,math,4 ગુણા 5,math,reply:20,gu
+C234,math,12 ભાગ 3,math,reply:4,gu
+C235,math,7 પ્લસ 8,math,reply:15,gu
+C236,math,30 માઇનસ 12,math,reply:18,gu
+C237,math,6 into 7 kitna hota hai,math,reply:42,hinglish
+C238,math,25 plus 75 batao,math,reply:100,hinglish
+C239,math,144 divided by 12 kya hai,math,reply:12,hinglish
+C240,math,paanch plus saat kitne hue,math,reply:12,hinglish
+C241,math,9 plus 9 ketla thay,math,reply:18,gujlish
+C242,math,81 divided by 9 ketla,math,reply:9,gujlish
+C243,math,8 times 8 shu thay,math,reply:64,gujlish
+C244,math,2 power 10 ketlu thay,math,reply:1024,gujlish
+C245,math,please solve 1000 - 1,math,reply:999,en
+C246,documents (attachments),what does the document say about the budget,doc_question,attach,en
+C247,documents (attachments),according to my pdf what is the deadline,doc_question,attach,en
+C248,documents (attachments),search my documents for safety rules,doc_question,attach,en
+C249,documents (attachments),summarize the attached file,doc_question,attach,en
+C250,documents (attachments),what is the main finding in this report,doc_question,attach,en
+C251,documents (attachments),who is the author mentioned in the file,doc_question,attach,en
+C252,documents (attachments),find the section about methodology in my pdf,doc_question,attach,en
+C253,documents (attachments),docment mein budget kya hai,doc_question,attach,en
+C254,documents (attachments),does the attached doc mention a deadline,doc_question,attach,en
+C255,documents (attachments),tell me what page 2 of the pdf says,doc_question,attach,en
+C256,documents (attachments),दस्तावेज़ में बजट के बारे में क्या लिखा है,doc_question,attach,hi
+C257,documents (attachments),मेरी पीडीएफ के अनुसार समय सीमा क्या है,doc_question,attach,hi
+C258,documents (attachments),इस फाइल का सारांश बताओ,doc_question,attach,hi
+C259,documents (attachments),मेरे दस्तावेज़ों में सुरक्षा नियम खोजो,doc_question,attach,hi
+C260,documents (attachments),रिपोर्ट में मुख्य निष्कर्ष क्या है,doc_question,attach,hi
+C261,documents (attachments),દસ્તાવેજમાં બજેટ વિશે શું લખ્યું છે,doc_question,attach,gu
+C262,documents (attachments),મારી પીડીએફ મુજબ સમયમર્યાદા શું છે,doc_question,attach,gu
+C263,documents (attachments),આ ફાઇલનો સારાંશ કહો,doc_question,attach,gu
+C264,documents (attachments),મારા દસ્તાવેજોમાં સલામતીના નિયમો શોધો,doc_question,attach,gu
+C265,documents (attachments),રિપોર્ટમાં મુખ્ય તારણ શું છે,doc_question,attach,gu
+C266,documents (attachments),document mein budget ke baare mein kya likha hai,doc_question,attach,hinglish
+C267,documents (attachments),meri pdf ke according deadline kya hai,doc_question,attach,hinglish
+C268,documents (attachments),is file ka summary batao,doc_question,attach,hinglish
+C269,documents (attachments),mere documents mein safety rules search karo,doc_question,attach,hinglish
+C270,documents (attachments),report ka main finding kya hai,doc_question,attach,hinglish
+C271,documents (attachments),document ma budget vishe shu lakhyu che,doc_question,attach,gujlish
+C272,documents (attachments),mari pdf mujab deadline shu che,doc_question,attach,gujlish
+C273,documents (attachments),aa file no summary kaho,doc_question,attach,gujlish
+C274,documents (attachments),mara documents ma safety rules shodho,doc_question,attach,gujlish
+C275,documents (attachments),report nu main finding shu che,doc_question,attach,gujlish
+C276,general questions,what is the capital of Australia,knowledge_question,,en
+C277,general questions,explain how photosynthesis works,knowledge_question,,en
+C278,general questions,who invented the telephone,knowledge_question,,en
+C279,general questions,why is the ocean salty,knowledge_question,,en
+C280,general questions,how do vaccines work,knowledge_question,,en
+C281,general questions,tell me about the Roman empire,knowledge_question,,en
+C282,general questions,whats the difference between a virus and bacteria,knowledge_question,,en
+C283,general questions,how far is the sun from earth,knowledge_question,,en
+C284,general questions,write a short poem about rain,knowledge_question,,en
+C285,general questions,give me tips to sleep better,knowledge_question,,en
+C286,general questions,waht is machien learning,knowledge_question,,en
+C287,general questions,translate good night to French,knowledge_question,,en
+C288,general questions,can you explain recursion in simple words,knowledge_question,,en
+C289,general questions,भारत की राजधानी क्या है,knowledge_question,,hi
+C290,general questions,बारिश कैसे होती है समझाओ,knowledge_question,,hi
+C291,general questions,ताजमहल किसने बनवाया,knowledge_question,,hi
+C292,general questions,चंद्रमा पृथ्वी से कितना दूर है,knowledge_question,,hi
+C293,general questions,ગુજરાતની રાજધાની કઈ છે,knowledge_question,,gu
+C294,general questions,વરસાદ કેવી રીતે પડે છે સમજાવો,knowledge_question,,gu
+C295,general questions,મહાત્મા ગાંધી કોણ હતા,knowledge_question,,gu
+C296,general questions,સૂર્ય કેટલો દૂર છે,knowledge_question,,gu
+C297,general questions,yaar ye batao black hole kya hota hai,knowledge_question,,hinglish
+C298,general questions,internet kaise kaam karta hai samjhao,knowledge_question,,hinglish
+C299,general questions,world cup 2011 kisne jeeta,knowledge_question,,hinglish
+C300,general questions,dinosaur kyun khatam ho gaye,knowledge_question,,hinglish
+C301,general questions,ek achhi sleep ke liye tips do,knowledge_question,,hinglish
+C302,general questions,aakash vadlu kem hoy che,knowledge_question,,gujlish
+C303,general questions,internet kevi rite chale che samjavo,knowledge_question,,gujlish
+C304,general questions,moon ketlo dur che,knowledge_question,,gujlish
+C305,general questions,python shu hoy che kaho,knowledge_question,,gujlish
+C306,general questions,gold no bhav kem vadhe che,knowledge_question,,gujlish
+C307,vision,detect objects in this photo,vision_detect,,en
+C308,vision,what is in this picture,vision_detect,,en
+C309,vision,count the people in the image,vision_detect,,en
+C310,vision,open the object detection page,vision_detect,,en
+C311,vision,use the camera and tell me what you see,vision_detect,,en
+C312,vision,identify the thing in my webcam,vision_detect,,en
+C313,vision,is there a cup in this image,vision_detect,,en
+C314,vision,scan this image for small objects,vision_detect,,en
+C315,vision,find a mug and a stapler in the photo,vision_detect,,en
+C316,vision,objct detecton,vision_detect,,en
+C317,vision,इस फोटो में कौन सी चीज़ें हैं,vision_detect,,hi
+C318,vision,कैमरे से देखकर बताओ यह क्या है,vision_detect,,hi
+C319,vision,तस्वीर में कितने लोग हैं,vision_detect,,hi
+C320,vision,ऑब्जेक्ट डिटेक्शन खोलो,vision_detect,,hi
+C321,vision,इस इमेज में कप है क्या,vision_detect,,hi
+C322,vision,આ ફોટામાં કઈ વસ્તુઓ છે,vision_detect,,gu
+C323,vision,કેમેરાથી જોઈને કહો આ શું છે,vision_detect,,gu
+C324,vision,તસવીરમાં કેટલા લોકો છે,vision_detect,,gu
+C325,vision,ઓબ્જેક્ટ ડિટેક્શન ખોલો,vision_detect,,gu
+C326,vision,આ ઇમેજમાં કપ છે કે,vision_detect,,gu
+C327,vision,is photo mein kya kya hai batao,vision_detect,,hinglish
+C328,vision,camera se dekh ke bolo ye kya hai,vision_detect,,hinglish
+C329,vision,image mein kitne log hain,vision_detect,,hinglish
+C330,vision,object detection page kholo,vision_detect,,hinglish
+C331,vision,photo mein cup hai kya,vision_detect,,hinglish
+C332,vision,aa photo ma shu shu che kaho,vision_detect,,gujlish
+C333,vision,camera thi joine kaho aa shu che,vision_detect,,gujlish
+C334,vision,image ma ketla manas che,vision_detect,,gujlish
+C335,vision,object detection page kholo,vision_detect,,gujlish
+C336,vision,photo ma cup che ke,vision_detect,,gujlish
+C337,performance,boost my pc,pc_performance,,en
+C338,performance,which apps are using the most ram,pc_performance,,en
+C339,performance,why is my computer lagging,pc_performance,,en
+C340,performance,open the pc performance page,pc_performance,,en
+C341,performance,clean up my laptop to make it faster,pc_performance,,en
+C342,performance,kill the heaviest process,pc_performance,,en
+C343,performance,speed up my system,pc_performance,,en
+C344,performance,show running processes by memory,pc_performance,,en
+C345,performance,free up memory now,pc_performance,,en
+C346,performance,performence boost,pc_performance,,en
+C347,performance,turn on power mode for speed,pc_performance,,en
+C348,performance,मेरा पीसी तेज़ करो,pc_performance,,hi
+C349,performance,कौन सा ऐप सबसे ज्यादा रैम ले रहा है,pc_performance,,hi
+C350,performance,पीसी परफॉर्मेंस पेज खोलो,pc_performance,,hi
+C351,performance,मेमोरी खाली करो,pc_performance,,hi
+C352,performance,लैपटॉप को तेज़ चलाने के लिए सफाई करो,pc_performance,,hi
+C353,performance,મારા પીસીને ઝડપી બનાવો,pc_performance,,gu
+C354,performance,કઈ એપ સૌથી વધુ રેમ વાપરે છે,pc_performance,,gu
+C355,performance,પીસી પરફોર્મન્સ પેજ ખોલો,pc_performance,,gu
+C356,performance,મેમરી ખાલી કરો,pc_performance,,gu
+C357,performance,લેપટોપ ઝડપી ચલાવવા સફાઈ કરો,pc_performance,,gu
+C358,performance,pc ko fast karo,pc_performance,,hinglish
+C359,performance,kaun si app sabse zyada ram kha rahi hai,pc_performance,,hinglish
+C360,performance,pc performance page kholo,pc_performance,,hinglish
+C361,performance,memory free kar do,pc_performance,,hinglish
+C362,performance,laptop ko tez chalane ke liye clean karo,pc_performance,,hinglish
+C363,performance,pc ne fast karo,pc_performance,,gujlish
+C364,performance,kai app sauthi vadhare ram vapre che,pc_performance,,gujlish
+C365,performance,pc performance page kholo,pc_performance,,gujlish
+C366,performance,memory free kari do,pc_performance,,gujlish
+C367,performance,laptop ne tez karva clean karo,pc_performance,,gujlish
+C368,voice commands,stop listening,voice_control,,en
+C369,voice commands,start hands-free mode,voice_control,,en
+C370,voice commands,turn on the wake word,voice_control,,en
+C371,voice commands,stop talking,voice_control,,en
+C372,voice commands,speak your replies aloud,voice_control,,en
+C373,voice commands,be quiet please,voice_control,,en
+C374,voice commands,switch voice to Hindi,voice_control,,en
+C375,voice commands,listen to me now,voice_control,,en
+C376,voice commands,read that out loud,voice_control,,en
+C377,voice commands,stp listening,voice_control,,en
+C378,voice commands,turn off voice replies,voice_control,,en
+C379,voice commands,hands free off,voice_control,,en
+C380,voice commands,सुनना बंद करो,voice_control,,hi
+C381,voice commands,हैंड्स फ्री मोड चालू करो,voice_control,,hi
+C382,voice commands,चुप हो जाओ,voice_control,,hi
+C383,voice commands,जवाब बोलकर सुनाओ,voice_control,,hi
+C384,voice commands,आवाज़ की भाषा हिंदी करो,voice_control,,hi
+C385,voice commands,સાંભળવાનું બંધ કરો,voice_control,,gu
+C386,voice commands,હેન્ડ્સ ફ્રી મોડ ચાલુ કરો,voice_control,,gu
+C387,voice commands,ચૂપ થઈ જાઓ,voice_control,,gu
+C388,voice commands,જવાબ બોલીને સંભળાવો,voice_control,,gu
+C389,voice commands,અવાજની ભાષા ગુજરાતી કરો,voice_control,,gu
+C390,voice commands,sunna band karo,voice_control,,hinglish
+C391,voice commands,hands free mode on karo,voice_control,,hinglish
+C392,voice commands,chup ho jao,voice_control,,hinglish
+C393,voice commands,jawab bol ke sunao,voice_control,,hinglish
+C394,voice commands,voice ki language hindi kar do,voice_control,,hinglish
+C395,voice commands,sambhadvanu bandh karo,voice_control,,gujlish
+C396,voice commands,hands free mode chalu karo,voice_control,,gujlish
+C397,voice commands,chup thai jao,voice_control,,gujlish
+C398,voice commands,javab boli ne sambhdavo,voice_control,,gujlish
+C399,voice commands,voice ni language gujarati kari do,voice_control,,gujlish

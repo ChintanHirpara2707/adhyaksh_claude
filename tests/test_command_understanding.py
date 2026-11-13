@@ -117,3 +117,43 @@ def test_read_is_not_append_and_math_values():
     assert router.understand("whats 50% of 200").slots["value"] == 100
     assert router.understand("what is 17 mod 5").slots["value"] == 2
     assert router.find_folder_name("ek folder banao jiska naam Notes3 ho") == "Notes3"
+
+
+from adhyaksh.chat import numwords  # noqa: E402
+
+
+@pytest.mark.parametrize("text,value", [
+    ("five plus seven", 12), ("twenty five minus ten", 15), ("two hundred divided by four", 50),
+    ("paanch plus saat kitne hue", 12), ("das ghata teen", 7), ("chaar guna paanch", 20),
+    ("पाँच प्लस सात", 12), ("बीस माइनस पांच", 15), ("तीन गुणा चार", 12),
+    ("પાંચ પ્લસ સાત", 12), ("વીસ માઇનસ પાંચ", 15), ("ચાર ગુણા પાંચ", 20),
+    ("what is nine times nine", 81), ("ek plus ek", 2),
+])
+def test_number_words(text, value):
+    rule = router.understand(text)
+    assert rule is not None and rule.intent == "math" and rule.slots["value"] == value, (text, rule)
+
+
+@pytest.mark.parametrize("text", [
+    "ek file banao", "do not delete it", "please do it", "so what is a virus", "be careful with notes.txt",
+    "mujhe teen cheezein batao", "open notepad aur calculator",
+])
+def test_number_words_do_not_trigger_math(text):
+    rule = router.understand(text)
+    assert rule is None or rule.intent != "math", (text, rule)
+
+
+@pytest.mark.parametrize("text,kind", [
+    ("clock check please", "time"), ("wat is the tim now", "time"), ("whats the tiem", "time"), ("tell me todya's date", "date"),
+    ("wats the dat today", "date"), ("इस वक्त क्या बजा है", "time"), ("घड़ी में क्या टाइम हुआ", "time"),
+    ("आज की डेट बताओ", "date"), ("abhi ka waqt kya hai", "time"),
+])
+def test_time_date_typos_and_hindi(text, kind):
+    rule = router.understand(text)
+    assert rule is not None and rule.intent == "time_date" and rule.slots.get("kind") == kind, (text, rule)
+
+
+def test_deadline_phrases_are_not_time():
+    for t in ("परियोजना की समय सीमा क्या है", "what is the project deadline"):
+        r = router.understand(t)
+        assert r is None or r.intent != "time_date", (t, r)

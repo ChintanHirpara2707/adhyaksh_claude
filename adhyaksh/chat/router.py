@@ -7,7 +7,7 @@ import re
 import urllib.parse
 from dataclasses import dataclass, field
 
-from adhyaksh.chat import identity
+from adhyaksh.chat import identity, numwords
 from adhyaksh.tools import apps
 
 _OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
@@ -57,7 +57,8 @@ def _extract_math(text: str):
 _WORD_OP_MAP = (
     ("divided by", "/"), ("power", "**"), ("into", "*"), ("times", "*"),
     ("multiplied by", "*"), ("multiplied into", "*"), ("minus", "-"),
-    ("plus", "+"), ("का गुणा", "*"), ("घात", "**"), ("गुणा", "*"), ("गुना", "*"),
+    ("plus", "+"), ("gunaa", "*"), ("guna", "*"), ("bhaag", "/"), ("bhag", "/"), ("jama", "+"), ("ghata", "-"),
+    ("का गुणा", "*"), ("घात", "**"), ("गुणा", "*"), ("गुना", "*"),
     ("भाग", "/"), ("माइनस", "-"), ("प्लस", "+"), ("ઘાત", "**"),
     ("ગુણાકાર", "*"), ("ગુણા", "*"), ("ભાગ", "/"), ("માઇનસ", "-"), ("પ્લસ", "+"),
 )
@@ -65,7 +66,7 @@ _WORD_OP_MAP = (
 
 def _word_math(text: str):
     """Evaluate word-based arithmetic like '5 plus 7', '6 into 7', '2 power 3'."""
-    s = text.casefold()
+    s = numwords.normalize(text).casefold()  # "twenty five plus paanch" -> "25 plus 5"
     for word, sym in _WORD_OP_MAP:
         s = s.replace(word, sym)
     s = re.sub(r"[^0-9.\+\-\*/\(\)\^ ]", " ", s)
@@ -566,6 +567,10 @@ _OPEN_V = (r"(?:open|launch|start|run|fire\s+up|boot\s+up|bring\s+up|khol(?:o|\s
            r"shuru\s+karo|खोलो|चालू\s+करो|शुरू\s+करो|ખોલો|ચાલુ\s+કરો|શરૂ\s+કરો)")
 _CLOSE_V = (r"(?:close|quit|exit|kill|terminate|stop|shut\s*down|band\s+karo|bandh\s+karo|"
             r"बंद\s+करो|બંધ\s+કરો)")
+_DONE_WITH = re.compile(r"^(?:i\s*(?:am|'m)\s+)?(?:done|finished|through)\s+with\s+(?:the\s+|my\s+)?(?P<rest>.+?)[\s,.!?]*(?:shut\s+it.*|close\s+it.*|quit\s+it.*)?$",
+                        re.IGNORECASE)
+_FILE_WHERE = re.compile(r"(?P<f>\b[\w\-.]+\.[A-Za-z0-9]{1,5}\b).{0,25}\b(?:kidhar|kahan|kaha|kya\s+rakhi|kya\s+padi|kidhar\s+padi|"
+                         r"where|kidr)\b|(?P<g>\b[\w\-.]+\.[A-Za-z0-9]{1,5}\b).{0,20}(?:कहाँ|कहां|ક્યાં)", re.IGNORECASE)
 _APP_VERB_FIRST = re.compile(rf"^(?P<v>{_OPEN_V}|{_CLOSE_V})\s+(?:the\s+|my\s+)?(?P<rest>.+?)[\s.!?।]*$", re.IGNORECASE)
 _APP_VERB_LAST = re.compile(
     r"^(?P<rest>.+?)\s+(?P<v>khol\s+do|kholo|khol|chalu\s+kar(?:o|\s+do)|chalu\s+kari\s+do|start\s+karo|"
@@ -616,6 +621,14 @@ def match_extended(text: str) -> Rule | None:
     if m and FILE_RE.fullmatch(m.group("f")):
         v = re.sub(r"\s+", " ", m.group("v").casefold())
         return Rule(_FILE_V_INTENT[v], {"file": m.group("f")})
+    m = _FILE_WHERE.search(t)
+    if m and not re.match(r"^(?:read|show|open|delete|remove)\b", t, re.IGNORECASE):
+        return Rule("file_search", {"file": m.group("f") or m.group("g")})
+    m = _DONE_WITH.match(t)
+    if m:
+        app = find_app_fuzzy(m.group("rest"))
+        if app:
+            return Rule("app_close", {"app": app})
     m = _APP_VERB_FIRST.match(t) or _APP_VERB_LAST.match(t)
     if m and not _has_file_extension(t):
         app = find_app_fuzzy(m.group("rest"))
@@ -653,6 +666,13 @@ _TIME_MORE = re.compile(r"\bwhat(?:'s|s|\s+is)\s+the\s+time\b|\btime\s+(?:pls|pl
 _DAY_MORE = re.compile(r"\b(?:which|what)\s+(?:week)?day\b|\bweekday\b|\bkaun\s*sa\s+(?:din|weekday)\b|"
                        r"\bkons[ao]\s+(?:din|weekday)\b|\bkayo\s+(?:divas|vaar)\b|"
                        r"कौन\s*सा\s+(?:दिन|वार)|કયો\s+દિવસ|ક્યો\s+દિવસ|કયો\s+વાર", re.IGNORECASE)
+_TIME_WORDS = ("time", "date", "today", "clock", "day", "weekday")
+_ASK_CUE = re.compile(r"\b(?:what|wat|whats|wats|tell|current|now|pls|please|check|show|which|kya|batao|bata|kaho)\b|"
+                      r"क्या|बताओ|बताइए|कहो|શું|કહો|બતાવો|જણાવો", re.IGNORECASE)
+_CLOCK = re.compile(r"\bclock\b|घड़ी|घडी|ઘડિયાળ|\bghadi\b", re.IGNORECASE)
+_HI_TIME = re.compile(r"(?:वक्त|वक़्त|टाइम|समय)(?!\s*सीमा)|इस\s+समय|\bwaqt\b|\bvakt\b", re.IGNORECASE)
+_HI_DATE = re.compile(r"डेट|तारीख|तारिख|तिथि|ડેટ|તારીખ|તિથિ", re.IGNORECASE)
+_HI_TIME_CUE = re.compile(r"क्या|कितना|कितने|बताओ|बताइए|हुआ|हुई|बजा|बजे|हो\s+रहा|है\s*$|\bkya\b|\bkitna\b|\bbata", re.IGNORECASE)
 _RECALL_MORE = re.compile(
     r"^(?:what(?:'s|s|\s+is|\s+was)|tell\s+me|remind\s+me\s+(?:of|what)|wat\s+is)\s+my\s+\w+|"
     r"^(?:mera|meri|mere)\s+\w+(?:\s+\w+){0,2}\s+(?:kya|kaun|kahan|kab|kitne)\b|"
@@ -692,8 +712,16 @@ def _match_more(t: str) -> Rule | None:
         return Rule("screenshot")
     if _STATUS_INDIC.search(t) and _STATUS_INDIC_ACT.search(t):
         return Rule("system_status")
-    if _TIME_MORE.search(t):
+    if _TIME_MORE.search(t) or (_CLOCK.search(t) and _ASK_CUE.search(t)):
         return Rule("time_date", {"kind": "time"})
+    if _HI_TIME.search(t) and _HI_TIME_CUE.search(t) and not _STATUS_X.search(t):
+        return Rule("time_date", {"kind": "time"})
+    if _HI_DATE.search(t) and _HI_TIME_CUE.search(t) and not _STATUS_X.search(t):
+        return Rule("time_date", {"kind": "date"})
+    if len(low.split()) <= 6 and _ASK_CUE.search(t) and _has_word_like(t, _TIME_WORDS, 0.75) \
+            and not _STATUS_X.search(t) and not _has_file_extension(t):
+        kind = "date" if _has_word_like(t, ("date", "today", "day", "weekday"), 0.75) else "time"
+        return Rule("time_date", {"kind": kind})
     if _DAY_MORE.search(t):
         return Rule("time_date", {"kind": "date"})
     m = _APPEND_EN.match(t)

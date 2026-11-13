@@ -370,3 +370,58 @@ def test_wikipedia_failure_returns_empty(monkeypatch):
     monkeypatch.setattr(descriptions.urllib.request, "urlopen", fake)
     result = descriptions.wikipedia("person")
     assert result == ""
+
+
+# ---------------------------------------------------------------------------
+# Wider coverage: tiles, NMS, open vocabulary
+# ---------------------------------------------------------------------------
+
+def _png(size=(400, 400)):
+    buf = io.BytesIO()
+    Image.new("RGB", size, "red").save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def test_nms_keeps_best_overlapping_box_per_label():
+    dets = [{"label": "cup", "confidence": 0.9, "box": [0, 0, 100, 100]},
+            {"label": "cup", "confidence": 0.6, "box": [5, 5, 105, 105]},
+            {"label": "dog", "confidence": 0.5, "box": [0, 0, 100, 100]},
+            {"label": "cup", "confidence": 0.7, "box": [300, 300, 380, 380]}]
+    out = detector.nms(dets)
+    assert [(d["label"], d["confidence"]) for d in out] == [("cup", 0.9), ("cup", 0.7), ("dog", 0.5)]
+
+
+def test_tiled_detection_runs_full_image_plus_tiles_and_merges(monkeypatch):
+    fake = _FakeModel("models/yolov8s.pt")
+    monkeypatch.setattr(detector, "_TILE_CACHE", {})
+    monkeypatch.setattr(detector, "_load_detection", _make_load(fake))
+    dets = detector.detect_tiled(_png(), conf=0.25, grid=2)
+    assert fake.call_count == 5  # full image + 2x2 tiles
+    assert any(d["label"] == "person" for d in dets) and all("error" not in d for d in dets)
+    # Boxes found in a tile are shifted back into full-image coordinates.
+    assert any(d["box"][0] > 150 for d in dets if d["label"] == "cup")
+
+
+def test_parse_classes_cleans_and_caps():
+    assert detector.parse_classes("Mug, stapler;  red pen,,mug") == ["mug", "stapler", "red pen"]
+    assert len(detector.parse_classes(",".join(f"c{i}" for i in range(100)))) == detector.MAX_OPEN_CLASSES
+
+
+def test_open_vocab_sets_classes_and_reports_missing_package(monkeypatch):
+    class _World(_FakeModel):
+        def set_classes(self, classes):
+            self.classes = classes
+
+    world = _World("w")
+    monkeypatch.setattr(detector, "_WORLD", {})
+    monkeypatch.setattr(detector, "_WORLD_CACHE", {})
+    monkeypatch.setattr(detector, "_load_world", lambda: world)
+    dets = detector.detect_open_vocab(_png(), ["cup", "dog"])
+    assert world.classes == ["cup", "dog"] and dets and "error" not in dets[0]
+    assert "at least one" in detector.detect_open_vocab(_png(), [])[0]["error"]
+
+    def boom():
+        raise ImportError("no YOLOWorld")
+    monkeypatch.setattr(detector, "_load_world", boom)
+    monkeypatch.setattr(detector, "_WORLD_CACHE", {})
+    assert "ultralytics" in detector.detect_open_vocab(_png(), ["cup"])[0]["error"]

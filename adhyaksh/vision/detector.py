@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+import re
 from pathlib import Path
 
 from PIL import Image, ImageStat
@@ -141,8 +142,6 @@ def detect_raw(image_bytes: bytes, model_choice: str = "balanced", imgsz: int = 
         return []
     dets_sorted = sorted(dets, key=lambda d: d["confidence"], reverse=True)
     return dets_sorted[:5]
-    _RAW_CACHE[cache_key] = result
-    return result
 
 
 def average_brightness(image_bytes: bytes) -> float | None:
@@ -189,3 +188,147 @@ def classify(image_bytes: bytes, imgsz: int = 640) -> list[dict] | str:
             })
     _CLASSIFY_CACHE[cache_key] = guesses
     return guesses
+
+
+# ---------------------------------------------------------------------------
+# Wider coverage. The standard detector only knows the 80 COCO classes. These helpers add
+# (1) tiled detection for small objects, (2) optional open-vocabulary detection with YOLO-World
+# for any words you type, and (3) the 1000 ImageNet classes through classify().
+# ---------------------------------------------------------------------------
+
+WORLD_MODEL = "yolov8s-worldv2.pt"
+_WORLD: dict[str, object] = {}
+_TILE_CACHE: dict[str, list[dict]] = {}
+_WORLD_CACHE: dict[str, list[dict]] = {}
+MAX_OPEN_CLASSES = 30
+
+
+def _read_image(image_bytes: bytes):
+    """Validate and open image bytes. Returns (image, None) or (None, error dict list)."""
+    if len(image_bytes) > _MAX_BYTES:
+        return None, [{"error": "File too large. Maximum 10 MB."}]
+    if _image_kind(image_bytes) not in ("jpeg", "png", "webp"):
+        return None, [{"error": "Unsupported file type. Use JPG, PNG or WEBP."}]
+    try:
+        return Image.open(io.BytesIO(image_bytes)).convert("RGB"), None
+    except Exception:
+        return None, [{"error": "The image could not be read."}]
+
+
+def _to_dets(results, dx: float = 0.0, dy: float = 0.0) -> list[dict]:
+    out: list[dict] = []
+    for r in results:
+        names = r.names
+        for box in r.boxes or []:
+            cls = int(box.cls[0])
+            x1, y1, x2, y2 = (float(v) for v in box.xyxy[0])
+            out.append({"label": names.get(cls, str(cls)), "confidence": float(box.conf[0]),
+                        "box": [x1 + dx, y1 + dy, x2 + dx, y2 + dy]})
+    return out
+
+
+def iou(a: list[float], b: list[float]) -> float:
+    ix1, iy1, ix2, iy2 = max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])
+    inter = max(0.0, ix2 - ix1) * max(0.0, iy2 - iy1)
+    union = (a[2] - a[0]) * (a[3] - a[1]) + (b[2] - b[0]) * (b[3] - b[1]) - inter
+    return inter / union if union > 0 else 0.0
+
+
+def nms(dets: list[dict], iou_threshold: float = 0.5) -> list[dict]:
+    """Per-label non-maximum suppression; keeps the most confident box of each overlapping group."""
+    kept: list[dict] = []
+    for d in sorted(dets, key=lambda x: x["confidence"], reverse=True):
+        if all(k["label"] != d["label"] or iou(k["box"], d["box"]) < iou_threshold for k in kept):
+            kept.append(d)
+    return kept
+
+
+def _tiles(w: int, h: int, grid: int, overlap: float = 0.2) -> list[tuple[int, int, int, int]]:
+    tw, th = w / grid, h / grid
+    ox, oy = tw * overlap, th * overlap
+    out = []
+    for gy in range(grid):
+        for gx in range(grid):
+            out.append((int(max(0, gx * tw - ox)), int(max(0, gy * th - oy)),
+                        int(min(w, (gx + 1) * tw + ox)), int(min(h, (gy + 1) * th + oy))))
+    return out
+
+
+def detect_tiled(image_bytes: bytes, conf: float = 0.25, imgsz: int = 640, model_choice: str = "balanced",
+                 grid: int = 2) -> list[dict]:
+    """Detect on the whole image plus a grid of overlapping tiles, then merge with NMS.
+
+    Small or distant objects that vanish at 640 px become large enough to find in a tile."""
+    img, err = _read_image(image_bytes)
+    if err:
+        return err
+    key = f"{hashlib.sha1(image_bytes).hexdigest()}:{conf}:{imgsz}:{model_choice}:{grid}"
+    if key in _TILE_CACHE:
+        return _TILE_CACHE[key]
+    try:
+        model = _load_detection(model_choice)
+    except ImportError:
+        return [{"error": "Object detection needs the ultralytics package. Install it with: pip install ultralytics"}]
+    except Exception as exc:
+        return [{"error": f"Model load failed: {exc}. Check your internet connection or place the weights file in models/."}]
+    dets: list[dict] = []
+    try:
+        dets += _to_dets(model.predict(img, conf=conf, imgsz=imgsz, verbose=False))
+        for (x1, y1, x2, y2) in _tiles(img.width, img.height, max(2, min(grid, 4))):
+            tile = img.crop((x1, y1, x2, y2))
+            dets += _to_dets(model.predict(tile, conf=conf, imgsz=imgsz, verbose=False), x1, y1)
+    except Exception as exc:
+        return [{"error": f"Detection failed: {exc}"}]
+    merged = nms(dets)
+    _TILE_CACHE[key] = merged
+    return merged
+
+
+def parse_classes(text: str) -> list[str]:
+    """Split user text like 'mug, stapler; red pen' into clean unique class names."""
+    seen: dict[str, None] = {}
+    for part in re.split(r"[,;\n]+", text or ""):
+        name = " ".join(part.split()).lower()[:40]
+        if name:
+            seen[name] = None
+    return list(seen)[:MAX_OPEN_CLASSES]
+
+
+def _load_world():
+    if "m" not in _WORLD:
+        from ultralytics import YOLOWorld
+
+        path = _model_path(WORLD_MODEL)
+        _WORLD["m"] = YOLOWorld(str(path) if path.exists() else WORLD_MODEL)
+        _WORLD["classes"] = None
+    return _WORLD["m"]
+
+
+def detect_open_vocab(image_bytes: bytes, classes: list[str], conf: float = 0.2, imgsz: int = 640) -> list[dict]:
+    """Detect any objects you name, using YOLO-World (open vocabulary). Needs extra downloads:
+    the YOLO-World weights and the CLIP text encoder (ultralytics fetches both on first use)."""
+    classes = [c for c in classes if c][:MAX_OPEN_CLASSES]
+    if not classes:
+        return [{"error": "Type at least one object name to look for."}]
+    img, err = _read_image(image_bytes)
+    if err:
+        return err
+    key = f"{hashlib.sha1(image_bytes).hexdigest()}:{conf}:{imgsz}:{'|'.join(classes)}"
+    if key in _WORLD_CACHE:
+        return _WORLD_CACHE[key]
+    try:
+        model = _load_world()
+    except ImportError:
+        return [{"error": "Open-vocabulary detection needs a recent ultralytics package (pip install -U ultralytics)."}]
+    except Exception as exc:
+        return [{"error": f"YOLO-World could not be loaded: {exc}. It needs an internet connection the first time "
+                          f"to download {WORLD_MODEL} and the CLIP text encoder."}]
+    try:
+        if _WORLD.get("classes") != classes:
+            model.set_classes(classes)
+            _WORLD["classes"] = list(classes)
+        dets = nms(_to_dets(model.predict(img, conf=conf, imgsz=imgsz, verbose=False)))
+    except Exception as exc:
+        return [{"error": f"Open-vocabulary detection failed: {exc}"}]
+    _WORLD_CACHE[key] = dets
+    return dets

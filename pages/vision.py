@@ -26,6 +26,21 @@ with col_imgsz:
 
 conf = st.slider("Confidence threshold", 0.10, 0.80, 0.25, 0.05)
 
+MODES = {
+    "standard": "Standard (80 everyday object types)",
+    "tiled": "Small objects (scans the image in tiles, slower)",
+    "open": "Any object I name (YOLO-World, needs a one-time download)",
+}
+mode = st.radio("Detection mode", list(MODES), format_func=lambda k: MODES[k], horizontal=False)
+open_classes: list[str] = []
+if mode == "open":
+    typed = st.text_input("Objects to look for, separated by commas",
+                          placeholder="mug, stapler, red pen, houseplant", max_chars=300)
+    open_classes = detector.parse_classes(typed)
+    st.caption("Open-vocabulary detection is less reliable than the standard detector. "
+               f"It needs about 400 MB of one-time downloads (YOLO-World weights and the CLIP text encoder).")
+also_named = st.checkbox("Also name other things in the picture (1000 general categories)", value=False)
+
 tab_camera, tab_upload = st.tabs(["Camera", "Upload image"])
 
 if "vision" not in st.session_state:
@@ -46,9 +61,14 @@ def render(key: str, file) -> None:
 
     ck = state.get(key)
     if image_bytes is not None:
-        new_key = f"{_cache_key(image_bytes)}:{conf}:{imgsz}:{model_choice}"
+        new_key = f"{_cache_key(image_bytes)}:{conf}:{imgsz}:{model_choice}:{mode}:{'|'.join(open_classes)}"
         if ck is None or ck.get("key") != new_key:
-            detections = detector.detect(image_bytes, conf=conf, imgsz=imgsz, model_choice=model_choice)
+            if mode == "tiled":
+                detections = detector.detect_tiled(image_bytes, conf=conf, imgsz=imgsz, model_choice=model_choice)
+            elif mode == "open":
+                detections = detector.detect_open_vocab(image_bytes, open_classes, conf=min(conf, 0.3), imgsz=imgsz)
+            else:
+                detections = detector.detect(image_bytes, conf=conf, imgsz=imgsz, model_choice=model_choice)
             state[key] = {"key": new_key, "bytes": image_bytes, "detections": detections}
         else:
             detections = ck.get("detections")
@@ -99,6 +119,14 @@ def render(key: str, file) -> None:
             f"{descriptions.describe(label)}{wiki}"
         )
 
+    if also_named:
+        named = detector.classify(image_bytes, imgsz=imgsz)
+        if isinstance(named, str):
+            st.info(named)
+        elif named:
+            st.markdown("**Other things this picture may show** (general categories, whole image):")
+            st.markdown("\n".join(f"- {g['label']} - {g['confidence']:.0%}" for g in named[:5]))
+
     # Collapsible Details section
     w, h = img.size
     bright = detector.average_brightness(image_bytes)
@@ -112,7 +140,7 @@ def render(key: str, file) -> None:
             st.markdown(f"- Average brightness: {bright:.0f} / 255")
         else:
             st.markdown("- Average brightness: unreadable")
-        st.markdown(f"- Model: {model_name}")
+        st.markdown(f"- Model: {model_name} ({MODES[mode]})")
         st.markdown(f"- Confidence threshold: {conf:.0%}")
         if camera_bytes is not None:
             st.markdown(f"- Camera bytes read: {camera_bytes}")

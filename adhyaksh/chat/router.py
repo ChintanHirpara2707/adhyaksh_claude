@@ -112,11 +112,11 @@ _FILE_EXTENSIONS = ("txt", "pdf", "docx", "doc", "xlsx", "xls", "csv", "pptx",
                     "png", "jpg", "jpeg", "py", "md", "zip", "json")
 
 # Filler words removed only as whole words at the START of the text.
-_LEADING_FILLERS = ("please", "can you", "chrome mein", "in chrome")
+_LEADING_FILLERS = ("please", "pls", "plz", "can you", "chrome mein", "in chrome")
 
 # Trailing request verbs removed only at the END of the text (longest first).
 _TRAILING_VERBS = (
-    "khar do", "kholo ne", "khol do", "kholo",
+    "khol dena", "kholi do", "kholi de", "khol de", "khar do", "kholo ne", "khol do", "kholo",
     "ખોલો ને", "ખોલો", "karo", "do", "ne",
 )
 
@@ -265,7 +265,8 @@ def parse_web_command(text: str):
         r"(?:open|go\s+to|खोलो\s+ने|खोलो|ખોલો\s+ને|ખોલો)\s+(?P<rest>.+?)"
         r"(?:\s+in\s+a\s+new\s+tab)?[.!?।]*$", t, re.IGNORECASE)
     if m:
-        site = _strip_trailing_verbs(m.group("rest"))
+        site = re.sub(r"\s+(?:site|website|web\s*page|page|wala|wali)$", "", _strip_trailing_verbs(m.group("rest")),
+                      flags=re.IGNORECASE)
         if _has_file_extension(site):
             # A token with a file extension is a file, never a website.
             return None
@@ -279,7 +280,7 @@ def parse_web_command(text: str):
     # "gmail ખોલો". Only treat as a site if it resolves to a known site or
     # contains a dot, so we never hijack a plain search query.
     m = re.match(
-        r"(?P<site>.+?)\s+(?:khar do|khol do|kholo ne|kholo|ખોલો ને|ખોલો)"
+        r"(?P<site>.+?)\s+(?:khol dena|kholi do|kholi de|khol de|khar do|khol do|kholo ne|kholo|ખોલો ને|ખોલો)"
         r"[.!?।]*$", t, re.IGNORECASE)
     if m:
         site_url = _normalize_site(m.group("site"))
@@ -447,7 +448,8 @@ def find_special_folder(text: str) -> str | None:
     return None
 
 
-_FOLDER_NAMED = re.compile(r"(?:called|named|कहो|કહો)\s+(.+?)[\s?.!]*$", re.IGNORECASE)
+_FOLDER_NAMED = re.compile(r"(?:called|named|कहो|કહો|jiska\s+naam|jiska\s+nam|jenu\s+naam|naam\s+se|naam\s+ka|naam\s+ni)"
+                           r"\s+(.+?)(?:\s+(?:ho|hai|rakho|rakhna|che|rakhjo))?[\s?.!]*$", re.IGNORECASE)
 
 
 def find_folder_name(text: str) -> str | None:
@@ -599,9 +601,17 @@ _FILE_V_INTENT = {"show": "file_read", "view": "file_read", "display": "file_rea
                   "make": "file_create", "new": "file_create", "touch": "file_create"}
 
 
+_BARE_CREATE = re.compile(
+    r"^(?:create|make|new|banao|bana\s+do)\s+(?:a\s+|an\s+|one\s+|ek\s+)?(?:new\s+|nayi\s+|navi\s+)?(?P<what>file|folder|directory)[\s.!?]*$",
+    re.IGNORECASE)
+
+
 def match_extended(text: str) -> Rule | None:
     """Synonym-, filler- and typo-tolerant rules for apps, files, screenshots, status, time and memory."""
     t = " ".join(text.split())
+    m = _BARE_CREATE.match(t)
+    if m:  # no name given: the engine asks for it
+        return Rule("file_create" if m.group("what").lower() == "file" else "folder_create")
     m = _FILE_VERB.match(t)
     if m and FILE_RE.fullmatch(m.group("f")):
         v = re.sub(r"\s+", " ", m.group("v").casefold())
@@ -617,6 +627,8 @@ def match_extended(text: str) -> Rule | None:
         return Rule("screenshot")
     if _STATUS_X.search(t) and _STATUS_ACT.search(t) and not _REMEMBER_X.match(t):
         return Rule("system_status")
+    if _RECALL_MORE.match(t) and not _STATUS_X.search(t):
+        return Rule("memory_recall")
     if _TIME_X.search(t):
         return Rule("time_date", {"kind": "time"})
     if _DATE_X.search(t):
@@ -625,14 +637,141 @@ def match_extended(text: str) -> Rule | None:
         return Rule("memory_recall")
     if _REMEMBER_X.match(t):
         return Rule("memory_save")
+    return _match_more(t)
+
+
+# --- More generic phrasing: Hindi/Gujarati system words, weekday questions, notes, appends, short greetings ---
+_STATUS_INDIC = re.compile(r"सीपीयू|रैम|डिस्क|लैपटॉप|सिस्टम|पीसी|સીપીયુ|રેમ|ડિસ્ક|લેપટોપ|સિસ્ટમ|પીસી|"
+                           r"\b(?:drive|hard\s*disk|ssd|hdd)\b", re.IGNORECASE)
+_STATUS_INDIC_ACT = re.compile(r"कितन|धीम|खाली|बचा|दिखाओ|बताओ|जांच|जाँच|कैसा|कैसी|કેટલ|ધીમ|ખાલી|બતાવો|કહો|તપાસો|"
+                               r"\b(?:kitn\w*|jagah|space|khali|bacha|bachi|baki|ketl\w*|slow|speed|health|check|status|usage)\b",
+                               re.IGNORECASE)
+_TIME_MORE = re.compile(r"\bwhat(?:'s|s|\s+is)\s+the\s+time\b|\btime\s+(?:pls|please|batao|kaho|bata\s+do)\b|"
+                        r"\b(?:ab|abhi)\s+kya\s+baj\w*|\bghadi\b.{0,15}\b(?:time|baj\w*)\b|"
+                        r"(?:સમય|ટાઇમ|ટાઈમ)\s*(?:જણાવો|કહો|શું|બતાવો)|(?:समय|टाइम)\s*(?:बताओ|बताइए|क्या)|"
+                        r"(?:કેટલા|કેટલાં)\s+વાગ્ય|ketla\s+vag\w+", re.IGNORECASE)
+_DAY_MORE = re.compile(r"\b(?:which|what)\s+(?:week)?day\b|\bweekday\b|\bkaun\s*sa\s+(?:din|weekday)\b|"
+                       r"\bkons[ao]\s+(?:din|weekday)\b|\bkayo\s+(?:divas|vaar)\b|"
+                       r"कौन\s*सा\s+(?:दिन|वार)|કયો\s+દિવસ|ક્યો\s+દિવસ|કયો\s+વાર", re.IGNORECASE)
+_RECALL_MORE = re.compile(
+    r"^(?:what(?:'s|s|\s+is|\s+was)|tell\s+me|remind\s+me\s+(?:of|what)|wat\s+is)\s+my\s+\w+|"
+    r"^(?:mera|meri|mere)\s+\w+(?:\s+\w+){0,2}\s+(?:kya|kaun|kahan|kab|kitne)\b|"
+    r"^(?:maro|mari|maru)\s+\w+(?:\s+\w+){0,2}\s+(?:shu|kaun|kya|kyare|kya|kyan)\b|"
+    r"^(?:मेरा|मेरी|मेरे)\s+.+(?:क्या|कहाँ|कौन|कब|कितने)|^(?:મારો|મારી|મારું)\s+.+(?:શું|ક્યાં|કઈ|કયો|ક્યારે)",
+    re.IGNORECASE)
+_NOTE_MORE = re.compile(
+    r"^(?:(?:ye|yeh|aa|यह|આ)\s+)?(?:note\s+kar(?:\s+lo|o)?|note\s+kari\s+lo|नोट\s+कर(?:\s+लो|ो)?|નોંધ\s+કરો)"
+    r"\s+(?:ki\s+|ke\s+|कि\s+|કે\s+)?\S.+$|"
+    r"^(?:bhul(?:na|ta)\s+(?:mat|nahi|nahin)|भूलना\s+मत|ભૂલતા\s+નહીં|ભૂલશો\s+નહીં)\s+\S.+$|"
+    r"^(?:please\s+)?(?:don'?t|do\s+not|dont)\s+forget\s+(?:that\s+)?\S.+$", re.IGNORECASE)
+_PERCENT = re.compile(r"(\d+(?:\.\d+)?)\s*(?:%|percent|per\s*cent)\s*of\s*(\d+(?:\.\d+)?)", re.IGNORECASE)
+_MODULO = re.compile(r"(\d+)\s*(?:mod|modulo|modulus)\s*(\d+)|remainder\s+of\s+(\d+)\s*(?:/|divided\s+by|by)\s*(\d+)",
+                     re.IGNORECASE)
+_APPEND_EN = re.compile(r"^(?:add|append|write|put|insert|type)\b.{0,60}?\b(?:to|into|in|at\s+the\s+end\s+of)\s+(?P<f>\S+)", re.IGNORECASE)
+_APPEND_IN = re.compile(r"^(?P<f>\S+\.[A-Za-z0-9]{1,5})\s+(?:में|mein|me|ma|માં)\s+.+?(?:जोड़ो|जोड़\s*दो|लिखो|लिख\s*दो|\bjod\b|\badd\b|\blikho\b|\blikh\s+do\b|umero|\bumer\w*|\blakho\b|\blakh\w*\s+(?:do|dyo)\b|append|ઉમેરો|લખો)",
+                        re.IGNORECASE)
+_OFFICE_VERB = re.compile(r"\b(?:create|make|new|generate|prepare)\b|बनाओ|बनाएं|बनाइए|तैयार|બનાવો|તૈયાર|"
+                          r"\b(?:banao|bana\s+do|banavo|tayar|taiyar|bani\s+do)\b", re.IGNORECASE)
+_SCREEN_MORE = re.compile(r"\bss\s+(?:le|lo|karo|kheench|kheench\s+lo)\b|"
+                          r"\b(?:capture|grab|snap|take|save)\b.{0,30}\b(?:display|screen|monitor)\b", re.IGNORECASE)
+_GREET_SHORT = re.compile(r"^(?:\S+\s+){0,2}(?:namaste|namaskar|नमस्ते|नमस्कार|નમસ્તે|kem\s+ch+o|કેમ\s+છો)(?:\s+\S+){0,2}[\s.!?]*$",
+                          re.IGNORECASE)
+
+
+def _match_more(t: str) -> Rule | None:
+    low = t.casefold()
+    pm = _PERCENT.search(t)
+    if pm:
+        return Rule("math", {"expr": pm.group(0), "value": round(float(pm.group(1)) * float(pm.group(2)) / 100, 6)})
+    mm = _MODULO.search(t)
+    if mm:
+        a, b = (mm.group(1), mm.group(2)) if mm.group(1) else (mm.group(3), mm.group(4))
+        if int(b):
+            return Rule("math", {"expr": mm.group(0), "value": int(a) % int(b)})
+    if _SCREEN_MORE.search(t):
+        return Rule("screenshot")
+    if _STATUS_INDIC.search(t) and _STATUS_INDIC_ACT.search(t):
+        return Rule("system_status")
+    if _TIME_MORE.search(t):
+        return Rule("time_date", {"kind": "time"})
+    if _DAY_MORE.search(t):
+        return Rule("time_date", {"kind": "date"})
+    m = _APPEND_EN.match(t)
+    if m and FILE_RE.fullmatch(m.group("f").strip(".,")):
+        return Rule("file_update", {"file": m.group("f").strip(".,")})
+    m = _APPEND_IN.match(t)
+    if m:
+        return Rule("file_update", {"file": m.group("f")})
+    fm = FILE_RE.search(t)
+    if fm and fm.group(1).lower().rsplit(".", 1)[-1] in ("xlsx", "xls", "docx", "doc") and _OFFICE_VERB.search(t):
+        return Rule("office_create")
+    if _NOTE_MORE.match(t):
+        return Rule("memory_save")
+    if _RECALL_MORE.match(t):
+        return Rule("memory_recall")
+    if len(low.split()) <= 6 and _GREET_SHORT.match(t):
+        return Rule("greet")
     return None
+
+
+# "What is my name" in any phrasing: a question about the stored name, never a declaration of one.
+_ID_QUERY = re.compile(
+    r"\bwho\s+am\s+i\b|\b(?:what(?:'s|s|\s+is)?|tell\s+me|say|do\s+(?:you|u)\s+(?:know|remember)|"
+    r"can\s+(?:you|u)\s+(?:tell|remind)\s+me)\b.{0,25}\b(?:my\s+name(?!\s+is\b)|who\s+i\s+am)\b|"
+    r"\b(?:mera|meri)\s+naam\s+(?:yaad|pata|kya|batao|bataiye|bolo|btao)\b|"
+    r"\b(?:maru|maaru)\s+naam\s+(?:shu|kaho|yaad|khabar|batavo)\b|"
+    r"मेरा\s+नाम.{0,25}(?:क्या|बताओ|बताइए|याद|पता)|"
+    r"મારું\s+નામ.{0,25}(?:શું|કહો|યાદ|ખબર|જણાવો)", re.IGNORECASE)
+_HELP_X = re.compile(
+    r"\b(?:your|tumhare|tumhari|aapke|aapki|tamari|tamara|tamaru|tari|tara)\b.{0,25}"
+    r"\b(?:features?|capabilit\w+|suvidha\w*|abilit\w+|functions?|skills?)\b|"
+    r"\b(?:what\s+(?:can|do)\s+(?:you|u)\s+(?:do|support|offer)|what\s+are\s+you\s+capable\s+of|"
+    r"kya\s+kya\s+kar\s+sakte|shu\s+shu\s+kari\s+shak)\b|"
+    r"(?:तुम्हारी|आपकी)\s+(?:\w+\s+)?(?:सुविधा|खूबियां|क्षमता)|(?:તમારી|તારી)\s+(?:\w+\s+)?(?:સુવિધા|ક્ષમતા)",
+    re.IGNORECASE)
+_SMALL_LEAD = re.compile(r"^(?:(?:ok|okay|alright|fine|cool|so|well|haan|acha|accha|theek hai|thik che)[\s,.]+)+", re.IGNORECASE)
+_SMALL_TAIL = re.compile(r"[\s,]+(?:bro|bhai|yaar|dost|mate|buddy|assistant|adhyaksh|sir|ji)[\s.!?]*$", re.IGNORECASE)
+_BYE = re.compile(r"^(?:bye+|good\s*bye|good\s*night|see\s+(?:you|ya)(?:\s+(?:later|soon|tomorrow))?|cya|take\s+care|"
+                  r"tata|ta\s*ta|alvida|phir\s+milenge|pachi\s+malishu|अलविदा|फिर\s+मिलेंगे|શુભ\s+રાત્રિ|અલવિદા)[\s.!?]*$",
+                  re.IGNORECASE)
+_THANKS = re.compile(r"^(?:thanks+|thank\s+(?:you|u)(?:\s+(?:so|very)\s+much)?|thx|ty|thanks\s+a\s+lot|shukriya|"
+                     r"dhanyavad|dhanyawad|aabhar|abhar|मेहरबानी|शुक्रिया|धन्यवाद|આભાર|ધન્યવાદ)[\s.!?]*$", re.IGNORECASE)
+
+
+def match_conversational(text: str) -> Rule | None:
+    """Identity questions, help requests and goodbyes/thanks, with leading 'ok' and trailing 'bro/yaar' tolerated."""
+    t = " ".join(text.split())
+    if _ID_QUERY.search(t):
+        return Rule("get_identity")
+    core = _SMALL_TAIL.sub("", _SMALL_LEAD.sub("", t)).strip() or t
+    if _BYE.match(core):
+        return Rule("smalltalk", {"kind": "bye"})
+    if _THANKS.match(core):
+        return Rule("smalltalk", {"kind": "thanks"})
+    if _HELP_X.search(t):
+        return Rule("help")
+    return None
+
+
+_VERBS = ("open", "close", "launch", "start", "quit", "exit", "kill", "create", "delete", "remove", "search",
+          "find", "read", "show", "remember", "screenshot", "append")
+
+
+def fix_verb_typo(text: str) -> str:
+    """Repair a misspelled leading command verb ('clse notepad' -> 'close notepad'); other words are untouched."""
+    import difflib
+    parts = text.split(None, 1)
+    if not parts or len(parts[0]) < 3 or not parts[0].isascii() or parts[0].lower() in _VERBS:
+        return text
+    close = difflib.get_close_matches(parts[0].lower(), _VERBS, n=1, cutoff=0.78)
+    return (close[0] + (" " + parts[1] if len(parts) > 1 else "")) if close else text
 
 
 def understand(text: str) -> Rule | None:
     """Rules on the raw text, then on the cleaned text, then the extended rules on both."""
     cleaned = clean_command(text)
-    for candidate in dict.fromkeys([text.strip(), cleaned]):
-        rule = match_rules(candidate) or match_extended(candidate)
+    for candidate in dict.fromkeys([text.strip(), cleaned, fix_verb_typo(cleaned)]):
+        rule = match_conversational(candidate) or match_rules(candidate) or match_extended(candidate)
         if rule:
             return rule
     return None

@@ -22,12 +22,23 @@ from tests.helpers import fresh_env  # noqa: E402
 
 CASES = ROOT / "tests" / "eval" / "cases.csv"
 RESULTS = ROOT / "tests" / "eval" / "results.csv"
+BASELINE = ROOT / "tests" / "eval" / "results_baseline.csv"  # first run, kept for the before/after table
+TRAIN_CSV = ROOT / "data" / "intents.csv"
 REPORT = ROOT / "docs" / "EVAL_REPORT.md"
 NO_MATCH = {"unknown", "out_of_scope", "error"}
 SECTION_ORDER = ["chat/identity", "memory", "files", "apps", "system status", "screenshot", "time/date", "math",
                  "documents (attachments)", "general questions", "vision", "performance", "voice commands"]
 LANG_ORDER = ["en", "hi", "gu", "hinglish", "gujlish"]
 MAX_PER_SECTION_IN_WORST = 8
+NOTE = '''
+## Note: why the code-mixed macro-F1 was 0.640 for all three models
+
+Not a data leak (zero text overlap between `data/intents.csv` and `data/test_codemixed.csv`) and not a model bug. The test file
+held 18 of the 25 intents, but macro-F1 was averaged over all 25 labels with `zero_division=0`, so the 7 intents with no test
+rows scored 0 and capped every model (~0.64 whatever its real quality). Fixes: the code-mixed score now averages only over
+intents present in the test file (`present_only=True` in `evaluate.compute_metrics`), and 26 held-out rows were added so the
+7 missing intents are covered. Scores are now 0.90 to 0.92 and differ between models.
+'''
 
 
 def build_env():
@@ -129,6 +140,21 @@ def pct(n: int, d: int) -> str:
     return f"{100 * n / d:.0f}% ({n}/{d})" if d else "n/a"
 
 
+def rates(rows: list[dict], key: str) -> dict[str, tuple[int, int]]:
+    out: dict[str, list[int]] = defaultdict(lambda: [0, 0])
+    for r in rows:
+        out[r[key]][1] += 1
+        out[r[key]][0] += r["pass"] == "PASS"
+    return {k: (v[0], v[1]) for k, v in out.items()}
+
+
+def leaked(rows: list[dict]) -> list[str]:
+    """Eval utterances that also appear in the training file (must be none, or the score is not honest)."""
+    with TRAIN_CSV.open(encoding="utf-8", newline="") as f:
+        train = {r["text"].lower().strip() for r in csv.DictReader(f)}
+    return [r["utterance"] for r in rows if r["utterance"].lower().strip() in train]
+
+
 def write_report(results: list[dict]) -> None:
     total, ok = len(results), sum(r["pass"] == "PASS" for r in results)
     by_sec, by_lang, by_sec_lang = defaultdict(lambda: [0, 0]), defaultdict(lambda: [0, 0]), defaultdict(lambda: [0, 0])
@@ -158,6 +184,23 @@ def write_report(results: list[dict]) -> None:
          "was attached to the message).", "",
          "## Pass rate per section", "", "| Section | Pass rate |", "|---|---|"]
     L += [f"| {s} | {pct(*by_sec[s])} |" for s in SECTION_ORDER if s in by_sec]
+    if BASELINE.exists():
+        with BASELINE.open(encoding="utf-8", newline="") as f:
+            base_rows = list(csv.DictReader(f))
+        bs, bl = rates(base_rows, "section"), rates(base_rows, "language")
+        ns, nl = rates(results, "section"), rates(results, "language")
+        b_ok = sum(v[0] for v in bs.values())
+        L += ["", "## Before and after", "",
+              "Before = the first run (`tests/eval/results_baseline.csv`). After = this run, same 399 cases, "
+              "with routing fixes and extra training data. No eval utterance is in the training file.", "",
+              "| Section | Before | After | Change |", "|---|---|---|---|"]
+        for sct in SECTION_ORDER:
+            if sct in ns:
+                b, a = bs.get(sct, (0, 0)), ns[sct]
+                L.append(f"| {sct} | {pct(*b)} | {pct(*a)} | {100 * a[0] / a[1] - 100 * b[0] / max(b[1], 1):+.0f} pts |")
+        L.append(f"| **all** | {pct(b_ok, total)} | {pct(ok, total)} | {100 * ok / total - 100 * b_ok / total:+.0f} pts |")
+        L += ["", "| Language | Before | After |", "|---|---|---|"]
+        L += [f"| {g} | {pct(*bl.get(g, (0, 0)))} | {pct(*nl[g])} |" for g in LANG_ORDER if g in nl]
     L += ["", "## Pass rate per language", "", "| Language | Pass rate |", "|---|---|"]
     L += [f"| {g} | {pct(*by_lang[g])} |" for g in LANG_ORDER if g in by_lang]
     L += ["", "## Section by language", "", "| Section | " + " | ".join(LANG_ORDER) + " |", "|---|" + "---|" * len(LANG_ORDER)]
@@ -195,6 +238,9 @@ def main() -> int:
         w.writeheader()
         w.writerows(results)
     write_report(results)
+    leak = leaked(results)
+    if leak:
+        print(f"WARNING: {len(leak)} eval utterances are in the training file: {leak[:5]}")
     ok = sum(r["pass"] == "PASS" for r in results)
     print(f"{ok}/{len(results)} passed; report written to {REPORT}")
     return 0

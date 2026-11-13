@@ -11,16 +11,19 @@ STOP = {"ready", "fine", "good", "great", "okay", "ok", "sure", "happy", "sad", 
         "assistant", "sorry", "glad", "late", "later", "now", "going", "coming", "just", "still", "from", "in",
         "on", "at", "with", "and", "or", "but", "hai", "che", "hoon", "chu", "है", "हूँ", "छે", "છે", "છું",
         "bulao", "kaho", "bolo", "कहो", "કહો", "doing", "well", "bored", "confused", "working", "learning",
-        "trying", "looking", "user", "owner", "friend", "boss", "master"}
+        "trying", "looking", "user", "owner", "friend", "boss", "master",
+        "kya", "kaun", "kon", "shu", "what", "who", "yaad", "batao", "bataiye", "batavo", "jaanta", "pata", "khabar",
+        "क्या", "कौन", "याद", "बताओ", "बताइए", "पता", "શું", "કોણ", "યાદ", "ખબર", "જણાવો", "naam", "name", "नाम", "નામ"}
 _ROLES = r"(?:user|owner|master|boss|friend|creator|developer|admin|operator)"
 EXPLICIT = [
     r"\b(?:my name is|my name's|you can call me|call me)\s+(.+)$",
     rf"\bi am your (?:new )?{_ROLES}\s+(.+)$",
     r"\bmera naam\s+(.+?)\s+hai\b", r"\bmujhe\s+(.+?)\s+(?:bulao|kaho|bolo)\b",
+    r"\bmujhe\s+(.+?)\s+naam se\s+(?:pukaro|bulao|bulana|bulaana)\b", r"\bmane\s+(.+?)\s+kahine\b",
     r"\bmain aapka (?:naya )?user\s+(.+?)\s+hoon\b",
     r"\bmaru naam\s+(.+?)\s+che\b", r"\bmane\s+(.+?)\s+kaho\b", r"\bhu tamaro (?:navo )?user\s+(.+?)\s+chu\b",
-    r"मेरा नाम\s+(.+?)\s+है", r"मुझे\s+(.+?)\s+कहो", r"मैं आपका (?:नया )?उपयोगकर्ता\s+(.+?)\s+हूँ",
-    r"મારું નામ\s+(.+?)\s+છે", r"મને\s+(.+?)\s+કહો", r"હું તમારો (?:નવો )?વપરાશકર્તા\s+(.+?)\s+છું",
+    r"मेरा नाम\s+(.+?)\s+है", r"मुझे\s+(.+?)\s+(?:कहो|कहिए|बुलाओ|बुलाइए|पुकारो)", r"मैं आपका (?:नया )?उपयोगकर्ता\s+(.+?)\s+हूँ",
+    r"મારું નામ\s+(.+?)\s+છે", r"મને\s+(.+?)\s+(?:કહો|બોલાવો|બોલાવજો)", r"હું તમારો (?:નવો )?વપરાશકર્તા\s+(.+?)\s+છું",
 ]
 BARE = r"^(?:i am|i'm|im)\s+(.+)$"
 _HYPOTHETICAL = re.compile(r"\b(?:when|if|suppose|imagine|say|maybe|perhaps)\b", re.IGNORECASE)

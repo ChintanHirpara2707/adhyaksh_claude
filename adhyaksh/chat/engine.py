@@ -17,7 +17,7 @@ from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_
 from adhyaksh.safety import policy
 from adhyaksh.tools import apps, features, files, office, system
 
-MAX_MESSAGE = 2000
+MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
 OS_INTENTS = {
     "file_create", "file_read", "file_update", "file_delete", "file_search",
     "folder_create", "office_create", "app_open", "app_close",
@@ -439,12 +439,21 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         name = identity.get_name()
         return _Reply(_t("identity_query", lang, name=name) if name else _t("no_name", lang), intent)
     if intent == "memory_save":
-        res = store.save_fact(text)
+        if slots.get("ask"):
+            return _need(ctx, intent, "content", {}, _t("ask_memory", lang), lang)
+        res = store.save_fact(slots.get("fact") or slots.get("content") or text)
         if not res.ok:
             return _Reply(_error_reply(res, lang), intent)
         key = "memory_exists" if res.data["duplicate"] else "memory_saved"
         return _Reply(_t(key, lang, fact=res.data["fact"]), intent, action="memory")
     if intent == "memory_recall":
+        if slots.get("all") or router.match_memory(text) == router.Rule("memory_recall", {"all": True}):
+            facts = store.list_facts()
+            if not facts:
+                return _Reply(_t("memory_none", lang), intent)
+            lines = "\n".join(f"- {f['fact'][:300]}" for f in facts[:20])
+            more = f"\n(and {len(facts) - 20} more)" if len(facts) > 20 else ""
+            return _Reply(f"I remember {len(facts)} item(s):\n{lines}{more}", intent, action="memory")
         res = store.recall(text)
         return _Reply(_t("memory_recall", lang, answer=res.data["answer"]) if res.ok else _t("memory_none", lang), intent)
     if intent == "system_status":

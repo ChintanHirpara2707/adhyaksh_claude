@@ -797,6 +797,9 @@ def fix_verb_typo(text: str) -> str:
 
 def understand(text: str) -> Rule | None:
     """Rules on the raw text, then on the cleaned text, then the extended rules on both."""
+    mem = match_memory(text)  # on the raw text: multi-line data must keep its line breaks
+    if mem:
+        return mem
     cleaned = clean_command(text)
     for candidate in dict.fromkeys([text.strip(), cleaned, fix_verb_typo(cleaned)]):
         rule = (match_conversational(candidate) or match_features(candidate) or match_rules(candidate)
@@ -941,3 +944,96 @@ def match_features(text: str) -> Rule | None:
 # "how much ... free / usage / check": reading numbers is system_status, not a boost request.
 _STATUS_ACT_STRICT = re.compile(r"\b(?:how\s+much|how\s+is|usage|status|kitna|kitni|ketlo|ketli|ketlu)\b|कितना|कितनी|કેટલો|કેટલી",
                                 re.IGNORECASE)
+
+
+# ---------------------------------------------------------------------------
+# Free-form memory commands: the save/remember verb may come before OR after the data, in any of the five
+# languages; the command words are stripped and the rest is stored. See match_memory().
+# ---------------------------------------------------------------------------
+
+_PRON_EN = r"(?:this|that|it|these|those|the\s+following|the\s+above|everything\s+above)"
+_MEM_TARGET = (r"(?:in|to|into|on|inside|within)\s+(?:your\s+|ur\s+|my\s+|the\s+)?"
+               r"(?:long[\s-]*term\s+)?(?:memory|memories|brain|notes?|notebook|memory\s+bank)")
+_FOR_ME = r"(?:\s+(?:for\s+me|please|pls|plz|now|ok|okay))*"
+# English phrases that name the memory as the destination ("save this in your memory"): valid anywhere in the message.
+_EN_TARGETED = re.compile(
+    rf"(?:(?:please|pls|plz|kindly|can\s+you|could\s+you|would\s+you|will\s+you|just|also)\s+)*"
+    rf"(?:save|store|add|put|keep|write|record|jot|note|log|file)(?:\s+down)?(?:\s+{_PRON_EN})?(?:\s+{_PRON_EN})?"
+    rf"\s+{_MEM_TARGET}{_FOR_ME}", re.IGNORECASE)
+# Bare English verbs: only at the start or the end of the message, so ordinary sentences are left alone.
+_EN_VERB = r"(?:remember|memori[sz]e|note(?:\s+down)?|keep\s+in\s+mind|don'?t\s+forget|do\s+not\s+forget|save|store)(?![\w])"
+_EN_LEAD = re.compile(
+    rf"^\s*(?:(?:please|pls|plz|kindly|can\s+you|could\s+you|would\s+you|just|also|hey|ok|okay)[\s,]+)*"
+    rf"{_EN_VERB}(?:\s+{_PRON_EN})?(?:\s+down)?{_FOR_ME}\s*(?:[:\-,]|\bthat\b|\bthat:)?\s*", re.IGNORECASE)
+_EN_TAIL = re.compile(
+    rf"[\s,.;:\-]*(?:(?:please|pls|plz|kindly|can\s+you|could\s+you|also|and)\s+)*"
+    rf"{_EN_VERB}\s+{_PRON_EN}(?:\s+down)?{_FOR_ME}[\s.!]*$", re.IGNORECASE)
+_HI_V = (r"(?:याद\s*रख(?:ो|ना|ें|िए|ियेगा|ना|ियो)?|सेव\s*कर(?:ो|ना|दो|\s*दो|\s*लो|\s*देना)?|सहेज(?:ो|\s*लो|\s*दो)?|"
+         r"नोट\s*कर(?:ो|ना|\s*लो|\s*लेना|\s*दो)?|स्टोर\s*कर(?:ो|\s*दो|\s*लो)?|मेमोरी\s*में\s*(?:सेव|डाल|रख)\w*(?:\s*(?:करो|दो|लो))?|"
+         r"भूलना\s*मत|भूलना\s*नहीं)")
+_GU_V = (r"(?:યાદ\s*રાખ(?:જો|ો|વું)?|સેવ\s*કર(?:ો|જો|વું|ી\s*લો|ી\s*દો)?|સાચવ(?:ો|જો|ી\s*લો|ી\s*રાખો)|"
+         r"નોંધ\s*(?:કર(?:ો|જો|ી\s*લો|ી\s*રાખો)|રાખો)|સ્ટોર\s*કર(?:ો|જો|ી\s*લો)|મેમરીમાં\s*(?:સેવ|રાખ|નાખ)\w*(?:\s*કર\w*)?|"
+         r"ભૂલતા\s*નહીં|ભૂલશો\s*નહીં)")
+_ROMAN_V = (r"(?:yaad\s*rakh(?:o|na|jo|ana|iye|iyega|iyo)?|yad\s*rakh(?:o|na|jo)|save\s*kar(?:o|na|\s*do|\s*lo|jo|\s*dena|\s*lena)?|"
+            r"save\s*kari\s*(?:lo|do|dejo|lejo|nakho)|store\s*kar(?:o|\s*do|\s*lo|na)|store\s*kari\s*(?:lo|do|dejo)|"
+            r"note\s*kar(?:o|na|\s*lo|\s*do|\s*lena|\s*dena)?|note\s*kari\s*(?:lo|do|lejo|dejo)|"
+            r"(?:memory|yaadasht)\s*(?:me|mein|ma)\s*(?:save|rakh\w*|daal\w*|store|nakho)(?:\s*kar\w*)?|"
+            r"dhyan\s*rakh(?:na|jo|o)|bhul(?:na|ta)\s+(?:mat|nahi|nahin))")
+_INDIC_PRON = r"(?:ye|yeh|ise|isko|isse|aa|aane|aa\s+badhu|यह|ये|इसे|इसको|इसे\s+भी|आ|આ|આને|આ\s+બધું)"
+_WORD_END = r"(?![\w\u0900-\u097F\u0A80-\u0AFF])"
+_INDIC = re.compile(rf"(?<![\w\u0900-\u097F\u0A80-\u0AFF])(?:{_INDIC_PRON}\s+)?(?:{_HI_V}|{_GU_V}|{_ROMAN_V}){_WORD_END}"
+                    r"(?:\s+(?:please|pls|na|ne|yaar|bhai))*", re.IGNORECASE)
+_CONNECT = re.compile(r"^[\s:;,\-–—]*(?:(?:that|ki|ke|कि|કે)(?=[\s:,]|$)[\s:,]*)?|[\s:;,\-–—]+$", re.IGNORECASE)
+_PRON_ONLY = re.compile(rf"^(?:{_PRON_EN}|{_INDIC_PRON}|please|pls|ok|okay|na|ne|yaar|bhai|for\s+me|me|now|memory|my\s+memory)?$", re.IGNORECASE)
+
+_MEM_RECALL_ALL = re.compile(
+    r"\bwhat\s+(?:all\s+)?(?:do|did|have)\s+(?:you|u)\s+(?:remember|recall|know\s+about\s+me|saved|stored|have\s+(?:saved|stored|noted))\b|"
+    r"\b(?:show|list|display|tell|give)\s+(?:me\s+)?(?:all\s+)?(?:my\s+|the\s+|your\s+)?(?:memories|saved\s+(?:items|notes|facts|things)|"
+    r"notes|memory|what\s+you\s+(?:remember|know|saved|stored))\b|"
+    r"\bwhat(?:'s|\s+is|\s+do\s+you\s+have)\s+(?:in\s+)?(?:your\s+|my\s+)memory\b|\bwhat\s+do\s+you\s+know\s+about\s+me\b|"
+    r"\b(?:tumhe|tumko|aapko|tame)\s+(?:kya\s+kya|shu\s+shu)\s+yaad\b|\bkya\s+kya\s+yaad\s+(?:hai|rakhte|rakhta|rakhti|rakhe)\b|\bshu\s+shu\s+yaad\s+che\b|"
+    r"तुम्हें\s+क्या\s+क्या\s+याद|आपको\s+क्या\s+क्या\s+याद|तुम्हें\s+मेरे\s+बारे\s+में\s+क्या|"
+    r"તમને\s+શું\s+શું\s+યાદ|તને\s+શું\s+શું\s+યાદ|મારા\s+વિશે\s+તમે\s+શું\s+જાણો", re.IGNORECASE)
+_RECALL_QUESTION = re.compile(
+    r"^\s*(?:do|did|can|could|will)\s+(?:you|u)\s+(?:remember|recall)\b(?!\s+(?:that|this|it)\b)|\bwhat\s+do\s+(?:you|u)\s+remember\b|"
+    r"\byaad\s+hai\b|\byaad\s+che\b|याद\s+है\s*(?:क्या)?\s*[?]?\s*$|યાદ\s+છે", re.IGNORECASE)
+
+
+def match_memory(text: str) -> Rule | None:
+    """Memory save or list commands, with the command words anywhere around free-form data.
+
+    Returns Rule("memory_save", {"fact": data}) or Rule("memory_save", {"ask": True}) when only the command was given,
+    or Rule("memory_recall", {"all": True}) to list everything. Multi-line text is kept as written."""
+    raw = text.strip()
+    if not raw:
+        return None
+    flat = " ".join(raw.split())
+    has_file = _has_file_extension(flat)
+    if _MEM_RECALL_ALL.search(flat) and not has_file:
+        return Rule("memory_recall", {"all": True})
+    targeted = _EN_TARGETED.search(raw)
+    if _RECALL_QUESTION.search(flat) and not targeted:
+        return None
+    data = raw
+    hit = False
+    if targeted:
+        data, hit = _EN_TARGETED.sub(" ", data), True
+    if not (has_file and not targeted):
+        m = _INDIC.search(data)
+        if m:
+            data, hit = _INDIC.sub(" ", data), True
+        if not hit and not has_file:
+            m_lead, m_tail = _EN_LEAD.match(data), _EN_TAIL.search(data)
+            if m_lead and not re.match(r"^\s*(?:save|store)\b", data, re.IGNORECASE) and not data[m_lead.end():].strip().startswith("?"):
+                data, hit = data[m_lead.end():], True
+            elif m_tail:
+                data, hit = data[:m_tail.start()], True
+            elif m_lead and re.match(r"^\s*(?:save|store)\s+(?:this|that|it|these)\b", data, re.IGNORECASE):
+                data, hit = data[m_lead.end():], True
+    if not hit:
+        return None
+    data = _CONNECT.sub("", data).strip()
+    data = _CONNECT.sub("", data).strip()
+    if _PRON_ONLY.match(" ".join(data.split())):
+        return Rule("memory_save", {"ask": True})
+    return Rule("memory_save", {"fact": data})

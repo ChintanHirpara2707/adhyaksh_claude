@@ -15,6 +15,11 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "hi": "आपका नाम {name} है।",
         "gu": "તમારું નામ {name} છે.",
     },
+    "ask_memory": {
+        "en": "What should I remember?",
+        "hi": "मुझे क्या याद रखना है?",
+        "gu": "મારે શું યાદ રાખવું છે?",
+    },
     "memory_saved": {
         "en": "Saved to memory: {fact}.",
         "hi": "स्मृति में सहेजा गया: {fact}।",

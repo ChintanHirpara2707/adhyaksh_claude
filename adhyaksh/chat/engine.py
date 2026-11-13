@@ -15,14 +15,15 @@ from adhyaksh.nlu import registry
 from adhyaksh.rag import answerer
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, files, office, system
+from adhyaksh.tools import apps, features, files, office, system
 
 MAX_MESSAGE = 2000
 OS_INTENTS = {
     "file_create", "file_read", "file_update", "file_delete", "file_search",
     "folder_create", "office_create", "app_open", "app_close",
-    "special_folder_open", "web_open", "screenshot", "system_status",
+    "special_folder_open", "web_open", "screenshot", "system_status", "pc_performance",
 }
+IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 YES = {"yes", "y", "confirm", "yes please", "haan", "ha", "हाँ", "हां", "હા", "ok confirm"}
 NO = {"no", "n", "cancel", "nahi", "nahin", "na", "नहीं", "ના", "નહીં", "nope"}
 EXAMPLE_NAME = "names.xlsx"
@@ -124,6 +125,16 @@ def _model_slots(intent: str, text: str) -> dict:
         return {"folder": fo} if fo else {}
     if intent == "time_date":
         return {"kind": _time_date_kind(text)}
+    if intent == "vision_detect":
+        return {"open": bool(router._PAGE_WORDS.search(text))}
+    if intent == "pc_performance":
+        r = router.match_features(text)
+        if r and r.intent == "pc_performance":
+            return r.slots
+        return {"kind": "page" if router._PAGE_WORDS.search(text) and router._PERF_PAGE.search(text) else "hogs"}
+    if intent == "voice_control":
+        va = router.voice_action(text)
+        return {"action": va[0], "value": va[1]} if va else {}
     if intent == "set_identity":
         name, conf = identity.extract_name(text)
         return {"name": name, "conf": conf} if name else {}
@@ -180,7 +191,8 @@ def _cannot_do_yet(lang: str) -> str:
 
 class _Reply:
     def __init__(self, text: str, intent: str, conf: float = 1.0, action: str = "", confirmation: dict | None = None,
-                 sources: list | None = None, suggest_mode: str | None = None):
+                 sources: list | None = None, suggest_mode: str | None = None, extra: dict | None = None):
+        self.extra = extra or {}  # UI hints: open_page, voice_cmd
         self.text, self.intent, self.conf, self.action = text, intent, conf, action
         self.confirmation, self.sources, self.suggest_mode = confirmation, sources or [], suggest_mode
 
@@ -271,6 +283,12 @@ _INTENT_SIGNAL = {
     "web_open": re.compile(r"\bopen\b|\bgo\s+to\b|\bsearch\b|\.com|\.in\b|kholo|खोलो|ખોલો|browse|website", re.IGNORECASE),
     "doc_question": re.compile(r"document|\bpdf\b|\bfile\b|report|attach|दस्तावेज़|दस्तावेज|પીડીએફ|દસ્તાવેજ|फाइल|ફાઇલ|docs?\b",
                                re.IGNORECASE),
+    "vision_detect": re.compile(r"photo|image|picture|camera|webcam|detect|object|vision|tasveer|तस्वीर|फोटो|इमेज|कैमरा|"
+                                r"ફોટો|તસવીર|ઇમેજ|કેમેરા", re.IGNORECASE),
+    "pc_performance": re.compile(r"perform|boost|faster|\bfast\b|speed|lag|hang|\bram\b|memory|process|clean|cpu|slow|"
+                                 r"tez|तेज|धीमा|परफॉर्म|रैम|मेमोरी|પરફોર્મ|ઝડપી|રેમ|મેમરી|હેંગ", re.IGNORECASE),
+    "voice_control": re.compile(r"listen|voice|hands.?free|wake|speak|talk|quiet|mute|aloud|\bmic\b|sunn|sambh|chup|bol|"
+                                r"सुन|बोल|चुप|आवाज|माइक|સાંભળ|બોલ|ચૂપ|અવાજ|માઇક", re.IGNORECASE),
     "app_open": re.compile(r"\bopen\b|launch|\bstart\b|\brun\b|kholo|khol\b|chalu|shuru|खोल|चालू|शुरू|ખોલ|ચાલુ|શરૂ",
                            re.IGNORECASE),
     "app_close": re.compile(r"close|quit|exit|kill|stop|band|bandh|off\b|बंद|બંધ", re.IGNORECASE),
@@ -293,11 +311,97 @@ def _general_override(text: str, intent: str) -> bool:
     return sig is not None and _is_general_question(text) and not sig.search(text)
 
 
+_KILL = re.compile(r"\b(?:kill|terminate|end)\b", re.IGNORECASE)
+
+
+def _vision_reply(text: str, slots: dict, ctx: context.Context, c: dict) -> _Reply:
+    """Detect objects in an attached image, or open the Object Detection page, or say how to give an image."""
+    if ctx.images:
+        res = features.detect_objects(ctx.images[0], ctx=c)
+        if not res.ok:
+            return _Reply("I could not analyse that image: " + res.message.rstrip(".") + ".", "vision_detect", action="vision")
+        d = res.data
+        if not d["total"]:
+            return _Reply("I did not find any known objects. Try a clearer or closer photo, or use the Object Detection "
+                          "page with the 'Small objects' mode.", "vision_detect", action="vision")
+        items = ", ".join(f"{o['count']} {o['label']}" if o["count"] > 1 else o["label"] for o in d["objects"])
+        return _Reply(f"I found {d['total']} object(s): {items}. The standard detector knows 80 everyday object types; "
+                      "the Object Detection page can also look for objects you name.", "vision_detect", action="vision")
+    if slots.get("open"):
+        res = features.open_page("vision", ctx=c)
+        if res.ok:
+            return _Reply("Opening the Object Detection page.", "vision_detect", action="open_page",
+                          extra={"open_page": "vision"})
+    return _Reply("Attach a photo to your message (paperclip) and I will list the objects in it, or open the "
+                  "Object Detection page to use the camera.", "vision_detect", action="vision")
+
+
+def _performance_reply(text: str, slots: dict, ctx: context.Context, lang: str, c: dict, intent: str) -> _Reply:
+    kind = slots.get("kind", "hogs")
+    if kind == "page":
+        res = features.open_page("performance", ctx=c)
+        if res.ok:
+            return _Reply("Opening the PC Performance page.", intent, action="open_page", extra={"open_page": "performance"})
+    if kind == "kill":
+        return _Reply("I do not stop processes by name. Say 'close <application>' for allow-listed apps, "
+                      "or ask 'which apps use the most RAM' to see the heaviest ones.", intent, action="performance")
+    if kind == "boost":
+        scan = features.temp_scan(ctx=c)
+        if not scan.ok:
+            return _Reply(_error_reply(scan, lang), intent, action="performance")
+        if not scan.data["files"]:
+            return _Reply("There are no old temp files to clean. Your PC is already tidy.", intent, action="performance")
+        res = features.temp_clean(ctx=c)
+        if res.error_code == E_NEEDS_CONFIRM:
+            r = _confirm_reply(res, lang, ctx, lambda tok: features.temp_clean(ctx=_ctx_for(text, intent, tok), token=tok),
+                               intent, "temp files")
+            r.text = (f"Found {scan.data['mb']} MB in {scan.data['files']} temp files older than a day. "
+                      "Confirm to delete them or cancel.")
+            return r
+        return _Reply(_error_reply(res, lang) if not res.ok else f"Cleaned {res.data['mb']} MB.", intent, action="performance")
+    res = features.perf_report(ctx=c)
+    if not res.ok:
+        return _Reply(_error_reply(res, lang), intent, action="performance")
+    d = res.data
+    top = ", ".join(f"{p['name']} ({p['ram_percent']}%)" for p in d.get("top", []))
+    return _Reply(f"CPU {d['cpu_percent']:.0f}%, RAM {d['ram_percent']:.0f}% ({d['ram_available_gb']:.1f} GB free), "
+                  f"disk {d['disk_percent']:.0f}% ({d['disk_free_gb']:.1f} GB free)."
+                  + (f" Using the most memory: {top}." if top else ""), intent, action="performance")
+
+
+_VOICE_TEXT = {
+    "start": "Hands-free listening is on. Your browser may ask for microphone permission. Say 'stop listening' to end it.",
+    "stop": "Listening stopped.", "quiet": "I will stop talking.",
+    "speak_on": "I will read my replies aloud.", "speak_off": "I will stop reading replies aloud.",
+    "wake_on": "Wake word is on: say 'Adhyaksh' before a command in hands-free mode.",
+    "wake_off": "Wake word is off: hands-free mode acts on everything it hears.",
+}
+
+
+def _voice_reply(text: str, slots: dict, c: dict, intent: str) -> _Reply:
+    action = slots.get("action")
+    if not action:
+        parsed = router.voice_action(text)
+        action, slots = (parsed[0], {"value": parsed[1]}) if parsed else ("start", {})
+    res = features.voice_command(action, slots.get("value", ""), ctx=c)
+    if not res.ok:
+        return _Reply("I could not change the voice setting: " + res.message.rstrip(".") + ".", intent, action="voice")
+    msg = (f"Voice language set to {features.VOICE_LANGS[slots['value']]}." if action == "lang"
+           else _VOICE_TEXT[action])
+    return _Reply(msg, intent, action="voice", extra={"voice_cmd": {"action": action, "value": slots.get("value", "")}})
+
+
 def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_id: int, lang: str,
               mode: str = "cowork") -> _Reply:
     c = _ctx_for(text, intent)
     if mode == "chat" and intent in OS_INTENTS:
         return _Reply(_t("needs_cowork", lang), intent, action="needs_cowork", suggest_mode="cowork")
+    if intent == "vision_detect":
+        return _vision_reply(text, slots, ctx, c)
+    if intent == "pc_performance":
+        return _performance_reply(text, slots, ctx, lang, c, intent)
+    if intent == "voice_control":
+        return _voice_reply(text, slots, c, intent)
     if intent == "greet":
         return _Reply(_t("greet", lang), intent)
     if intent == "bot_identity":
@@ -499,6 +603,9 @@ def _finish_confirmation(ctx: context.Context, accept: bool, lang: str) -> _Repl
     if p["action"] == "file_delete":
         ctx.last_file = None
         return _Reply(_t("file_deleted", lang, path=d.get("path", p["target"])), "confirmation", action=p["action"])
+    if p["action"] == "temp_clean":
+        return _Reply(f"Cleaned {d.get('mb', 0)} MB of temp files. Skipped {d.get('skipped', 0)} files in use.",
+                      "confirmation", action=p["action"])
     if p["action"] == "file_overwrite":
         return _Reply(_t("file_updated", lang, path=d.get("path", p["target"])), "confirmation", action=p["action"])
     return _Reply(_t("app_closed", lang, app=d.get("app", p["target"])), "confirmation", action=p["action"])
@@ -644,20 +751,27 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
     if not text and not attachments:
         return Result.failure(E_LOW_CONFIDENCE, "Empty message.")
     lang = detect_lang(text) if text else "en"
+    images = [d for n, d in attachments if Path(n).suffix.lower() in IMAGE_EXT]
+    attachments = [(n, d) for n, d in attachments if Path(n).suffix.lower() not in IMAGE_EXT]
+    names = [n for n, _ in attachments] + [f"image {i + 1}" for i in range(len(images))]
     shown = text
-    if attachments:
-        names = ", ".join(n for n, _ in attachments)
-        shown = (text + "\n" if text else "") + f"[Attached: {names}]"
+    if names:
+        shown = (text + "\n" if text else "") + f"[Attached: {', '.join(names)}]"
     context.save_message(conversation_id, "user", shown)
     ctx = context.get(conversation_id)
+    ctx.images = images or None
     try:
-        if attachments:
+        if images and not attachments:
+            r = _vision_reply(text, {}, ctx, _ctx_for(text, "vision_detect"))
+        elif attachments:
             ok, bad = _ingest_attachments(attachments)
             r = _attachment_reply(text, ok, bad, ctx, conversation_id, lang, mode)
         else:
             r = _process(text, ctx, conversation_id, lang, mode=mode)
     except Exception as exc:  # never raise to the UI for expected failures
         r = _Reply(_t("error", lang, reason=f"internal error ({type(exc).__name__})"), "error", 0.0)
+    finally:
+        ctx.images = None
     ms = (time.perf_counter() - t0) * 1000
     context.save_message(conversation_id, "assistant", r.text, r.intent, r.conf, ms)
     result = {"reply": r.text, "intent": r.intent, "confidence": round(r.conf, 3), "action": r.action,
@@ -665,4 +779,5 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
               "lang": lang, "voice": voice, "mode": mode}
     if r.suggest_mode is not None:
         result["suggest_mode"] = r.suggest_mode
+    result.update(r.extra)
     return Result.success(result)

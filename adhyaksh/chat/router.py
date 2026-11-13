@@ -771,7 +771,138 @@ def understand(text: str) -> Rule | None:
     """Rules on the raw text, then on the cleaned text, then the extended rules on both."""
     cleaned = clean_command(text)
     for candidate in dict.fromkeys([text.strip(), cleaned, fix_verb_typo(cleaned)]):
-        rule = match_conversational(candidate) or match_rules(candidate) or match_extended(candidate)
+        rule = (match_conversational(candidate) or match_features(candidate) or match_rules(candidate)
+                or match_extended(candidate))
         if rule:
             return rule
     return None
+
+
+# ---------------------------------------------------------------------------
+# Vision, performance and voice-control commands.
+# ---------------------------------------------------------------------------
+
+_TOK = re.compile(r"[a-z]+")
+
+
+def _has_word_like(t: str, words: tuple[str, ...], cutoff: float = 0.8) -> bool:
+    """True if any word of t is (nearly) one of `words`; tolerates typos such as 'stp' for 'stop'."""
+    import difflib
+    toks = _TOK.findall(t.casefold())
+    return any(difflib.get_close_matches(tok, words, n=1, cutoff=cutoff) for tok in toks if len(tok) >= 3)
+
+
+_V_TARGET = re.compile(
+    r"listen|hands?[\s-]*free|\bmic\b|microphone|voice|wake\s*word|\bsunn\w*|sambh\w*|\bsun(?:o|na|ne)\b|"
+    r"सुन|हैंड्स|माइक|वेक\s*वर्ड|सांभळ|સાંભળ|હેન્ડ્સ|માઇક|વેક\s*વર્ડ|\bawaaz\b|\bavaj\b|आवाज|અવાજ", re.IGNORECASE)
+_V_OFF = re.compile(r"\b(?:stop|end|quit|disable|off|pause|cancel|mute|band|bandh|ruk|ruko)\b|बंद|बन्द|रुको|બંધ|બંધ", re.IGNORECASE)
+_V_QUIET = re.compile(r"\b(?:stop\s+(?:talking|speaking)|be\s+quiet|quiet\s+please|shut\s+up|chup|chup\s+raho|chup\s+thai)\b|"
+                      r"चुप|ચૂપ|ચુપ", re.IGNORECASE)
+_V_SPEAK_OFF = re.compile(
+    r"\b(?:stop|turn\s+off|disable|no\s+more|mute|band)\b.{0,20}\b(?:voice\s+repl\w*|repl(?:y|ies)\s+aloud|reading|"
+    r"speaking\s+repl\w*|answers?\s+aloud|bolna|bolne|bolvanu|bolvu)\b|"
+    r"(?:जवाब|उत्तर)\s+बोलना\s+बंद|બોલવાનું\s+બંધ|\bjaw?ab\s+bolna\s+band\b|\bjavab\s+bolvanu\s+bandh\b|"
+    r"\bturn\s+off\s+(?:the\s+)?voice\s+repl\w*", re.IGNORECASE)
+_V_SPEAK_ON = re.compile(
+    r"\b(?:speak|say|read|tell)\b.{0,30}\b(?:aloud|out\s+loud|repl(?:y|ies)|answers?)\b|"
+    r"\b(?:read|say)\s+(?:that|it|this)\s+(?:out\s+loud|aloud)\b|\btalk\s+to\s+me\b|"
+    r"\bjaw?ab\b.{0,15}\b(?:bol\s*(?:ke|kar)|bolkar|bolna|sunao|batana)\b|\bjavab\b.{0,15}\b(?:boli?\s*ne|bolvu|sambhdav\w*|kehjo)\b|"
+    r"(?:जवाब|उत्तर).{0,12}(?:बोलकर|बोल\s*कर)|જવાબ.{0,12}(?:બોલીને)", re.IGNORECASE)
+_V_WAKE = re.compile(r"wake\s*word|वेक\s*वर्ड|વેક\s*વર્ડ", re.IGNORECASE)
+_V_ON = re.compile(r"\b(?:start|begin|enable|on|resume|activate|chalu|shuru|keep|always)\b|चालू|शुरू|ચાલુ|શરૂ", re.IGNORECASE)
+_V_LANG_CUE = re.compile(r"language|\blang\b|bhasha|भाषा|ભાષા|\bswitch\b|\buse\b|\bin\b", re.IGNORECASE)
+_V_LANG_NAME = [(re.compile(r"hindi|हिंदी|हिन्दी|હિન્દી", re.IGNORECASE), "hi-IN"),
+                (re.compile(r"gujarati|gujrati|गुजराती|ગુજરાતી", re.IGNORECASE), "gu-IN"),
+                (re.compile(r"english|angrezi|अंग्रेज़ी|अंग्रेजी|અંગ્રેજી", re.IGNORECASE), "en-IN")]
+_V_SPEECHY = re.compile(r"voice|speech|speak|bol|बोल|બોલ|awaaz|आवाज|અવાજ|talk", re.IGNORECASE)
+
+
+def voice_action(t: str) -> tuple[str, str] | None:
+    """(action, value) for a voice-control phrase, else None."""
+    if _V_SPEECHY.search(t) and _V_LANG_CUE.search(t):
+        for pat, code in _V_LANG_NAME:
+            if pat.search(t):
+                return "lang", code
+    if _V_QUIET.search(t):
+        return "quiet", ""
+    if _V_SPEAK_OFF.search(t):
+        return "speak_off", ""
+    if _V_SPEAK_ON.search(t):
+        return "speak_on", ""
+    off = bool(_V_OFF.search(t)) or _has_word_like(t, ("stop", "disable", "pause", "quit"), 0.75)
+    if _V_WAKE.search(t):
+        return ("wake_off" if off else "wake_on"), ""
+    if _V_TARGET.search(t) and len(t.split()) <= 8 and not t.rstrip().endswith("?"):
+        return ("stop" if off else "start"), ""
+    return None
+
+
+_POWER = re.compile(
+    r"\b(?:shut\s*down|shutdown|power\s*off|restart|reboot|log\s*off|log\s*out|sign\s*out|hibernate|put\s+to\s+sleep)\b"
+    r".{0,20}\b(?:laptop|computer|pc|system|windows|machine)\b|"
+    r"\b(?:laptop|computer|pc|system|windows|machine)\b.{0,12}\b(?:shut\s*down|power\s*off|restart|reboot|hibernate)\b",
+    re.IGNORECASE)
+_NO_TOOL = re.compile(
+    r"^(?:please\s+)?(?:send|write|compose|draft)\s+(?:an?\s+|the\s+|my\s+)?(?:e-?mail|mail|sms|text\s+message|message|whatsapp)\b|"
+    r"^(?:please\s+)?(?:call|dial|phone|ring)\s+\w+|^(?:please\s+)?(?:book|order|buy|pay|recharge)\s+\w+",
+    re.IGNORECASE)
+_VISION_NOUN = re.compile(
+    r"\b(?:photos?|images?|pictures?|pics?|webcam|camera|tasveer|tasvir|foto|vision)\b|तस्वीर|फोटो|इमेज|कैमरा|विज़न|विजन|"
+    r"ફોટો|ફોટામાં|તસવીર|ઇમેજ|કેમેરા|વિઝન", re.IGNORECASE)
+_VISION_CUE = re.compile(
+    r"\b(?:what|which|identify|detect|recogni[sz]e|scan|spot|label|name|count|how\s+many|is\s+there|are\s+there|see|sees|"
+    r"analy[sz]e|kya|kaun|kaun\s+si|kitn\w+|ketl\w+|shu|kai|dikh\w*|dekhay|batao|kaho|batavo|bata|chalao|chalavo|"
+    r"recognition|detection|page|open|kholo)\b|"
+    r"क्या|कौन|कितन|बताओ|दिख|चलाओ|खोलो|કઈ|કેટલ|શું|દેખાય|કહો|ચલાવો|ખોલો|છે\s+કે", re.IGNORECASE)
+_VISION_DIRECT = re.compile(r"object\s*(?:s\s*)?detect\w*|ऑब्जेक्ट\s*डिटेक्शन|ઓબ્જેક્ટ\s*ડિટેક્શન|image\s*recogni\w+|"
+                            r"इमेज\s*रिकग्निशन|ઇમેજ\s*રિકગ્નિશન|\bobjct\s+detecton\b", re.IGNORECASE)
+_PAGE_WORDS = re.compile(r"\b(?:open|show|page|kholo|khol|kholi|launch|go\s+to)\b|खोलो|ખોલો|पेज|પેજ", re.IGNORECASE)
+
+_PERF_BOOST = re.compile(
+    r"\b(?:boost|speed\s*up|optimi[sz]e|clean\s*up|clean|declutter|free\s+up|release|clear|tune\s+up|faster|fast|"
+    r"tez|saaf|safai|junk|temp)\b|तेज़|तेज|साफ|सफाई|ऑप्टिमाइज़|ઝડપી|સાફ|સફાઈ|ઓપ્ટિમાઇઝ", re.IGNORECASE)
+_PERF_THING = re.compile(r"\b(?:pc|laptop|computer|system|memory|ram|cpu|temp\s+files?|junk|performance|performence)\b|"
+                         r"पीसी|लैपटॉप|कंप्यूटर|कम्प्यूटर|मेमोरी|टेम्प|परफॉर्मेंस|પીસી|લેપટોપ|કમ્પ્યુટર|મેમરી|ટેમ્પ|પરફોર્મન્સ",
+                         re.IGNORECASE)
+_PERF_HOG = re.compile(
+    r"\b(?:which|what|kaun|kaun\s+si|kaun\s+sa|kai|kayo|konsa)\b.{0,25}\b(?:apps?|programs?|processe?s?|process)\b.{0,30}"
+    r"\b(?:ram|memory|cpu)\b|\b(?:apps?|programs?|processe?s?)\b.{0,20}\b(?:hogging|eating|using|eats|uses|khata|khati|kha\s+rah\w+|vapre|vaprta)\b|"
+    r"\bwhat(?:'s|\s+is)\s+(?:slowing|eating)\b|\b(?:running\s+processes|top\s+processes)\b|"
+    r"(?:कौन|कौन\s*सा|कौन\s*सी).{0,25}(?:ऐप|प्रोग्राम|प्रोसेस).{0,25}(?:रैम|मेमोरी|सीपीयू)|"
+    r"(?:मेमोरी|रैम).{0,12}(?:खाने|खा\s*रह)|(?:કયો|કઈ).{0,25}(?:એપ|પ્રોગ્રામ|પ્રોસેસ).{0,25}(?:રેમ|મેમરી|સીપીયુ)|"
+    r"(?:મેમરી|રેમ).{0,12}ખાતા|\bkya\s+cheez\b.{0,20}\bslow\b|\bshu\s+cheez\b.{0,20}\bslow\b|"
+    r"कौन\s*सी\s+चीज़|કઈ\s+વસ્તુ", re.IGNORECASE)
+_PERF_PAGE = re.compile(r"(?:performance|performence|परफॉर्मेंस|પરફોર્મન્સ)\s*(?:page|dashboard|पेज|डैशबोर्ड|ડેશબોર્ડ|પેજ)?|"
+                        r"\bpc\s+performance\b", re.IGNORECASE)
+_PERF_LAG = re.compile(r"\b(?:lag\w*|hang\w*|freez\w*|sluggish)\b|हैंग|हेंग|હેંગ", re.IGNORECASE)
+
+
+def match_features(text: str) -> Rule | None:
+    """Voice control, object detection and PC performance requests."""
+    t = " ".join(text.split())
+    if (_POWER.search(t) or _NO_TOOL.search(t)) and not _has_file_extension(t):
+        return Rule("out_of_scope")  # no tool exists for this: say so instead of guessing an app
+    va = voice_action(t)
+    if va and not _has_file_extension(t):
+        return Rule("voice_control", {"action": va[0], "value": va[1]})
+    if _VISION_DIRECT.search(t) or (_VISION_NOUN.search(t) and _VISION_CUE.search(t)):
+        if not re.search(r"screen|screenshot|screen\s*shot|स्क्रीन|સ્ક્રીન", t, re.IGNORECASE):
+            return Rule("vision_detect", {"open": bool(_PAGE_WORDS.search(t))})
+    if _PERF_HOG.search(t):
+        return Rule("pc_performance", {"kind": "hogs"})
+    if _PERF_PAGE.search(t) and _PAGE_WORDS.search(t):
+        return Rule("pc_performance", {"kind": "page"})
+    if _PERF_BOOST.search(t) and _PERF_THING.search(t) and not _STATUS_ACT_STRICT.search(t):
+        return Rule("pc_performance", {"kind": "boost"})
+    if _PERF_LAG.search(t) and _PERF_THING.search(t):
+        return Rule("pc_performance", {"kind": "hogs"})
+    if re.search(r"\b(?:kill|end|stop|terminate)\b.{0,15}\b(?:heaviest|biggest|top|worst)\b.{0,15}\bprocess", t, re.IGNORECASE):
+        return Rule("pc_performance", {"kind": "kill"})
+    if _PERF_PAGE.fullmatch(t.strip(" .!?")) or re.fullmatch(r"(?:performence|performance)\s+boost", t.strip(" .!?"), re.IGNORECASE):
+        return Rule("pc_performance", {"kind": "boost"})
+    return None
+
+
+# "how much ... free / usage / check": reading numbers is system_status, not a boost request.
+_STATUS_ACT_STRICT = re.compile(r"\b(?:how\s+much|how\s+is|usage|status|kitna|kitni|ketlo|ketli|ketlu)\b|कितना|कितनी|કેટલો|કેટલી",
+                                re.IGNORECASE)

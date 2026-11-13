@@ -16,6 +16,7 @@ class Context:
     pending_agent_confirm: dict | None = None  # {"token", "action", "target", "text"}
     pending_name: str | None = None
     agent_steps: list | None = None       # steps from the last agent run
+    images: list | None = None            # image bytes attached to the message being handled
 
 
 _CTX: dict[int, Context] = {}

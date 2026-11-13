@@ -169,3 +169,15 @@ browser mein youtube khol do,web_open,hinglish,latin,generated,false
 google par weather search karo,web_open,hinglish,latin,generated,false
 browser ma youtube kholi do,web_open,gujlish,latin,generated,false
 google par weather shodho,web_open,gujlish,latin,generated,false
+is image mein objects detect karke batao,vision_detect,hinglish,latin,generated,false
+camera wala detection page kholo,vision_detect,hinglish,latin,generated,false
+aa image ma objects detect kari ne kaho,vision_detect,gujlish,latin,generated,false
+camera vado detection page kholo,vision_detect,gujlish,latin,generated,false
+computer ko speed up karo,pc_performance,hinglish,latin,generated,false
+ram khane wale apps dikhao,pc_performance,hinglish,latin,generated,false
+computer ne speed up karo,pc_performance,gujlish,latin,generated,false
+ram khata apps batavo,pc_performance,gujlish,latin,generated,false
+sunna band karo abhi,voice_control,hinglish,latin,generated,false
+bolkar jawab dena shuru karo,voice_control,hinglish,latin,generated,false
+sambhadvanu bandh karo have,voice_control,gujlish,latin,generated,false
+boline javab apvo chalu karo,voice_control,gujlish,latin,generated,false

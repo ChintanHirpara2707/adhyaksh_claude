@@ -2538,3 +2538,607 @@ tamari capabilities batavo,help,gujlish,latin,generated,false
 तुम्हारी सुविधाएँ क्या हैं,help,hi,devanagari,generated,false
 તમારી સુવિધાઓ શું છે,help,gu,gujarati,generated,false
 તમે શું કરી શકો છો,help,gu,gujarati,generated,false
+analyze this photo for objects,vision_detect,en,latin,generated,false
+"hey, analyze this photo for objects now",vision_detect,en,latin,generated,false
+"hey, analyze this photo for objects please",vision_detect,en,latin,generated,false
+"assistant, analyze this photo for objects please",vision_detect,en,latin,generated,false
+which objects can you see in the image i uploaded,vision_detect,en,latin,generated,false
+"hey, which objects can you see in the image i uploaded please",vision_detect,en,latin,generated,false
+please which objects can you see in the image i uploaded,vision_detect,en,latin,generated,false
+which objects can you see in the image i uploaded please,vision_detect,en,latin,generated,false
+"assistant, which objects can you see in the image i uploaded",vision_detect,en,latin,generated,false
+run detection on my picture,vision_detect,en,latin,generated,false
+"assistant, run detection on my picture please",vision_detect,en,latin,generated,false
+please run detection on my picture,vision_detect,en,latin,generated,false
+"assistant, run detection on my picture now",vision_detect,en,latin,generated,false
+look through the webcam and name what is there,vision_detect,en,latin,generated,false
+"hey, look through the webcam and name what is there please",vision_detect,en,latin,generated,false
+"hey, look through the webcam and name what is there now",vision_detect,en,latin,generated,false
+please look through the webcam and name what is there,vision_detect,en,latin,generated,false
+show the vision page,vision_detect,en,latin,generated,false
+please show the vision page,vision_detect,en,latin,generated,false
+please show the vision page please,vision_detect,en,latin,generated,false
+"hey, show the vision page",vision_detect,en,latin,generated,false
+open image recognition,vision_detect,en,latin,generated,false
+please open image recognition now,vision_detect,en,latin,generated,false
+open image recognition now,vision_detect,en,latin,generated,false
+"assistant, open image recognition now",vision_detect,en,latin,generated,false
+how many bottles are in this picture,vision_detect,en,latin,generated,false
+"assistant, how many bottles are in this picture",vision_detect,en,latin,generated,false
+"hey, how many bottles are in this picture now",vision_detect,en,latin,generated,false
+please how many bottles are in this picture please,vision_detect,en,latin,generated,false
+spot items in this photo,vision_detect,en,latin,generated,false
+"assistant, spot items in this photo now",vision_detect,en,latin,generated,false
+please spot items in this photo please,vision_detect,en,latin,generated,false
+"hey, spot items in this photo",vision_detect,en,latin,generated,false
+"assistant, spot items in this photo please",vision_detect,en,latin,generated,false
+tell me what the camera sees,vision_detect,en,latin,generated,false
+"hey, tell me what the camera sees",vision_detect,en,latin,generated,false
+"hey, tell me what the camera sees please",vision_detect,en,latin,generated,false
+"assistant, tell me what the camera sees please",vision_detect,en,latin,generated,false
+label the things in this image,vision_detect,en,latin,generated,false
+please label the things in this image,vision_detect,en,latin,generated,false
+"assistant, label the things in this image please",vision_detect,en,latin,generated,false
+"hey, label the things in this image please",vision_detect,en,latin,generated,false
+please label the things in this image please,vision_detect,en,latin,generated,false
+is there a laptop in the photo,vision_detect,en,latin,generated,false
+please is there a laptop in the photo now,vision_detect,en,latin,generated,false
+"assistant, is there a laptop in the photo",vision_detect,en,latin,generated,false
+"hey, is there a laptop in the photo now",vision_detect,en,latin,generated,false
+please is there a laptop in the photo please,vision_detect,en,latin,generated,false
+recognise the objects on my desk with the camera,vision_detect,en,latin,generated,false
+please recognise the objects on my desk with the camera now,vision_detect,en,latin,generated,false
+"hey, recognise the objects on my desk with the camera please",vision_detect,en,latin,generated,false
+"assistant, recognise the objects on my desk with the camera please",vision_detect,en,latin,generated,false
+is tasveer mein kaun si cheezein hain,vision_detect,hinglish,latin,generated,false
+is tasveer mein kaun si cheezein hain jaldi,vision_detect,hinglish,latin,generated,false
+"suno, is tasveer mein kaun si cheezein hain jaldi",vision_detect,hinglish,latin,generated,false
+"suno, is tasveer mein kaun si cheezein hain",vision_detect,hinglish,latin,generated,false
+camera on karke bata do saamne kya hai,vision_detect,hinglish,latin,generated,false
+"suno, camera on karke bata do saamne kya hai jaldi",vision_detect,hinglish,latin,generated,false
+camera on karke bata do saamne kya hai abhi,vision_detect,hinglish,latin,generated,false
+"suno, camera on karke bata do saamne kya hai",vision_detect,hinglish,latin,generated,false
+please camera on karke bata do saamne kya hai abhi,vision_detect,hinglish,latin,generated,false
+photo me kitni bottles hain,vision_detect,hinglish,latin,generated,false
+"suno, photo me kitni bottles hain",vision_detect,hinglish,latin,generated,false
+please photo me kitni bottles hain abhi,vision_detect,hinglish,latin,generated,false
+photo me kitni bottles hain abhi,vision_detect,hinglish,latin,generated,false
+vision page khol do,vision_detect,hinglish,latin,generated,false
+please vision page khol do jaldi,vision_detect,hinglish,latin,generated,false
+"suno, vision page khol do abhi",vision_detect,hinglish,latin,generated,false
+vision page khol do jaldi,vision_detect,hinglish,latin,generated,false
+image recognition chalao,vision_detect,hinglish,latin,generated,false
+please image recognition chalao,vision_detect,hinglish,latin,generated,false
+"suno, image recognition chalao abhi",vision_detect,hinglish,latin,generated,false
+image recognition chalao abhi,vision_detect,hinglish,latin,generated,false
+please image recognition chalao abhi,vision_detect,hinglish,latin,generated,false
+tasveer scan karke objects batao,vision_detect,hinglish,latin,generated,false
+please tasveer scan karke objects batao abhi,vision_detect,hinglish,latin,generated,false
+tasveer scan karke objects batao jaldi,vision_detect,hinglish,latin,generated,false
+tasveer scan karke objects batao abhi,vision_detect,hinglish,latin,generated,false
+photo mein laptop dikh raha hai kya,vision_detect,hinglish,latin,generated,false
+photo mein laptop dikh raha hai kya abhi,vision_detect,hinglish,latin,generated,false
+please photo mein laptop dikh raha hai kya,vision_detect,hinglish,latin,generated,false
+please photo mein laptop dikh raha hai kya abhi,vision_detect,hinglish,latin,generated,false
+please photo mein laptop dikh raha hai kya jaldi,vision_detect,hinglish,latin,generated,false
+webcam se dekh kar cheezon ke naam batao,vision_detect,hinglish,latin,generated,false
+please webcam se dekh kar cheezon ke naam batao abhi,vision_detect,hinglish,latin,generated,false
+webcam se dekh kar cheezon ke naam batao jaldi,vision_detect,hinglish,latin,generated,false
+"suno, webcam se dekh kar cheezon ke naam batao",vision_detect,hinglish,latin,generated,false
+aa tasveer ma kai kai vastu che,vision_detect,gujlish,latin,generated,false
+"sambhdo, aa tasveer ma kai kai vastu che",vision_detect,gujlish,latin,generated,false
+"sambhdo, aa tasveer ma kai kai vastu che jaldi",vision_detect,gujlish,latin,generated,false
+please aa tasveer ma kai kai vastu che jaldi,vision_detect,gujlish,latin,generated,false
+camera chalu kari ne kaho saamne shu che,vision_detect,gujlish,latin,generated,false
+please camera chalu kari ne kaho saamne shu che,vision_detect,gujlish,latin,generated,false
+please camera chalu kari ne kaho saamne shu che atyare,vision_detect,gujlish,latin,generated,false
+"sambhdo, camera chalu kari ne kaho saamne shu che jaldi",vision_detect,gujlish,latin,generated,false
+"sambhdo, camera chalu kari ne kaho saamne shu che",vision_detect,gujlish,latin,generated,false
+photo ma ketli bottle che,vision_detect,gujlish,latin,generated,false
+"sambhdo, photo ma ketli bottle che jaldi",vision_detect,gujlish,latin,generated,false
+photo ma ketli bottle che atyare,vision_detect,gujlish,latin,generated,false
+please photo ma ketli bottle che jaldi,vision_detect,gujlish,latin,generated,false
+"sambhdo, photo ma ketli bottle che atyare",vision_detect,gujlish,latin,generated,false
+vision page kholi do,vision_detect,gujlish,latin,generated,false
+please vision page kholi do,vision_detect,gujlish,latin,generated,false
+please vision page kholi do jaldi,vision_detect,gujlish,latin,generated,false
+"sambhdo, vision page kholi do",vision_detect,gujlish,latin,generated,false
+"sambhdo, vision page kholi do jaldi",vision_detect,gujlish,latin,generated,false
+image recognition chalavo,vision_detect,gujlish,latin,generated,false
+"sambhdo, image recognition chalavo",vision_detect,gujlish,latin,generated,false
+please image recognition chalavo atyare,vision_detect,gujlish,latin,generated,false
+image recognition chalavo atyare,vision_detect,gujlish,latin,generated,false
+tasveer scan kari ne objects kaho,vision_detect,gujlish,latin,generated,false
+please tasveer scan kari ne objects kaho atyare,vision_detect,gujlish,latin,generated,false
+"sambhdo, tasveer scan kari ne objects kaho atyare",vision_detect,gujlish,latin,generated,false
+please tasveer scan kari ne objects kaho,vision_detect,gujlish,latin,generated,false
+photo ma laptop dekhay che ke,vision_detect,gujlish,latin,generated,false
+photo ma laptop dekhay che ke jaldi,vision_detect,gujlish,latin,generated,false
+"sambhdo, photo ma laptop dekhay che ke jaldi",vision_detect,gujlish,latin,generated,false
+please photo ma laptop dekhay che ke,vision_detect,gujlish,latin,generated,false
+please photo ma laptop dekhay che ke atyare,vision_detect,gujlish,latin,generated,false
+webcam thi joine vastuo na naam kaho,vision_detect,gujlish,latin,generated,false
+please webcam thi joine vastuo na naam kaho,vision_detect,gujlish,latin,generated,false
+"sambhdo, webcam thi joine vastuo na naam kaho",vision_detect,gujlish,latin,generated,false
+"sambhdo, webcam thi joine vastuo na naam kaho jaldi",vision_detect,gujlish,latin,generated,false
+"sambhdo, webcam thi joine vastuo na naam kaho atyare",vision_detect,gujlish,latin,generated,false
+इस तस्वीर में कौन सी वस्तुएं हैं,vision_detect,hi,devanagari,generated,false
+कृपया इस तस्वीर में कौन सी वस्तुएं हैं,vision_detect,hi,devanagari,generated,false
+"सुनो, इस तस्वीर में कौन सी वस्तुएं हैं अभी",vision_detect,hi,devanagari,generated,false
+इस तस्वीर में कौन सी वस्तुएं हैं जल्दी,vision_detect,hi,devanagari,generated,false
+"सुनो, इस तस्वीर में कौन सी वस्तुएं हैं जल्दी",vision_detect,hi,devanagari,generated,false
+कैमरा चालू करके बताओ सामने क्या है,vision_detect,hi,devanagari,generated,false
+कृपया कैमरा चालू करके बताओ सामने क्या है अभी,vision_detect,hi,devanagari,generated,false
+"सुनो, कैमरा चालू करके बताओ सामने क्या है अभी",vision_detect,hi,devanagari,generated,false
+कृपया कैमरा चालू करके बताओ सामने क्या है जल्दी,vision_detect,hi,devanagari,generated,false
+फोटो में कितनी बोतलें हैं,vision_detect,hi,devanagari,generated,false
+फोटो में कितनी बोतलें हैं जल्दी,vision_detect,hi,devanagari,generated,false
+कृपया फोटो में कितनी बोतलें हैं,vision_detect,hi,devanagari,generated,false
+"सुनो, फोटो में कितनी बोतलें हैं जल्दी",vision_detect,hi,devanagari,generated,false
+"सुनो, फोटो में कितनी बोतलें हैं",vision_detect,hi,devanagari,generated,false
+विज़न पेज खोलो,vision_detect,hi,devanagari,generated,false
+कृपया विज़न पेज खोलो जल्दी,vision_detect,hi,devanagari,generated,false
+"सुनो, विज़न पेज खोलो जल्दी",vision_detect,hi,devanagari,generated,false
+विज़न पेज खोलो अभी,vision_detect,hi,devanagari,generated,false
+इमेज रिकग्निशन चलाओ,vision_detect,hi,devanagari,generated,false
+कृपया इमेज रिकग्निशन चलाओ जल्दी,vision_detect,hi,devanagari,generated,false
+इमेज रिकग्निशन चलाओ अभी,vision_detect,hi,devanagari,generated,false
+"सुनो, इमेज रिकग्निशन चलाओ",vision_detect,hi,devanagari,generated,false
+तस्वीर स्कैन करके चीज़ें बताओ,vision_detect,hi,devanagari,generated,false
+"सुनो, तस्वीर स्कैन करके चीज़ें बताओ अभी",vision_detect,hi,devanagari,generated,false
+कृपया तस्वीर स्कैन करके चीज़ें बताओ जल्दी,vision_detect,hi,devanagari,generated,false
+कृपया तस्वीर स्कैन करके चीज़ें बताओ,vision_detect,hi,devanagari,generated,false
+"सुनो, तस्वीर स्कैन करके चीज़ें बताओ",vision_detect,hi,devanagari,generated,false
+फोटो में लैपटॉप दिख रहा है क्या,vision_detect,hi,devanagari,generated,false
+"सुनो, फोटो में लैपटॉप दिख रहा है क्या",vision_detect,hi,devanagari,generated,false
+कृपया फोटो में लैपटॉप दिख रहा है क्या जल्दी,vision_detect,hi,devanagari,generated,false
+फोटो में लैपटॉप दिख रहा है क्या अभी,vision_detect,hi,devanagari,generated,false
+"सुनो, फोटो में लैपटॉप दिख रहा है क्या अभी",vision_detect,hi,devanagari,generated,false
+वेबकैम से देखकर चीज़ों के नाम बताओ,vision_detect,hi,devanagari,generated,false
+कृपया वेबकैम से देखकर चीज़ों के नाम बताओ,vision_detect,hi,devanagari,generated,false
+कृपया वेबकैम से देखकर चीज़ों के नाम बताओ अभी,vision_detect,hi,devanagari,generated,false
+"सुनो, वेबकैम से देखकर चीज़ों के नाम बताओ अभी",vision_detect,hi,devanagari,generated,false
+આ તસવીરમાં કઈ વસ્તુઓ છે,vision_detect,gu,gujarati,generated,false
+આ તસવીરમાં કઈ વસ્તુઓ છે હમણાં,vision_detect,gu,gujarati,generated,false
+આ તસવીરમાં કઈ વસ્તુઓ છે જલ્દી,vision_detect,gu,gujarati,generated,false
+"સાંભળો, આ તસવીરમાં કઈ વસ્તુઓ છે",vision_detect,gu,gujarati,generated,false
+કૃપા કરીને આ તસવીરમાં કઈ વસ્તુઓ છે હમણાં,vision_detect,gu,gujarati,generated,false
+કેમેરા ચાલુ કરીને કહો સામે શું છે,vision_detect,gu,gujarati,generated,false
+કૃપા કરીને કેમેરા ચાલુ કરીને કહો સામે શું છે હમણાં,vision_detect,gu,gujarati,generated,false
+"સાંભળો, કેમેરા ચાલુ કરીને કહો સામે શું છે જલ્દી",vision_detect,gu,gujarati,generated,false
+"સાંભળો, કેમેરા ચાલુ કરીને કહો સામે શું છે",vision_detect,gu,gujarati,generated,false
+કેમેરા ચાલુ કરીને કહો સામે શું છે જલ્દી,vision_detect,gu,gujarati,generated,false
+ફોટામાં કેટલી બોટલ છે,vision_detect,gu,gujarati,generated,false
+ફોટામાં કેટલી બોટલ છે હમણાં,vision_detect,gu,gujarati,generated,false
+કૃપા કરીને ફોટામાં કેટલી બોટલ છે,vision_detect,gu,gujarati,generated,false
+"સાંભળો, ફોટામાં કેટલી બોટલ છે જલ્દી",vision_detect,gu,gujarati,generated,false
+કૃપા કરીને ફોટામાં કેટલી બોટલ છે હમણાં,vision_detect,gu,gujarati,generated,false
+વિઝન પેજ ખોલો,vision_detect,gu,gujarati,generated,false
+કૃપા કરીને વિઝન પેજ ખોલો,vision_detect,gu,gujarati,generated,false
+કૃપા કરીને વિઝન પેજ ખોલો જલ્દી,vision_detect,gu,gujarati,generated,false
+"સાંભળો, વિઝન પેજ ખોલો હમણાં",vision_detect,gu,gujarati,generated,false
+ઇમેજ રિકગ્નિશન ચલાવો,vision_detect,gu,gujarati,generated,false
+કૃપા કરીને ઇમેજ રિકગ્નિશન ચલાવો,vision_detect,gu,gujarati,generated,false
+ઇમેજ રિકગ્નિશન ચલાવો હમણાં,vision_detect,gu,gujarati,generated,false
+"સાંભળો, ઇમેજ રિકગ્નિશન ચલાવો જલ્દી",vision_detect,gu,gujarati,generated,false
+તસવીર સ્કેન કરીને વસ્તુઓ કહો,vision_detect,gu,gujarati,generated,false
+કૃપા કરીને તસવીર સ્કેન કરીને વસ્તુઓ કહો,vision_detect,gu,gujarati,generated,false
+"સાંભળો, તસવીર સ્કેન કરીને વસ્તુઓ કહો જલ્દી",vision_detect,gu,gujarati,generated,false
+તસવીર સ્કેન કરીને વસ્તુઓ કહો જલ્દી,vision_detect,gu,gujarati,generated,false
+"સાંભળો, તસવીર સ્કેન કરીને વસ્તુઓ કહો હમણાં",vision_detect,gu,gujarati,generated,false
+ફોટામાં લેપટોપ દેખાય છે કે,vision_detect,gu,gujarati,generated,false
+ફોટામાં લેપટોપ દેખાય છે કે હમણાં,vision_detect,gu,gujarati,generated,false
+ફોટામાં લેપટોપ દેખાય છે કે જલ્દી,vision_detect,gu,gujarati,generated,false
+કૃપા કરીને ફોટામાં લેપટોપ દેખાય છે કે,vision_detect,gu,gujarati,generated,false
+વેબકેમથી જોઈને વસ્તુઓના નામ કહો,vision_detect,gu,gujarati,generated,false
+"સાંભળો, વેબકેમથી જોઈને વસ્તુઓના નામ કહો જલ્દી",vision_detect,gu,gujarati,generated,false
+કૃપા કરીને વેબકેમથી જોઈને વસ્તુઓના નામ કહો હમણાં,vision_detect,gu,gujarati,generated,false
+"સાંભળો, વેબકેમથી જોઈને વસ્તુઓના નામ કહો",vision_detect,gu,gujarati,generated,false
+વેબકેમથી જોઈને વસ્તુઓના નામ કહો જલ્દી,vision_detect,gu,gujarati,generated,false
+make my computer run faster,pc_performance,en,latin,generated,false
+please make my computer run faster now,pc_performance,en,latin,generated,false
+"hey, make my computer run faster now",pc_performance,en,latin,generated,false
+"assistant, make my computer run faster please",pc_performance,en,latin,generated,false
+please make my computer run faster please,pc_performance,en,latin,generated,false
+what is slowing down my pc,pc_performance,en,latin,generated,false
+"hey, what is slowing down my pc please",pc_performance,en,latin,generated,false
+"hey, what is slowing down my pc",pc_performance,en,latin,generated,false
+please what is slowing down my pc now,pc_performance,en,latin,generated,false
+what is slowing down my pc now,pc_performance,en,latin,generated,false
+list the programs hogging memory,pc_performance,en,latin,generated,false
+list the programs hogging memory now,pc_performance,en,latin,generated,false
+"hey, list the programs hogging memory please",pc_performance,en,latin,generated,false
+"assistant, list the programs hogging memory",pc_performance,en,latin,generated,false
+list the programs hogging memory please,pc_performance,en,latin,generated,false
+clean temporary files,pc_performance,en,latin,generated,false
+please clean temporary files please,pc_performance,en,latin,generated,false
+"hey, clean temporary files now",pc_performance,en,latin,generated,false
+"assistant, clean temporary files now",pc_performance,en,latin,generated,false
+"hey, clean temporary files please",pc_performance,en,latin,generated,false
+optimize my laptop,pc_performance,en,latin,generated,false
+please optimize my laptop now,pc_performance,en,latin,generated,false
+"assistant, optimize my laptop please",pc_performance,en,latin,generated,false
+"hey, optimize my laptop please",pc_performance,en,latin,generated,false
+"my pc is lagging, fix it",pc_performance,en,latin,generated,false
+"hey, my pc is lagging, fix it",pc_performance,en,latin,generated,false
+"please my pc is lagging, fix it please",pc_performance,en,latin,generated,false
+"my pc is lagging, fix it please",pc_performance,en,latin,generated,false
+"hey, my pc is lagging, fix it please",pc_performance,en,latin,generated,false
+show me the performance dashboard,pc_performance,en,latin,generated,false
+"assistant, show me the performance dashboard",pc_performance,en,latin,generated,false
+"assistant, show me the performance dashboard now",pc_performance,en,latin,generated,false
+please show me the performance dashboard now,pc_performance,en,latin,generated,false
+which process eats the most cpu,pc_performance,en,latin,generated,false
+please which process eats the most cpu now,pc_performance,en,latin,generated,false
+please which process eats the most cpu,pc_performance,en,latin,generated,false
+"assistant, which process eats the most cpu please",pc_performance,en,latin,generated,false
+"hey, which process eats the most cpu please",pc_performance,en,latin,generated,false
+release some memory,pc_performance,en,latin,generated,false
+release some memory now,pc_performance,en,latin,generated,false
+"hey, release some memory now",pc_performance,en,latin,generated,false
+"assistant, release some memory please",pc_performance,en,latin,generated,false
+please release some memory,pc_performance,en,latin,generated,false
+tune up my system,pc_performance,en,latin,generated,false
+"assistant, tune up my system please",pc_performance,en,latin,generated,false
+please tune up my system please,pc_performance,en,latin,generated,false
+tune up my system now,pc_performance,en,latin,generated,false
+"hey, tune up my system",pc_performance,en,latin,generated,false
+scan for junk files,pc_performance,en,latin,generated,false
+"assistant, scan for junk files please",pc_performance,en,latin,generated,false
+please scan for junk files,pc_performance,en,latin,generated,false
+"hey, scan for junk files now",pc_performance,en,latin,generated,false
+scan for junk files please,pc_performance,en,latin,generated,false
+open the pc boost page,pc_performance,en,latin,generated,false
+please open the pc boost page,pc_performance,en,latin,generated,false
+please open the pc boost page please,pc_performance,en,latin,generated,false
+"hey, open the pc boost page now",pc_performance,en,latin,generated,false
+open the pc boost page please,pc_performance,en,latin,generated,false
+mera computer tez chalao,pc_performance,hinglish,latin,generated,false
+"suno, mera computer tez chalao jaldi",pc_performance,hinglish,latin,generated,false
+mera computer tez chalao jaldi,pc_performance,hinglish,latin,generated,false
+please mera computer tez chalao jaldi,pc_performance,hinglish,latin,generated,false
+"suno, mera computer tez chalao",pc_performance,hinglish,latin,generated,false
+kya cheez pc ko slow kar rahi hai,pc_performance,hinglish,latin,generated,false
+kya cheez pc ko slow kar rahi hai abhi,pc_performance,hinglish,latin,generated,false
+please kya cheez pc ko slow kar rahi hai abhi,pc_performance,hinglish,latin,generated,false
+"suno, kya cheez pc ko slow kar rahi hai jaldi",pc_performance,hinglish,latin,generated,false
+memory kha rahe programs dikhao,pc_performance,hinglish,latin,generated,false
+memory kha rahe programs dikhao jaldi,pc_performance,hinglish,latin,generated,false
+"suno, memory kha rahe programs dikhao jaldi",pc_performance,hinglish,latin,generated,false
+please memory kha rahe programs dikhao jaldi,pc_performance,hinglish,latin,generated,false
+temp files saaf karo,pc_performance,hinglish,latin,generated,false
+please temp files saaf karo,pc_performance,hinglish,latin,generated,false
+"suno, temp files saaf karo jaldi",pc_performance,hinglish,latin,generated,false
+temp files saaf karo jaldi,pc_performance,hinglish,latin,generated,false
+laptop optimize karo,pc_performance,hinglish,latin,generated,false
+"suno, laptop optimize karo",pc_performance,hinglish,latin,generated,false
+please laptop optimize karo,pc_performance,hinglish,latin,generated,false
+laptop optimize karo abhi,pc_performance,hinglish,latin,generated,false
+pc hang ho raha hai theek karo,pc_performance,hinglish,latin,generated,false
+please pc hang ho raha hai theek karo jaldi,pc_performance,hinglish,latin,generated,false
+please pc hang ho raha hai theek karo abhi,pc_performance,hinglish,latin,generated,false
+pc hang ho raha hai theek karo jaldi,pc_performance,hinglish,latin,generated,false
+pc hang ho raha hai theek karo abhi,pc_performance,hinglish,latin,generated,false
+performance dashboard dikhao,pc_performance,hinglish,latin,generated,false
+performance dashboard dikhao abhi,pc_performance,hinglish,latin,generated,false
+please performance dashboard dikhao jaldi,pc_performance,hinglish,latin,generated,false
+performance dashboard dikhao jaldi,pc_performance,hinglish,latin,generated,false
+kaun sa process zyada cpu use kar raha hai,pc_performance,hinglish,latin,generated,false
+please kaun sa process zyada cpu use kar raha hai jaldi,pc_performance,hinglish,latin,generated,false
+"suno, kaun sa process zyada cpu use kar raha hai jaldi",pc_performance,hinglish,latin,generated,false
+kaun sa process zyada cpu use kar raha hai abhi,pc_performance,hinglish,latin,generated,false
+kaun sa process zyada cpu use kar raha hai jaldi,pc_performance,hinglish,latin,generated,false
+maru computer fast chalavo,pc_performance,gujlish,latin,generated,false
+please maru computer fast chalavo jaldi,pc_performance,gujlish,latin,generated,false
+maru computer fast chalavo jaldi,pc_performance,gujlish,latin,generated,false
+maru computer fast chalavo atyare,pc_performance,gujlish,latin,generated,false
+"sambhdo, maru computer fast chalavo jaldi",pc_performance,gujlish,latin,generated,false
+shu cheez pc ne slow kare che,pc_performance,gujlish,latin,generated,false
+please shu cheez pc ne slow kare che jaldi,pc_performance,gujlish,latin,generated,false
+"sambhdo, shu cheez pc ne slow kare che jaldi",pc_performance,gujlish,latin,generated,false
+shu cheez pc ne slow kare che jaldi,pc_performance,gujlish,latin,generated,false
+please shu cheez pc ne slow kare che atyare,pc_performance,gujlish,latin,generated,false
+memory khata programs batavo,pc_performance,gujlish,latin,generated,false
+please memory khata programs batavo jaldi,pc_performance,gujlish,latin,generated,false
+memory khata programs batavo atyare,pc_performance,gujlish,latin,generated,false
+"sambhdo, memory khata programs batavo",pc_performance,gujlish,latin,generated,false
+"sambhdo, memory khata programs batavo atyare",pc_performance,gujlish,latin,generated,false
+temp files saaf karo atyare,pc_performance,gujlish,latin,generated,false
+"sambhdo, temp files saaf karo atyare",pc_performance,gujlish,latin,generated,false
+"sambhdo, temp files saaf karo jaldi",pc_performance,gujlish,latin,generated,false
+please laptop optimize karo jaldi,pc_performance,gujlish,latin,generated,false
+please laptop optimize karo atyare,pc_performance,gujlish,latin,generated,false
+"sambhdo, laptop optimize karo jaldi",pc_performance,gujlish,latin,generated,false
+"sambhdo, laptop optimize karo atyare",pc_performance,gujlish,latin,generated,false
+pc hang thay che sudharo,pc_performance,gujlish,latin,generated,false
+please pc hang thay che sudharo atyare,pc_performance,gujlish,latin,generated,false
+please pc hang thay che sudharo,pc_performance,gujlish,latin,generated,false
+"sambhdo, pc hang thay che sudharo",pc_performance,gujlish,latin,generated,false
+pc hang thay che sudharo jaldi,pc_performance,gujlish,latin,generated,false
+performance dashboard batavo,pc_performance,gujlish,latin,generated,false
+performance dashboard batavo atyare,pc_performance,gujlish,latin,generated,false
+"sambhdo, performance dashboard batavo atyare",pc_performance,gujlish,latin,generated,false
+please performance dashboard batavo atyare,pc_performance,gujlish,latin,generated,false
+"sambhdo, performance dashboard batavo",pc_performance,gujlish,latin,generated,false
+kayo process vadhu cpu vapre che,pc_performance,gujlish,latin,generated,false
+"sambhdo, kayo process vadhu cpu vapre che",pc_performance,gujlish,latin,generated,false
+kayo process vadhu cpu vapre che atyare,pc_performance,gujlish,latin,generated,false
+please kayo process vadhu cpu vapre che atyare,pc_performance,gujlish,latin,generated,false
+मेरा कंप्यूटर तेज़ चलाओ,pc_performance,hi,devanagari,generated,false
+"सुनो, मेरा कंप्यूटर तेज़ चलाओ जल्दी",pc_performance,hi,devanagari,generated,false
+कृपया मेरा कंप्यूटर तेज़ चलाओ अभी,pc_performance,hi,devanagari,generated,false
+"सुनो, मेरा कंप्यूटर तेज़ चलाओ अभी",pc_performance,hi,devanagari,generated,false
+मेरा कंप्यूटर तेज़ चलाओ अभी,pc_performance,hi,devanagari,generated,false
+कौन सी चीज़ पीसी को धीमा कर रही है,pc_performance,hi,devanagari,generated,false
+कृपया कौन सी चीज़ पीसी को धीमा कर रही है,pc_performance,hi,devanagari,generated,false
+कृपया कौन सी चीज़ पीसी को धीमा कर रही है अभी,pc_performance,hi,devanagari,generated,false
+"सुनो, कौन सी चीज़ पीसी को धीमा कर रही है जल्दी",pc_performance,hi,devanagari,generated,false
+मेमोरी खाने वाले प्रोग्राम दिखाओ,pc_performance,hi,devanagari,generated,false
+"सुनो, मेमोरी खाने वाले प्रोग्राम दिखाओ जल्दी",pc_performance,hi,devanagari,generated,false
+कृपया मेमोरी खाने वाले प्रोग्राम दिखाओ अभी,pc_performance,hi,devanagari,generated,false
+मेमोरी खाने वाले प्रोग्राम दिखाओ जल्दी,pc_performance,hi,devanagari,generated,false
+टेम्प फाइलें साफ करो,pc_performance,hi,devanagari,generated,false
+कृपया टेम्प फाइलें साफ करो जल्दी,pc_performance,hi,devanagari,generated,false
+"सुनो, टेम्प फाइलें साफ करो",pc_performance,hi,devanagari,generated,false
+टेम्प फाइलें साफ करो अभी,pc_performance,hi,devanagari,generated,false
+टेम्प फाइलें साफ करो जल्दी,pc_performance,hi,devanagari,generated,false
+लैपटॉप ऑप्टिमाइज़ करो,pc_performance,hi,devanagari,generated,false
+"सुनो, लैपटॉप ऑप्टिमाइज़ करो अभी",pc_performance,hi,devanagari,generated,false
+"सुनो, लैपटॉप ऑप्टिमाइज़ करो जल्दी",pc_performance,hi,devanagari,generated,false
+"सुनो, लैपटॉप ऑप्टिमाइज़ करो",pc_performance,hi,devanagari,generated,false
+लैपटॉप ऑप्टिमाइज़ करो अभी,pc_performance,hi,devanagari,generated,false
+पीसी हैंग हो रहा है ठीक करो,pc_performance,hi,devanagari,generated,false
+कृपया पीसी हैंग हो रहा है ठीक करो जल्दी,pc_performance,hi,devanagari,generated,false
+कृपया पीसी हैंग हो रहा है ठीक करो अभी,pc_performance,hi,devanagari,generated,false
+"सुनो, पीसी हैंग हो रहा है ठीक करो जल्दी",pc_performance,hi,devanagari,generated,false
+परफॉर्मेंस डैशबोर्ड दिखाओ,pc_performance,hi,devanagari,generated,false
+"सुनो, परफॉर्मेंस डैशबोर्ड दिखाओ",pc_performance,hi,devanagari,generated,false
+"सुनो, परफॉर्मेंस डैशबोर्ड दिखाओ अभी",pc_performance,hi,devanagari,generated,false
+कृपया परफॉर्मेंस डैशबोर्ड दिखाओ अभी,pc_performance,hi,devanagari,generated,false
+कृपया परफॉर्मेंस डैशबोर्ड दिखाओ,pc_performance,hi,devanagari,generated,false
+कौन सा प्रोसेस ज्यादा सीपीयू ले रहा है,pc_performance,hi,devanagari,generated,false
+कृपया कौन सा प्रोसेस ज्यादा सीपीयू ले रहा है अभी,pc_performance,hi,devanagari,generated,false
+कृपया कौन सा प्रोसेस ज्यादा सीपीयू ले रहा है,pc_performance,hi,devanagari,generated,false
+"सुनो, कौन सा प्रोसेस ज्यादा सीपीयू ले रहा है",pc_performance,hi,devanagari,generated,false
+"सुनो, कौन सा प्रोसेस ज्यादा सीपीयू ले रहा है जल्दी",pc_performance,hi,devanagari,generated,false
+મારું કમ્પ્યુટર ઝડપી ચલાવો,pc_performance,gu,gujarati,generated,false
+કૃપા કરીને મારું કમ્પ્યુટર ઝડપી ચલાવો હમણાં,pc_performance,gu,gujarati,generated,false
+મારું કમ્પ્યુટર ઝડપી ચલાવો જલ્દી,pc_performance,gu,gujarati,generated,false
+"સાંભળો, મારું કમ્પ્યુટર ઝડપી ચલાવો",pc_performance,gu,gujarati,generated,false
+મારું કમ્પ્યુટર ઝડપી ચલાવો હમણાં,pc_performance,gu,gujarati,generated,false
+કઈ વસ્તુ પીસીને ધીમું કરે છે,pc_performance,gu,gujarati,generated,false
+કઈ વસ્તુ પીસીને ધીમું કરે છે હમણાં,pc_performance,gu,gujarati,generated,false
+કૃપા કરીને કઈ વસ્તુ પીસીને ધીમું કરે છે જલ્દી,pc_performance,gu,gujarati,generated,false
+કૃપા કરીને કઈ વસ્તુ પીસીને ધીમું કરે છે હમણાં,pc_performance,gu,gujarati,generated,false
+"સાંભળો, કઈ વસ્તુ પીસીને ધીમું કરે છે હમણાં",pc_performance,gu,gujarati,generated,false
+મેમરી ખાતા પ્રોગ્રામ બતાવો,pc_performance,gu,gujarati,generated,false
+"સાંભળો, મેમરી ખાતા પ્રોગ્રામ બતાવો",pc_performance,gu,gujarati,generated,false
+"સાંભળો, મેમરી ખાતા પ્રોગ્રામ બતાવો હમણાં",pc_performance,gu,gujarati,generated,false
+કૃપા કરીને મેમરી ખાતા પ્રોગ્રામ બતાવો હમણાં,pc_performance,gu,gujarati,generated,false
+"સાંભળો, મેમરી ખાતા પ્રોગ્રામ બતાવો જલ્દી",pc_performance,gu,gujarati,generated,false
+ટેમ્પ ફાઇલો સાફ કરો,pc_performance,gu,gujarati,generated,false
+ટેમ્પ ફાઇલો સાફ કરો હમણાં,pc_performance,gu,gujarati,generated,false
+"સાંભળો, ટેમ્પ ફાઇલો સાફ કરો હમણાં",pc_performance,gu,gujarati,generated,false
+કૃપા કરીને ટેમ્પ ફાઇલો સાફ કરો હમણાં,pc_performance,gu,gujarati,generated,false
+લેપટોપ ઓપ્ટિમાઇઝ કરો,pc_performance,gu,gujarati,generated,false
+કૃપા કરીને લેપટોપ ઓપ્ટિમાઇઝ કરો હમણાં,pc_performance,gu,gujarati,generated,false
+"સાંભળો, લેપટોપ ઓપ્ટિમાઇઝ કરો",pc_performance,gu,gujarati,generated,false
+"સાંભળો, લેપટોપ ઓપ્ટિમાઇઝ કરો હમણાં",pc_performance,gu,gujarati,generated,false
+લેપટોપ ઓપ્ટિમાઇઝ કરો જલ્દી,pc_performance,gu,gujarati,generated,false
+પીસી હેંગ થાય છે સુધારો,pc_performance,gu,gujarati,generated,false
+પીસી હેંગ થાય છે સુધારો જલ્દી,pc_performance,gu,gujarati,generated,false
+"સાંભળો, પીસી હેંગ થાય છે સુધારો જલ્દી",pc_performance,gu,gujarati,generated,false
+કૃપા કરીને પીસી હેંગ થાય છે સુધારો હમણાં,pc_performance,gu,gujarati,generated,false
+પીસી હેંગ થાય છે સુધારો હમણાં,pc_performance,gu,gujarati,generated,false
+પરફોર્મન્સ ડેશબોર્ડ બતાવો,pc_performance,gu,gujarati,generated,false
+કૃપા કરીને પરફોર્મન્સ ડેશબોર્ડ બતાવો જલ્દી,pc_performance,gu,gujarati,generated,false
+"સાંભળો, પરફોર્મન્સ ડેશબોર્ડ બતાવો હમણાં",pc_performance,gu,gujarati,generated,false
+"સાંભળો, પરફોર્મન્સ ડેશબોર્ડ બતાવો",pc_performance,gu,gujarati,generated,false
+પરફોર્મન્સ ડેશબોર્ડ બતાવો જલ્દી,pc_performance,gu,gujarati,generated,false
+કયો પ્રોસેસ વધુ સીપીયુ વાપરે છે,pc_performance,gu,gujarati,generated,false
+કયો પ્રોસેસ વધુ સીપીયુ વાપરે છે હમણાં,pc_performance,gu,gujarati,generated,false
+"સાંભળો, કયો પ્રોસેસ વધુ સીપીયુ વાપરે છે જલ્દી",pc_performance,gu,gujarati,generated,false
+કયો પ્રોસેસ વધુ સીપીયુ વાપરે છે જલ્દી,pc_performance,gu,gujarati,generated,false
+"સાંભળો, કયો પ્રોસેસ વધુ સીપીયુ વાપરે છે હમણાં",pc_performance,gu,gujarati,generated,false
+begin listening for my commands,voice_control,en,latin,generated,false
+"assistant, begin listening for my commands",voice_control,en,latin,generated,false
+"hey, begin listening for my commands now",voice_control,en,latin,generated,false
+please begin listening for my commands please,voice_control,en,latin,generated,false
+"assistant, begin listening for my commands now",voice_control,en,latin,generated,false
+pause the microphone,voice_control,en,latin,generated,false
+"hey, pause the microphone",voice_control,en,latin,generated,false
+"assistant, pause the microphone now",voice_control,en,latin,generated,false
+please pause the microphone please,voice_control,en,latin,generated,false
+"hey, pause the microphone please",voice_control,en,latin,generated,false
+enable always-on listening,voice_control,en,latin,generated,false
+"hey, enable always-on listening",voice_control,en,latin,generated,false
+please enable always-on listening,voice_control,en,latin,generated,false
+"assistant, enable always-on listening",voice_control,en,latin,generated,false
+"hey, enable always-on listening please",voice_control,en,latin,generated,false
+disable the wake word,voice_control,en,latin,generated,false
+please disable the wake word,voice_control,en,latin,generated,false
+"assistant, disable the wake word please",voice_control,en,latin,generated,false
+please disable the wake word please,voice_control,en,latin,generated,false
+talk to me when you answer,voice_control,en,latin,generated,false
+please talk to me when you answer now,voice_control,en,latin,generated,false
+talk to me when you answer now,voice_control,en,latin,generated,false
+"hey, talk to me when you answer now",voice_control,en,latin,generated,false
+"assistant, talk to me when you answer now",voice_control,en,latin,generated,false
+stop reading answers aloud,voice_control,en,latin,generated,false
+please stop reading answers aloud please,voice_control,en,latin,generated,false
+"hey, stop reading answers aloud",voice_control,en,latin,generated,false
+"assistant, stop reading answers aloud",voice_control,en,latin,generated,false
+mute yourself,voice_control,en,latin,generated,false
+please mute yourself please,voice_control,en,latin,generated,false
+mute yourself please,voice_control,en,latin,generated,false
+"assistant, mute yourself now",voice_control,en,latin,generated,false
+mute yourself now,voice_control,en,latin,generated,false
+keep listening to me,voice_control,en,latin,generated,false
+"assistant, keep listening to me please",voice_control,en,latin,generated,false
+"hey, keep listening to me please",voice_control,en,latin,generated,false
+please keep listening to me now,voice_control,en,latin,generated,false
+keep listening to me please,voice_control,en,latin,generated,false
+turn the mic off,voice_control,en,latin,generated,false
+turn the mic off please,voice_control,en,latin,generated,false
+turn the mic off now,voice_control,en,latin,generated,false
+"assistant, turn the mic off now",voice_control,en,latin,generated,false
+"hey, turn the mic off please",voice_control,en,latin,generated,false
+use Hindi for speech,voice_control,en,latin,generated,false
+"assistant, use Hindi for speech now",voice_control,en,latin,generated,false
+"assistant, use Hindi for speech",voice_control,en,latin,generated,false
+use Hindi for speech now,voice_control,en,latin,generated,false
+let me talk to you hands-free,voice_control,en,latin,generated,false
+please let me talk to you hands-free now,voice_control,en,latin,generated,false
+let me talk to you hands-free please,voice_control,en,latin,generated,false
+"assistant, let me talk to you hands-free please",voice_control,en,latin,generated,false
+"assistant, let me talk to you hands-free",voice_control,en,latin,generated,false
+switch off listening,voice_control,en,latin,generated,false
+"assistant, switch off listening now",voice_control,en,latin,generated,false
+"hey, switch off listening now",voice_control,en,latin,generated,false
+"assistant, switch off listening",voice_control,en,latin,generated,false
+"assistant, switch off listening please",voice_control,en,latin,generated,false
+meri awaaz sunna shuru karo,voice_control,hinglish,latin,generated,false
+"suno, meri awaaz sunna shuru karo abhi",voice_control,hinglish,latin,generated,false
+please meri awaaz sunna shuru karo,voice_control,hinglish,latin,generated,false
+"suno, meri awaaz sunna shuru karo jaldi",voice_control,hinglish,latin,generated,false
+meri awaaz sunna shuru karo abhi,voice_control,hinglish,latin,generated,false
+mic band kar do,voice_control,hinglish,latin,generated,false
+please mic band kar do abhi,voice_control,hinglish,latin,generated,false
+"suno, mic band kar do abhi",voice_control,hinglish,latin,generated,false
+mic band kar do jaldi,voice_control,hinglish,latin,generated,false
+hamesha sunte raho,voice_control,hinglish,latin,generated,false
+hamesha sunte raho jaldi,voice_control,hinglish,latin,generated,false
+please hamesha sunte raho jaldi,voice_control,hinglish,latin,generated,false
+please hamesha sunte raho abhi,voice_control,hinglish,latin,generated,false
+wake word band karo,voice_control,hinglish,latin,generated,false
+"suno, wake word band karo jaldi",voice_control,hinglish,latin,generated,false
+"suno, wake word band karo",voice_control,hinglish,latin,generated,false
+please wake word band karo,voice_control,hinglish,latin,generated,false
+"suno, wake word band karo abhi",voice_control,hinglish,latin,generated,false
+jawab bolkar batana,voice_control,hinglish,latin,generated,false
+please jawab bolkar batana abhi,voice_control,hinglish,latin,generated,false
+please jawab bolkar batana jaldi,voice_control,hinglish,latin,generated,false
+"suno, jawab bolkar batana jaldi",voice_control,hinglish,latin,generated,false
+jawab bolna band karo,voice_control,hinglish,latin,generated,false
+jawab bolna band karo abhi,voice_control,hinglish,latin,generated,false
+"suno, jawab bolna band karo jaldi",voice_control,hinglish,latin,generated,false
+"suno, jawab bolna band karo",voice_control,hinglish,latin,generated,false
+please jawab bolna band karo abhi,voice_control,hinglish,latin,generated,false
+tum chup raho,voice_control,hinglish,latin,generated,false
+"suno, tum chup raho jaldi",voice_control,hinglish,latin,generated,false
+please tum chup raho,voice_control,hinglish,latin,generated,false
+"suno, tum chup raho",voice_control,hinglish,latin,generated,false
+bolne ki language english karo,voice_control,hinglish,latin,generated,false
+please bolne ki language english karo jaldi,voice_control,hinglish,latin,generated,false
+"suno, bolne ki language english karo abhi",voice_control,hinglish,latin,generated,false
+please bolne ki language english karo abhi,voice_control,hinglish,latin,generated,false
+"suno, bolne ki language english karo",voice_control,hinglish,latin,generated,false
+mari avaj sambhdvanu chalu karo,voice_control,gujlish,latin,generated,false
+mari avaj sambhdvanu chalu karo jaldi,voice_control,gujlish,latin,generated,false
+please mari avaj sambhdvanu chalu karo atyare,voice_control,gujlish,latin,generated,false
+"sambhdo, mari avaj sambhdvanu chalu karo",voice_control,gujlish,latin,generated,false
+mic bandh kari do,voice_control,gujlish,latin,generated,false
+please mic bandh kari do atyare,voice_control,gujlish,latin,generated,false
+"sambhdo, mic bandh kari do jaldi",voice_control,gujlish,latin,generated,false
+please mic bandh kari do,voice_control,gujlish,latin,generated,false
+hamesha sambhdta raho,voice_control,gujlish,latin,generated,false
+"sambhdo, hamesha sambhdta raho atyare",voice_control,gujlish,latin,generated,false
+hamesha sambhdta raho jaldi,voice_control,gujlish,latin,generated,false
+please hamesha sambhdta raho atyare,voice_control,gujlish,latin,generated,false
+wake word bandh karo,voice_control,gujlish,latin,generated,false
+please wake word bandh karo jaldi,voice_control,gujlish,latin,generated,false
+wake word bandh karo jaldi,voice_control,gujlish,latin,generated,false
+wake word bandh karo atyare,voice_control,gujlish,latin,generated,false
+"sambhdo, wake word bandh karo jaldi",voice_control,gujlish,latin,generated,false
+javab boline kehjo,voice_control,gujlish,latin,generated,false
+javab boline kehjo jaldi,voice_control,gujlish,latin,generated,false
+please javab boline kehjo atyare,voice_control,gujlish,latin,generated,false
+javab boline kehjo atyare,voice_control,gujlish,latin,generated,false
+"sambhdo, javab boline kehjo",voice_control,gujlish,latin,generated,false
+javab bolvanu bandh karo,voice_control,gujlish,latin,generated,false
+"sambhdo, javab bolvanu bandh karo jaldi",voice_control,gujlish,latin,generated,false
+"sambhdo, javab bolvanu bandh karo atyare",voice_control,gujlish,latin,generated,false
+javab bolvanu bandh karo atyare,voice_control,gujlish,latin,generated,false
+tame chup raho,voice_control,gujlish,latin,generated,false
+please tame chup raho jaldi,voice_control,gujlish,latin,generated,false
+"sambhdo, tame chup raho jaldi",voice_control,gujlish,latin,generated,false
+please tame chup raho atyare,voice_control,gujlish,latin,generated,false
+"sambhdo, tame chup raho atyare",voice_control,gujlish,latin,generated,false
+bolvani bhasha english karo,voice_control,gujlish,latin,generated,false
+please bolvani bhasha english karo,voice_control,gujlish,latin,generated,false
+please bolvani bhasha english karo atyare,voice_control,gujlish,latin,generated,false
+"sambhdo, bolvani bhasha english karo jaldi",voice_control,gujlish,latin,generated,false
+"sambhdo, bolvani bhasha english karo",voice_control,gujlish,latin,generated,false
+मेरी आवाज़ सुनना शुरू करो,voice_control,hi,devanagari,generated,false
+"सुनो, मेरी आवाज़ सुनना शुरू करो",voice_control,hi,devanagari,generated,false
+कृपया मेरी आवाज़ सुनना शुरू करो जल्दी,voice_control,hi,devanagari,generated,false
+कृपया मेरी आवाज़ सुनना शुरू करो अभी,voice_control,hi,devanagari,generated,false
+माइक बंद कर दो,voice_control,hi,devanagari,generated,false
+कृपया माइक बंद कर दो,voice_control,hi,devanagari,generated,false
+माइक बंद कर दो अभी,voice_control,hi,devanagari,generated,false
+"सुनो, माइक बंद कर दो",voice_control,hi,devanagari,generated,false
+हमेशा सुनते रहो,voice_control,hi,devanagari,generated,false
+"सुनो, हमेशा सुनते रहो",voice_control,hi,devanagari,generated,false
+कृपया हमेशा सुनते रहो,voice_control,hi,devanagari,generated,false
+कृपया हमेशा सुनते रहो जल्दी,voice_control,hi,devanagari,generated,false
+"सुनो, हमेशा सुनते रहो अभी",voice_control,hi,devanagari,generated,false
+वेक वर्ड बंद करो,voice_control,hi,devanagari,generated,false
+"सुनो, वेक वर्ड बंद करो अभी",voice_control,hi,devanagari,generated,false
+"सुनो, वेक वर्ड बंद करो जल्दी",voice_control,hi,devanagari,generated,false
+"सुनो, वेक वर्ड बंद करो",voice_control,hi,devanagari,generated,false
+जवाब बोलकर बताना,voice_control,hi,devanagari,generated,false
+कृपया जवाब बोलकर बताना अभी,voice_control,hi,devanagari,generated,false
+कृपया जवाब बोलकर बताना,voice_control,hi,devanagari,generated,false
+जवाब बोलकर बताना अभी,voice_control,hi,devanagari,generated,false
+कृपया जवाब बोलकर बताना जल्दी,voice_control,hi,devanagari,generated,false
+जवाब बोलना बंद करो,voice_control,hi,devanagari,generated,false
+कृपया जवाब बोलना बंद करो,voice_control,hi,devanagari,generated,false
+जवाब बोलना बंद करो जल्दी,voice_control,hi,devanagari,generated,false
+जवाब बोलना बंद करो अभी,voice_control,hi,devanagari,generated,false
+"सुनो, जवाब बोलना बंद करो अभी",voice_control,hi,devanagari,generated,false
+तुम चुप रहो,voice_control,hi,devanagari,generated,false
+"सुनो, तुम चुप रहो",voice_control,hi,devanagari,generated,false
+"सुनो, तुम चुप रहो अभी",voice_control,hi,devanagari,generated,false
+तुम चुप रहो अभी,voice_control,hi,devanagari,generated,false
+बोलने की भाषा अंग्रेज़ी करो,voice_control,hi,devanagari,generated,false
+"सुनो, बोलने की भाषा अंग्रेज़ी करो अभी",voice_control,hi,devanagari,generated,false
+कृपया बोलने की भाषा अंग्रेज़ी करो अभी,voice_control,hi,devanagari,generated,false
+कृपया बोलने की भाषा अंग्रेज़ी करो,voice_control,hi,devanagari,generated,false
+बोलने की भाषा अंग्रेज़ी करो जल्दी,voice_control,hi,devanagari,generated,false
+મારો અવાજ સાંભળવાનું શરૂ કરો,voice_control,gu,gujarati,generated,false
+મારો અવાજ સાંભળવાનું શરૂ કરો જલ્દી,voice_control,gu,gujarati,generated,false
+મારો અવાજ સાંભળવાનું શરૂ કરો હમણાં,voice_control,gu,gujarati,generated,false
+"સાંભળો, મારો અવાજ સાંભળવાનું શરૂ કરો જલ્દી",voice_control,gu,gujarati,generated,false
+માઇક બંધ કરી દો,voice_control,gu,gujarati,generated,false
+કૃપા કરીને માઇક બંધ કરી દો જલ્દી,voice_control,gu,gujarati,generated,false
+"સાંભળો, માઇક બંધ કરી દો જલ્દી",voice_control,gu,gujarati,generated,false
+કૃપા કરીને માઇક બંધ કરી દો હમણાં,voice_control,gu,gujarati,generated,false
+હંમેશા સાંભળતા રહો,voice_control,gu,gujarati,generated,false
+કૃપા કરીને હંમેશા સાંભળતા રહો,voice_control,gu,gujarati,generated,false
+"સાંભળો, હંમેશા સાંભળતા રહો",voice_control,gu,gujarati,generated,false
+કૃપા કરીને હંમેશા સાંભળતા રહો જલ્દી,voice_control,gu,gujarati,generated,false
+"સાંભળો, હંમેશા સાંભળતા રહો હમણાં",voice_control,gu,gujarati,generated,false
+વેક વર્ડ બંધ કરો,voice_control,gu,gujarati,generated,false
+કૃપા કરીને વેક વર્ડ બંધ કરો જલ્દી,voice_control,gu,gujarati,generated,false
+"સાંભળો, વેક વર્ડ બંધ કરો જલ્દી",voice_control,gu,gujarati,generated,false
+વેક વર્ડ બંધ કરો હમણાં,voice_control,gu,gujarati,generated,false
+કૃપા કરીને વેક વર્ડ બંધ કરો,voice_control,gu,gujarati,generated,false
+જવાબ બોલીને કહેજો,voice_control,gu,gujarati,generated,false
+કૃપા કરીને જવાબ બોલીને કહેજો,voice_control,gu,gujarati,generated,false
+જવાબ બોલીને કહેજો જલ્દી,voice_control,gu,gujarati,generated,false
+"સાંભળો, જવાબ બોલીને કહેજો હમણાં",voice_control,gu,gujarati,generated,false
+કૃપા કરીને જવાબ બોલીને કહેજો હમણાં,voice_control,gu,gujarati,generated,false
+જવાબ બોલવાનું બંધ કરો,voice_control,gu,gujarati,generated,false
+જવાબ બોલવાનું બંધ કરો હમણાં,voice_control,gu,gujarati,generated,false
+"સાંભળો, જવાબ બોલવાનું બંધ કરો જલ્દી",voice_control,gu,gujarati,generated,false
+"સાંભળો, જવાબ બોલવાનું બંધ કરો હમણાં",voice_control,gu,gujarati,generated,false
+કૃપા કરીને જવાબ બોલવાનું બંધ કરો જલ્દી,voice_control,gu,gujarati,generated,false
+તમે ચૂપ રહો,voice_control,gu,gujarati,generated,false
+કૃપા કરીને તમે ચૂપ રહો જલ્દી,voice_control,gu,gujarati,generated,false
+"સાંભળો, તમે ચૂપ રહો જલ્દી",voice_control,gu,gujarati,generated,false
+કૃપા કરીને તમે ચૂપ રહો હમણાં,voice_control,gu,gujarati,generated,false
+બોલવાની ભાષા અંગ્રેજી કરો,voice_control,gu,gujarati,generated,false
+કૃપા કરીને બોલવાની ભાષા અંગ્રેજી કરો જલ્દી,voice_control,gu,gujarati,generated,false
+"સાંભળો, બોલવાની ભાષા અંગ્રેજી કરો",voice_control,gu,gujarati,generated,false
+બોલવાની ભાષા અંગ્રેજી કરો હમણાં,voice_control,gu,gujarati,generated,false
+કૃપા કરીને બોલવાની ભાષા અંગ્રેજી કરો હમણાં,voice_control,gu,gujarati,generated,false

@@ -9,6 +9,18 @@ from adhyaksh.ui import components as ui
 from adhyaksh.voice import bridge
 
 ui.chat_width()
+
+
+def apply_ui_hints(res) -> None:
+    """Act on UI hints returned by the engine: forward a voice command, switch to a page."""
+    data = res.data or {}
+    cmd = data.get("voice_cmd")
+    if cmd:
+        st.session_state["voice_cmd"] = {**cmd, "nonce": str(time.time_ns())}
+    page = data.get("open_page")
+    if page:
+        st.session_state["goto_page"] = page
+
 ui.page_header("Chat", "Type or speak a command in English, Hindi, Gujarati or a mix.")
 if identity.get_name() is None:
     ui.first_run_form()
@@ -112,8 +124,11 @@ st.session_state.setdefault("seen_assistant", last_id)
 # Replies are spoken when "Speak replies aloud" is on, or when the reply answers a spoken command.
 new_reply = last is not None and last_id != st.session_state["seen_assistant"]
 speak = new_reply and (config.get_bool("voice_reply") or st.session_state.pop("voice_reply_pending", False))
-heard = bridge.voice_input(theme_name=config.get("theme") or "light", speak_text=last["content"] if speak else "",
+vcmd = st.session_state.get("voice_cmd") or {}
+heard = bridge.voice_input(theme_name=config.get("theme") or "light", lang=config.get("voice_lang") or "en-IN",
+                           speak_text=last["content"] if speak else "",
                            speak_nonce=str(last_id) if speak else "",
+                           command=vcmd or None, command_nonce=vcmd.get("nonce", ""),
                            handsfree_default=config.get_bool("voice_handsfree"),
                            wake_default=config.get_bool("voice_wake_word"))
 if new_reply:
@@ -128,6 +143,7 @@ if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
         with st.spinner("Working"):
             result = engine.handle_message(heard["text"], cid, voice=True, mode=mode)
         st.session_state["voice_reply_pending"] = True
+        apply_ui_hints(result)
         if result.data and result.data.get("suggest_mode") == "cowork":
             st.session_state["suggest_switch"] = True
         st.rerun()
@@ -153,14 +169,19 @@ if new_mode != mode:
     st.session_state["suggest_switch"] = False
     st.rerun()
 
-prompt = st.chat_input("Type a command or attach a PDF, DOCX or TXT file", accept_file="multiple",
-                       file_type=["pdf", "docx", "txt", "md", "csv"])
+prompt = st.chat_input("Type a command, or attach a document or a photo", accept_file="multiple",
+                       file_type=["pdf", "docx", "txt", "md", "csv", "jpg", "jpeg", "png", "webp"])
 if prompt:
     text = (getattr(prompt, "text", None) if not isinstance(prompt, str) else prompt) or ""
     files = [] if isinstance(prompt, str) else [(f.name, f.getvalue()) for f in (prompt.files or [])]
     st.session_state["suggest_switch"] = False
     with st.spinner("Working"):
         result = engine.handle_message(text, cid, mode=mode, attachments=files)
+    apply_ui_hints(result)
     if result.data and result.data.get("suggest_mode") == "cowork":
         st.session_state["suggest_switch"] = True
     st.rerun()
+
+_goto = st.session_state.pop("goto_page", None)
+if _goto in ("vision", "performance"):
+    st.switch_page(f"pages/{_goto}.py")

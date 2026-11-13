@@ -18,7 +18,7 @@ INTENTS = ["greet", "set_identity", "get_identity", "memory_save", "memory_recal
            "file_read", "file_update", "file_delete", "file_search", "office_create", "app_open",
            "app_close", "system_status", "doc_question", "knowledge_question", "help", "unknown",
            "out_of_scope", "bot_identity", "time_date", "folder_create", "screenshot",
-           "special_folder_open", "web_open"]
+           "special_folder_open", "web_open", "vision_detect", "pc_performance", "voice_control"]
 LANGS = ["en", "hi", "gu", "hinglish", "gujlish"]
 SCRIPTS = ["latin", "devanagari", "gujarati"]
 SOURCES = ["generated", "author", "corrected"]
@@ -714,6 +714,112 @@ def augment_test(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_CSV)
     return added
 
 
+# ---------------------------------------------------------------------------
+# Vision, performance and voice-control intents. Written fresh and disjoint from tests/eval/cases.csv
+# (augment_features drops any utterance listed in `forbidden`).
+# ---------------------------------------------------------------------------
+FEATURE_TEMPLATES: dict[str, dict[str, list[str]]] = {
+    "vision_detect": {
+        "en": ["analyze this photo for objects", "which objects can you see in the image i uploaded",
+               "run detection on my picture", "look through the webcam and name what is there",
+               "show the vision page", "open image recognition", "how many bottles are in this picture",
+               "spot items in this photo", "tell me what the camera sees", "label the things in this image",
+               "is there a laptop in the photo", "recognise the objects on my desk with the camera"],
+        "hinglish": ["is tasveer mein kaun si cheezein hain", "camera on karke bata do saamne kya hai",
+                     "photo me kitni bottles hain", "vision page khol do", "image recognition chalao",
+                     "tasveer scan karke objects batao", "photo mein laptop dikh raha hai kya",
+                     "webcam se dekh kar cheezon ke naam batao"],
+        "gujlish": ["aa tasveer ma kai kai vastu che", "camera chalu kari ne kaho saamne shu che",
+                    "photo ma ketli bottle che", "vision page kholi do", "image recognition chalavo",
+                    "tasveer scan kari ne objects kaho", "photo ma laptop dekhay che ke",
+                    "webcam thi joine vastuo na naam kaho"],
+        "hi": ["इस तस्वीर में कौन सी वस्तुएं हैं", "कैमरा चालू करके बताओ सामने क्या है", "फोटो में कितनी बोतलें हैं",
+               "विज़न पेज खोलो", "इमेज रिकग्निशन चलाओ", "तस्वीर स्कैन करके चीज़ें बताओ",
+               "फोटो में लैपटॉप दिख रहा है क्या", "वेबकैम से देखकर चीज़ों के नाम बताओ"],
+        "gu": ["આ તસવીરમાં કઈ વસ્તુઓ છે", "કેમેરા ચાલુ કરીને કહો સામે શું છે", "ફોટામાં કેટલી બોટલ છે",
+               "વિઝન પેજ ખોલો", "ઇમેજ રિકગ્નિશન ચલાવો", "તસવીર સ્કેન કરીને વસ્તુઓ કહો",
+               "ફોટામાં લેપટોપ દેખાય છે કે", "વેબકેમથી જોઈને વસ્તુઓના નામ કહો"]},
+    "pc_performance": {
+        "en": ["make my computer run faster", "what is slowing down my pc", "list the programs hogging memory",
+               "clean temporary files", "optimize my laptop", "my pc is lagging, fix it",
+               "show me the performance dashboard", "which process eats the most cpu", "release some memory",
+               "tune up my system", "scan for junk files", "open the pc boost page"],
+        "hinglish": ["mera computer tez chalao", "kya cheez pc ko slow kar rahi hai", "memory kha rahe programs dikhao",
+                     "temp files saaf karo", "laptop optimize karo", "pc hang ho raha hai theek karo",
+                     "performance dashboard dikhao", "kaun sa process zyada cpu use kar raha hai"],
+        "gujlish": ["maru computer fast chalavo", "shu cheez pc ne slow kare che", "memory khata programs batavo",
+                    "temp files saaf karo", "laptop optimize karo", "pc hang thay che sudharo",
+                    "performance dashboard batavo", "kayo process vadhu cpu vapre che"],
+        "hi": ["मेरा कंप्यूटर तेज़ चलाओ", "कौन सी चीज़ पीसी को धीमा कर रही है", "मेमोरी खाने वाले प्रोग्राम दिखाओ",
+               "टेम्प फाइलें साफ करो", "लैपटॉप ऑप्टिमाइज़ करो", "पीसी हैंग हो रहा है ठीक करो",
+               "परफॉर्मेंस डैशबोर्ड दिखाओ", "कौन सा प्रोसेस ज्यादा सीपीयू ले रहा है"],
+        "gu": ["મારું કમ્પ્યુટર ઝડપી ચલાવો", "કઈ વસ્તુ પીસીને ધીમું કરે છે", "મેમરી ખાતા પ્રોગ્રામ બતાવો",
+               "ટેમ્પ ફાઇલો સાફ કરો", "લેપટોપ ઓપ્ટિમાઇઝ કરો", "પીસી હેંગ થાય છે સુધારો",
+               "પરફોર્મન્સ ડેશબોર્ડ બતાવો", "કયો પ્રોસેસ વધુ સીપીયુ વાપરે છે"]},
+    "voice_control": {
+        "en": ["begin listening for my commands", "pause the microphone", "enable always-on listening",
+               "disable the wake word", "talk to me when you answer", "stop reading answers aloud",
+               "mute yourself", "keep listening to me", "turn the mic off", "use Hindi for speech",
+               "let me talk to you hands-free", "switch off listening"],
+        "hinglish": ["meri awaaz sunna shuru karo", "mic band kar do", "hamesha sunte raho", "wake word band karo",
+                     "jawab bolkar batana", "jawab bolna band karo", "tum chup raho", "bolne ki language english karo"],
+        "gujlish": ["mari avaj sambhdvanu chalu karo", "mic bandh kari do", "hamesha sambhdta raho", "wake word bandh karo",
+                    "javab boline kehjo", "javab bolvanu bandh karo", "tame chup raho", "bolvani bhasha english karo"],
+        "hi": ["मेरी आवाज़ सुनना शुरू करो", "माइक बंद कर दो", "हमेशा सुनते रहो", "वेक वर्ड बंद करो",
+               "जवाब बोलकर बताना", "जवाब बोलना बंद करो", "तुम चुप रहो", "बोलने की भाषा अंग्रेज़ी करो"],
+        "gu": ["મારો અવાજ સાંભળવાનું શરૂ કરો", "માઇક બંધ કરી દો", "હંમેશા સાંભળતા રહો", "વેક વર્ડ બંધ કરો",
+               "જવાબ બોલીને કહેજો", "જવાબ બોલવાનું બંધ કરો", "તમે ચૂપ રહો", "બોલવાની ભાષા અંગ્રેજી કરો"]},
+}
+_FEATURE_TEST = {
+    "vision_detect": {"hinglish": ["is image mein objects detect karke batao", "camera wala detection page kholo"],
+                      "gujlish": ["aa image ma objects detect kari ne kaho", "camera vado detection page kholo"]},
+    "pc_performance": {"hinglish": ["computer ko speed up karo", "ram khane wale apps dikhao"],
+                       "gujlish": ["computer ne speed up karo", "ram khata apps batavo"]},
+    "voice_control": {"hinglish": ["sunna band karo abhi", "bolkar jawab dena shuru karo"],
+                      "gujlish": ["sambhadvanu bandh karo have", "boline javab apvo chalu karo"]},
+}
+
+
+def augment_features(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_CSV, seed: int = 13,
+                     per_template: int = 4, forbidden: set[str] | None = None) -> tuple[int, int]:
+    """Append FEATURE_TEMPLATES rows (with the usual politeness prefixes and suffixes) to the training CSV and a
+    few held-out code-mixed rows to the test CSV. Existing rows are kept. Returns (train rows, test rows) added."""
+    rng = random.Random(seed)
+    df, tdf = load(path), load(test_path)
+    banned = {x.lower().strip() for x in (forbidden or set())}
+    seen = set(df["text"].str.lower().str.strip()) | set(tdf["text"].str.lower().str.strip()) | banned
+    rows, added = df.to_dict("records"), 0
+    for intent, by_lang in FEATURE_TEMPLATES.items():
+        for lang, templates in by_lang.items():
+            for tpl in templates:
+                cands = list(dict.fromkeys(_candidates(tpl, lang, POOLS[lang], True)))
+                rng.shuffle(cands)
+                for text in [tpl] + cands[:per_template]:
+                    key = text.lower().strip()
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    rows.append({"text": text, "intent": intent, "language": lang, "script": script_of(text),
+                                 "source": "generated", "reviewed": "false"})
+                    added += 1
+    write_csv(rows, path)
+    trows, tadded = tdf.to_dict("records"), 0
+    train_keys = {r["text"].lower().strip() for r in rows}
+    tseen = set(tdf["text"].str.lower().str.strip()) | banned
+    for intent, by_lang in _FEATURE_TEST.items():
+        for lang, texts in by_lang.items():
+            for text in texts:
+                key = text.lower().strip()
+                if key in tseen or key in train_keys:
+                    continue
+                tseen.add(key)
+                trows.append({"text": text, "intent": intent, "language": lang, "script": script_of(text),
+                              "source": "generated", "reviewed": "false"})
+                tadded += 1
+    write_csv(trows, test_path)
+    return added, tadded
+
+
 def main(argv: list[str]) -> int:
     cmd = argv[0] if argv else ""
     if cmd == "generate":
@@ -733,6 +839,8 @@ def main(argv: list[str]) -> int:
             with eval_csv.open(encoding="utf-8", newline="") as f:
                 forbidden = {r["utterance"] for r in csv.DictReader(f)}
         print(f"added {augment_knowledge(forbidden=forbidden)} training rows, {augment_test()} test rows")
+        a, b = augment_features(forbidden=forbidden)
+        print(f"added {a} feature training rows, {b} feature test rows")
         return 0
     if cmd == "validate":
         errs = validate()

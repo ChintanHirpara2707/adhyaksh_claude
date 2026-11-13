@@ -169,6 +169,19 @@
     speaking = false; if (handsfree) startRec();
   });
 
+  // Commands sent from the assistant ("stop listening", "be quiet", "switch voice to Hindi").
+  function runCommand(c) {
+    if (!c) return;
+    if (c.action === "start" && SR) { handsfree = true; paint(); if (!running) startRec(); }
+    else if (c.action === "stop") { stopAll("Listening stopped"); }
+    else if (c.action === "quiet") { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); speaking = false; if (handsfree) startRec(); }
+    else if (c.action === "wake_on") { wakeChk.checked = true; }
+    else if (c.action === "wake_off") { wakeChk.checked = false; }
+    else if (c.action === "lang" && c.value) { langSel.value = c.value; if (running && rec) { try { rec.stop(); } catch (err) {} } }
+    paint(); fit();
+  }
+  let lastCmd = "";
+
   window.addEventListener("message", function (event) {
     if (!event.data || event.data.type !== "streamlit:render") return;
     const a = event.data.args || {};
@@ -180,6 +193,7 @@
       wakeChk.checked = !!a.wake_default;
       if (a.handsfree_default && SR) { handsfree = true; paint(); startRec(); }
     }
+    if (a.command_nonce && a.command_nonce !== lastCmd) { lastCmd = a.command_nonce; runCommand(a.command); }
     if (a.speak_nonce && a.speak_nonce !== lastSpoken && a.speak_text) { lastSpoken = a.speak_nonce; speak(a.speak_text); }
     fit();
   });

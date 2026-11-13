@@ -31,7 +31,8 @@ def speakable(text: str) -> str:
 
 
 def voice_input(theme_name: str = "light", lang: str = "en-IN", speak_text: str = "", speak_nonce: str = "",
-                key: str = "voice", handsfree_default: bool = False, wake_default: bool = False) -> dict | None:
+                key: str = "voice", handsfree_default: bool = False, wake_default: bool = False,
+                command: dict | None = None, command_nonce: str = "") -> dict | None:
     """Render the voice control. Returns {"text", "lang", "nonce", "handsfree", "wake"} after a recognised
     utterance, or {"setting": True, ...} when only the hands-free or wake-word toggle changed, else None.
 
@@ -42,6 +43,7 @@ def voice_input(theme_name: str = "light", lang: str = "en-IN", speak_text: str 
         return _component()(tokens=TOKENS.get(theme_name, TOKENS["light"]), lang=lang,
                             speak_text=speakable(speak_text) if speak_text else "", speak_nonce=speak_nonce,
                             handsfree_default=handsfree_default, wake_default=wake_default,
+                            command=command, command_nonce=command_nonce,
                             key=key, default=None)
     except Exception:
         return None

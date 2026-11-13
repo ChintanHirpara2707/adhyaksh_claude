@@ -53,7 +53,8 @@ _HI_QW = {"क्या","कौन","कहाँ","कैसे","क्यो
 _GU_QW = {"શું","કોણ","ક્યાં","કેવી","કેમ","શું","કયો","કયા","કેટલું","કેટલી",
           "shu","kon","kyare","kevi","kem","shu che","kon che","kitlo che","kitli che",
           "kya che","kaun che","shu thay che"}
-_DATE_WORDS = re.compile(r"\b(date|today|tarikh|तारीख|તારીખ)\b", re.IGNORECASE)
+_DATE_WORDS = re.compile(r"\b(?:date|today|tarikh|tareekh|day|weekday|din|vaar|divas)\b|तारीख|તારીખ|डेट|ડેટ|दिन|दिनांक|દિવસ|વાર",
+                         re.IGNORECASE)
 
 
 def _time_date_kind(text: str) -> str:
@@ -244,9 +245,52 @@ _TOOLISH = re.compile(
     r"disk|open|close|delete|create|rename|move|copy|search my|my documents)\b", re.IGNORECASE)
 
 
+# Words that ask for knowledge or writing rather than an action on this computer.
+_GENERAL_CUES = re.compile(
+    r"\b(?:explain|describe|define|write|compose|translate|summari[sz]e|suggest|recommend|tips?|ideas?|advice|"
+    r"difference\s+between|meaning\s+of|compare|why|how|who|whom|whose|which|when|where|what|"
+    r"samjh?ao|samjavo|samjha|kyun|kyu|kaise|kisne|kaun|kab|kahan|kitna|kitni|kitne|kem|kevi|kevo|koe|kone|kyare|"
+    r"ketlo|ketli|ketlu|shu|kon|jaankari|jankari|vishe|baare\s+mein)\b"
+    r"|समझाओ|समझाइए|क्यों|कैसे|कौन|किसने|कब|कहाँ|कितना|कितनी|कितने|क्या\s+होता|के\s+बारे\s+में|"
+    r"સમજાવો|કેમ|કેવી|કોણ|ક્યારે|ક્યાં|કેટલો|કેટલી|કેટલું|વિશે", re.IGNORECASE)
+
+# Lexical evidence that a tool-style intent really was asked for. Without any, a question is general knowledge.
+_INTENT_SIGNAL = {
+    "system_status": re.compile(r"cpu|ram\b|disk|storage|memory|battery|processor|laptop|computer|\bpc\b|system|"
+                                r"सीपीयू|रैम|डिस्क|सिस्टम|લેપટોપ|સિસ્ટમ|રેમ|ડિસ્ક|सीपीयू|मेमोरी|મેમરી", re.IGNORECASE),
+    "time_date": re.compile(r"\btime\b|\bdate\b|\bday\b|clock|baje|baja|vagya|vaage|tarikh|tareekh|din\b|vaar|"
+                            r"समय|तारीख|बजे|दिन|સમય|તારીખ|વાગ્યા|દિવસ|વાર", re.IGNORECASE),
+    "memory_recall": re.compile(r"\bmy\b|\bmine\b|\bmera\b|\bmeri\b|\bmaru\b|\bmaro\b|\bmari\b|\bmaine\b|\bme\b|"
+                                r"remember|recall|yaad|याद|मेरा|मेरी|मैंने|મારો|મારી|મારું|મેં|યાદ", re.IGNORECASE),
+    "greet": re.compile(r"\b(?:hello|hi|hey|namaste|namaskar|morning|evening|afternoon|kem\s+ch+o)\b|नमस्|હેલો|નમસ્|કેમ\s+છો",
+                        re.IGNORECASE),
+    "help": re.compile(r"\bhelp\b|\bcommands?\b|\bfeatures?\b|madad|मदद|મદદ|what\s+can\s+you|kya\s+kar\s+sakte|"
+                       r"how\s+(?:do|to)\s+i\s+use", re.IGNORECASE),
+    "bot_identity": re.compile(r"\byou(?:r)?\b|\btum\b|\baap\b|\btame\b|\btu\b|तुम|आप|તમે|તું", re.IGNORECASE),
+    "get_identity": re.compile(r"\bname\b|\bnaam\b|नाम|નામ|\bwho\s+am\s+i\b", re.IGNORECASE),
+    "web_open": re.compile(r"\bopen\b|\bgo\s+to\b|\bsearch\b|\.com|\.in\b|kholo|खोलो|ખોલો|browse|website", re.IGNORECASE),
+    "doc_question": re.compile(r"document|\bpdf\b|\bfile\b|report|attach|दस्तावेज़|दस्तावेज|પીડીએફ|દસ્તાવેજ|फाइल|ફાઇલ|docs?\b",
+                               re.IGNORECASE),
+    "app_open": re.compile(r"\bopen\b|launch|\bstart\b|\brun\b|kholo|khol\b|chalu|shuru|खोल|चालू|शुरू|ખોલ|ચાલુ|શરૂ",
+                           re.IGNORECASE),
+    "app_close": re.compile(r"close|quit|exit|kill|stop|band|bandh|off\b|बंद|બંધ", re.IGNORECASE),
+    "out_of_scope": re.compile(r"$^"),
+    "unknown": re.compile(r"$^"),
+}
+
+
 def _is_general_question(text: str) -> bool:
-    """A question that needs knowledge, not a tool."""
-    return _is_question(text) and not _TOOLISH.search(text) and not _UNSUPPORTED_ACTION.search(text)
+    """A question or request for knowledge or writing, not a tool."""
+    if _TOOLISH.search(text) or _UNSUPPORTED_ACTION.search(text):
+        return False
+    return _is_question(text) or bool(_GENERAL_CUES.search(text))
+
+
+def _general_override(text: str, intent: str) -> bool:
+    """True when the model picked a tool-style or catch-all intent that nothing in the text supports,
+    while the text reads as a general knowledge request. Intents with concrete tool evidence keep priority."""
+    sig = _INTENT_SIGNAL.get(intent)
+    return sig is not None and _is_general_question(text) and not sig.search(text)
 
 
 def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_id: int, lang: str,
@@ -286,7 +330,7 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         ctx.pending_name = name
         return _Reply(_t("ask_name", lang, name=name), intent, action="clarify")
     if intent == "get_identity":
-        if not _is_question(text):
+        if not _is_question(text) and not router._ID_QUERY.search(text):
             return _Reply(_t("unknown", lang), "unknown")
         name = identity.get_name()
         return _Reply(_t("identity_query", lang, name=name) if name else _t("no_name", lang), intent)
@@ -522,6 +566,11 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
     if intent == "unknown" and conf == 0.0 and not registry.available():
         return _Reply("No trained model is active. Run: python -m adhyaksh.nlu.train --all", "unknown", 0.0)
     threshold = config.get_float("confidence_threshold")
+    if _general_override(text, intent):
+        # Unsupported by the text: answer as a general question instead of running a tool intent.
+        r = _dispatch("knowledge_question", text, {}, ctx, convo_id, lang, mode=mode)
+        r.conf = conf
+        return r
     agent_enabled = llm.available() and not llm.is_local()
     if conf < threshold or gap < registry.MIN_GAP:
         # Low confidence or ambiguous (small gap between the top two intents): do not dispatch
@@ -537,8 +586,8 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
             r = _llm_answer(text, convo_id, lang, "knowledge_question")
             r.conf = conf
             return r
-        if config.get_bool("cloud_consent") and _is_general_question(text):
-            r = _wiki_or_link(text, lang, "knowledge_question")
+        if _is_general_question(text):
+            r = _llm_answer(text, convo_id, lang, "knowledge_question")
             r.conf = conf
             return r
         r = _Reply(_cannot_do_yet(lang), "unknown", conf, action="low_confidence")

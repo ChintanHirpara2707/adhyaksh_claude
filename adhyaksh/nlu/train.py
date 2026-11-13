@@ -67,7 +67,8 @@ def train_all(seed: int = 42, progress=None, kinds=None, write_report: bool = Tr
         pt = m.predict_proba(test["text"])
         tm = evaluate.compute_metrics(test["intent"], [classes[i] for i in pt.argmax(1)], test["language"], labels)
         pc = m.predict_proba(dtest["text"])
-        cm = evaluate.compute_metrics(dtest["intent"], [classes[i] for i in pc.argmax(1)], dtest["language"], labels)
+        cm = evaluate.compute_metrics(dtest["intent"], [classes[i] for i in pc.argmax(1)], dtest["language"], labels,
+                                      present_only=True)
         s.test_accuracy, s.test_macro_f1, s.per_language = tm["accuracy"], tm["macro_f1"], tm["per_language"]
         s.codemixed_macro_f1 = cm["macro_f1"]
         path = m.save(out_dir)

@@ -13,10 +13,17 @@ import numpy as np
 from adhyaksh import config, db
 
 
-def compute_metrics(y_true, y_pred, langs, labels) -> dict:
+def compute_metrics(y_true, y_pred, langs, labels, present_only: bool = False) -> dict:
+    """Accuracy, macro-F1, per-language macro-F1 and the confusion matrix.
+
+    present_only=True averages macro-F1 over the intents that occur in y_true. Use it for a test file that does
+    not cover every intent: labels with no examples would otherwise score 0 and cap the result."""
     from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 
     y_true, y_pred, langs = list(y_true), list(y_pred), np.array(langs)
+    full_labels = list(labels)
+    if present_only:
+        labels = [lab for lab in labels if lab in set(y_true)]
     per_lang = {}
     for lang in sorted(set(langs)):
         m = langs == lang
@@ -25,7 +32,7 @@ def compute_metrics(y_true, y_pred, langs, labels) -> dict:
     return {"accuracy": float(accuracy_score(y_true, y_pred)),
             "macro_f1": float(f1_score(y_true, y_pred, average="macro", labels=labels, zero_division=0)),
             "per_language": per_lang,
-            "confusion": confusion_matrix(y_true, y_pred, labels=labels).tolist(), "labels": list(labels)}
+            "confusion": confusion_matrix(y_true, y_pred, labels=full_labels).tolist(), "labels": full_labels}
 
 
 def measure_latency(model, texts, n: int = 200) -> tuple[float, float]:

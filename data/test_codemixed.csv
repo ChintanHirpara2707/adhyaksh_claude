@@ -143,3 +143,29 @@ hmm khabar nathi yaar,unknown,gujlish,latin,generated,false
 kai pan bolu chu,unknown,gujlish,latin,generated,false
 zxcv bnm,unknown,gujlish,latin,generated,false
 are chhodo ne,unknown,gujlish,latin,generated,false
+aap ka naam kya hai assistant,bot_identity,hinglish,latin,generated,false
+tum ho kaun,bot_identity,hinglish,latin,generated,false
+Reports2 naam ka folder bana do,folder_create,hinglish,latin,generated,false
+naya folder Backup1 tayar karo,folder_create,hinglish,latin,generated,false
+Reports2 naam no folder bani do,folder_create,gujlish,latin,generated,false
+navo folder Backup1 tayar karo,folder_create,gujlish,latin,generated,false
+mere liye train ticket book karo,out_of_scope,hinglish,latin,generated,false
+bijli ka bill bhar do,out_of_scope,hinglish,latin,generated,false
+mara mate train ticket book karo,out_of_scope,gujlish,latin,generated,false
+vijli nu bill bhari do,out_of_scope,gujlish,latin,generated,false
+screen ka screenshot khinch lo,screenshot,hinglish,latin,generated,false
+abhi ki screen capture kar lo,screenshot,hinglish,latin,generated,false
+screen no screenshot kheenchi lo,screenshot,gujlish,latin,generated,false
+atyar ni screen capture kari lo,screenshot,gujlish,latin,generated,false
+downloads wala folder khol do,special_folder_open,hinglish,latin,generated,false
+recycle bin dikhao,special_folder_open,hinglish,latin,generated,false
+downloads vado folder kholi do,special_folder_open,gujlish,latin,generated,false
+recycle bin batavo,special_folder_open,gujlish,latin,generated,false
+abhi kitna time hua,time_date,hinglish,latin,generated,false
+aaj tarikh kya hai,time_date,hinglish,latin,generated,false
+atyare ketla vagya che,time_date,gujlish,latin,generated,false
+aaje tarikh shu che,time_date,gujlish,latin,generated,false
+browser mein youtube khol do,web_open,hinglish,latin,generated,false
+google par weather search karo,web_open,hinglish,latin,generated,false
+browser ma youtube kholi do,web_open,gujlish,latin,generated,false
+google par weather shodho,web_open,gujlish,latin,generated,false

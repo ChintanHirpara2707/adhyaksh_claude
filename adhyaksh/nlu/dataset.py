@@ -1,6 +1,6 @@
 """Intent dataset: generation, validation, loading and splitting.
 
-CLI: python -m adhyaksh.nlu.dataset generate|augment|validate|report
+CLI: python -m adhyaksh.nlu.dataset generate|augment|augment-knowledge|validate|report
 All generated rows are marked reviewed=false until the author confirms them.
 """
 from __future__ import annotations
@@ -554,6 +554,166 @@ def augment(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_CSV, seed
     return added
 
 
+# ---------------------------------------------------------------------------
+# Broader general-knowledge phrasing (topics x frames) so questions about unseen subjects are not
+# mistaken for commands. Topics and frames are disjoint from tests/eval/cases.csv by construction;
+# run_eval.py asserts that no eval utterance appears in the training file.
+# ---------------------------------------------------------------------------
+_K_TOPICS = {
+    "en": ["volcanoes", "magnets", "electricity", "DNA", "gravity", "earthquakes", "rainbows", "oxygen",
+           "the pyramids of Egypt", "Napoleon", "Shakespeare", "Albert Einstein", "Mount Everest",
+           "the Amazon river", "the Pacific ocean", "solar panels", "GPS", "bitcoin", "the human heart",
+           "the French revolution", "tides", "antibiotics", "the printing press"],
+    "hinglish": ["volcano", "magnet", "bijli", "DNA", "gravity", "bhukamp", "indradhanush", "oxygen", "pyramid",
+                 "Napoleon", "Einstein", "Mount Everest", "Amazon nadi", "solar panel", "GPS", "bitcoin",
+                 "insaani dil", "french revolution", "samundar ki lehrein", "antibiotics"],
+    "gujlish": ["volcano", "magnet", "vijli", "DNA", "gravity", "bhukamp", "indradhanush", "oxygen", "pyramid",
+                "Napoleon", "Einstein", "Mount Everest", "Amazon nadi", "solar panel", "GPS", "bitcoin",
+                "manav hriday", "french revolution", "dariya na mojha", "antibiotics"],
+    "hi": ["ज्वालामुखी", "चुंबक", "बिजली", "डीएनए", "गुरुत्वाकर्षण", "भूकंप", "इंद्रधनुष", "ऑक्सीजन", "पिरामिड",
+           "नेपोलियन", "आइंस्टीन", "एवरेस्ट", "अमेज़न नदी", "सोलर पैनल", "जीपीएस", "बिटकॉइन", "मानव हृदय",
+           "फ्रांसीसी क्रांति", "ज्वार भाटा", "एंटीबायोटिक"],
+    "gu": ["જ્વાળામુખી", "ચુંબક", "વીજળી", "ડીએનએ", "ગુરુત્વાકર્ષણ", "ભૂકંપ", "મેઘધનુષ", "ઓક્સિજન", "પિરામિડ",
+           "નેપોલિયન", "આઇન્સ્ટાઇન", "એવરેસ્ટ", "એમેઝોન નદી", "સોલર પેનલ", "જીપીએસ", "બિટકોઇન", "માનવ હૃદય",
+           "ફ્રેન્ચ ક્રાંતિ", "ભરતી ઓટ", "એન્ટિબાયોટિક"],
+}
+_K_FRAMES = {
+    "en": ["what is {t}", "tell me about {t}", "how does {t} work", "why does {t} matter", "explain {t} in simple terms",
+           "give me a short summary of {t}", "i want to know about {t}", "can you describe {t}",
+           "what are the facts about {t}", "write two lines on {t}", "write a short story about {t}"],
+    "hinglish": ["{t} kya hota hai", "{t} ke baare mein batao", "{t} kaise kaam karta hai", "{t} kyun hota hai",
+                 "{t} ko aasan bhasha mein samjhao", "{t} ki poori jaankari do", "{t} par do line likho"],
+    "gujlish": ["{t} shu hoy che", "{t} vishe kaho", "{t} kevi rite kaam kare che", "{t} kem thay che",
+                "{t} ne saral bhasha ma samjavo", "{t} ni puri jankari apo", "{t} par be line lakho"],
+    "hi": ["{t} क्या है", "{t} के बारे में बताओ", "{t} कैसे काम करता है", "{t} क्यों होता है",
+           "{t} को आसान भाषा में समझाओ", "{t} की पूरी जानकारी दो", "{t} पर दो लाइन लिखो"],
+    "gu": ["{t} શું છે", "{t} વિશે કહો", "{t} કેવી રીતે કામ કરે છે", "{t} કેમ થાય છે",
+           "{t} ને સરળ ભાષામાં સમજાવો", "{t} ની પૂરી માહિતી આપો", "{t} પર બે લાઇન લખો"],
+}
+_K_PLANETS = {"en": ["Mars", "Jupiter", "Venus", "Saturn"], "hinglish": ["Mars", "Jupiter", "Venus", "Saturn"],
+              "gujlish": ["Mars", "Jupiter", "Venus", "Saturn"], "hi": ["मंगल", "बृहस्पति", "शुक्र", "शनि"],
+              "gu": ["મંગળ", "ગુરુ", "શુક્ર", "શનિ"]}
+_K_DIST = {"en": ["how far is {p} from earth", "how big is {p}", "how long is a day on {p}"],
+           "hinglish": ["{p} dharti se kitna door hai", "{p} kitna bada hai", "{p} par ek din kitna lamba hota hai"],
+           "gujlish": ["{p} prithvi thi ketlo dur che", "{p} ketlo moto che", "{p} par ek divas ketlo lambo hoy che"],
+           "hi": ["{p} पृथ्वी से कितना दूर है", "{p} कितना बड़ा है", "{p} पर एक दिन कितना लंबा होता है"],
+           "gu": ["{p} પૃથ્વીથી કેટલો દૂર છે", "{p} કેટલો મોટો છે", "{p} પર એક દિવસ કેટલો લાંબો હોય છે"]}
+_K_IDEAS = {"en": ["a birthday party", "learning guitar", "saving money", "a weekend trip", "staying focused"],
+            "hinglish": ["birthday party", "guitar seekhne", "paise bachane", "weekend trip", "dhyan lagane"],
+            "gujlish": ["birthday party", "guitar shikhva", "paisa bachavva", "weekend trip", "dhyan rakhva"],
+            "hi": ["जन्मदिन की पार्टी", "गिटार सीखने", "पैसे बचाने", "वीकेंड ट्रिप", "ध्यान लगाने"],
+            "gu": ["જન્મદિવસની પાર્ટી", "ગિટાર શીખવા", "પૈસા બચાવવા", "વીકએન્ડ ટ્રિપ", "ધ્યાન રાખવા"]}
+_K_IDEA_FRAMES = {"en": ["suggest some ideas for {i}", "give me advice on {i}", "any tips for {i}"],
+                  "hinglish": ["{i} ke liye kuch ideas do", "{i} par salah do", "{i} ke liye koi tips hain"],
+                  "gujlish": ["{i} mate kai ideas apo", "{i} par salah apo", "{i} mate koi tips che"],
+                  "hi": ["{i} के लिए कुछ आइडिया दो", "{i} पर सलाह दो", "{i} के लिए कोई टिप्स हैं"],
+                  "gu": ["{i} માટે કેટલાક આઇડિયા આપો", "{i} પર સલાહ આપો", "{i} માટે કોઈ ટિપ્સ છે"]}
+# Bare commands whose object is missing: the assistant asks a follow-up question (it is not out of scope).
+_BARE_ROWS = {
+    "file_create": {"en": ["create a file", "make a file", "new file", "make a new file", "i want to create a file"],
+                    "hinglish": ["ek file banao", "nayi file banao", "file create karo"],
+                    "gujlish": ["ek file banavo", "navi file banavo", "file create karo"],
+                    "hi": ["एक फाइल बनाओ", "नई फाइल बनाओ"], "gu": ["એક ફાઇલ બનાવો", "નવી ફાઇલ બનાવો"]},
+    "folder_create": {"en": ["create a folder", "make a folder", "new folder", "make a new directory"],
+                      "hinglish": ["ek folder banao", "naya folder banao"],
+                      "gujlish": ["ek folder banavo", "navo folder banavo"],
+                      "hi": ["एक फोल्डर बनाओ", "नया फोल्डर बनाओ"], "gu": ["એક ફોલ્ડર બનાવો", "નવો ફોલ્ડર બનાવો"]},
+    "get_identity": {"en": ["can you tell me what my name was", "do you know what i am called", "say my name", "remind me of my name"],
+                     "hinglish": ["mera naam kya tha", "tumhe mera naam yaad hai kya", "mera naam bolo"],
+                     "gujlish": ["maru naam shu hatu", "tamne maru naam yaad che", "maru naam bolo"],
+                     "hi": ["मेरा नाम क्या था", "क्या तुम्हें मेरा नाम याद है", "मेरा नाम बोलो"],
+                     "gu": ["મારું નામ શું હતું", "શું તમને મારું નામ યાદ છે", "મારું નામ બોલો"]},
+    "help": {"en": ["what features do you have", "show me your capabilities", "what are you able to do"],
+             "hinglish": ["tumhare features kya hain", "tum kya kar paate ho", "tumhari capabilities dikhao"],
+             "gujlish": ["tamara features shu che", "tame shu kari shako cho", "tamari capabilities batavo"],
+             "hi": ["तुम्हारी सुविधाएँ क्या हैं", "तुम क्या कर पाते हो"], "gu": ["તમારી સુવિધાઓ શું છે", "તમે શું કરી શકો છો"]},
+}
+
+
+def _knowledge_rows() -> list[tuple[str, str, str]]:
+    """(text, intent, language) rows for general knowledge, ideas and distance questions, plus bare commands."""
+    rows: list[tuple[str, str, str]] = []
+    for lang, topics in _K_TOPICS.items():
+        for frame in _K_FRAMES[lang]:
+            for t in topics:
+                rows.append((frame.format(t=t), "knowledge_question", lang))
+        for frame in _K_DIST[lang]:
+            for p in _K_PLANETS[lang]:
+                rows.append((frame.format(p=p), "knowledge_question", lang))
+        for frame in _K_IDEA_FRAMES[lang]:
+            for i in _K_IDEAS[lang]:
+                rows.append((frame.format(i=i), "knowledge_question", lang))
+    for intent, by_lang in _BARE_ROWS.items():
+        for lang, texts in by_lang.items():
+            rows += [(t, intent, lang) for t in texts]
+    return rows
+
+
+def augment_knowledge(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_CSV, seed: int = 11,
+                      per_cell: int = 20, forbidden: set[str] | None = None) -> int:
+    """Append a sample of _knowledge_rows() to the training CSV (keeps existing rows; skips duplicates, anything
+    in the test file and anything in `forbidden`, e.g. the held-out evaluation utterances)."""
+    rng = random.Random(seed)
+    df = load(path)
+    seen = set(df["text"].str.lower().str.strip()) | set(load(test_path)["text"].str.lower().str.strip())
+    seen |= {x.lower().strip() for x in (forbidden or set())}
+    by_cell: dict[tuple[str, str], list[str]] = {}
+    for text, intent, lang in _knowledge_rows():
+        by_cell.setdefault((intent, lang), []).append(text)
+    rows = df.to_dict("records")
+    added = 0
+    for (intent, lang), texts in by_cell.items():
+        rng.shuffle(texts)
+        for text in texts[:per_cell]:
+            key = text.lower().strip()
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append({"text": text, "intent": intent, "language": lang, "script": script_of(text),
+                         "source": "generated", "reviewed": "false"})
+            added += 1
+    write_csv(rows, path)
+    return added
+
+
+# Held-out code-mixed phrasings for intents the test file did not cover (appended, never used for training).
+_EXTRA_TEST = {
+    "bot_identity": {"hinglish": ["aap ka naam kya hai assistant", "tum ho kaun"], "gujlish": ["tamaru naam shu che", "tame kon cho"]},
+    "folder_create": {"hinglish": ["Reports2 naam ka folder bana do", "naya folder Backup1 tayar karo"],
+                      "gujlish": ["Reports2 naam no folder bani do", "navo folder Backup1 tayar karo"]},
+    "out_of_scope": {"hinglish": ["mere liye train ticket book karo", "bijli ka bill bhar do"],
+                     "gujlish": ["mara mate train ticket book karo", "vijli nu bill bhari do"]},
+    "screenshot": {"hinglish": ["screen ka screenshot khinch lo", "abhi ki screen capture kar lo"],
+                   "gujlish": ["screen no screenshot kheenchi lo", "atyar ni screen capture kari lo"]},
+    "special_folder_open": {"hinglish": ["downloads wala folder khol do", "recycle bin dikhao"],
+                            "gujlish": ["downloads vado folder kholi do", "recycle bin batavo"]},
+    "time_date": {"hinglish": ["abhi kitna time hua", "aaj tarikh kya hai"], "gujlish": ["atyare ketla vagya che", "aaje tarikh shu che"]},
+    "web_open": {"hinglish": ["browser mein youtube khol do", "google par weather search karo"],
+                 "gujlish": ["browser ma youtube kholi do", "google par weather shodho"]},
+}
+
+
+def augment_test(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_CSV) -> int:
+    """Append _EXTRA_TEST rows so every intent appears in the code-mixed test file."""
+    train_keys = set(load(path)["text"].str.lower().str.strip())
+    df = load(test_path)
+    seen = set(df["text"].str.lower().str.strip())
+    rows = df.to_dict("records")
+    added = 0
+    for intent, by_lang in _EXTRA_TEST.items():
+        for lang, texts in by_lang.items():
+            for text in texts:
+                key = text.lower().strip()
+                if key in seen or key in train_keys:
+                    continue
+                seen.add(key)
+                rows.append({"text": text, "intent": intent, "language": lang, "script": script_of(text),
+                             "source": "generated", "reviewed": "false"})
+                added += 1
+    write_csv(rows, test_path)
+    return added
+
+
 def main(argv: list[str]) -> int:
     cmd = argv[0] if argv else ""
     if cmd == "generate":
@@ -565,6 +725,15 @@ def main(argv: list[str]) -> int:
     if cmd == "augment":
         print(f"added {augment()} rows")
         return 0
+    if cmd == "augment-knowledge":
+        forbidden = set()
+        eval_csv = config.ROOT / "tests" / "eval" / "cases.csv"
+        if eval_csv.exists():
+            import csv
+            with eval_csv.open(encoding="utf-8", newline="") as f:
+                forbidden = {r["utterance"] for r in csv.DictReader(f)}
+        print(f"added {augment_knowledge(forbidden=forbidden)} training rows, {augment_test()} test rows")
+        return 0
     if cmd == "validate":
         errs = validate()
         print("\n".join(errs) if errs else "dataset valid")
@@ -572,7 +741,7 @@ def main(argv: list[str]) -> int:
     if cmd == "report":
         print(balance_report())
         return 0
-    print("Usage: python -m adhyaksh.nlu.dataset generate|augment|validate|report")
+    print("Usage: python -m adhyaksh.nlu.dataset generate|augment|augment-knowledge|validate|report")
     return 2
 
 

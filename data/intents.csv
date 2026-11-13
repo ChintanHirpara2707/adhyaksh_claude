@@ -2385,3 +2385,156 @@ tame shu shu kari shako,help,gujlish,latin,generated,false
 aa assistant kevi rite kaam kare,help,gujlish,latin,generated,false
 तुम क्या क्या कर सकते हो,help,hi,devanagari,generated,false
 તું શું શું કરી શકે,help,gu,gujarati,generated,false
+tell me about tides,knowledge_question,en,latin,generated,false
+i want to know about antibiotics,knowledge_question,en,latin,generated,false
+tell me about magnets,knowledge_question,en,latin,generated,false
+can you describe oxygen,knowledge_question,en,latin,generated,false
+give me a short summary of oxygen,knowledge_question,en,latin,generated,false
+can you describe GPS,knowledge_question,en,latin,generated,false
+give me a short summary of rainbows,knowledge_question,en,latin,generated,false
+what are the facts about DNA,knowledge_question,en,latin,generated,false
+what are the facts about volcanoes,knowledge_question,en,latin,generated,false
+suggest some ideas for saving money,knowledge_question,en,latin,generated,false
+why does tides matter,knowledge_question,en,latin,generated,false
+why does the French revolution matter,knowledge_question,en,latin,generated,false
+explain the human heart in simple terms,knowledge_question,en,latin,generated,false
+how big is Mars,knowledge_question,en,latin,generated,false
+what is the Pacific ocean,knowledge_question,en,latin,generated,false
+write two lines on solar panels,knowledge_question,en,latin,generated,false
+i want to know about volcanoes,knowledge_question,en,latin,generated,false
+can you describe the printing press,knowledge_question,en,latin,generated,false
+i want to know about solar panels,knowledge_question,en,latin,generated,false
+write a short story about earthquakes,knowledge_question,en,latin,generated,false
+gravity ki poori jaankari do,knowledge_question,hinglish,latin,generated,false
+Napoleon kyun hota hai,knowledge_question,hinglish,latin,generated,false
+DNA ke baare mein batao,knowledge_question,hinglish,latin,generated,false
+Mount Everest ke baare mein batao,knowledge_question,hinglish,latin,generated,false
+Napoleon kaise kaam karta hai,knowledge_question,hinglish,latin,generated,false
+solar panel ke baare mein batao,knowledge_question,hinglish,latin,generated,false
+antibiotics kaise kaam karta hai,knowledge_question,hinglish,latin,generated,false
+bijli kaise kaam karta hai,knowledge_question,hinglish,latin,generated,false
+bitcoin kaise kaam karta hai,knowledge_question,hinglish,latin,generated,false
+bhukamp ko aasan bhasha mein samjhao,knowledge_question,hinglish,latin,generated,false
+french revolution ke baare mein batao,knowledge_question,hinglish,latin,generated,false
+Napoleon par do line likho,knowledge_question,hinglish,latin,generated,false
+pyramid ko aasan bhasha mein samjhao,knowledge_question,hinglish,latin,generated,false
+volcano par do line likho,knowledge_question,hinglish,latin,generated,false
+french revolution ko aasan bhasha mein samjhao,knowledge_question,hinglish,latin,generated,false
+paise bachane par salah do,knowledge_question,hinglish,latin,generated,false
+dhyan lagane ke liye koi tips hain,knowledge_question,hinglish,latin,generated,false
+Mars dharti se kitna door hai,knowledge_question,hinglish,latin,generated,false
+bijli ki poori jaankari do,knowledge_question,hinglish,latin,generated,false
+GPS ki poori jaankari do,knowledge_question,hinglish,latin,generated,false
+Einstein shu hoy che,knowledge_question,gujlish,latin,generated,false
+birthday party mate koi tips che,knowledge_question,gujlish,latin,generated,false
+Napoleon shu hoy che,knowledge_question,gujlish,latin,generated,false
+solar panel ni puri jankari apo,knowledge_question,gujlish,latin,generated,false
+french revolution vishe kaho,knowledge_question,gujlish,latin,generated,false
+guitar shikhva mate koi tips che,knowledge_question,gujlish,latin,generated,false
+Napoleon par be line lakho,knowledge_question,gujlish,latin,generated,false
+bitcoin vishe kaho,knowledge_question,gujlish,latin,generated,false
+antibiotics kevi rite kaam kare che,knowledge_question,gujlish,latin,generated,false
+dariya na mojha shu hoy che,knowledge_question,gujlish,latin,generated,false
+bitcoin par be line lakho,knowledge_question,gujlish,latin,generated,false
+GPS shu hoy che,knowledge_question,gujlish,latin,generated,false
+bitcoin ni puri jankari apo,knowledge_question,gujlish,latin,generated,false
+DNA ne saral bhasha ma samjavo,knowledge_question,gujlish,latin,generated,false
+pyramid vishe kaho,knowledge_question,gujlish,latin,generated,false
+Mount Everest ne saral bhasha ma samjavo,knowledge_question,gujlish,latin,generated,false
+magnet ni puri jankari apo,knowledge_question,gujlish,latin,generated,false
+oxygen kevi rite kaam kare che,knowledge_question,gujlish,latin,generated,false
+Einstein vishe kaho,knowledge_question,gujlish,latin,generated,false
+Saturn par ek divas ketlo lambo hoy che,knowledge_question,gujlish,latin,generated,false
+एवरेस्ट को आसान भाषा में समझाओ,knowledge_question,hi,devanagari,generated,false
+एवरेस्ट की पूरी जानकारी दो,knowledge_question,hi,devanagari,generated,false
+मानव हृदय क्या है,knowledge_question,hi,devanagari,generated,false
+एवरेस्ट क्या है,knowledge_question,hi,devanagari,generated,false
+आइंस्टीन पर दो लाइन लिखो,knowledge_question,hi,devanagari,generated,false
+ऑक्सीजन पर दो लाइन लिखो,knowledge_question,hi,devanagari,generated,false
+जीपीएस की पूरी जानकारी दो,knowledge_question,hi,devanagari,generated,false
+मानव हृदय पर दो लाइन लिखो,knowledge_question,hi,devanagari,generated,false
+गुरुत्वाकर्षण कैसे काम करता है,knowledge_question,hi,devanagari,generated,false
+जन्मदिन की पार्टी के लिए कुछ आइडिया दो,knowledge_question,hi,devanagari,generated,false
+पिरामिड क्या है,knowledge_question,hi,devanagari,generated,false
+चुंबक कैसे काम करता है,knowledge_question,hi,devanagari,generated,false
+डीएनए को आसान भाषा में समझाओ,knowledge_question,hi,devanagari,generated,false
+बिजली के बारे में बताओ,knowledge_question,hi,devanagari,generated,false
+गुरुत्वाकर्षण क्या है,knowledge_question,hi,devanagari,generated,false
+बिटकॉइन क्यों होता है,knowledge_question,hi,devanagari,generated,false
+पिरामिड के बारे में बताओ,knowledge_question,hi,devanagari,generated,false
+ऑक्सीजन क्या है,knowledge_question,hi,devanagari,generated,false
+फ्रांसीसी क्रांति को आसान भाषा में समझाओ,knowledge_question,hi,devanagari,generated,false
+शनि कितना बड़ा है,knowledge_question,hi,devanagari,generated,false
+વીજળી પર બે લાઇન લખો,knowledge_question,gu,gujarati,generated,false
+જ્વાળામુખી પર બે લાઇન લખો,knowledge_question,gu,gujarati,generated,false
+પિરામિડ કેમ થાય છે,knowledge_question,gu,gujarati,generated,false
+ગુરુ કેટલો મોટો છે,knowledge_question,gu,gujarati,generated,false
+જીપીએસ ને સરળ ભાષામાં સમજાવો,knowledge_question,gu,gujarati,generated,false
+જ્વાળામુખી ની પૂરી માહિતી આપો,knowledge_question,gu,gujarati,generated,false
+ગુરુત્વાકર્ષણ કેમ થાય છે,knowledge_question,gu,gujarati,generated,false
+ડીએનએ ની પૂરી માહિતી આપો,knowledge_question,gu,gujarati,generated,false
+મેઘધનુષ કેમ થાય છે,knowledge_question,gu,gujarati,generated,false
+જીપીએસ પર બે લાઇન લખો,knowledge_question,gu,gujarati,generated,false
+એન્ટિબાયોટિક ની પૂરી માહિતી આપો,knowledge_question,gu,gujarati,generated,false
+જીપીએસ ની પૂરી માહિતી આપો,knowledge_question,gu,gujarati,generated,false
+એન્ટિબાયોટિક પર બે લાઇન લખો,knowledge_question,gu,gujarati,generated,false
+એમેઝોન નદી ને સરળ ભાષામાં સમજાવો,knowledge_question,gu,gujarati,generated,false
+પિરામિડ શું છે,knowledge_question,gu,gujarati,generated,false
+પૈસા બચાવવા માટે કેટલાક આઇડિયા આપો,knowledge_question,gu,gujarati,generated,false
+ચુંબક વિશે કહો,knowledge_question,gu,gujarati,generated,false
+મેઘધનુષ શું છે,knowledge_question,gu,gujarati,generated,false
+જ્વાળામુખી કેવી રીતે કામ કરે છે,knowledge_question,gu,gujarati,generated,false
+એવરેસ્ટ કેવી રીતે કામ કરે છે,knowledge_question,gu,gujarati,generated,false
+create a file,file_create,en,latin,generated,false
+make a new file,file_create,en,latin,generated,false
+new file,file_create,en,latin,generated,false
+make a file,file_create,en,latin,generated,false
+i want to create a file,file_create,en,latin,generated,false
+file create karo,file_create,hinglish,latin,generated,false
+nayi file banao,file_create,hinglish,latin,generated,false
+ek file banao,file_create,hinglish,latin,generated,false
+navi file banavo,file_create,gujlish,latin,generated,false
+ek file banavo,file_create,gujlish,latin,generated,false
+नई फाइल बनाओ,file_create,hi,devanagari,generated,false
+एक फाइल बनाओ,file_create,hi,devanagari,generated,false
+એક ફાઇલ બનાવો,file_create,gu,gujarati,generated,false
+નવી ફાઇલ બનાવો,file_create,gu,gujarati,generated,false
+new folder,folder_create,en,latin,generated,false
+make a new directory,folder_create,en,latin,generated,false
+make a folder,folder_create,en,latin,generated,false
+create a folder,folder_create,en,latin,generated,false
+ek folder banao,folder_create,hinglish,latin,generated,false
+navo folder banavo,folder_create,gujlish,latin,generated,false
+ek folder banavo,folder_create,gujlish,latin,generated,false
+एक फोल्डर बनाओ,folder_create,hi,devanagari,generated,false
+નવો ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+એક ફોલ્ડર બનાવો,folder_create,gu,gujarati,generated,false
+remind me of my name,get_identity,en,latin,generated,false
+do you know what i am called,get_identity,en,latin,generated,false
+say my name,get_identity,en,latin,generated,false
+can you tell me what my name was,get_identity,en,latin,generated,false
+tumhe mera naam yaad hai kya,get_identity,hinglish,latin,generated,false
+mera naam bolo,get_identity,hinglish,latin,generated,false
+mera naam kya tha,get_identity,hinglish,latin,generated,false
+maru naam shu hatu,get_identity,gujlish,latin,generated,false
+maru naam bolo,get_identity,gujlish,latin,generated,false
+tamne maru naam yaad che,get_identity,gujlish,latin,generated,false
+मेरा नाम क्या था,get_identity,hi,devanagari,generated,false
+मेरा नाम बोलो,get_identity,hi,devanagari,generated,false
+क्या तुम्हें मेरा नाम याद है,get_identity,hi,devanagari,generated,false
+મારું નામ શું હતું,get_identity,gu,gujarati,generated,false
+મારું નામ બોલો,get_identity,gu,gujarati,generated,false
+શું તમને મારું નામ યાદ છે,get_identity,gu,gujarati,generated,false
+what are you able to do,help,en,latin,generated,false
+what features do you have,help,en,latin,generated,false
+show me your capabilities,help,en,latin,generated,false
+tumhare features kya hain,help,hinglish,latin,generated,false
+tumhari capabilities dikhao,help,hinglish,latin,generated,false
+tum kya kar paate ho,help,hinglish,latin,generated,false
+tame shu kari shako cho,help,gujlish,latin,generated,false
+tamara features shu che,help,gujlish,latin,generated,false
+tamari capabilities batavo,help,gujlish,latin,generated,false
+तुम क्या कर पाते हो,help,hi,devanagari,generated,false
+तुम्हारी सुविधाएँ क्या हैं,help,hi,devanagari,generated,false
+તમારી સુવિધાઓ શું છે,help,gu,gujarati,generated,false
+તમે શું કરી શકો છો,help,gu,gujarati,generated,false

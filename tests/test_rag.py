@@ -108,3 +108,4 @@ def test_chat_attachment_is_indexed_and_answered():
     assert r2["intent"] == "attachment" and "Indexed" in r2["reply"]
     bad = engine.handle_message("", cid, attachments=[("x.exe", b"MZ")]).data
     assert "Could not index" in bad["reply"]
+

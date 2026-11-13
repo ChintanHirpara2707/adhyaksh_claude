@@ -197,17 +197,56 @@ def _need(ctx: context.Context, intent: str, need: str, slots: dict, question: s
     return _Reply(question, intent, action="clarify")
 
 
+def _general_prompt(text: str, convo_id: int) -> str:
+    """System prompt, user's name, recent turns and the new question as one prompt."""
+    name = identity.get_name()
+    parts = [llm.SYSTEM_PROMPT]
+    if name:
+        parts.append(f"The user's name is {name}.")
+    turns = [m for m in context.history(convo_id)[:-1] if m["content"]][-8:]
+    if turns:
+        parts.append("Conversation so far:\n" + "\n".join(
+            f"{'User' if m['role'] == 'user' else 'Assistant'}: {m['content'][:600]}" for m in turns))
+    parts.append(f"User: {text}\nAssistant:")
+    return "\n\n".join(parts)
+
+
 def _llm_answer(text: str, convo_id: int, lang: str, intent: str) -> _Reply:
-    if not config.get_bool("cloud_consent"):
+    """General question answering: local or consented cloud model, then a Wikipedia lookup, then a search link."""
+    if not llm.is_local() and not config.get_bool("cloud_consent"):
         return _Reply(_t("llm_blocked", lang, link=llm.search_link(text)), intent)
-    turns = context.history(convo_id)
-    prompt = "Answer briefly and factually.\n" + "\n".join(f"{m['role']}: {m['content']}" for m in turns[-8:-1]) + f"\nuser: {text}"
-    res = llm.ask(prompt)
+    if llm.get_provider() is None:
+        return _wiki_or_link(text, lang, intent)
+    res = llm.ask(_general_prompt(text, convo_id), timeout=llm.ANSWER_TIMEOUT, max_tokens=llm.ANSWER_TOKENS)
     if res.ok:
         return _Reply(res.data, intent, action="llm")
     if res.error_code == E_NO_API_KEY:
-        return _Reply(_t("llm_unavailable", lang, link=llm.search_link(text)), intent)
+        return _wiki_or_link(text, lang, intent)
     return _Reply(_t("error", lang, reason=res.message.rstrip(".")) + " " + llm.search_link(text), intent)
+
+
+def _wiki_or_link(text: str, lang: str, intent: str) -> _Reply:
+    """No model is configured: with cloud consent try a free Wikipedia summary, else give a search link."""
+    if config.get_bool("cloud_consent"):
+        from adhyaksh.llm import wiki
+        extract = wiki.lookup(text, lang)
+        if extract:
+            return _Reply(extract, intent, action="wiki")
+    return _Reply(_t("llm_unavailable", lang, link=llm.search_link(text)), intent)
+
+
+# Requests to act on the computer that no tool covers: never hand these to a chat model.
+_UNSUPPORTED_ACTION = re.compile(
+    r"\b(shut\s*down|shutdown|restart|reboot|log\s*off|sign\s*out|hibernate|uninstall|install|format|"
+    r"send\s+(an?\s+)?(email|mail|message|sms)|call|dial|play|download)\b", re.IGNORECASE)
+_TOOLISH = re.compile(
+    r"\b(file|folder|directory|app|screenshot|excel|word|docx|xlsx|remember|forget|memory|status|cpu|ram|"
+    r"disk|open|close|delete|create|rename|move|copy|search my|my documents)\b", re.IGNORECASE)
+
+
+def _is_general_question(text: str) -> bool:
+    """A question that needs knowledge, not a tool."""
+    return _is_question(text) and not _TOOLISH.search(text) and not _UNSUPPORTED_ACTION.search(text)
 
 
 def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_id: int, lang: str,
@@ -350,6 +389,8 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
     if intent == "knowledge_question":
         return _llm_answer(text, convo_id, lang, intent)
     if intent == "out_of_scope":
+        if llm.available() and not _UNSUPPORTED_ACTION.search(text):
+            return _llm_answer(text, convo_id, lang, "knowledge_question")
         return _Reply(_cannot_do_yet(lang), "out_of_scope")
     return _Reply(_cannot_do_yet(lang), "unknown")
 
@@ -476,14 +517,23 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
     if intent == "unknown" and conf == 0.0 and not registry.available():
         return _Reply("No trained model is active. Run: python -m adhyaksh.nlu.train --all", "unknown", 0.0)
     threshold = config.get_float("confidence_threshold")
-    agent_enabled = llm.get_provider() is not None and config.get_bool("cloud_consent")
+    agent_enabled = llm.available() and not llm.is_local()
     if conf < threshold or gap < registry.MIN_GAP:
         # Low confidence or ambiguous (small gap between the top two intents): do not dispatch
-        # to the nearest intent. Use the agent when enabled, else the knowledge answerer.
+        # to the nearest intent. A plain question goes to the general answerer; other requests use
+        # the agent when enabled, else the knowledge answerer.
+        if llm.available() and _is_general_question(text):
+            r = _llm_answer(text, convo_id, lang, "knowledge_question")
+            r.conf = conf
+            return r
         if agent_enabled:
             return _agent_dispatch(text, ctx, convo_id, lang)
-        if llm.get_provider() is not None and config.get_bool("cloud_consent"):
+        if llm.available() and not _UNSUPPORTED_ACTION.search(text):
             r = _llm_answer(text, convo_id, lang, "knowledge_question")
+            r.conf = conf
+            return r
+        if config.get_bool("cloud_consent") and _is_general_question(text):
+            r = _wiki_or_link(text, lang, "knowledge_question")
             r.conf = conf
             return r
         r = _Reply(_cannot_do_yet(lang), "unknown", conf, action="low_confidence")

@@ -30,7 +30,7 @@ if not history:
 # Stream the final answer of the latest agent turn, once per new message.
 last_assistant = next((m for m in reversed(history) if m["role"] == "assistant"), None)
 streaming = False
-if last_assistant and last_assistant.get("intent") == "agent":
+if last_assistant and last_assistant.get("intent") in ("agent", "knowledge_question"):
     if st.session_state.get("streamed_agent_msg_id") != last_assistant["id"]:
         streaming = True
         st.session_state["streamed_agent_msg_id"] = last_assistant["id"]

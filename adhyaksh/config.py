@@ -92,6 +92,7 @@ DEFAULTS: dict[str, str] = {
     "embedding_model": "gemini-embedding-001",  # per Google docs, checked 2026-11-06; editable in Settings
     "groq_model": "llama-3.1-8b-instant",  # per Groq docs, checked 2026-11-06; editable in Settings
     "gemini_model": "gemini-3.5-flash-lite",  # per Google docs, checked 2026-11-06; editable in Settings
+    "ollama_model": "llama3.2:3b",  # local model name for the optional Ollama provider
     "doc_min_score": "0.15",
     "power_mode": "false",
     "vision_model": "balanced",

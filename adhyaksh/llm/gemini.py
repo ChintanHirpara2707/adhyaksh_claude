@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from adhyaksh import config
-from adhyaksh.llm.base import MAX_TOKENS, Provider, api_key
+from adhyaksh.llm.base import Provider, api_key
 
 BASE = "https://generativelanguage.googleapis.com/v1beta/models/"
 
@@ -15,7 +15,7 @@ class GeminiProvider(Provider):
         r = requests.post(f"{BASE}{self.model()}:generateContent", timeout=timeout,
                           headers={"x-goog-api-key": api_key("gemini")},
                           json={"contents": [{"parts": [{"text": prompt}]}],
-                                "generationConfig": {"maxOutputTokens": MAX_TOKENS}})
+                                "generationConfig": {"maxOutputTokens": self.max_tokens}})
         r.raise_for_status()
         return "".join(p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"])
 

@@ -39,24 +39,27 @@ st.subheader("Language model and cloud use")
 st.caption(f"Document retrieval method: {'Gemini embeddings' if retriever.embedding_mode() == 'gemini' else 'TF-IDF (offline)'}. "
            "Nothing leaves this computer unless you grant consent below and add a key.")
 with st.form("llm"):
-    provider = st.selectbox("Provider", ["", "groq", "gemini"], index=["", "groq", "gemini"].index(config.get("llm_provider")),
-                            format_func=lambda x: x or "None (offline mode)")
+    provider = st.selectbox("Provider", ["", "groq", "gemini", "ollama"],
+                            index=["", "groq", "gemini", "ollama"].index(config.get("llm_provider")),
+                            format_func=lambda x: {"": "None (offline mode)", "ollama": "Ollama (local, free, no key)"}.get(x, x))
     existing = llm.api_key(provider) if provider else ""
     key = st.text_input("API key", type="password", placeholder=llm.mask(existing) if existing else "Not set")
     groq_model = st.text_input("Groq model", value=config.get("groq_model"))
     gemini_model = st.text_input("Gemini model", value=config.get("gemini_model"))
+    ollama_model = st.text_input("Ollama model (installed locally, e.g. llama3.2:3b)", value=config.get("ollama_model"))
     embed_model = st.text_input("Gemini embedding model", value=config.get("embedding_model"))
-    consent = st.checkbox("Allow sending questions and passages to the selected provider", value=config.get_bool("cloud_consent"))
+    consent = st.checkbox("Allow sending questions and passages to the selected cloud provider (Groq, Gemini, Wikipedia lookup)", value=config.get_bool("cloud_consent"))
     if st.form_submit_button("Save language model settings", type="primary"):
         config.set_value("llm_provider", provider)
         config.set_value("groq_model", groq_model.strip())
         config.set_value("gemini_model", gemini_model.strip())
+        config.set_value("ollama_model", ollama_model.strip())
         config.set_value("embedding_model", embed_model.strip())
         config.set_value("cloud_consent", "true" if consent else "false")
-        if provider and key.strip():
+        if provider in llm.PROVIDERS and key.strip():
             llm.set_key(provider, key)
         st.toast("Saved.")
-if config.get_bool("cloud_consent") and config.get("llm_provider"):
+if config.get_bool("cloud_consent") and config.get("llm_provider") in llm.PROVIDERS:
     st.warning("Cloud use is ON. Questions and document passages may be sent to the selected provider.")
 
 st.subheader("Power mode (dangerous)")

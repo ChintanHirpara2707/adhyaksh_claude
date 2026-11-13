@@ -14,7 +14,17 @@ from adhyaksh.llm import cache
 from adhyaksh.result import E_BLOCKED, E_NO_API_KEY, E_TIMEOUT, Result
 
 PROVIDERS = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY"}
+LOCAL_PROVIDERS = {"ollama"}  # run on this computer, no key, no cloud consent needed
 MAX_TOKENS = 400
+ANSWER_TOKENS = 1024
+ANSWER_TIMEOUT = 25.0
+SYSTEM_PROMPT = (
+    "You are ADHYAKSH, a helpful general-purpose assistant running on the user's laptop. "
+    "Answer any question the user asks: facts, explanations, writing, coding, maths, advice, translation. "
+    "Reply in the language and script the user used (English, Hindi, Gujarati, Hinglish or Gujlish). "
+    "Be accurate and concise, use short paragraphs or lists when they help, and say so when you are unsure "
+    "instead of guessing. You cannot browse the web or perform actions on the computer in this reply."
+)
 ENV_FILE = config.ROOT / ".env"
 
 
@@ -31,6 +41,8 @@ def _load_env() -> None:
 
 
 def api_key(provider: str) -> str:
+    if provider in LOCAL_PROVIDERS:
+        return ""
     _load_env()
     return os.environ.get(PROVIDERS[provider], "").strip()
 
@@ -58,10 +70,14 @@ class Provider(ABC):
     @abstractmethod
     def _call(self, prompt: str, timeout: float) -> str: ...
 
-    def complete(self, prompt: str, stream: bool = False, timeout: float = 8.0) -> Result:
-        """Timeout 8 s, one retry, cached per prompt. stream is accepted but not implemented."""
+    max_tokens = MAX_TOKENS
+
+    def complete(self, prompt: str, stream: bool = False, timeout: float = 8.0,
+                 max_tokens: int = MAX_TOKENS) -> Result:
+        """Timeout 8 s by default, one retry, cached per prompt. stream is accepted but not implemented."""
         import requests
 
+        self.max_tokens = max_tokens
         model = self.model()
         hit = cache.get(self.name, model, prompt)
         if hit is not None:
@@ -87,6 +103,9 @@ class Provider(ABC):
 
 def get_provider() -> Provider | None:
     name = config.get("llm_provider")
+    if name == "ollama":
+        from adhyaksh.llm.ollama import OllamaProvider
+        return OllamaProvider()
     if name not in PROVIDERS or not api_key(name):
         return None
     from adhyaksh.llm.gemini import GeminiProvider
@@ -94,11 +113,22 @@ def get_provider() -> Provider | None:
     return {"groq": GroqProvider, "gemini": GeminiProvider}[name]()
 
 
-def ask(prompt: str, timeout: float = 8.0) -> Result:
-    """Send a prompt to the configured provider only with cloud consent and a key."""
-    if not config.get_bool("cloud_consent"):
+def is_local() -> bool:
+    return config.get("llm_provider") in LOCAL_PROVIDERS
+
+
+def available() -> bool:
+    """True when a language model can be used now: a local model, or a keyed cloud provider with consent."""
+    if get_provider() is None:
+        return False
+    return is_local() or config.get_bool("cloud_consent")
+
+
+def ask(prompt: str, timeout: float = 8.0, max_tokens: int = MAX_TOKENS) -> Result:
+    """Send a prompt to the configured provider: a local model, or a cloud one only with consent and a key."""
+    if not is_local() and not config.get_bool("cloud_consent"):
         return Result.failure(E_BLOCKED, "Cloud use is not enabled in Settings.")
     provider = get_provider()
     if provider is None:
         return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
-    return provider.complete(prompt, timeout=timeout)
+    return provider.complete(prompt, timeout=timeout, max_tokens=max_tokens)

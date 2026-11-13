@@ -19,43 +19,7 @@ Requirements files: `requirements-core.txt` (streamlit, numpy, pandas, scikit-le
 
 ## 2. Folder map
 
-Root files:
-- `app.py` — Streamlit entry point: page routing, boot (logging + DB init), navigation.
-- `run.bat` — Windows launcher: creates `.venv`, installs `requirements-core.txt`, runs Streamlit.
-- `run.sh` — POSIX launcher: same as run.bat.
-- `pytest.ini` — pytest configuration.
-- `.env` — git-ignored; API keys for Groq/Gemini (never tracked).
-- `.gitignore` — ignores `.venv/`, `__pycache__/`, `*.pyc`, `.pytest_cache/`, `.env`, `data/*.db`, `data/logs/`, `data/uploads/`, `models/*`, `*.zip`, `appmap.log`, `*.out`, `*.log`, `pytest_*.txt`, `*_dbg.txt`.
-- `CLAUDE.md` — this file.
-- `CHANGELOG.md`, `README.md`, `check_model.py`, `check_model2.py`, `fix_boot.py`, `fix_router.py`, `repro_web.py`, `requirements-core.txt`, `requirements-optional.txt`, `line_dbg.txt`, `appmap.log` (git-ignored/generated).
-
-Folders:
-- `.venv/` — git-ignored virtual environment (generated).
-- `.streamlit/` — Streamlit config (generated).
-- `.pytest_cache/` — git-ignored pytest cache (generated).
-- `pages/` — Streamlit page modules (one per UI page).
-- `adhyaksh/` — Python package root.
-- `adhyaksh/__init__.py` — package marker, `__version__ = "0.1.0"`.
-- `adhyaksh/config.py` — paths, constants, settings loader (all settings stored in SQLite).
-- `adhyaksh/db.py` — SQLite access layer; schema, migrations, queries, backup/restore/export/wipe.
-- `adhyaksh/logging_setup.py` — logging with secret redaction; writes to `data/logs/adhyaksh.log` (git-ignored).
-- `adhyaksh/result.py` — `Result` dataclass and error codes (`E_*`).
-- `adhyaksh/responses.py` — all user-facing reply templates (EN/HI/GU).
-- `adhyaksh/agent/` — agent loop and tool registry: `__init__.py`, `registry.py` (tool registration, safety-guarded runner, run_python sandbox), `runner.py` (agent loop: TOOL/ANSWER protocol, max 6 steps, L2 pause/resume).
-- `adhyaksh/chat/` — chat engine: `__init__.py`, `context.py` (in-memory conversation context, pending slots/confirmations), `engine.py` (message routing, mode, OS_INTENTS, dispatch), `identity.py` (name extraction/save/get), `router.py` (rule layer, slot extractors, web command parsing, safe math).
-- `adhyaksh/llm/` — LLM providers: `__init__.py`, `base.py` (Provider ABC, `ask`, `ask_with_tools`, Groq/Gemini selection, caching), `cache.py`, `groq.py`, `gemini.py`.
-- `adhyaksh/memory/` — personal fact store: `__init__.py`, `store.py` (save/recall/list/update/delete facts, keyword recall).
-- `adhyaksh/nlu/` — intent models: `__init__.py`, `dataset.py` (intent dataset generation/validation/split), `features.py` (TF-IDF vectorizer), `models.py` (M1 logreg, M2 PyTorch MLP untested on target, M3 calibrated SVM), `registry.py` (SQLite model registry, predict with MIN_GAP), `train.py` (train all models, background run), `evaluate.py` (metrics, latency, threshold tuning, RESULTS.md writer).
-- `adhyaksh/rag/` — document Q&A: `__init__.py`, `loader.py` (PDF/DOCX/TXT ingestion, chunking, SQLite storage), `chunker.py` (overlapping chunks), `retriever.py` (TF-IDF or Gemini embeddings), `answerer.py` (extractive or LLM answer with citations).
-- `adhyaksh/safety/` — authorization: `__init__.py`, `policy.py` (L0-L3 levels, allowed folders, `run_guarded`, audit rule), `audit.py` (append-only audit log), `confirm.py` (confirmation token store).
-- `adhyaksh/tools/` — tool implementations: `__init__.py` (empty), `apps.py` (allow-listed app open/close), `boost.py` (PC stats, temp scan/clean), `files.py` (create/read/update/delete/search/list, send2trash), `office.py` (Excel/Word creation), `system.py` (status, screenshot, web open, special folder open).
-- `adhyaksh/ui/` — UI layer: `__init__.py`, `components.py` (page_header, empty_state, error_state, confirmation_card, first_run_form, chat_width), `icons.py` (page icon slugs), `theme.py` (light/dark design tokens, CSS, sidebar header).
-- `adhyaksh/voice/` — browser speech: `__init__.py`, `bridge.py` (Streamlit component bridge, untested on target), `component/index.html` (Web Speech API recognition + synthesis).
-- `adhyaksh/vision/` — object detection: `detector.py` (YOLOv8n/s/m, classify fallback, caching), `descriptions.py` (COCO descriptions + Wikipedia lookup).
-- `tests/` — test suite: `__init__.py`, `helpers.py` (temporary workspace), `test_boost.py`, `test_chat.py`, `test_chat_regression.py`, `test_data_admin.py`, `test_dataset.py`, `test_db.py`, `test_guard.py`, `test_logging.py`, `test_models.py`, `test_modes.py`, `test_policy.py`, `test_rag.py`, `test_responses.py`, `test_routing_fixes.py`, `test_static.py`, `test_theme.py`, `test_tools.py`, `test_vision.py`, `test_web_commands.py`.
-- `data/` — data directory (git-ignored `*.db`, `*.db-wal`, `*.db-shm`, `uploads/`, `logs/`, `backups/`). Contains `intents.csv` (training intents, unreviewed), `test_author.csv` (held-out author cases), `test_codemixed.csv` (held-out code-mixed test), `adhyaksh.db` (generated SQLite database).
-- `models/` — trained model files (git-ignored except `.gitkeep`). Contains `m1_logreg.joblib`, `m3_svm.joblib`, `yolov8n.pt`, `yolov8n-cls.pt`, `yolov8s.pt`.
-- `docs/` — documentation: `ASSUMPTIONS.md`, `CHANGELOG.md`, `DATA_CARD.md`, `DECISIONS.md`, `IDEAS.md`, `OPEN_QUESTIONS.md`, `PERFORMANCE.md`, `PROGRESS.md`, `PROJECT_BRIEF.md`, `QA_LOG.md`, `RESULTS.md` (generated by `evaluate.write_results_md()`).
+See [docs/FILES.md](./docs/FILES.md) for the complete folder and file listing. The project root contains `app.py`, `run.bat`, `run.sh`, `pytest.ini`, `.env` (git-ignored), `.gitignore`, source files (`CHANGELOG.md`, `README.md`, `requirements-core.txt`, `requirements-optional.txt`), and the `pages/`, `adhyaksh/`, `tests/`, `data/`, `models/`, `docs/` directories.
 
 ## 3. Pages and features
 
@@ -144,20 +108,7 @@ RAG (`adhyaksh/rag/`): Document Q&A for indexed TXT/DOCX/PDF files.
 - **retriever** (`retriever.py`): `embedding_mode()` returns "gemini" only with gemini provider + key + cloud_consent, else "tfidf". `retrieve(question, k=4)` returns top-k chunks with scores (cosine similarity via Gemini embeddings or TF-IDF linear_kernel). Caches the TF-IDF index.
 - **answerer** (`answerer.py`): `answer(question)` retrieves hits above `doc_min_score` threshold. If none, returns `doc_not_found`. If cloud_consent + provider available, uses LLM with passages; otherwise returns extractive answer with source citations (top 3 chunks). Returns `{answer, sources, mode, found}`.
 
-SQLite schema (`adhyaksh/db.py`, `SCHEMA_V1`), every table and column:
-- `profile(id INTEGER PRIMARY KEY, display_name TEXT NOT NULL, created_at TEXT NOT NULL)` — single-operator name profile.
-- `settings(key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at TEXT NOT NULL)` — all settings key/value.
-- `conversations(id INTEGER PRIMARY KEY, title TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL)` — conversation list.
-- `messages(id INTEGER PRIMARY KEY, conversation_id INTEGER REFERENCES conversations(id) ON DELETE CASCADE, role TEXT NOT NULL, content TEXT NOT NULL, intent TEXT, confidence REAL, latency_ms REAL, created_at TEXT NOT NULL)` — chat history. Index `idx_messages_conv` on conversation_id.
-- `memory_facts(id INTEGER PRIMARY KEY, fact TEXT NOT NULL, category TEXT NOT NULL DEFAULT 'general', created_at TEXT NOT NULL, updated_at TEXT NOT NULL)` — remembered facts.
-- `documents(id INTEGER PRIMARY KEY, filename TEXT NOT NULL, filepath TEXT NOT NULL, pages INTEGER, indexed_at TEXT, status TEXT NOT NULL DEFAULT 'pending')` — indexed documents.
-- `doc_chunks(id INTEGER PRIMARY KEY, document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE, chunk_index INTEGER NOT NULL, page_or_section TEXT, text TEXT NOT NULL, embedding BLOB NULL, method TEXT NOT NULL DEFAULT 'tfidf')` — document chunks. Index `idx_chunks_doc` on document_id.
-- `audit_log(id INTEGER PRIMARY KEY, ts TEXT NOT NULL, user_text TEXT, intent TEXT, action TEXT NOT NULL, target TEXT, level INTEGER NOT NULL, confirmed TEXT NOT NULL DEFAULT 'none', result TEXT NOT NULL)` — append-only audit. Triggers `audit_log_no_update` and `audit_log_no_delete` prevent changes.
-- `model_registry(id INTEGER PRIMARY KEY, name TEXT NOT NULL, kind TEXT NOT NULL, path TEXT NOT NULL, dataset_hash TEXT, trained_at TEXT NOT NULL, is_active INTEGER NOT NULL DEFAULT 0)` — trained model registry.
-- `eval_runs(id INTEGER PRIMARY KEY, model_id INTEGER REFERENCES model_registry(id) ON DELETE CASCADE, accuracy REAL, macro_f1 REAL, per_language_json TEXT, confusion_json TEXT, size_bytes INTEGER, p50_ms REAL, p95_ms REAL, created_at TEXT NOT NULL)` — evaluation results.
-- `feedback(id INTEGER PRIMARY KEY, message_id INTEGER REFERENCES messages(id) ON DELETE CASCADE, correct_intent TEXT NOT NULL, note TEXT, created_at TEXT NOT NULL)` — "Wrong intent?" corrections.
-
-`db.py` also provides: `connect()` context manager (WAL journal, foreign_keys=ON), `schema_version()`, `init()` (runs migrations), `execute()`, `executemany()`, `query_all()`, `query_one()`, `get_setting()`, `set_setting()`, `backup()`, `restore()`, `export_bytes()`, `wipe()`, `utcnow()`.
+SQLite schema detail: see [docs/DATABASE.md](./docs/DATABASE.md) for every table and column (`profile`, `settings`, `conversations`, `messages`, `memory_facts`, `documents`, `doc_chunks`, `audit_log`, `model_registry`, `eval_runs`, `feedback`). `db.py` also provides: `connect()`, `schema_version()`, `init()`, `execute()`, `executemany()`, `query_all()`, `query_one()`, `get_setting()`, `set_setting()`, `backup()`, `restore()`, `export_bytes()`, `wipe()`, `utcnow()`.
 
 ## 8. LLM and voice
 
@@ -189,91 +140,21 @@ Page flow: model selector + image size slider + confidence slider. Camera and Up
 
 ## 10. Config and settings
 
-All settings in `adhyaksh/config.py`, `DEFAULTS` dict. Values stored in SQLite (`settings` table); `get(key)` returns the DB value or the default; `set_value(key, value)` writes to DB. Unknown keys raise `KeyError`.
-
-| Key | Default | Meaning |
-|-----|---------|---------|
-| `theme` | `""` | `""` = never chosen (follow OS), else `"light"` or `"dark"` |
-| `confidence_threshold` | `"0.60"` | Minimum confidence for intent prediction (tuned during training via `tune_tau`) |
-| `conversation_turns` | `"8"` | Number of turns loaded for chat history |
-| `active_model` | `""` | Active intent model ID (set by training or Model Lab) |
-| `cloud_consent` | `"false"` | Allow sending questions/passages to the cloud LLM provider |
-| `voice_reply` | `"false"` | Speak assistant replies aloud via browser voice |
-| `llm_provider` | `""` | `""`, `"groq"`, or `"gemini"` |
-| `allowed_folders` | JSON of `[default_workspace()]` | Allowed root folders for file operations |
-| `default_work_folder` | `~/Documents/ADHYAKSH_Workspace` | Default workspace folder |
-| `app_allowlist` | JSON of default apps | Application name → command list allow-list |
-| `embedding_model` | `"gemini-embedding-001"` | Gemini embedding model (per Google docs, checked 2026-11-06) |
-| `groq_model` | `"llama-3.1-8b-instant"` | Groq model (per Groq docs, checked 2026-11-06) |
-| `gemini_model` | `"gemini-3.5-flash-lite"` | Gemini model (per Google docs, checked 2026-11-06) |
-| `doc_min_score` | `"0.15"` | Minimum document match score for RAG retrieval |
-| `power_mode` | `"false"` | Enable `run_python` tool (restricted sandbox, L2 confirmation every time) |
-| `vision_model` | `"balanced"` | Object detection model: `fast`, `balanced`, `accurate` |
-| `vision_imgsz` | `"640"` | Object detection image size: `640` or `960` |
-
-Helper functions: `get_float(key)`, `get_bool(key)`, `get_allowed_roots()` (resolved Paths), `configure_folders(paths, default)` (validates no system paths, default inside a root, saves), `models_dir()`, `data_dir()`, `db_path()`, `uploads_dir()`, `logs_dir()`, `backups_dir()`, `default_workspace()`, `default_app_allowlist()` (OS-specific defaults), `default_special_folders()` (Windows: Recycle Bin, Downloads, Documents, Desktop, Explorer).
-
-Settings page (`pages/settings.py`) exposes: folders, assistant (threshold, model, voice), language model (provider, key, model names, cloud_consent), power mode, apps allow-list JSON, your data (export/wipe).
+See [docs/CONFIG.md](./docs/CONFIG.md) for the complete settings reference. All settings in `adhyaksh/config.py`, `DEFAULTS` dict. Values stored in SQLite (`settings` table); `get(key)` returns the DB value or the default; `set_value(key, value)` writes to DB. Unknown keys raise `KeyError`. Settings page (`pages/settings.py`) exposes: folders, assistant (threshold, model, voice), language model (provider, key, model names, cloud_consent), power mode, apps allow-list JSON, your data (export/wipe).
 
 ## 11. Tests
 
-Test files under `tests/` (no API key or network needed; HTTP calls monkeypatched; `ADHYAKSH_NO_OPEN=1` set to avoid opening apps):
+See [docs/TESTS.md](./docs/TESTS.md) for the complete test reference. Test files under `tests/` (no API key or network needed; HTTP calls monkeypatched; `ADHYAKSH_NO_OPEN=1` set to avoid opening apps).
 
-- `test_chat.py` — engine end-to-end: identity cases, safe math, memory store, chat flows, file/office tools, apps and status, document Q&A, consent logic.
-- `test_chat_regression.py` — 15 regression cases (date/time, bot identity, math, slots/file tools, apps/special folders/web, knowledge routing, name handling). 15/15 pass.
-- `test_web_commands.py` — 139 tests for `parse_web_command` and end-to-end web commands (file vs web disambiguation, local search, Hindi/Gujarati, guard rails).
-- `test_web_search.py` — 15 tests for `web_search` and `fetch_page` (DuckDuckGo/Wikipedia parsing, fallback, localhost/private IP blocking, timeout, HTTP errors, truncation, agent sources).
-- `test_agent_injection.py` — 1 test: prompt injection via fetched page content must not trigger file_delete.
-- `test_routing_fixes.py` — 11 routing/slot cases (folder/file slots, web open, name persistence, word-based math, small talk, unsupported).
-- `test_modes.py` — 7 tests for Chat/Cowork mode: chat mode refuses file_create/app_open/screenshot/special_folder_open; chat mode answers math/identity/smalltalk; cowork mode creates files; default mode is cowork. Uses a temporary trained workspace.
-- `test_boost.py` — 10 tests (8 pass, 2 skipped on Windows for symlink privilege): stats ranges, temp scan old/new/symlink, clean temp delete/keep/symlink/outside/empty-subfolders, default dir.
-- `test_vision.py` — tests for `describe()` (5 labels + unknown), detection grouping/counts, corrupted image rejection, too-large/wrong-type rejection, missing ultralytics message, model choice respected, imgsz passed, classifier fallback top-3 format, detect_raw top-5, average brightness, Wikipedia summary + failure.
-- `test_tools.py` — tool tests; has a pre-existing exit-15 teardown crash on Windows (baseline, not a failure). Run with `--ignore=tests/test_tools.py`.
-- `test_dataset.py`, `test_db.py`, `test_data_admin.py`, `test_guard.py`, `test_logging.py`, `test_models.py`, `test_policy.py`, `test_rag.py`, `test_responses.py`, `test_static.py`, `test_theme.py` — supporting module tests.
+## 12. Rules for agents
 
-Windows-only tests: `test_open_downloads_folder_real_path` in `test_routing_fixes.py` (skipped on non-Windows). Symlink tests in `test_boost.py` (skipped on Windows). Tests needing a real API key: none — all LLM tests use fake providers. Tests needing network: none — all HTTP is monkeypatched.
-
-Full suite: run `.venv\Scripts\python.exe -m pytest tests/ -q --ignore=tests/test_tools.py`. The `test_tools.py` teardown crash (exit 15) is pre-existing and baseline.
-
-## 12. Known issues and conventions
-
-Known issues:
-- Stale Streamlit modules: after editing `adhyaksh/ui/theme.py` or other imported modules, a running Streamlit process keeps the old bytecode in memory. A full Streamlit restart (Ctrl+C, then `run.bat`/`run.sh`) is required for changes to take effect.
-- New pages need an icon entry in `adhyaksh/ui/icons.py` (`PAGE_ICONS[slug]`), otherwise `app.py`'s `icons.page_icon(slug)` raises `KeyError`.
-- `test_tools.py` has a pre-existing exit-15 teardown crash on Windows (baseline, not a test failure). Exclude with `--ignore=tests/test_tools.py`.
-- Hindi/Gujarati reply templates are UNREVIEWED pending author review.
-- M2 PyTorch MLP is UNTESTED ON TARGET.
-- Dataset (`data/intents.csv`, `data/test_codemixed.csv`) is UNREVIEWED (generated, `reviewed=false`).
-- `docs/RESULTS.md` not regenerated after the last retrain.
-- `requirements-core.txt` has lower bounds only; `pip freeze` should be run after first install and pinned.
-- Voice component (`adhyaksh/voice/`) is UNTESTED ON TARGET; wake word, follow-up window, barge-in, stop button, sentence-by-streaming-sentence replies, voice persona, and L2-only voice confirmations are not implemented.
-
-Coding style:
+- Run only tests for the changed file; do not run the full test suite.
+- Never launch Chrome, WhatsApp, or any other app.
+- Never push to GitHub unless asked.
 - No emojis anywhere in code or strings.
-- No `eval`/`exec` on user text (math uses `ast`-based `safe_eval`).
-- No secrets in code or database; API keys in git-ignored `.env`; secrets redacted in logs (`logging_setup.py`).
-- Expected failures return `Result` objects, never raise. `Result.failure(error_code, message)`.
-- All file actions go through `safety.policy.run_guarded` (L0-L3, allowed folders, confirmation, audit).
-- Every action attempt writes exactly one audit row (append-only, SQLite triggers prevent update/delete).
-- Reply templates in `responses.py` with EN/HI/GU variants; `t(key, lang, **kwargs)` falls back to English.
-- Type hints used throughout (`from __future__ import annotations`).
-
-How to add a new page:
-1. Create `pages/<slug>.py` calling `ui.page_header(...)` and `theme.inject(...)`.
-2. Add `("<slug>", "Title")` to `PAGES` in `app.py`.
-3. Add `"<slug>": ":material/icon:"` to `PAGE_ICONS` in `adhyaksh/ui/icons.py`.
-
-How to add a new intent:
-1. Add the intent string to `dataset.INTENTS` in `adhyaksh/nlu/dataset.py`.
-2. Add templates in `TEMPLATES` in the same file (en/hi/gu/hinglish/gujlish).
-3. Add handling in `engine._dispatch` and/or `router.match_rules`.
-4. Retrain: `python -m adhyaksh.nlu.train --all`.
-
-How to add a new tool:
-1. Implement the function in `adhyaksh/tools/<module>.py` going through `policy.run_guarded`.
-2. Register it in `adhyaksh/agent/registry.py` with name, JSON schema, level, and callable.
-3. Add the level to `policy.LEVELS` and PATH_ACTIONS if applicable.
-4. Handle the intent in `engine._dispatch` (or let the agent use it).
+- One small task at a time.
+- Restart Streamlit fully after changing imported modules (stale bytecode).
+- New pages need an entry in `ui/icons.py` (`PAGE_ICONS[slug]`).
 
 ## 13. Roadmap
 

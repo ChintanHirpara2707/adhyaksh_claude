@@ -90,3 +90,22 @@ def test_image_attachment_runs_detection(monkeypatch):
     assert r["intent"] == "vision_detect" and "2 cup" in r["reply"] and "laptop" in r["reply"]
     monkeypatch.setattr(detector, "detect", lambda b, **k: [{"error": "Unsupported file type."}])
     assert "could not analyse" in engine.handle_message("", cid, attachments=[("x.png", b"zz")]).data["reply"]
+
+
+@pytest.mark.parametrize("text,intent", [
+    ("please call me Dev", "set_identity"), ("wat did i tell u about my bike", "memory_recall"),
+    ("memory free kar do", "pc_performance"), ("मेमोरी खाली करो", "pc_performance"),
+    ("कैमरे से देखकर बताओ यह क्या है", "vision_detect"), ("my laptop feels sluggish, check it", "system_status"),
+    ("call 9876543210", "out_of_scope"),
+])
+def test_regressions_from_eval(text, intent):
+    r = router.understand(text)
+    if intent == "system_status":
+        assert r is None or r.intent == "system_status", (text, r)
+    else:
+        assert r is not None and r.intent == intent, (text, r)
+
+
+def test_lag_questions_split_between_stats_and_performance():
+    assert router.understand("why is my computer lagging").intent == "pc_performance"
+    assert router.understand("my laptop feels sluggish, check it").intent == "system_status"

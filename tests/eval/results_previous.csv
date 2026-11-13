@@ -1,0 +1,400 @@
+id,section,utterance,expected_intent,expected_outcome,language,predicted_intent,confidence,tools_called,reply,latency_ms,pass,reason,detail
+C001,chat/identity,hello there,greet,,en,greet,1.0,,Hello. How can I help you?,156.1,PASS,,
+C002,chat/identity,hey assistant good morning,greet,,en,greet,1.0,,Hello. How can I help you?,39.5,PASS,,
+C003,chat/identity,helo,greet,,en,greet,0.521,,Hello. How can I help you?,37.8,PASS,,
+C004,chat/identity,नमस्कार दोस्त,greet,,hi,greet,1.0,,नमस्ते। मैं आपकी कैसे सहायता कर सकता हूँ।,19.0,PASS,,
+C005,chat/identity,કેમ છો મિત્ર,greet,,gu,greet,1.0,,નમસ્તે. હું તમારી કેવી રીતે મદદ કરી શકું.,18.6,PASS,,
+C006,chat/identity,arre bhai namaste,greet,,hinglish,greet,1.0,,Hello. How can I help you?,19.0,PASS,,
+C007,chat/identity,kem chho dost,greet,,gujlish,greet,1.0,,Hello. How can I help you?,19.1,PASS,,
+C008,chat/identity,my name is Rohan,set_identity,,en,set_identity,1.0,save_name,"Welcome, Rohan. Your profile has been saved.",19.5,PASS,,
+C009,chat/identity,please call me Dev,set_identity,,en,set_identity,1.0,save_name,"Welcome, Dev. Your profile has been saved.",18.9,PASS,,
+C010,chat/identity,u can call me Sam ok,set_identity,,en,set_identity,1.0,save_name,"Welcome, Sam. Your profile has been saved.",17.7,PASS,,
+C011,chat/identity,मुझे सुरेश बुलाओ,set_identity,,hi,set_identity,1.0,save_name,"स्वागत है, सुरेश। आपकी प्रोफ़ाइल सहेज ली गई है।",17.8,PASS,,
+C012,chat/identity,મને કિશન કહો,set_identity,,gu,set_identity,1.0,save_name,"સ્વાગત છે, કિશન. તમારી પ્રોફાઇલ સાચવવામાં આવી છે.",17.2,PASS,,
+C013,chat/identity,mera naam Vikram hai yaar,set_identity,,hinglish,set_identity,1.0,save_name,"Welcome, Vikram. Your profile has been saved.",18.7,PASS,,
+C014,chat/identity,maru naam Hardik che,set_identity,,gujlish,set_identity,1.0,save_name,"Welcome, Hardik. Your profile has been saved.",19.4,PASS,,
+C015,chat/identity,what's my name,get_identity,,en,get_identity,1.0,,Your name is Tester.,17.3,PASS,,
+C016,chat/identity,do u remember who i am,get_identity,,en,get_identity,1.0,,Your name is Tester.,17.6,PASS,,
+C017,chat/identity,क्या आपको मेरा नाम याद है,get_identity,,hi,get_identity,1.0,,आपका नाम Tester है।,17.5,PASS,,
+C018,chat/identity,મારું નામ યાદ છે તમને,get_identity,,gu,get_identity,1.0,,તમારું નામ Tester છે.,17.6,PASS,,
+C019,chat/identity,batao na mera naam kya hai,get_identity,,hinglish,get_identity,1.0,,Your name is Tester.,17.7,PASS,,
+C020,chat/identity,maru naam kaho ne,get_identity,,gujlish,get_identity,1.0,,Your name is Tester.,20.1,PASS,,
+C021,chat/identity,tell me who you are,bot_identity,,en,bot_identity,0.867,,I am ADHYAKSH.,37.7,PASS,,
+C022,chat/identity,may i know your name assistant,bot_identity,,en,bot_identity,0.718,,I am ADHYAKSH.,38.9,PASS,,
+C023,chat/identity,thanks a lot,smalltalk,,en,smalltalk,1.0,,You're welcome.,19.6,PASS,,
+C024,chat/identity,ok bye,smalltalk,,en,smalltalk,1.0,,Goodbye. Have a good day.,18.7,PASS,,
+C025,chat/identity,धन्यवाद,smalltalk,,hi,smalltalk,1.0,,आपका स्वागत है।,18.4,PASS,,
+C026,chat/identity,આભાર,smalltalk,,gu,smalltalk,1.0,,તમારું સ્વાગત છે.,18.2,PASS,,
+C027,chat/identity,how are you yaar,smalltalk,,hinglish,smalltalk,1.0,,"I am doing well, thank you. How can I help you?",18.3,PASS,,
+C028,chat/identity,what can you do,help,,en,help,1.0,,"I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; remember facts; answer questions from you",20.3,PASS,,
+C029,chat/identity,help me please,help,,en,help,0.995,,"I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; remember facts; answer questions from you",47.0,PASS,,
+C030,chat/identity,bhai tumhare paas kaun kaun se features hain,help,,hinglish,help,1.0,,"I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; remember facts; answer questions from you",23.5,PASS,,
+C031,chat/identity,tamari pase kya kya suvidha che,help,,gujlish,help,1.0,,"I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; remember facts; answer questions from you",18.2,PASS,,
+C032,chat/identity,मुझे मदद चाहिए,help,,hi,help,0.994,,"I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; remember facts; answer questions from you",37.3,PASS,,
+C033,memory,remember that my locker code is 4471,memory_save,tool:save_fact,en,memory_save,1.0,save_fact,Saved to memory: remember that my locker code is 4471.,18.4,PASS,,
+C034,memory,please note down my flight is on Monday,memory_save,tool:save_fact,en,memory_save,1.0,save_fact,Saved to memory: please note down my flight is on Monday.,19.8,PASS,,
+C035,memory,keep in mind my sister likes tulips,memory_save,tool:save_fact,en,memory_save,1.0,save_fact,Saved to memory: keep in mind my sister likes tulips.,18.3,PASS,,
+C036,memory,dont forget my wifi password is blue42,memory_save,tool:save_fact,en,memory_save,1.0,save_fact,Saved to memory: dont forget my wifi password is blue42.,18.0,PASS,,
+C037,memory,rember that my bus number is 12,memory_save,tool:save_fact,en,memory_save,1.0,save_fact,Saved to memory: rember that my bus number is 12.,18.0,PASS,,
+C038,memory,याद रखो कि मेरी चाबी मेज़ पर है,memory_save,tool:save_fact,hi,memory_save,1.0,save_fact,स्मृति में सहेजा गया: याद रखो कि मेरी चाबी मेज़ पर है।,18.1,PASS,,
+C039,memory,यह नोट कर लो मेरा जन्मदिन 5 मार्च है,memory_save,tool:save_fact,hi,memory_save,1.0,save_fact,स्मृति में सहेजा गया: यह नोट कर लो मेरा जन्मदिन 5 मार्च है।,18.5,PASS,,
+C040,memory,भूलना मत मेरी दवा रात को है,memory_save,tool:save_fact,hi,memory_save,1.0,save_fact,स्मृति में सहेजा गया: भूलना मत मेरी दवा रात को है।,18.2,PASS,,
+C041,memory,યાદ રાખજો કે મારી ચાવી ડ્રોઅરમાં છે,memory_save,tool:save_fact,gu,memory_save,0.994,save_fact,મેમરીમાં સાચવ્યું: યાદ રાખજો કે મારી ચાવી ડ્રોઅરમાં છે.,35.1,PASS,,
+C042,memory,આ નોંધ કરો મારી બેગ લાલ છે,memory_save,tool:save_fact,gu,memory_save,1.0,save_fact,મેમરીમાં સાચવ્યું: આ નોંધ કરો મારી બેગ લાલ છે.,19.3,PASS,,
+C043,memory,yaad rakhna meri meeting 5 baje hai,memory_save,tool:save_fact,hinglish,memory_save,1.0,save_fact,Saved to memory: yaad rakhna meri meeting 5 baje hai.,19.5,PASS,,
+C044,memory,ye note kar lo ki mera laptop Dell hai,memory_save,tool:save_fact,hinglish,memory_save,1.0,save_fact,Saved to memory: ye note kar lo ki mera laptop Dell hai.,20.1,PASS,,
+C045,memory,bhulna mat mera cab 7 baje aayega,memory_save,tool:save_fact,hinglish,memory_save,1.0,save_fact,Saved to memory: bhulna mat mera cab 7 baje aayega.,19.4,PASS,,
+C046,memory,yaad rakhjo maro exam Monday e che,memory_save,tool:save_fact,gujlish,memory_save,1.0,save_fact,Saved to memory: yaad rakhjo maro exam Monday e che.,20.2,PASS,,
+C047,memory,aa note kari lo mari bike Honda che,memory_save,tool:save_fact,gujlish,memory_save,1.0,save_fact,Saved to memory: aa note kari lo mari bike Honda che.,18.1,PASS,,
+C048,memory,bhulta nahi maru bill 500 nu che,memory_save,tool:save_fact,gujlish,memory_save,1.0,save_fact,Saved to memory: bhulta nahi maru bill 500 nu che.,18.6,PASS,,
+C049,memory,what is my locker code,memory_recall,tool:recall,en,memory_recall,1.0,recall,mock fact.,17.7,PASS,,
+C050,memory,do you remember my bus number,memory_recall,tool:recall,en,memory_recall,1.0,recall,mock fact.,17.8,PASS,,
+C051,memory,remind me what my sister likes,memory_recall,tool:recall,en,memory_recall,1.0,recall,mock fact.,17.9,PASS,,
+C052,memory,wat did i tell u about my flight,memory_recall,tool:recall,en,memory_recall,0.521,recall,mock fact.,38.6,PASS,,
+C053,memory,मेरी चाबी कहाँ है,memory_recall,tool:recall,hi,memory_recall,1.0,recall,mock fact.,29.1,PASS,,
+C054,memory,मैंने अपने जन्मदिन के बारे में क्या बताया था,memory_recall,tool:recall,hi,memory_recall,0.996,recall,mock fact.,43.7,PASS,,
+C055,memory,મારી ચાવી ક્યાં છે,memory_recall,tool:recall,gu,memory_recall,1.0,recall,mock fact.,30.0,PASS,,
+C056,memory,મેં મારી બેગ વિશે શું કહ્યું હતું,memory_recall,tool:recall,gu,memory_recall,0.997,recall,mock fact.,41.5,PASS,,
+C057,memory,meri meeting kitne baje hai yaad hai,memory_recall,tool:recall,hinglish,memory_recall,1.0,recall,mock fact.,20.1,PASS,,
+C058,memory,mera laptop kaun sa hai batao,memory_recall,tool:recall,hinglish,memory_recall,1.0,recall,mock fact.,21.5,PASS,,
+C059,memory,maro exam kyare che yaad che,memory_recall,tool:recall,gujlish,memory_recall,1.0,recall,mock fact.,20.5,PASS,,
+C060,memory,mari bike kaun si che kaho,memory_recall,tool:recall,gujlish,memory_recall,1.0,recall,mock fact.,24.4,PASS,,
+C061,files,create a file named plan.txt,file_create,tool:create,en,file_create,1.0,create,File created: plan.txt.,26.7,PASS,,
+C062,files,make a new file called notes2.txt,file_create,tool:create,en,file_create,1.0,create,File created: notes2.txt.,41.3,PASS,,
+C063,files,pls create todo.txt,file_create,tool:create,en,file_create,1.0,create,File created: todo.txt.,60.1,PASS,,
+C064,files,crate a file budget.txt,file_create,tool:create,en,file_create,1.0,create,File created: budget.txt.,36.7,PASS,,
+C065,files,plan.txt नाम की फाइल बनाओ,file_create,tool:create,hi,file_create,1.0,create,फ़ाइल बनाई गई: plan.txt।,73.9,PASS,,
+C066,files,diary.txt નામની ફાઇલ બનાવો,file_create,tool:create,gu,file_create,1.0,create,ફાઇલ બનાવવામાં આવી: diary.txt.,144.0,PASS,,
+C067,files,ek nayi file ideas.txt bana do,file_create,tool:create,hinglish,file_create,0.999,create,File created: ideas.txt.,48.6,PASS,,
+C068,files,navi file ideas.txt banavo,file_create,tool:create,gujlish,file_create,1.0,create,File created: ideas.txt.,65.8,PASS,,
+C069,files,read plan.txt,file_read,tool:read,en,file_read,1.0,read,Contents of plan.txt:  mock,33.3,PASS,,
+C070,files,show me what is inside notes2.txt,file_read,tool:read,en,file_read,0.999,read,Contents of notes2.txt:  mock,50.3,PASS,,
+C071,files,could you display todo.txt,file_read,tool:read,en,file_read,1.0,read,Contents of todo.txt:  mock,36.1,PASS,,
+C072,files,plan.txt में क्या लिखा है दिखाओ,file_read,tool:read,hi,file_read,1.0,read,Contents of plan.txt:  mock,59.9,PASS,,
+C073,files,plan.txt ની સામગ્રી બતાવો,file_read,tool:read,gu,file_read,1.0,read,Contents of plan.txt:  mock,61.8,PASS,,
+C074,files,zara todo.txt ka content dikha do,file_read,tool:read,hinglish,file_read,1.0,read,Contents of todo.txt:  mock,77.3,PASS,,
+C075,files,todo.txt ma shu lakhyu che batavo,file_read,tool:read,gujlish,file_read,1.0,read,Contents of todo.txt:  mock,51.3,PASS,,
+C076,files,add a line to plan.txt saying buy milk,file_update,tool:update,en,file_update,1.0,update,File updated: plan.txt.,29.7,PASS,,
+C077,files,"append ""done"" to todo.txt",file_update,tool:update,en,file_update,1.0,update,File updated: todo.txt.,47.8,PASS,,
+C078,files,"plan.txt mein ek line jod do ""call mom""",file_update,tool:update,hinglish,file_update,1.0,update,File updated: plan.txt.,55.8,PASS,,
+C079,files,"plan.txt में नया टेक्स्ट ""hello"" जोड़ो",file_update,tool:update,hi,file_update,1.0,update,File updated: plan.txt.,28.3,PASS,,
+C080,files,"plan.txt ma ek line umero ""ok""",file_update,tool:update,gujlish,file_update,1.0,update,File updated: plan.txt.,38.4,PASS,,
+C081,files,delete plan.txt,file_delete,tool:delete,en,file_delete,1.0,delete,Moved to the Recycle Bin: plan.txt.,35.9,PASS,,
+C082,files,please remove the file old.txt,file_delete,tool:delete,en,file_delete,1.0,delete,Moved to the Recycle Bin: old.txt.,46.4,PASS,,
+C083,files,i dont need notes2.txt anymore delete it,file_delete,tool:delete,en,file_delete,0.999,delete,Moved to the Recycle Bin: notes2.txt.,54.4,PASS,,
+C084,files,todo.txt को हटाओ,file_delete,tool:delete,hi,file_delete,0.993,delete,Moved to the Recycle Bin: todo.txt.,55.3,PASS,,
+C085,files,diary.txt કાઢી નાખો,file_delete,tool:delete,gu,file_delete,1.0,delete,Moved to the Recycle Bin: diary.txt.,68.2,PASS,,
+C086,files,old.txt ko mita do,file_delete,tool:delete,hinglish,file_delete,0.997,delete,Moved to the Recycle Bin: old.txt.,45.0,PASS,,
+C087,files,old.txt ne bhusi nakho,file_delete,tool:delete,gujlish,file_delete,0.999,delete,Moved to the Recycle Bin: old.txt.,45.9,PASS,,
+C088,files,find budget.xlsx,file_search,tool:search,en,file_search,1.0,search,Found 1 file(s): mock/match.txt,43.4,PASS,,
+C089,files,where is resume.pdf,file_search,tool:search,en,file_search,1.0,search,Found 1 file(s): mock/match.txt,26.6,PASS,,
+C090,files,look for files named invoice.docx,file_search,tool:search,en,file_search,0.999,search,Found 1 file(s): mock/match.txt,55.3,PASS,,
+C091,files,resume.pdf कहाँ है,file_search,tool:search,hi,file_search,0.999,search,Found 1 file(s): mock/match.txt,66.1,PASS,,
+C092,files,invoice.docx ક્યાં છે,file_search,tool:search,gu,file_search,0.994,search,Found 1 file(s): mock/match.txt,56.8,PASS,,
+C093,files,budget.xlsx kidhar padi hai mere pc me,file_search,tool:search,hinglish,file_read,0.724,read,Contents of budget.xlsx:  mock,43.6,FAIL,wrong intent,"predicted file_read, expected file_search"
+C094,files,resume.pdf kya rakhi che,file_search,tool:search,gujlish,file_search,0.995,search,Found 1 file(s): mock/match.txt,55.9,PASS,,
+C095,files,make a new folder called Photos2,folder_create,tool:create_folder,en,folder_create,1.0,create_folder,Folder created: Photos2.,29.4,PASS,,
+C096,files,create directory named Projects,folder_create,tool:create_folder,en,folder_create,1.0,create_folder,Folder created: Projects.,33.8,PASS,,
+C097,files,ek folder banao jiska naam Notes3 ho,folder_create,tool:create_folder,hinglish,folder_create,0.991,create_folder,Folder created: Notes3.,57.1,PASS,,
+C098,files,create an excel sheet named marks2.xlsx,office_create,,en,office_create,1.0,create_workbook,Created mock.xlsx with 1 rows in mock.,43.9,PASS,,
+C099,files,make a word document called letter2.docx,office_create,,en,office_create,1.0,create_document,Created mock.docx in mock.,35.7,PASS,,
+C100,files,एक्सेल शीट sales2.xlsx बनाओ,office_create,,hi,office_create,1.0,create_workbook,Created mock.xlsx with 1 rows in mock.,36.4,PASS,,
+C101,files,વર્ડ દસ્તાવેજ minutes2.docx બનાવો,office_create,,gu,office_create,1.0,create_document,Created mock.docx in mock.,61.4,PASS,,
+C102,files,excel mein names2.xlsx naam se sheet bana do,office_create,,hinglish,office_create,1.0,create_workbook,Created mock.xlsx with 1 rows in mock.,23.9,PASS,,
+C103,apps,open notepad,app_open,tool:open_app,en,app_open,1.0,open_app,Opened notepad.,36.4,PASS,,
+C104,apps,launch the calculator,app_open,tool:open_app,en,app_open,1.0,open_app,Opened calculator.,23.3,PASS,,
+C105,apps,can you please open paint,app_open,tool:open_app,en,app_open,1.0,open_app,Opened paint.,28.8,PASS,,
+C106,apps,opn notepad,app_open,tool:open_app,en,app_open,1.0,open_app,Opened notepad.,29.6,PASS,,
+C107,apps,start chrome,app_open,tool:open_app,en,app_open,1.0,open_app,Opened chrome.,28.4,PASS,,
+C108,apps,fire up the vscode editor,app_open,tool:open_app,en,app_open,1.0,open_app,Opened vs code.,21.4,PASS,,
+C109,apps,नोटपैड खोलो,app_open,tool:open_app,hi,app_open,1.0,open_app,Opened notepad.,22.5,PASS,,
+C110,apps,कैलकुलेटर चालू करो,app_open,tool:open_app,hi,app_open,1.0,open_app,Opened calculator.,22.6,PASS,,
+C111,apps,નોટપેડ ચાલુ કરી દો,app_open,tool:open_app,gu,app_open,0.997,open_app,Opened notepad.,69.2,PASS,,
+C112,apps,કેલ્ક્યુલેટર ચાલુ કરો,app_open,tool:open_app,gu,app_open,1.0,open_app,Opened calculator.,21.5,PASS,,
+C113,apps,notepad kholo yaar,app_open,tool:open_app,hinglish,app_open,1.0,open_app,Opened notepad.,35.2,PASS,,
+C114,apps,zara calculator chalu kar do,app_open,tool:open_app,hinglish,app_open,1.0,open_app,Opened calculator.,24.2,PASS,,
+C115,apps,mujhe paint chahiye,app_open,tool:open_app,hinglish,app_open,0.997,open_app,Opened paint.,105.4,PASS,,
+C116,apps,notepad kholi do,app_open,tool:open_app,gujlish,app_open,1.0,open_app,Opened notepad.,63.1,PASS,,
+C117,apps,calculator chalu karo,app_open,tool:open_app,gujlish,app_open,1.0,open_app,Opened calculator.,23.4,PASS,,
+C118,apps,close notepad,app_close,tool:close_app,en,app_close,1.0,close_app,Closed notepad.,30.5,PASS,,
+C119,apps,quit the calculator,app_close,tool:close_app,en,app_close,1.0,close_app,Closed calculator.,22.9,PASS,,
+C120,apps,terminate paint now,app_close,tool:close_app,en,app_close,1.0,close_app,Closed paint.,72.4,PASS,,
+C121,apps,"finished with chrome, shut it",app_close,tool:close_app,en,knowledge_question,0.989,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=finished%20wit",66.1,FAIL,wrong intent,"predicted knowledge_question, expected app_close"
+C122,apps,clse notepad,app_close,tool:close_app,en,app_close,1.0,close_app,Closed notepad.,30.3,PASS,,
+C123,apps,नोटपैड बंद करो,app_close,tool:close_app,hi,app_close,1.0,close_app,Closed notepad.,26.3,PASS,,
+C124,apps,કેલ્ક્યુલેટર બંધ કરો,app_close,tool:close_app,gu,app_close,1.0,close_app,Closed calculator.,21.9,PASS,,
+C125,apps,paint ko band kar dena,app_close,tool:close_app,hinglish,app_close,1.0,close_app,Closed paint.,63.4,PASS,,
+C126,apps,chrome ko off karo,app_close,tool:close_app,hinglish,app_close,1.0,close_app,Closed chrome.,29.1,PASS,,
+C127,apps,notepad ne bandh kari nakho,app_close,tool:close_app,gujlish,app_close,0.993,close_app,Closed notepad.,65.0,PASS,,
+C128,apps,calculator bandh karo,app_close,tool:close_app,gujlish,app_close,1.0,close_app,Closed calculator.,22.2,PASS,,
+C129,apps,pls open youtube site,web_open,tool:web_open,en,web_open,1.0,web_open,Opened youtube.com in the default browser.,22.8,PASS,,
+C130,apps,search google for pizza near me,web_open,tool:web_open,en,web_open,1.0,web_open,Opened https://www.google.com/search?q=pizza+near+me in the default browser.,22.8,PASS,,
+C131,apps,go to github.com,web_open,tool:web_open,en,web_open,1.0,web_open,Opened github.com in the default browser.,22.5,PASS,,
+C132,apps,youtube khol de bhai,web_open,tool:web_open,hinglish,web_open,1.0,web_open,Opened youtube.com in the default browser.,22.8,PASS,,
+C133,apps,python tutorial search karo,web_open,tool:web_open,hinglish,web_open,1.0,web_open,Opened https://www.google.com/search?q=python+tutorial in the default browser.,19.8,PASS,,
+C134,apps,gmail kholi do,web_open,tool:web_open,gujlish,web_open,1.0,web_open,Opened gmail.com in the default browser.,19.6,PASS,,
+C135,apps,open downloads folder,special_folder_open,tool:open_special_folder,en,special_folder_open,0.997,open_special_folder,Opened downloads.,58.9,PASS,,
+C136,apps,show me the recycle bin,special_folder_open,tool:open_special_folder,en,special_folder_open,0.828,open_special_folder,Opened recycle bin.,56.5,PASS,,
+C137,apps,desktop folder kholo na,special_folder_open,tool:open_special_folder,hinglish,special_folder_open,0.997,open_special_folder,Opened desktop.,55.7,PASS,,
+C138,system status,show system status,system_status,tool:status,en,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",24.9,PASS,,
+C139,system status,how is my cpu usage,system_status,tool:status,en,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",25.8,PASS,,
+C140,system status,check ram and disk,system_status,tool:status,en,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",28.6,PASS,,
+C141,system status,"my laptop feels sluggish, check it",system_status,tool:status,en,system_status,0.59,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",47.6,PASS,,
+C142,system status,free disk space kitni bachi hai,system_status,tool:status,en,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",40.7,PASS,,
+C143,system status,how much memory is free rn,system_status,tool:status,en,system_status,0.999,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",50.6,PASS,,
+C144,system status,pc health report please,system_status,tool:status,en,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",26.5,PASS,,
+C145,system status,sytem status,system_status,tool:status,en,system_status,0.998,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",60.7,PASS,,
+C146,system status,सिस्टम की स्थिति दिखाओ,system_status,tool:status,hi,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",21.8,PASS,,
+C147,system status,सीपीयू कितना इस्तेमाल हो रहा है,system_status,tool:status,hi,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",22.5,PASS,,
+C148,system status,कितनी रैम खाली है,system_status,tool:status,hi,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",24.9,PASS,,
+C149,system status,मेरा लैपटॉप धीमा क्यों है,system_status,tool:status,hi,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",24.1,PASS,,
+C150,system status,સિસ્ટમની સ્થિતિ બતાવો,system_status,tool:status,gu,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",28.9,PASS,,
+C151,system status,સીપીયુ વપરાશ કેટલો છે,system_status,tool:status,gu,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",23.2,PASS,,
+C152,system status,કેટલી રેમ ખાલી છે,system_status,tool:status,gu,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",29.9,PASS,,
+C153,system status,લેપટોપ ધીમું કેમ છે,system_status,tool:status,gu,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",22.7,PASS,,
+C154,system status,system status dikhao,system_status,tool:status,hinglish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",20.5,PASS,,
+C155,system status,cpu kitna use ho raha hai,system_status,tool:status,hinglish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",21.3,PASS,,
+C156,system status,ram aur disk check karo,system_status,tool:status,hinglish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",43.6,PASS,,
+C157,system status,drive me kitni jagah khali hai,system_status,tool:status,hinglish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",21.3,PASS,,
+C158,system status,laptop slow kyun chal raha hai,system_status,tool:status,hinglish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",22.1,PASS,,
+C159,system status,system status batavo,system_status,tool:status,gujlish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",21.7,PASS,,
+C160,system status,cpu ketlo vaprai che,system_status,tool:status,gujlish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",24.8,PASS,,
+C161,system status,ram disk dono ka status do,system_status,tool:status,gujlish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",52.6,PASS,,
+C162,system status,disk ma ketli jagya khali che,system_status,tool:status,gujlish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",24.8,PASS,,
+C163,system status,laptop slow kem che,system_status,tool:status,gujlish,system_status,1.0,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",24.8,PASS,,
+C164,system status,hows the battery and cpu,system_status,tool:status,en,system_status,0.977,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",48.8,PASS,,
+C165,screenshot,screenshot,screenshot,tool:screenshot,en,screenshot,1.0,screenshot,Screenshot saved: mock.png.,49.8,PASS,,
+C166,screenshot,grab a screenshot please,screenshot,tool:screenshot,en,screenshot,1.0,screenshot,Screenshot saved: mock.png.,24.3,PASS,,
+C167,screenshot,capture whatever is on my display,screenshot,tool:screenshot,en,screenshot,1.0,screenshot,Screenshot saved: mock.png.,28.8,PASS,,
+C168,screenshot,snap the screen now,screenshot,tool:screenshot,en,screenshot,1.0,screenshot,Screenshot saved: mock.png.,22.8,PASS,,
+C169,screenshot,screen shot,screenshot,tool:screenshot,en,screenshot,0.999,screenshot,Screenshot saved: mock.png.,46.4,PASS,,
+C170,screenshot,screnshot,screenshot,tool:screenshot,en,screenshot,0.994,screenshot,Screenshot saved: mock.png.,35.4,PASS,,
+C171,screenshot,store my current screen as a picture,screenshot,tool:screenshot,en,screenshot,0.888,screenshot,Screenshot saved: mock.png.,41.2,PASS,,
+C172,screenshot,make a screen grab,screenshot,tool:screenshot,en,screenshot,0.926,screenshot,Screenshot saved: mock.png.,51.6,PASS,,
+C173,screenshot,hey can you take a screenshot for me,screenshot,tool:screenshot,en,screenshot,1.0,screenshot,Screenshot saved: mock.png.,75.1,PASS,,
+C174,screenshot,स्क्रीन का स्क्रीनशॉट ले लो,screenshot,tool:screenshot,hi,screenshot,0.999,screenshot,Screenshot saved: mock.png.,54.0,PASS,,
+C175,screenshot,मेरी स्क्रीन की तस्वीर खींचो,screenshot,tool:screenshot,hi,screenshot,0.948,screenshot,Screenshot saved: mock.png.,50.7,PASS,,
+C176,screenshot,स्क्रीन की कैप्चर कर दो,screenshot,tool:screenshot,hi,screenshot,0.996,screenshot,Screenshot saved: mock.png.,45.5,PASS,,
+C177,screenshot,कृपया स्क्रीनशॉट ले लीजिए,screenshot,tool:screenshot,hi,screenshot,0.998,screenshot,Screenshot saved: mock.png.,56.4,PASS,,
+C178,screenshot,સ્ક્રીનનો સ્ક્રીનશોટ લઈ આપો,screenshot,tool:screenshot,gu,screenshot,0.966,screenshot,Screenshot saved: mock.png.,42.4,PASS,,
+C179,screenshot,સ્ક્રીનની તસવીર લઈ લો,screenshot,tool:screenshot,gu,screenshot,0.986,screenshot,Screenshot saved: mock.png.,56.4,PASS,,
+C180,screenshot,સ્ક્રીનનું કેપ્ચર કરી આપો,screenshot,tool:screenshot,gu,screenshot,0.951,screenshot,Screenshot saved: mock.png.,50.9,PASS,,
+C181,screenshot,મારી સ્ક્રીનનો સ્ક્રીનશોટ લો,screenshot,tool:screenshot,gu,screenshot,1.0,screenshot,Screenshot saved: mock.png.,42.9,PASS,,
+C182,screenshot,ek screenshot kheench lo,screenshot,tool:screenshot,hinglish,screenshot,0.999,screenshot,Screenshot saved: mock.png.,47.5,PASS,,
+C183,screenshot,screenshot nikal do,screenshot,tool:screenshot,hinglish,screenshot,0.999,screenshot,Screenshot saved: mock.png.,54.9,PASS,,
+C184,screenshot,screen ka photo kheench do,screenshot,tool:screenshot,hinglish,screenshot,0.988,screenshot,Screenshot saved: mock.png.,53.9,PASS,,
+C185,screenshot,zara screen capture karo,screenshot,tool:screenshot,hinglish,screenshot,1.0,screenshot,Screenshot saved: mock.png.,44.6,PASS,,
+C186,screenshot,ss le lo,screenshot,tool:screenshot,hinglish,screenshot,1.0,screenshot,Screenshot saved: mock.png.,26.8,PASS,,
+C187,screenshot,ek screenshot lai lo,screenshot,tool:screenshot,gujlish,screenshot,1.0,screenshot,Screenshot saved: mock.png.,48.3,PASS,,
+C188,screenshot,screenshot padi lo,screenshot,tool:screenshot,gujlish,screenshot,1.0,screenshot,Screenshot saved: mock.png.,58.0,PASS,,
+C189,screenshot,screen ni tasvir lo,screenshot,tool:screenshot,gujlish,screenshot,0.996,screenshot,Screenshot saved: mock.png.,47.8,PASS,,
+C190,screenshot,jara screen capture karo,screenshot,tool:screenshot,gujlish,screenshot,1.0,screenshot,Screenshot saved: mock.png.,23.7,PASS,,
+C191,screenshot,mari screen no screenshot lo ne,screenshot,tool:screenshot,gujlish,screenshot,1.0,screenshot,Screenshot saved: mock.png.,27.6,PASS,,
+C192,time/date,time batao abhi,time_date,,en,time_date,1.0,,The current time is 01:06 PM.,78.3,PASS,,
+C193,time/date,could you tell me the current time,time_date,,en,time_date,1.0,,The current time is 01:06 PM.,24.3,PASS,,
+C194,time/date,clock check please,time_date,,en,system_status,0.979,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",57.8,FAIL,wrong intent,"predicted system_status, expected time_date"
+C195,time/date,whats the date today,time_date,reply:20,en,time_date,0.997,,Today's date is 13 November 2026.,51.0,PASS,,
+C196,time/date,which weekday is it,time_date,,en,time_date,1.0,,Today's date is 13 November 2026.,23.8,PASS,,
+C197,time/date,todays date,time_date,reply:20,en,time_date,1.0,,Today's date is 13 November 2026.,35.1,PASS,,
+C198,time/date,time pls,time_date,,en,time_date,1.0,,The current time is 01:06 PM.,28.6,PASS,,
+C199,time/date,wat is the tim now,time_date,,en,time_date,0.895,,The current time is 01:06 PM.,67.0,PASS,,
+C200,time/date,hey assistant what's the time,time_date,,en,time_date,1.0,,The current time is 01:06 PM.,34.4,PASS,,
+C201,time/date,इस वक्त क्या बजा है,time_date,,hi,knowledge_question,0.237,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%87%E0%A",48.6,FAIL,wrong intent,"predicted knowledge_question, expected time_date"
+C202,time/date,आज की डेट बताओ,time_date,reply:20,hi,time_date,0.691,,आज की तारीख 13 November 2026 है।,45.8,PASS,,
+C203,time/date,घड़ी में क्या टाइम हुआ,time_date,,hi,file_read,0.83,,Which file name should I use?,47.7,FAIL,wrong intent,"predicted file_read, expected time_date"
+C204,time/date,आज कौन सा दिन है,time_date,,hi,time_date,1.0,,आज की तारीख 13 November 2026 है।,36.8,PASS,,
+C205,time/date,હમણાં ટાઇમ શું થયો,time_date,,gu,time_date,1.0,,હાલનું સમય 01:06 PM છે.,29.6,PASS,,
+C206,time/date,આજે તારીખ કઈ છે,time_date,reply:20,gu,time_date,0.99,,આજની તારીખ 13 November 2026 છે.,53.4,PASS,,
+C207,time/date,અત્યારનો સમય જણાવો,time_date,,gu,time_date,1.0,,હાલનું સમય 01:06 PM છે.,44.3,PASS,,
+C208,time/date,આજે કયો દિવસ છે,time_date,,gu,time_date,1.0,,આજની તારીખ 13 November 2026 છે.,28.3,PASS,,
+C209,time/date,ghadi mein kya baja hai,time_date,,hinglish,time_date,1.0,,The current time is 01:06 PM.,42.0,PASS,,
+C210,time/date,today ki tarikh batao,time_date,reply:20,hinglish,time_date,1.0,,Today's date is 13 November 2026.,50.9,PASS,,
+C211,time/date,abhi ka time bata do,time_date,,hinglish,time_date,1.0,,The current time is 01:06 PM.,33.9,PASS,,
+C212,time/date,aaj konsa weekday hai,time_date,,hinglish,time_date,1.0,,Today's date is 13 November 2026.,41.3,PASS,,
+C213,time/date,abhi kya baje hain yaar,time_date,,hinglish,time_date,1.0,,The current time is 01:06 PM.,38.9,PASS,,
+C214,time/date,hal ma ketla vaagया,time_date,,gujlish,time_date,0.67,,वर्तमान समय 01:06 PM है।,44.9,PASS,,
+C215,time/date,aaj ni tarikh kaho,time_date,reply:20,gujlish,time_date,0.996,,Today's date is 13 November 2026.,59.5,PASS,,
+C216,time/date,atyar nu time kaho,time_date,,gujlish,time_date,1.0,,The current time is 01:06 PM.,34.0,PASS,,
+C217,time/date,aaje kayo vaar che,time_date,,gujlish,time_date,1.0,,Today's date is 13 November 2026.,30.5,PASS,,
+C218,time/date,atyare time shu thayu che,time_date,,gujlish,time_date,0.995,,The current time is 01:06 PM.,60.5,PASS,,
+C219,math,what is 7*8,math,reply:56,en,math,1.0,,7*8 = 56.,25.7,PASS,,
+C220,math,calculate 120 / 4,math,reply:30,en,math,1.0,,120 / 4 = 30.0.,38.9,PASS,,
+C221,math,15 + 27,math,reply:42,en,math,1.0,,15 + 27 = 42.,29.4,PASS,,
+C222,math,what's 2 to the power 5,math,reply:32,en,math,1.0,,2 ** 5 = 32.,23.1,PASS,,
+C223,math,5 plus 7,math,reply:12,en,math,1.0,,5 + 7 = 12.,38.7,PASS,,
+C224,math,100 minus 36,math,reply:64,en,math,1.0,,100 - 36 = 64.,35.4,PASS,,
+C225,math,9 times 9,math,reply:81,en,math,1.0,,9 * 9 = 81.,39.9,PASS,,
+C226,math,compute (3+4)*5,math,reply:35,en,math,1.0,,(3+4)*5 = 35.,36.0,PASS,,
+C227,math,whats 50% of 200,math,reply:100,en,math,1.0,,50% of 200 = 100.0.,37.6,PASS,,
+C228,math,what is 17 mod 5,math,reply:2,en,math,1.0,,17 mod 5 = 2.,32.9,PASS,,
+C229,math,3 गुणा 6,math,reply:18,hi,math,1.0,,3 * 6 = 18.,28.6,PASS,,
+C230,math,10 भाग 2,math,reply:5,hi,math,1.0,,10 / 2 = 5.0.,29.9,PASS,,
+C231,math,8 प्लस 9,math,reply:17,hi,math,1.0,,8 + 9 = 17.,27.5,PASS,,
+C232,math,20 माइनस 5,math,reply:15,hi,math,1.0,,20 - 5 = 15.,41.2,PASS,,
+C233,math,4 ગુણા 5,math,reply:20,gu,math,1.0,,4 * 5 = 20.,48.1,PASS,,
+C234,math,12 ભાગ 3,math,reply:4,gu,math,1.0,,12 / 3 = 4.0.,28.6,PASS,,
+C235,math,7 પ્લસ 8,math,reply:15,gu,math,1.0,,7 + 8 = 15.,37.9,PASS,,
+C236,math,30 માઇનસ 12,math,reply:18,gu,math,1.0,,30 - 12 = 18.,37.6,PASS,,
+C237,math,6 into 7 kitna hota hai,math,reply:42,hinglish,math,1.0,,6 * 7 = 42.,36.4,PASS,,
+C238,math,25 plus 75 batao,math,reply:100,hinglish,math,1.0,,25 + 75 = 100.,29.8,PASS,,
+C239,math,144 divided by 12 kya hai,math,reply:12,hinglish,math,1.0,,144 / 12 = 12.0.,38.3,PASS,,
+C240,math,paanch plus saat kitne hue,math,reply:12,hinglish,knowledge_question,0.364,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=paanch%20plus%",113.1,FAIL,wrong intent,"predicted knowledge_question, expected math"
+C241,math,9 plus 9 ketla thay,math,reply:18,gujlish,math,1.0,,9 + 9 = 18.,30.4,PASS,,
+C242,math,81 divided by 9 ketla,math,reply:9,gujlish,math,1.0,,81 / 9 = 9.0.,29.1,PASS,,
+C243,math,8 times 8 shu thay,math,reply:64,gujlish,math,1.0,,8 * 8 = 64.,27.7,PASS,,
+C244,math,2 power 10 ketlu thay,math,reply:1024,gujlish,math,1.0,,2 ** 10 = 1024.,34.8,PASS,,
+C245,math,please solve 1000 - 1,math,reply:999,en,math,1.0,,1000 - 1 = 999.,37.6,PASS,,
+C246,documents (attachments),what does the document say about the budget,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,37.0,PASS,,
+C247,documents (attachments),according to my pdf what is the deadline,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,39.8,PASS,,
+C248,documents (attachments),search my documents for safety rules,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,43.2,PASS,,
+C249,documents (attachments),summarize the attached file,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,33.1,PASS,,
+C250,documents (attachments),what is the main finding in this report,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,38.7,PASS,,
+C251,documents (attachments),who is the author mentioned in the file,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,29.7,PASS,,
+C252,documents (attachments),find the section about methodology in my pdf,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,25.8,PASS,,
+C253,documents (attachments),docment mein budget kya hai,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,31.7,PASS,,
+C254,documents (attachments),does the attached doc mention a deadline,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,28.1,PASS,,
+C255,documents (attachments),tell me what page 2 of the pdf says,doc_question,attach,en,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,24.0,PASS,,
+C256,documents (attachments),दस्तावेज़ में बजट के बारे में क्या लिखा है,doc_question,attach,hi,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,33.2,PASS,,
+C257,documents (attachments),मेरी पीडीएफ के अनुसार समय सीमा क्या है,doc_question,attach,hi,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,39.3,PASS,,
+C258,documents (attachments),इस फाइल का सारांश बताओ,doc_question,attach,hi,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,31.6,PASS,,
+C259,documents (attachments),मेरे दस्तावेज़ों में सुरक्षा नियम खोजो,doc_question,attach,hi,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,24.5,PASS,,
+C260,documents (attachments),रिपोर्ट में मुख्य निष्कर्ष क्या है,doc_question,attach,hi,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,29.2,PASS,,
+C261,documents (attachments),દસ્તાવેજમાં બજેટ વિશે શું લખ્યું છે,doc_question,attach,gu,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,32.1,PASS,,
+C262,documents (attachments),મારી પીડીએફ મુજબ સમયમર્યાદા શું છે,doc_question,attach,gu,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,40.4,PASS,,
+C263,documents (attachments),આ ફાઇલનો સારાંશ કહો,doc_question,attach,gu,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,32.6,PASS,,
+C264,documents (attachments),મારા દસ્તાવેજોમાં સલામતીના નિયમો શોધો,doc_question,attach,gu,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,35.1,PASS,,
+C265,documents (attachments),રિપોર્ટમાં મુખ્ય તારણ શું છે,doc_question,attach,gu,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,30.8,PASS,,
+C266,documents (attachments),document mein budget ke baare mein kya likha hai,doc_question,attach,hinglish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,32.7,PASS,,
+C267,documents (attachments),meri pdf ke according deadline kya hai,doc_question,attach,hinglish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,32.0,PASS,,
+C268,documents (attachments),is file ka summary batao,doc_question,attach,hinglish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,36.7,PASS,,
+C269,documents (attachments),mere documents mein safety rules search karo,doc_question,attach,hinglish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,52.7,PASS,,
+C270,documents (attachments),report ka main finding kya hai,doc_question,attach,hinglish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,36.3,PASS,,
+C271,documents (attachments),document ma budget vishe shu lakhyu che,doc_question,attach,gujlish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,53.0,PASS,,
+C272,documents (attachments),mari pdf mujab deadline shu che,doc_question,attach,gujlish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,36.8,PASS,,
+C273,documents (attachments),aa file no summary kaho,doc_question,attach,gujlish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,39.5,PASS,,
+C274,documents (attachments),mara documents ma safety rules shodho,doc_question,attach,gujlish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,36.5,PASS,,
+C275,documents (attachments),report nu main finding shu che,doc_question,attach,gujlish,doc_question,1.0,,Indexed: sample.txt (1 passages).  Mock answer from the attached document.,29.6,PASS,,
+C276,general questions,what is the capital of Australia,knowledge_question,,en,knowledge_question,0.996,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=what%20is%20th",69.3,PASS,,
+C277,general questions,explain how photosynthesis works,knowledge_question,,en,knowledge_question,1.0,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=explain%20how%",66.6,PASS,,
+C278,general questions,who invented the telephone,knowledge_question,,en,knowledge_question,0.912,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=who%20invented",81.4,PASS,,
+C279,general questions,why is the ocean salty,knowledge_question,,en,knowledge_question,0.95,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=why%20is%20the",151.4,PASS,,
+C280,general questions,how do vaccines work,knowledge_question,,en,knowledge_question,0.698,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=how%20do%20vac",130.9,PASS,,
+C281,general questions,tell me about the Roman empire,knowledge_question,,en,knowledge_question,0.893,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=tell%20me%20ab",151.9,PASS,,
+C282,general questions,whats the difference between a virus and bacteria,knowledge_question,,en,knowledge_question,0.985,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=whats%20the%20",117.3,PASS,,
+C283,general questions,how far is the sun from earth,knowledge_question,,en,knowledge_question,0.877,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=how%20far%20is",103.6,PASS,,
+C284,general questions,write a short poem about rain,knowledge_question,,en,knowledge_question,0.982,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=write%20a%20sh",108.2,PASS,,
+C285,general questions,give me tips to sleep better,knowledge_question,,en,knowledge_question,0.515,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=give%20me%20ti",134.3,PASS,,
+C286,general questions,waht is machien learning,knowledge_question,,en,knowledge_question,0.997,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=waht%20is%20ma",109.7,PASS,,
+C287,general questions,translate good night to French,knowledge_question,,en,knowledge_question,0.359,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=translate%20go",114.3,PASS,,
+C288,general questions,can you explain recursion in simple words,knowledge_question,,en,knowledge_question,0.978,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=explain%20recu",162.8,PASS,,
+C289,general questions,भारत की राजधानी क्या है,knowledge_question,,hi,knowledge_question,0.997,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%AD%E0%A",195.5,PASS,,
+C290,general questions,बारिश कैसे होती है समझाओ,knowledge_question,,hi,knowledge_question,0.996,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%AC%E0%A",218.3,PASS,,
+C291,general questions,ताजमहल किसने बनवाया,knowledge_question,,hi,knowledge_question,0.885,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%A4%E0%A",194.5,PASS,,
+C292,general questions,चंद्रमा पृथ्वी से कितना दूर है,knowledge_question,,hi,knowledge_question,0.703,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%9A%E0%A",44.6,PASS,,
+C293,general questions,ગુજરાતની રાજધાની કઈ છે,knowledge_question,,gu,knowledge_question,0.983,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%AA%97%E0%A",45.8,PASS,,
+C294,general questions,વરસાદ કેવી રીતે પડે છે સમજાવો,knowledge_question,,gu,knowledge_question,0.894,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%AA%B5%E0%A",44.5,PASS,,
+C295,general questions,મહાત્મા ગાંધી કોણ હતા,knowledge_question,,gu,knowledge_question,0.44,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%AA%AE%E0%A",43.9,PASS,,
+C296,general questions,સૂર્ય કેટલો દૂર છે,knowledge_question,,gu,knowledge_question,0.42,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%AA%B8%E0%A",55.0,PASS,,
+C297,general questions,yaar ye batao black hole kya hota hai,knowledge_question,,hinglish,knowledge_question,0.98,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=yaar%20ye%20ba",63.2,PASS,,
+C298,general questions,internet kaise kaam karta hai samjhao,knowledge_question,,hinglish,knowledge_question,1.0,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=internet%20kai",55.0,PASS,,
+C299,general questions,world cup 2011 kisne jeeta,knowledge_question,,hinglish,knowledge_question,0.366,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=world%20cup%20",39.7,PASS,,
+C300,general questions,dinosaur kyun khatam ho gaye,knowledge_question,,hinglish,knowledge_question,0.188,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=dinosaur%20kyu",44.2,PASS,,
+C301,general questions,ek achhi sleep ke liye tips do,knowledge_question,,hinglish,knowledge_question,0.837,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=ek%20achhi%20s",43.3,PASS,,
+C302,general questions,aakash vadlu kem hoy che,knowledge_question,,gujlish,knowledge_question,1.0,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=aakash%20vadlu",45.7,PASS,,
+C303,general questions,internet kevi rite chale che samjavo,knowledge_question,,gujlish,knowledge_question,0.924,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=internet%20kev",47.3,PASS,,
+C304,general questions,moon ketlo dur che,knowledge_question,,gujlish,knowledge_question,0.354,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=moon%20ketlo%2",40.0,PASS,,
+C305,general questions,python shu hoy che kaho,knowledge_question,,gujlish,knowledge_question,0.996,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=python%20shu%2",43.3,PASS,,
+C306,general questions,gold no bhav kem vadhe che,knowledge_question,,gujlish,knowledge_question,0.775,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=gold%20no%20bh",42.5,PASS,,
+C307,vision,detect objects in this photo,vision_detect,,en,out_of_scope,0.335,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",42.2,FAIL,no match,"predicted out_of_scope, expected vision_detect"
+C308,vision,what is in this picture,vision_detect,,en,knowledge_question,0.363,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=what%20is%20in",39.0,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C309,vision,count the people in the image,vision_detect,,en,out_of_scope,0.929,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",39.6,FAIL,no match,"predicted out_of_scope, expected vision_detect"
+C310,vision,open the object detection page,vision_detect,,en,unknown,0.319,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",68.2,FAIL,no match,"predicted unknown, expected vision_detect"
+C311,vision,use the camera and tell me what you see,vision_detect,,en,knowledge_question,0.394,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=use%20the%20ca",39.2,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C312,vision,identify the thing in my webcam,vision_detect,,en,out_of_scope,0.769,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",39.4,FAIL,no match,"predicted out_of_scope, expected vision_detect"
+C313,vision,is there a cup in this image,vision_detect,,en,knowledge_question,0.483,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=is%20there%20a",67.4,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C314,vision,scan this image for small objects,vision_detect,,en,out_of_scope,0.374,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",51.8,FAIL,no match,"predicted out_of_scope, expected vision_detect"
+C315,vision,find a mug and a stapler in the photo,vision_detect,,en,out_of_scope,0.932,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",57.5,FAIL,no match,"predicted out_of_scope, expected vision_detect"
+C316,vision,objct detecton,vision_detect,,en,unknown,0.2,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",61.5,FAIL,no match,"predicted unknown, expected vision_detect"
+C317,vision,इस फोटो में कौन सी चीज़ें हैं,vision_detect,,hi,knowledge_question,0.575,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%87%E0%A",75.2,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C318,vision,कैमरे से देखकर बताओ यह क्या है,vision_detect,,hi,knowledge_question,0.621,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%95%E0%A",62.9,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C319,vision,तस्वीर में कितने लोग हैं,vision_detect,,hi,knowledge_question,0.867,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%A4%E0%A",66.3,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C320,vision,ऑब्जेक्ट डिटेक्शन खोलो,vision_detect,,hi,app_open,0.857,,Which application?,75.3,FAIL,wrong intent,"predicted app_open, expected vision_detect"
+C321,vision,इस इमेज में कप है क्या,vision_detect,,hi,file_read,0.53,,Which file name should I use?,69.7,FAIL,wrong intent,"predicted file_read, expected vision_detect"
+C322,vision,આ ફોટામાં કઈ વસ્તુઓ છે,vision_detect,,gu,unknown,0.232,,"હું હજી એ કામ કરી શકતો નથી. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screensh",86.2,FAIL,no match,"predicted unknown, expected vision_detect"
+C323,vision,કેમેરાથી જોઈને કહો આ શું છે,vision_detect,,gu,knowledge_question,0.499,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%AA%95%E0%A",64.2,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C324,vision,તસવીરમાં કેટલા લોકો છે,vision_detect,,gu,knowledge_question,0.419,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%AA%A4%E0%A",60.8,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C325,vision,ઓબ્જેક્ટ ડિટેક્શન ખોલો,vision_detect,,gu,app_open,0.716,,Which application?,67.5,FAIL,wrong intent,"predicted app_open, expected vision_detect"
+C326,vision,આ ઇમેજમાં કપ છે કે,vision_detect,,gu,memory_save,0.351,save_fact,મેમરીમાં સાચવ્યું: આ ઇમેજમાં કપ છે કે.,78.0,FAIL,wrong intent,"predicted memory_save, expected vision_detect"
+C327,vision,is photo mein kya kya hai batao,vision_detect,,hinglish,file_read,0.374,,Which file name should I use?,89.1,FAIL,wrong intent,"predicted file_read, expected vision_detect"
+C328,vision,camera se dekh ke bolo ye kya hai,vision_detect,,hinglish,knowledge_question,0.215,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=camera%20se%20",61.7,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C329,vision,image mein kitne log hain,vision_detect,,hinglish,knowledge_question,0.634,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=image%20mein%2",80.9,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C330,vision,object detection page kholo,vision_detect,,hinglish,unknown,0.434,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",90.2,FAIL,no match,"predicted unknown, expected vision_detect"
+C331,vision,photo mein cup hai kya,vision_detect,,hinglish,knowledge_question,0.264,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=photo%20mein%2",53.3,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C332,vision,aa photo ma shu shu che kaho,vision_detect,,gujlish,file_read,0.609,,Which file name should I use?,45.1,FAIL,wrong intent,"predicted file_read, expected vision_detect"
+C333,vision,camera thi joine kaho aa shu che,vision_detect,,gujlish,knowledge_question,0.388,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=camera%20thi%2",48.1,FAIL,wrong intent,"predicted knowledge_question, expected vision_detect"
+C334,vision,image ma ketla manas che,vision_detect,,gujlish,time_date,0.642,,The current time is 01:06 PM.,45.7,FAIL,wrong intent,"predicted time_date, expected vision_detect"
+C335,vision,object detection page kholo,vision_detect,,gujlish,unknown,0.434,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",63.2,FAIL,no match,"predicted unknown, expected vision_detect"
+C336,vision,photo ma cup che ke,vision_detect,,gujlish,out_of_scope,0.716,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",47.3,FAIL,no match,"predicted out_of_scope, expected vision_detect"
+C337,performance,boost my pc,pc_performance,,en,out_of_scope,0.854,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",46.3,FAIL,no match,"predicted out_of_scope, expected pc_performance"
+C338,performance,which apps are using the most ram,pc_performance,,en,unknown,0.364,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",55.4,FAIL,no match,"predicted unknown, expected pc_performance"
+C339,performance,why is my computer lagging,pc_performance,,en,knowledge_question,0.794,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=why%20is%20my%",52.4,FAIL,wrong intent,"predicted knowledge_question, expected pc_performance"
+C340,performance,open the pc performance page,pc_performance,,en,system_status,0.546,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",62.7,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C341,performance,clean up my laptop to make it faster,pc_performance,,en,out_of_scope,0.986,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",46.2,FAIL,no match,"predicted out_of_scope, expected pc_performance"
+C342,performance,kill the heaviest process,pc_performance,,en,app_close,0.477,,Which application?,57.4,FAIL,wrong intent,"predicted app_close, expected pc_performance"
+C343,performance,speed up my system,pc_performance,,en,system_status,0.847,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",40.6,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C344,performance,show running processes by memory,pc_performance,,en,system_status,0.553,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",35.4,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C345,performance,free up memory now,pc_performance,,en,system_status,0.972,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",52.0,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C346,performance,performence boost,pc_performance,,en,out_of_scope,0.887,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",42.6,FAIL,no match,"predicted out_of_scope, expected pc_performance"
+C347,performance,turn on power mode for speed,pc_performance,,en,unknown,0.384,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",44.5,FAIL,no match,"predicted unknown, expected pc_performance"
+C348,performance,मेरा पीसी तेज़ करो,pc_performance,,hi,unknown,0.244,,"मैं अभी वह काम नहीं कर सकता। I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screens",45.6,FAIL,no match,"predicted unknown, expected pc_performance"
+C349,performance,कौन सा ऐप सबसे ज्यादा रैम ले रहा है,pc_performance,,hi,knowledge_question,0.383,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%95%E0%A",45.8,FAIL,wrong intent,"predicted knowledge_question, expected pc_performance"
+C350,performance,पीसी परफॉर्मेंस पेज खोलो,pc_performance,,hi,app_open,0.702,,Which application?,52.4,FAIL,wrong intent,"predicted app_open, expected pc_performance"
+C351,performance,मेमोरी खाली करो,pc_performance,,hi,system_status,0.983,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",35.8,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C352,performance,लैपटॉप को तेज़ चलाने के लिए सफाई करो,pc_performance,,hi,knowledge_question,0.789,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%B2%E0%A",44.9,FAIL,wrong intent,"predicted knowledge_question, expected pc_performance"
+C353,performance,મારા પીસીને ઝડપી બનાવો,pc_performance,,gu,file_create,0.82,,Which file name should I use?,35.8,FAIL,wrong intent,"predicted file_create, expected pc_performance"
+C354,performance,કઈ એપ સૌથી વધુ રેમ વાપરે છે,pc_performance,,gu,unknown,0.268,,"હું હજી એ કામ કરી શકતો નથી. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screensh",50.0,FAIL,no match,"predicted unknown, expected pc_performance"
+C355,performance,પીસી પરફોર્મન્સ પેજ ખોલો,pc_performance,,gu,app_open,0.743,,Which application?,54.6,FAIL,wrong intent,"predicted app_open, expected pc_performance"
+C356,performance,મેમરી ખાલી કરો,pc_performance,,gu,system_status,0.733,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",35.8,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C357,performance,લેપટોપ ઝડપી ચલાવવા સફાઈ કરો,pc_performance,,gu,unknown,0.199,,"હું હજી એ કામ કરી શકતો નથી. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screensh",43.5,FAIL,no match,"predicted unknown, expected pc_performance"
+C358,performance,pc ko fast karo,pc_performance,,hinglish,knowledge_question,0.512,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=pc%20ko%20fast",46.5,FAIL,wrong intent,"predicted knowledge_question, expected pc_performance"
+C359,performance,kaun si app sabse zyada ram kha rahi hai,pc_performance,,hinglish,unknown,0.266,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",44.9,FAIL,no match,"predicted unknown, expected pc_performance"
+C360,performance,pc performance page kholo,pc_performance,,hinglish,system_status,0.688,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",46.6,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C361,performance,memory free kar do,pc_performance,,hinglish,system_status,0.954,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",37.1,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C362,performance,laptop ko tez chalane ke liye clean karo,pc_performance,,hinglish,out_of_scope,0.476,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",40.6,FAIL,no match,"predicted out_of_scope, expected pc_performance"
+C363,performance,pc ne fast karo,pc_performance,,gujlish,knowledge_question,0.481,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=pc%20ne%20fast",45.4,FAIL,wrong intent,"predicted knowledge_question, expected pc_performance"
+C364,performance,kai app sauthi vadhare ram vapre che,pc_performance,,gujlish,unknown,0.267,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",46.3,FAIL,no match,"predicted unknown, expected pc_performance"
+C365,performance,pc performance page kholo,pc_performance,,gujlish,system_status,0.688,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",45.4,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C366,performance,memory free kari do,pc_performance,,gujlish,system_status,0.946,status,"CPU 10 percent, memory 20 percent, disk 30 percent used.",35.8,FAIL,wrong intent,"predicted system_status, expected pc_performance"
+C367,performance,laptop ne tez karva clean karo,pc_performance,,gujlish,out_of_scope,0.916,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",38.7,FAIL,no match,"predicted out_of_scope, expected pc_performance"
+C368,voice commands,stop listening,voice_control,,en,app_close,0.869,,Which application?,58.8,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C369,voice commands,start hands-free mode,voice_control,,en,app_open,0.976,,Which application?,52.4,FAIL,wrong intent,"predicted app_open, expected voice_control"
+C370,voice commands,turn on the wake word,voice_control,,en,out_of_scope,0.493,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",43.1,FAIL,no match,"predicted out_of_scope, expected voice_control"
+C371,voice commands,stop talking,voice_control,,en,app_close,0.941,,Which application?,54.2,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C372,voice commands,speak your replies aloud,voice_control,,en,bot_identity,0.68,,I am ADHYAKSH.,36.8,FAIL,wrong intent,"predicted bot_identity, expected voice_control"
+C373,voice commands,be quiet please,voice_control,,en,knowledge_question,0.535,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=be%20quiet",54.3,FAIL,wrong intent,"predicted knowledge_question, expected voice_control"
+C374,voice commands,switch voice to Hindi,voice_control,,en,out_of_scope,0.361,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",38.8,FAIL,no match,"predicted out_of_scope, expected voice_control"
+C375,voice commands,listen to me now,voice_control,,en,unknown,0.304,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",53.1,FAIL,no match,"predicted unknown, expected voice_control"
+C376,voice commands,read that out loud,voice_control,,en,file_read,0.747,,Which file name should I use?,39.3,FAIL,wrong intent,"predicted file_read, expected voice_control"
+C377,voice commands,stp listening,voice_control,,en,unknown,0.163,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",44.5,FAIL,no match,"predicted unknown, expected voice_control"
+C378,voice commands,turn off voice replies,voice_control,,en,app_close,0.981,,Which application?,45.1,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C379,voice commands,hands free off,voice_control,,en,app_close,0.855,,Which application?,43.5,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C380,voice commands,सुनना बंद करो,voice_control,,hi,app_close,0.989,,Which application?,53.1,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C381,voice commands,हैंड्स फ्री मोड चालू करो,voice_control,,hi,app_open,0.992,,Which application?,52.3,FAIL,wrong intent,"predicted app_open, expected voice_control"
+C382,voice commands,चुप हो जाओ,voice_control,,hi,help,0.359,,"I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; remember facts; answer questions from you",37.2,FAIL,wrong intent,"predicted help, expected voice_control"
+C383,voice commands,जवाब बोलकर सुनाओ,voice_control,,hi,unknown,0.234,,"मैं अभी वह काम नहीं कर सकता। I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screens",43.3,FAIL,no match,"predicted unknown, expected voice_control"
+C384,voice commands,आवाज़ की भाषा हिंदी करो,voice_control,,hi,knowledge_question,0.36,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%A4%86%E0%A",44.7,FAIL,wrong intent,"predicted knowledge_question, expected voice_control"
+C385,voice commands,સાંભળવાનું બંધ કરો,voice_control,,gu,app_close,0.992,,Which application?,52.2,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C386,voice commands,હેન્ડ્સ ફ્રી મોડ ચાલુ કરો,voice_control,,gu,app_open,0.969,,Which application?,54.4,FAIL,wrong intent,"predicted app_open, expected voice_control"
+C387,voice commands,ચૂપ થઈ જાઓ,voice_control,,gu,unknown,0.208,,"હું હજી એ કામ કરી શકતો નથી. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screensh",44.4,FAIL,no match,"predicted unknown, expected voice_control"
+C388,voice commands,જવાબ બોલીને સંભળાવો,voice_control,,gu,unknown,0.149,,"હું હજી એ કામ કરી શકતો નથી. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screensh",45.3,FAIL,no match,"predicted unknown, expected voice_control"
+C389,voice commands,અવાજની ભાષા ગુજરાતી કરો,voice_control,,gu,knowledge_question,0.386,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=%E0%AA%85%E0%A",47.0,FAIL,wrong intent,"predicted knowledge_question, expected voice_control"
+C390,voice commands,sunna band karo,voice_control,,hinglish,app_close,0.993,,Which application?,69.1,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C391,voice commands,hands free mode on karo,voice_control,,hinglish,app_open,0.799,,Which application?,45.2,FAIL,wrong intent,"predicted app_open, expected voice_control"
+C392,voice commands,chup ho jao,voice_control,,hinglish,unknown,0.259,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",43.4,FAIL,no match,"predicted unknown, expected voice_control"
+C393,voice commands,jawab bol ke sunao,voice_control,,hinglish,knowledge_question,0.396,,"Cloud use is not enabled in Settings, so I cannot send this question to a language model. You can search the web: https://www.google.com/search?q=jawab%20bol%20",44.9,FAIL,wrong intent,"predicted knowledge_question, expected voice_control"
+C394,voice commands,voice ki language hindi kar do,voice_control,,hinglish,unknown,0.259,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",48.2,FAIL,no match,"predicted unknown, expected voice_control"
+C395,voice commands,sambhadvanu bandh karo,voice_control,,gujlish,app_close,0.997,,Which application?,55.8,FAIL,wrong intent,"predicted app_close, expected voice_control"
+C396,voice commands,hands free mode chalu karo,voice_control,,gujlish,app_open,0.983,,Which application?,54.8,FAIL,wrong intent,"predicted app_open, expected voice_control"
+C397,voice commands,chup thai jao,voice_control,,gujlish,unknown,0.175,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",45.6,FAIL,no match,"predicted unknown, expected voice_control"
+C398,voice commands,javab boli ne sambhdavo,voice_control,,gujlish,unknown,0.134,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",42.8,FAIL,no match,"predicted unknown, expected voice_control"
+C399,voice commands,voice ni language gujarati kari do,voice_control,,gujlish,unknown,0.328,,"I cannot do that yet. I can create, read, update, delete and search files; create Excel and Word files; open and close allowed applications; take screenshots; c",47.7,FAIL,no match,"predicted unknown, expected voice_control"

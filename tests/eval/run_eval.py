@@ -23,6 +23,7 @@ from tests.helpers import fresh_env  # noqa: E402
 CASES = ROOT / "tests" / "eval" / "cases.csv"
 RESULTS = ROOT / "tests" / "eval" / "results.csv"
 BASELINE = ROOT / "tests" / "eval" / "results_baseline.csv"  # first run, kept for the before/after table
+PREVIOUS = ROOT / "tests" / "eval" / "results_previous.csv"  # run before the vision/performance/voice work
 TRAIN_CSV = ROOT / "data" / "intents.csv"
 REPORT = ROOT / "docs" / "EVAL_REPORT.md"
 NO_MATCH = {"unknown", "out_of_scope", "error"}
@@ -30,6 +31,15 @@ SECTION_ORDER = ["chat/identity", "memory", "files", "apps", "system status", "s
                  "documents (attachments)", "general questions", "vision", "performance", "voice commands"]
 LANG_ORDER = ["en", "hi", "gu", "hinglish", "gujlish"]
 MAX_PER_SECTION_IN_WORST = 8
+CAVEAT = '''
+## Caveat: how much to trust the 98% to 100% scores
+
+No eval utterance is in the training file (checked on every run), but the router rules and regexes were written while
+reading these exact failures, so `cases.csv` is no longer a blind test for the rules. Treat it as a regression suite.
+For an honest generalisation estimate, write a fresh set of phrasings and run it once without tuning against it.
+Known gap: "turn on power mode for speed" is not routed to PC performance on purpose, because "power mode" in this
+app is the dangerous run_python switch that is only changed in Settings.
+'''
 NOTE = '''
 ## Note: why the code-mixed macro-F1 was 0.640 for all three models
 
@@ -193,22 +203,30 @@ def write_report(results: list[dict]) -> None:
          "## Pass rate per section", "", "| Section | Pass rate |", "|---|---|"]
     L += [f"| {s} | {pct(*by_sec[s])} |" for s in SECTION_ORDER if s in by_sec]
     if BASELINE.exists():
-        with BASELINE.open(encoding="utf-8", newline="") as f:
-            base_rows = list(csv.DictReader(f))
-        bs, bl = rates(base_rows, "section"), rates(base_rows, "language")
-        ns, nl = rates(results, "section"), rates(results, "language")
-        b_ok = sum(v[0] for v in bs.values())
+        def read(path):
+            with path.open(encoding="utf-8", newline="") as f:
+                return list(csv.DictReader(f))
+        runs = [("First run", read(BASELINE))]
+        if PREVIOUS.exists():
+            runs.append(("Previous run", read(PREVIOUS)))
+        runs.append(("This run", results))
+        by = [rates(r, "section") for _, r in runs]
+        bl = [rates(r, "language") for _, r in runs]
         L += ["", "## Before and after", "",
-              "Before = the first run (`tests/eval/results_baseline.csv`). After = this run, same 399 cases, "
-              "with routing fixes and extra training data. No eval utterance is in the training file.", "",
-              "| Section | Before | After | Change |", "|---|---|---|---|"]
+              "Same 399 cases every time. First run = the untouched assistant. Previous run = after the general-question and "
+              "identity fixes. This run = with vision, performance and voice intents, number words and time/date fixes. "
+              "No eval utterance is in the training file.", "",
+              "| Section | " + " | ".join(n for n, _ in runs) + " | Change vs previous |", "|---|" + "---|" * (len(runs) + 1)]
+        ref = by[-2] if len(by) > 1 else by[0]
         for sct in SECTION_ORDER:
-            if sct in ns:
-                b, a = bs.get(sct, (0, 0)), ns[sct]
-                L.append(f"| {sct} | {pct(*b)} | {pct(*a)} | {100 * a[0] / a[1] - 100 * b[0] / max(b[1], 1):+.0f} pts |")
-        L.append(f"| **all** | {pct(b_ok, total)} | {pct(ok, total)} | {100 * ok / total - 100 * b_ok / total:+.0f} pts |")
-        L += ["", "| Language | Before | After |", "|---|---|---|"]
-        L += [f"| {g} | {pct(*bl.get(g, (0, 0)))} | {pct(*nl[g])} |" for g in LANG_ORDER if g in nl]
+            if sct in by[-1]:
+                cells = [pct(*b.get(sct, (0, 0))) for b in by]
+                a, b = by[-1][sct], ref.get(sct, (0, 1))
+                L.append(f"| {sct} | " + " | ".join(cells) + f" | {100 * a[0] / a[1] - 100 * b[0] / max(b[1], 1):+.0f} pts |")
+        tots = [(sum(v[0] for v in b.values()), sum(v[1] for v in b.values())) for b in by]
+        L.append("| **all** | " + " | ".join(pct(*t) for t in tots) + f" | {100 * tots[-1][0] / tots[-1][1] - 100 * tots[-2][0] / tots[-2][1]:+.0f} pts |")
+        L += ["", "| Language | " + " | ".join(n for n, _ in runs) + " |", "|---|" + "---|" * len(runs)]
+        L += ["| " + g + " | " + " | ".join(pct(*b.get(g, (0, 0))) for b in bl) + " |" for g in LANG_ORDER if g in bl[-1]]
     L += ["", "## Pass rate per language", "", "| Language | Pass rate |", "|---|---|"]
     L += [f"| {g} | {pct(*by_lang[g])} |" for g in LANG_ORDER if g in by_lang]
     L += ["", "## Section by language", "", "| Section | " + " | ".join(LANG_ORDER) + " |", "|---|" + "---|" * len(LANG_ORDER)]

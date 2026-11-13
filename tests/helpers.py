@@ -11,6 +11,8 @@ def fresh_env() -> Path:
     os.environ["ADHYAKSH_DATA_DIR"] = str(d / "data")
     os.environ["ADHYAKSH_MODELS_DIR"] = str(d / "models")
     db.init()
+    from adhyaksh.chat import context
+    context._CTX.clear()  # conversation ids restart in a fresh database; drop stale pending state
     return d
 
 

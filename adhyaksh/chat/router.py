@@ -593,7 +593,7 @@ _DATE_X = re.compile(r"\b(?:what(?:'s|\s+is)\s+(?:the\s+)?(?:date|day)|today'?s\
 _REMEMBER_X = re.compile(r"^(?:remember|note\s+down|note|keep\s+in\s+mind|yaad\s+rakh(?:o|na|jo)|याद\s+रखो|યાદ\s+રાખો)"
                          r"\s+(?:that\s+|ki\s+|ke\s+|कि\s+|કે\s+)?(?P<fact>\S.+)$", re.IGNORECASE)
 _RECALL_X = re.compile(r"^(?:do\s+you\s+(?:remember|recall)|can\s+you\s+(?:remember|recall)|recall|"
-                       r"what\s+did\s+i\s+(?:tell|say|ask)|yaad\s+hai)\b", re.IGNORECASE)
+                       r"wh?at\s+did\s+i\s+(?:tell|say|ask|mention)|yaad\s+hai)\b", re.IGNORECASE)
 _FILE_VERB = re.compile(
     r"^(?P<v>show|view|display|print|cat|read|open|delete|remove|erase|trash|find|locate|search(?:\s+for)?|"
     r"where\s+is|create|make|new|touch)\s+(?:me\s+)?(?:the\s+|a\s+|an\s+|new\s+)?(?:file\s+|named\s+|called\s+)?(?P<f>\S+?)[\s.!?।]*$",
@@ -872,10 +872,10 @@ _POWER = re.compile(
     re.IGNORECASE)
 _NO_TOOL = re.compile(
     r"^(?:please\s+)?(?:send|write|compose|draft)\s+(?:an?\s+|the\s+|my\s+)?(?:e-?mail|mail|sms|text\s+message|message|whatsapp)\b|"
-    r"^(?:please\s+)?(?:call|dial|phone|ring)\s+\w+|^(?:please\s+)?(?:book|order|buy|pay|recharge)\s+\w+",
+    r"^(?:please\s+)?(?:call|dial|phone|ring)\s+(?!me\b|us\b|it\b|this\b)\w+|^(?:please\s+)?(?:book|order|buy|pay|recharge)\s+\w+",
     re.IGNORECASE)
 _VISION_NOUN = re.compile(
-    r"\b(?:photos?|images?|pictures?|pics?|webcam|camera|tasveer|tasvir|foto|vision)\b|तस्वीर|फोटो|इमेज|कैमरा|विज़न|विजन|"
+    r"\b(?:photos?|images?|pictures?|pics?|webcam|camera|tasveer|tasvir|foto|vision)\b|तस्वीर|फोटो|इमेज|कैमरा|कैमरे|विज़न|विजन|"
     r"ફોટો|ફોટામાં|તસવીર|ઇમેજ|કેમેરા|વિઝન", re.IGNORECASE)
 _VISION_CUE = re.compile(
     r"\b(?:what|which|identify|detect|recogni[sz]e|scan|spot|label|name|count|how\s+many|is\s+there|are\s+there|see|sees|"
@@ -902,6 +902,9 @@ _PERF_HOG = re.compile(
     r"कौन\s*सी\s+चीज़|કઈ\s+વસ્તુ", re.IGNORECASE)
 _PERF_PAGE = re.compile(r"(?:performance|performence|परफॉर्मेंस|પરફોર્મન્સ)\s*(?:page|dashboard|पेज|डैशबोर्ड|ડેશબોર્ડ|પેજ)?|"
                         r"\bpc\s+performance\b", re.IGNORECASE)
+_PERF_FREE = re.compile(r"\bmemory\b.{0,10}\b(?:free|khali|khaali)\b.{0,10}\b(?:kar|karo|kari|do|dyo)\b|"
+                        r"मेमोरी\s*खाली\s*(?:करो|कर)|મેમરી\s*ખાલી\s*(?:કરો|કર)", re.IGNORECASE)
+_PERF_CHECK = re.compile(r"\b(?:check|status|how)\b|कितना|કેટલો", re.IGNORECASE)
 _PERF_LAG = re.compile(r"\b(?:lag\w*|hang\w*|freez\w*|sluggish)\b|हैंग|हेंग|હેંગ", re.IGNORECASE)
 
 
@@ -922,8 +925,12 @@ def match_features(text: str) -> Rule | None:
         return Rule("pc_performance", {"kind": "page"})
     if _PERF_BOOST.search(t) and _PERF_THING.search(t) and not _STATUS_ACT_STRICT.search(t):
         return Rule("pc_performance", {"kind": "boost"})
-    if _PERF_LAG.search(t) and _PERF_THING.search(t):
+    if _PERF_FREE.search(t):
+        return Rule("pc_performance", {"kind": "boost"})
+    if _PERF_LAG.search(t) and _PERF_THING.search(t) and not _PERF_CHECK.search(t):
         return Rule("pc_performance", {"kind": "hogs"})
+    if _PERF_LAG.search(t) and _PERF_THING.search(t):  # asked to check how it is doing: read the numbers
+        return Rule("system_status")
     if re.search(r"\b(?:kill|end|stop|terminate)\b.{0,15}\b(?:heaviest|biggest|top|worst)\b.{0,15}\bprocess", t, re.IGNORECASE):
         return Rule("pc_performance", {"kind": "kill"})
     if _PERF_PAGE.fullmatch(t.strip(" .!?")) or re.fullmatch(r"(?:performence|performance)\s+boost", t.strip(" .!?"), re.IGNORECASE):

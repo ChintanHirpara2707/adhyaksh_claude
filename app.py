@@ -16,7 +16,7 @@ def _boot() -> bool:
 
 _boot()
 
-PAGES = [("chat", "Chat"), ("documents", "Documents"), ("memory", "Memory"), ("tools", "Tools"),
+PAGES = [("chat", "Chat"), ("memory", "Memory"), ("tools", "Tools"),
          ("model_lab", "Model Lab"), ("activity", "Activity"), ("settings", "Settings"),
          ("vision", "Object Detection"), ("performance", "PC Performance")]
 pages = [

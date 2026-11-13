@@ -4,6 +4,7 @@ import time
 from adhyaksh import config, db
 from adhyaksh.chat import context, engine, identity
 from adhyaksh.nlu import dataset
+from adhyaksh.rag import loader
 from adhyaksh.ui import components as ui
 from adhyaksh.voice import bridge
 
@@ -87,6 +88,17 @@ for m in history:
 #             if result:
 #                 st.code(result)
 
+with st.expander("Attached documents"):
+    _docs = loader.list_documents()
+    if not _docs:
+        st.caption("None yet. Use the paperclip in the message box to attach a file.")
+    for _d in _docs:
+        _c1, _c2 = st.columns([5, 1])
+        _c1.caption(f"{_d['filename']} - {_d['chunks']} passages")
+        if _c2.button("Remove", key=f"rmdoc_{_d['id']}"):
+            loader.delete_document(int(_d["id"]))
+            st.rerun()
+
 pending = context.get(cid).pending_confirm
 if pending:
     choice = ui.confirmation_card(pending["action"].replace("_", " "), pending["target"], key=f"c_{pending['token']}")
@@ -133,11 +145,14 @@ if new_mode != mode:
     st.session_state["suggest_switch"] = False
     st.rerun()
 
-prompt = st.chat_input("Type a command")
+prompt = st.chat_input("Type a command or attach a PDF, DOCX or TXT file", accept_file="multiple",
+                       file_type=["pdf", "docx", "txt", "md", "csv"])
 if prompt:
+    text = (getattr(prompt, "text", None) if not isinstance(prompt, str) else prompt) or ""
+    files = [] if isinstance(prompt, str) else [(f.name, f.getvalue()) for f in (prompt.files or [])]
     st.session_state["suggest_switch"] = False
     with st.spinner("Working"):
-        result = engine.handle_message(prompt, cid, mode=mode)
+        result = engine.handle_message(text, cid, mode=mode, attachments=files)
     if result.data and result.data.get("suggest_mode") == "cowork":
         st.session_state["suggest_switch"] = True
     st.rerun()

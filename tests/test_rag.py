@@ -95,3 +95,16 @@ def test_llm_requires_consent_and_key():
     assert llm.ask("hi").error_code == E_NO_API_KEY
     assert llm.mask("abcd1234wxyz") == "********wxyz" and llm.get_provider() is None
     assert retriever.embedding_mode() == "tfidf"
+
+
+def test_chat_attachment_is_indexed_and_answered():
+    from adhyaksh.chat import context, engine
+    fresh_env()
+    cid = context.new_conversation()
+    data = b"The Surat branch opened in March and employs forty technicians."
+    r = engine.handle_message("when did the Surat branch open", cid, attachments=[("branch.txt", data)]).data
+    assert "Indexed: branch.txt" in r["reply"] and "March" in r["reply"] and r["intent"] == "doc_question"
+    r2 = engine.handle_message("", cid, attachments=[("more.txt", b"Plain extra note about pumps.")]).data
+    assert r2["intent"] == "attachment" and "Indexed" in r2["reply"]
+    bad = engine.handle_message("", cid, attachments=[("x.exe", b"MZ")]).data
+    assert "Could not index" in bad["reply"]

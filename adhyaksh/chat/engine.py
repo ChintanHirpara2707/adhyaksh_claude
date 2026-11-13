@@ -497,17 +497,61 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
     return r
 
 
-def handle_message(text: str, conversation_id: int, voice: bool = False, mode: str = "cowork") -> Result:
-    """Process one user message and return reply, intent, confidence, action, timing."""
+def _ingest_attachments(attachments: list[tuple[str, bytes]]) -> tuple[list[str], list[str]]:
+    """Index attached files. Returns (ok lines, failure lines)."""
+    from adhyaksh.rag import loader
+    ok, bad = [], []
+    for name, data in attachments:
+        res = loader.ingest_bytes(name, data)
+        if res.ok:
+            ok.append(f"{res.data['filename']} ({res.data['chunks']} passages)")
+        else:
+            bad.append(f"{name}: {res.message.rstrip('.')}")
+    return ok, bad
+
+
+def _attachment_reply(text: str, ok: list[str], bad: list[str], ctx: context.Context,
+                      convo_id: int, lang: str, mode: str) -> _Reply:
+    note = ""
+    if ok:
+        note += "Indexed: " + ", ".join(ok) + ".\n"
+    if bad:
+        note += "Could not index: " + "; ".join(bad) + ".\n"
+    if not text:
+        return _Reply(note.strip() + (" Ask me anything about it." if ok else ""), "attachment", action="attach")
+    if ok:
+        res = answerer.answer(text)
+        if res.data.get("found"):
+            return _Reply(note + "\n" + res.data["answer"], "doc_question", action="doc_answer",
+                          sources=res.data["sources"])
+    r = _process(text, ctx, convo_id, lang, mode=mode)
+    r.text = note + ("\n" if note else "") + r.text
+    return r
+
+
+def handle_message(text: str, conversation_id: int, voice: bool = False, mode: str = "cowork",
+                   attachments: list[tuple[str, bytes]] | None = None) -> Result:
+    """Process one user message and return reply, intent, confidence, action, timing.
+
+    attachments: optional (filename, bytes) pairs; they are indexed and used for document Q&A."""
     t0 = time.perf_counter()
     text = (text or "").strip()[:MAX_MESSAGE]
-    if not text:
+    attachments = attachments or []
+    if not text and not attachments:
         return Result.failure(E_LOW_CONFIDENCE, "Empty message.")
-    lang = detect_lang(text)
-    context.save_message(conversation_id, "user", text)
+    lang = detect_lang(text) if text else "en"
+    shown = text
+    if attachments:
+        names = ", ".join(n for n, _ in attachments)
+        shown = (text + "\n" if text else "") + f"[Attached: {names}]"
+    context.save_message(conversation_id, "user", shown)
     ctx = context.get(conversation_id)
     try:
-        r = _process(text, ctx, conversation_id, lang, mode=mode)
+        if attachments:
+            ok, bad = _ingest_attachments(attachments)
+            r = _attachment_reply(text, ok, bad, ctx, conversation_id, lang, mode)
+        else:
+            r = _process(text, ctx, conversation_id, lang, mode=mode)
     except Exception as exc:  # never raise to the UI for expected failures
         r = _Reply(_t("error", lang, reason=f"internal error ({type(exc).__name__})"), "error", 0.0)
     ms = (time.perf_counter() - t0) * 1000

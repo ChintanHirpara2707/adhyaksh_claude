@@ -10,7 +10,7 @@ How to run / test / train:
 - Train: `python -m adhyaksh.nlu.train --all`; rewrites `docs/RESULTS.md`.
 
 Folder map (1 line per folder):
-- `pages/` — Streamlit pages (chat, documents, memory, tools, model_lab, activity, settings, vision, performance)
+- `pages/` — Streamlit pages (chat, memory, tools, model_lab, activity, settings, vision, performance)
 - `adhyaksh/` — package: chat engine, NLU models, RAG, tools, safety, UI, voice, vision, LLM providers
 - `tests/` — pytest suite (no API key or network needed)
 - `data/` — intents.csv, test_author.csv, test_codemixed.csv, adhyaksh.db (git-ignored)

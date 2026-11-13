@@ -11,7 +11,7 @@ from adhyaksh.result import E_ACTION_FAILED, E_FILE_NOT_FOUND, Result
 from adhyaksh.tools.files import sanitize_name
 
 MAX_BYTES = 25 * 1024 * 1024
-EXTENSIONS = {".pdf", ".docx", ".txt"}
+EXTENSIONS = {".pdf", ".docx", ".txt", ".md", ".csv"}
 
 
 def _sections(text: str, size: int = 2000) -> list[tuple[str, str]]:
@@ -48,7 +48,7 @@ def ingest(path: str) -> Result:
     if not src.is_file():
         return Result.failure(E_FILE_NOT_FOUND, "The file was not found.")
     if src.suffix.lower() not in EXTENSIONS:
-        return Result.failure(E_ACTION_FAILED, "Only PDF, DOCX and TXT files are supported.")
+        return Result.failure(E_ACTION_FAILED, "Only PDF, DOCX, TXT, MD and CSV files are supported.")
     if src.stat().st_size > MAX_BYTES:
         return Result.failure(E_ACTION_FAILED, "The file is larger than 25 MB.")
     try:

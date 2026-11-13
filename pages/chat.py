@@ -109,20 +109,28 @@ if pending:
 last = next((m for m in reversed(history) if m["role"] == "assistant"), None)
 last_id = last["id"] if last else 0
 st.session_state.setdefault("seen_assistant", last_id)
-speak = config.get_bool("voice_reply") and last is not None and last_id != st.session_state["seen_assistant"]
+# Replies are spoken when "Speak replies aloud" is on, or when the reply answers a spoken command.
+new_reply = last is not None and last_id != st.session_state["seen_assistant"]
+speak = new_reply and (config.get_bool("voice_reply") or st.session_state.pop("voice_reply_pending", False))
 heard = bridge.voice_input(theme_name=config.get("theme") or "light", speak_text=last["content"] if speak else "",
-                           speak_nonce=str(last_id) if speak else "")
-if speak:
+                           speak_nonce=str(last_id) if speak else "",
+                           handsfree_default=config.get_bool("voice_handsfree"),
+                           wake_default=config.get_bool("voice_wake_word"))
+if new_reply:
     st.session_state["seen_assistant"] = last_id
 if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
     st.session_state["voice_nonce"] = heard["nonce"]
-    st.caption(f"Heard: {heard['text']}")
-    st.session_state["suggest_switch"] = False
-    with st.spinner("Working"):
-        result = engine.handle_message(heard["text"], cid, voice=True, mode=mode)
-    if result.data and result.data.get("suggest_mode") == "cowork":
-        st.session_state["suggest_switch"] = True
-    st.rerun()
+    config.set_value("voice_handsfree", "true" if heard.get("handsfree") else "false")
+    config.set_value("voice_wake_word", "true" if heard.get("wake") else "false")
+    if not heard.get("setting") and heard.get("text"):
+        st.caption(f"Heard: {heard['text']}")
+        st.session_state["suggest_switch"] = False
+        with st.spinner("Working"):
+            result = engine.handle_message(heard["text"], cid, voice=True, mode=mode)
+        st.session_state["voice_reply_pending"] = True
+        if result.data and result.data.get("suggest_mode") == "cowork":
+            st.session_state["suggest_switch"] = True
+        st.rerun()
 
 # Mode toggle: small control directly above the chat input.
 st.divider()

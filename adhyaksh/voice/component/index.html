@@ -8,9 +8,12 @@
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 2px; }
   select, button { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 12px; }
   button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-  button:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   button:disabled { opacity: .6; cursor: not-allowed; }
+  label.chk { display: inline-flex; gap: 4px; align-items: center; }
   #status { color: var(--muted); }
+  #dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); display: inline-block; }
+  #dot.on { background: var(--accent); }
 </style>
 </head>
 <body>
@@ -21,64 +24,150 @@
     <option value="hi-IN">Hindi</option>
     <option value="gu-IN">Gujarati</option>
   </select>
-  <button id="mic" type="button" class="primary">Start listening</button>
+  <button id="mic" type="button" class="primary">Speak once</button>
+  <button id="hf" type="button" aria-pressed="false">Start hands-free</button>
+  <label class="chk" for="wake"><input id="wake" type="checkbox"> Wake word "Adhyaksh"</label>
+  <button id="quiet" type="button">Stop speaking</button>
+  <span id="dot" aria-hidden="true"></span>
   <span id="status" role="status" aria-live="polite">Ready</span>
 </div>
 <script>
   const root = document.documentElement;
   const statusEl = document.getElementById("status");
   const micBtn = document.getElementById("mic");
+  const hfBtn = document.getElementById("hf");
+  const quietBtn = document.getElementById("quiet");
+  const wakeChk = document.getElementById("wake");
   const langSel = document.getElementById("lang");
+  const dot = document.getElementById("dot");
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let rec = null, listening = false, lastSpoken = "", langInit = false;
+  let rec = null, running = false, handsfree = false, speaking = false, armedUntil = 0;
+  let lastSpoken = "", langInit = false, stateInit = false, restartTimer = null;
 
   function post(type, data) { window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: type }, data), "*"); }
   function fit() { post("streamlit:setFrameHeight", { height: document.body.scrollHeight + 6 }); }
   function setStatus(t) { statusEl.textContent = t; fit(); }
   function emit(v) { post("streamlit:setComponentValue", { value: v, dataType: "json" }); }
+  function paint() {
+    hfBtn.textContent = handsfree ? "Stop hands-free" : "Start hands-free";
+    hfBtn.setAttribute("aria-pressed", handsfree ? "true" : "false");
+    hfBtn.className = handsfree ? "primary" : "";
+    dot.className = running ? "on" : "";
+  }
 
   const ERRORS = {
     "not-allowed": "Microphone permission was denied. Allow it in the browser address bar.",
     "service-not-allowed": "Speech recognition is blocked in this browser.",
-    "no-speech": "No speech was detected. Try again.",
     "audio-capture": "No microphone was found.",
     "network": "Speech recognition needs an internet connection in this browser.",
     "language-not-supported": "This language is not supported by the browser speech service."
   };
+  const FATAL = { "not-allowed": 1, "service-not-allowed": 1, "audio-capture": 1, "language-not-supported": 1 };
+
+  // Spoken commands handled inside the browser (never sent to the assistant).
+  const STOP_LISTEN = /^(stop listening|stop hands[- ]?free|hands[- ]?free off|that'?s all|sunna band karo|sunna band|सुनना बंद करो|સાંભળવાનું બંધ કરો)\b/i;
+  const WAKE = /^(?:hey |ok |okay |hello )?(?:adhyaksh|adhyaksha|adhyaksa|adhyakash|अध्यक्ष|અધ્યક્ષ)\b[\s,.:!-]*/i;
+
+  function handle(text) {
+    let t = text.trim();
+    if (!t) return;
+    if (STOP_LISTEN.test(t)) { stopAll("Hands-free stopped"); return; }
+    if (wakeChk.checked && handsfree) {
+      const m = t.match(WAKE);
+      if (m) {
+        t = t.slice(m[0].length).trim();
+        if (!t) { armedUntil = Date.now() + 10000; setStatus("Yes? I am listening"); return; }
+      } else if (Date.now() > armedUntil) {
+        setStatus("Waiting for the wake word 'Adhyaksh'");
+        return;
+      }
+      armedUntil = 0;
+    }
+    setStatus("Heard: " + t);
+    emit({ text: t, lang: langSel.value, nonce: String(Date.now()) + Math.random().toString(36).slice(2, 6),
+           handsfree: handsfree, wake: wakeChk.checked });
+  }
+
+  function startRec() {
+    if (!rec || running || speaking) return;
+    rec.lang = langSel.value;
+    rec.continuous = handsfree;
+    try { rec.start(); } catch (err) { /* already started */ }
+  }
+  function stopAll(msg) {
+    handsfree = false; clearTimeout(restartTimer);
+    if (rec && running) { try { rec.stop(); } catch (err) {} }
+    paint(); setStatus(msg || "Ready");
+  }
 
   if (!SR) {
-    micBtn.disabled = true;
+    micBtn.disabled = true; hfBtn.disabled = true; wakeChk.disabled = true;
     setStatus("Voice input is not supported in this browser. Use Chrome or Edge, or type your message.");
   } else {
     rec = new SR();
-    rec.interimResults = false;
+    rec.interimResults = true;
     rec.maxAlternatives = 1;
-    rec.onstart = function () { listening = true; micBtn.textContent = "Stop listening"; setStatus("Listening"); };
-    rec.onend = function () { listening = false; micBtn.textContent = "Start listening"; if (statusEl.textContent === "Listening") setStatus("Ready"); };
-    rec.onerror = function (e) { setStatus(ERRORS[e.error] || ("Voice error: " + e.error)); };
+    rec.onstart = function () {
+      running = true; paint();
+      setStatus(handsfree ? (wakeChk.checked ? "Hands-free: say 'Adhyaksh' then your command" : "Hands-free: listening") : "Listening");
+    };
+    rec.onend = function () {
+      running = false; paint();
+      if (handsfree && !speaking) { clearTimeout(restartTimer); restartTimer = setTimeout(startRec, 350); }
+      else if (!speaking && /^Listening/.test(statusEl.textContent)) setStatus("Ready");
+    };
+    rec.onerror = function (e) {
+      if (e.error === "no-speech" || e.error === "aborted") return;
+      if (FATAL[e.error]) handsfree = false;
+      setStatus(ERRORS[e.error] || ("Voice error: " + e.error)); paint();
+    };
     rec.onresult = function (e) {
-      const text = e.results[0][0].transcript.trim();
-      if (text) { setStatus("Heard: " + text); emit({ text: text, lang: langSel.value, nonce: String(Date.now()) }); }
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        if (r.isFinal) handle(r[0].transcript);
+        else if (!wakeChk.checked) setStatus("Hearing: " + r[0].transcript);
+      }
     };
     micBtn.addEventListener("click", function () {
-      if (listening) { rec.stop(); return; }
-      rec.lang = langSel.value;
-      try { rec.start(); } catch (err) { setStatus("Could not start listening. Try again."); }
+      if (running) { stopAll("Ready"); return; }
+      handsfree = false; startRec();
+    });
+    hfBtn.addEventListener("click", function () {
+      if (handsfree) { stopAll("Hands-free stopped"); return; }
+      handsfree = true; paint();
+      if (running) { try { rec.stop(); } catch (err) {} } else startRec();
+      emit({ setting: true, handsfree: true, wake: wakeChk.checked, nonce: "s" + Date.now() });
+    });
+    wakeChk.addEventListener("change", function () {
+      emit({ setting: true, handsfree: handsfree, wake: wakeChk.checked, nonce: "s" + Date.now() });
     });
   }
 
+  function pickVoice(code) {
+    const voices = window.speechSynthesis.getVoices();
+    const base = code.slice(0, 2).toLowerCase();
+    return voices.find(function (v) { return v.lang.toLowerCase() === code.toLowerCase(); }) ||
+           voices.find(function (v) { return v.lang.toLowerCase().indexOf(base) === 0; }) || null;
+  }
   function speak(text) {
     if (!("speechSynthesis" in window)) { setStatus("Spoken replies are not supported in this browser."); return; }
     const code = langSel.value;
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length && !voices.some(function (v) { return v.lang.toLowerCase().indexOf(code.slice(0, 2)) === 0; })) {
-      setStatus("No installed voice for this language on this system.");
-    }
+    const v = pickVoice(code);
+    if (!v && window.speechSynthesis.getVoices().length) setStatus("No installed voice for this language on this system.");
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = code;
+    u.lang = code; if (v) u.voice = v;
+    // Do not listen to our own voice: pause recognition while speaking, then resume.
+    speaking = true;
+    if (rec && running) { try { rec.stop(); } catch (err) {} }
+    function done() { speaking = false; if (handsfree) { clearTimeout(restartTimer); restartTimer = setTimeout(startRec, 400); } }
+    u.onend = done; u.onerror = done;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   }
+  quietBtn.addEventListener("click", function () {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    speaking = false; if (handsfree) startRec();
+  });
 
   window.addEventListener("message", function (event) {
     if (!event.data || event.data.type !== "streamlit:render") return;
@@ -86,11 +175,16 @@
     const t = a.tokens || {};
     Object.keys(t).forEach(function (k) { root.style.setProperty("--" + k.replace(/_/g, "-"), t[k]); });
     if (!langInit && a.lang) { langSel.value = a.lang; langInit = true; }
+    if (!stateInit) {
+      stateInit = true;
+      wakeChk.checked = !!a.wake_default;
+      if (a.handsfree_default && SR) { handsfree = true; paint(); startRec(); }
+    }
     if (a.speak_nonce && a.speak_nonce !== lastSpoken && a.speak_text) { lastSpoken = a.speak_nonce; speak(a.speak_text); }
     fit();
   });
   post("streamlit:componentReady", { apiVersion: 1 });
-  fit();
+  paint(); fit();
 </script>
 </body>
 </html>

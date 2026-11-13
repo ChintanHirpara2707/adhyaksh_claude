@@ -85,6 +85,8 @@ DEFAULTS: dict[str, str] = {
     "active_model": "",
     "cloud_consent": "false",
     "voice_reply": "false",
+    "voice_handsfree": "false",  # start listening automatically and speak replies to spoken commands
+    "voice_wake_word": "false",  # in hands-free mode, only act on phrases that start with "Adhyaksh"
     "llm_provider": "",
     "allowed_folders": json.dumps([str(default_workspace())]),
     "default_work_folder": str(default_workspace()),

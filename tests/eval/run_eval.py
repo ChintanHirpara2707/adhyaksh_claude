@@ -58,6 +58,9 @@ def build_env():
     train.train_all(42, write_report=False)
 
 
+CALL_ARGS: list[str] = []  # arguments of every mocked tool call in the current case
+
+
 def mocked_tools(calls: list[str]):
     """Patch every tool the engine can call. Each mock records its name and returns a plausible success."""
     from adhyaksh.chat import engine
@@ -69,6 +72,8 @@ def mocked_tools(calls: list[str]):
     def rec(name, data):
         def fn(*a, **k):
             calls.append(name)
+            CALL_ARGS.append(" ".join(str(x) for x in a if isinstance(x, (str, int))) + " "
+                             + " ".join(str(v) for kk, v in k.items() if kk != "ctx" and isinstance(v, (str, int))))
             return Result.success(data(*a, **k) if callable(data) else data)
         return fn
 
@@ -121,6 +126,7 @@ def run_case(row: dict, calls: list[str]) -> dict:
     outcome = [t for t in (row["expected_outcome"] or "").split(";") if t]
     attachments = [("sample.txt", b"mock document text")] if "attach" in outcome else None
     calls.clear()
+    CALL_ARGS.clear()
     t0 = time.perf_counter()
     try:
         res = engine.handle_message(row["utterance"], cid, attachments=attachments)
@@ -138,12 +144,17 @@ def run_case(row: dict, calls: list[str]) -> dict:
             problems.append(f"reply lacks '{tok[6:]}'")
         elif tok == "attach" and "ingest_bytes" not in calls:
             problems.append("attachment was not indexed")
+        elif tok.startswith("arg:") and not any(tok[4:].casefold() in a.casefold() for a in CALL_ARGS):
+            problems.append(f"expected tool argument '{tok[4:]}', got {[a.strip() for a in CALL_ARGS] or 'none'}")
+        elif tok == "notool" and tools:
+            problems.append(f"expected tool none, called {tools}")
     intent_ok = predicted == row["expected_intent"]
     passed = intent_ok and not problems
     if passed:
         reason = ""
     elif intent_ok:
-        reason = "wrong tool" if any(p.startswith("expected tool") for p in problems) else "wrong reply"
+        reason = ("wrong tool" if any(p.startswith("expected tool") and "argument" not in p for p in problems)
+                  else "wrong argument" if any("argument" in p for p in problems) else "wrong reply")
     elif predicted in NO_MATCH or predicted == "crash" or data.get("action") == "low_confidence":
         reason = "no match"
     else:
@@ -182,7 +193,7 @@ def write_report(results: list[dict]) -> None:
             d[k][0] += r["pass"] == "PASS"
     fails = [r for r in results if r["pass"] == "FAIL"]
     reasons = Counter(r["reason"] for r in fails)
-    prio = {"wrong tool": 0, "wrong intent": 1, "wrong reply": 2, "no match": 3}
+    prio = {"wrong tool": 0, "wrong argument": 0, "wrong intent": 1, "wrong reply": 2, "no match": 3}
     ranked = sorted(fails, key=lambda r: (prio[r["reason"]], -r["confidence"]))
     worst, per = [], Counter()
     for r in ranked:

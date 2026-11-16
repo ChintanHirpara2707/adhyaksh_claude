@@ -70,8 +70,14 @@ def schemas() -> list[dict]:
     ``run_python`` is omitted unless Power mode is enabled in Settings.
     """
     include_power = config.get_bool("power_mode")
+
+    def norm(p: dict) -> dict:
+        if p.get("type") == "object":
+            return p
+        return {"type": "object", "properties": p, "required": list(p)}  # bare property maps become object schemas
+
     return [
-        {"name": t.name, "description": t.description, "parameters": t.parameters}
+        {"name": t.name, "description": t.description, "parameters": norm(t.parameters)}
         for t in _REGISTRY.values()
         if not (t.name == "run_python" and not include_power)
     ]
@@ -504,3 +510,70 @@ register(
     2,
     _run_python,
 )
+
+
+# ---------------------------------------------------------------------------
+# Tools added for the native tool-calling agent (P1)
+# ---------------------------------------------------------------------------
+
+def _memory_list(arguments: dict, ctx: dict) -> Result:
+    facts = store.list_facts()
+    return Result.success({"count": len(facts), "facts": [f["fact"][:300] for f in facts[:20]]})
+
+
+def _get_time(arguments: dict, ctx: dict) -> Result:
+    from datetime import datetime
+    now = datetime.now()
+    return Result.success({"time": now.strftime("%I:%M %p"), "date": now.strftime("%A %d %B %Y")})
+
+
+def _set_user_name(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.chat import identity
+    name = " ".join(str(arguments.get("name", "")).split())[:60]
+    if not name:
+        return Result.failure(E_ACTION_FAILED, "No name was given.")
+    identity.save_name(name)
+    return Result.success({"name": name})
+
+
+def _voice_control(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import features
+    res = features.voice_command(str(arguments.get("action", "")), str(arguments.get("value", "")), ctx=ctx)
+    if res.ok:
+        return Result.success({**res.data, "voice_cmd": dict(res.data)})
+    return res
+
+
+def _open_page(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import features
+    res = features.open_page(str(arguments.get("page", "")), ctx=ctx)
+    if res.ok:
+        return Result.success({**res.data, "open_page": res.data["page"]})
+    return res
+
+
+def _performance_report(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import features
+    return features.perf_report(ctx=ctx)
+
+
+def _clean_temp_files(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import features
+    return features.temp_clean(ctx=ctx, token=ctx.get("token"))
+
+
+register("memory_list", "List everything the user asked the assistant to remember.", {"type": "object", "properties": {}}, 0, _memory_list)
+register("get_time", "Get the current local time and date.", {"type": "object", "properties": {}}, 0, _get_time)
+register("set_user_name", "Save the name the user wants to be called.",
+         {"type": "object", "properties": {"name": {"type": "string", "description": "The user's name."}}, "required": ["name"]}, 1, _set_user_name)
+register("voice_control", "Change voice settings: start or stop hands-free listening, stop speaking, speak replies aloud or not, "
+         "wake word on or off, or set the voice language.",
+         {"type": "object", "properties": {
+             "action": {"type": "string", "enum": ["start", "stop", "quiet", "speak_on", "speak_off", "wake_on", "wake_off", "lang"]},
+             "value": {"type": "string", "description": "For action lang: en-IN, hi-IN or gu-IN."}}, "required": ["action"]}, 1, _voice_control)
+register("open_page", "Show one of the application's pages: vision (Object Detection) or performance (PC Performance).",
+         {"type": "object", "properties": {"page": {"type": "string", "enum": ["vision", "performance"]}}, "required": ["page"]}, 0, _open_page)
+register("performance_report", "CPU, RAM and disk use now, plus the applications using the most memory.",
+         {"type": "object", "properties": {}}, 0, _performance_report)
+register("clean_temp_files", "Delete temporary files older than one day to free disk space (needs confirmation).",
+         {"type": "object", "properties": {}}, 2, _clean_temp_files)

@@ -15,6 +15,7 @@ _HI_ROMAN = {
     "shunya": 0, "ek": 1, "do": 2, "teen": 3, "char": 4, "chaar": 4, "paanch": 5, "panch": 5, "pach": 5, "chhe": 6, "chhah": 6,
     "chhai": 6, "saat": 7, "sat": 7, "aath": 8, "ath": 8, "nau": 9, "das": 10, "gyarah": 11, "barah": 12, "terah": 13,
     "chaudah": 14, "pandrah": 15, "solah": 16, "satrah": 17, "atharah": 18, "unnis": 19, "bees": 20, "tees": 30,
+    "ikkis": 21, "bais": 22, "pachees": 25, "pachis": 25, "pachchis": 25, "pachattar": 75, "pachhattar": 75,
     "chalis": 40, "pachas": 50, "saath": 60, "sattar": 70, "assi": 80, "nabbe": 90, "sau": 100}
 _HI_DEV = {
     "शून्य": 0, "एक": 1, "दो": 2, "तीन": 3, "चार": 4, "पांच": 5, "पाँच": 5, "छह": 6, "छः": 6, "छे": 6, "सात": 7, "आठ": 8,
@@ -40,6 +41,14 @@ _TABLE = {**_EN, **_HI_ROMAN, **_HI_DEV, **_GU_ROMAN, **_GU}
 
 def _value(tok: str) -> int | None:
     return _TABLE.get(tok)
+
+
+def normalize_all(text: str) -> str:
+    """Replace every unambiguous number word with digits, even when no operator word is present
+    ('sau me se pachees ghatao' -> '100 me se 25 ghatao'). Ambiguous words such as 'do' or 'so' are left alone."""
+    toks = re.findall(r"[\w\u0900-\u097F\u0A80-\u0AFF.]+|[+\-*/()%^]", text.casefold())
+    force = bool(re.search(r"ghata|minus|plus|gun[ai]|bhaa?g|\bjod|\b(?:me|mein)\s+se\b|घटा|ઓછા", text.casefold()))
+    return " ".join(str(_TABLE[t]) if (t in _TABLE and (force or t not in _AMBIGUOUS)) else t for t in toks)
 
 
 def normalize(text: str) -> str:

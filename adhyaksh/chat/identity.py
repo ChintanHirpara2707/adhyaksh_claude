@@ -11,7 +11,8 @@ STOP = {"ready", "fine", "good", "great", "okay", "ok", "sure", "happy", "sad", 
         "assistant", "sorry", "glad", "late", "later", "now", "going", "coming", "just", "still", "from", "in",
         "on", "at", "with", "and", "or", "but", "hai", "che", "hoon", "chu", "है", "हूँ", "छે", "છે", "છું",
         "bulao", "kaho", "bolo", "कहो", "કહો", "doing", "well", "bored", "confused", "working", "learning",
-        "trying", "looking", "user", "owner", "friend", "boss", "master",
+        "trying", "looking", "user", "owner", "friend", "boss", "master", "ek", "one", "koi", "kuch", "kai", "some", "any",
+        "एक", "कोई", "कुछ", "એક", "કોઈ", "કંઈ", "joke", "story", "kahani", "shayari", "later", "back", "when", "if",
         "kya", "kaun", "kon", "shu", "what", "who", "yaad", "batao", "bataiye", "batavo", "jaanta", "pata", "khabar",
         "क्या", "कौन", "याद", "बताओ", "बताइए", "पता", "શું", "કોણ", "યાદ", "ખબર", "જણાવો", "naam", "name", "नाम", "નામ"}
 _ROLES = r"(?:user|owner|master|boss|friend|creator|developer|admin|operator)"

@@ -100,6 +100,45 @@ class Provider(ABC):
     def model(self) -> str:
         return config.get(f"{self.name}_model")
 
+    # ---- native tool calling -------------------------------------------------------------
+    def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
+        """Provider-specific call. Returns {"text": str, "tool_calls": [{"id", "name", "arguments": dict}]}."""
+        raise NotImplementedError
+
+    def chat(self, messages: list[dict], tools: list[dict] | None = None, timeout: float = 25.0,
+             max_tokens: int = 1024) -> Result:
+        """Chat with optional tools. Neutral message format: role system/user/assistant/tool; an assistant
+        message may carry tool_calls; a tool message carries tool_call_id, name and content.
+        Two attempts with a short pause; a timeout on every request; clear failure messages."""
+        import time
+
+        import requests
+
+        self.max_tokens = max_tokens
+        last, code = "", "E_LLM_FAILED"
+        for attempt in range(2):
+            try:
+                out = self._chat(messages, tools or [], timeout)
+                if out.get("text") or out.get("tool_calls"):
+                    return Result.success(out)
+                last = "empty response"
+            except requests.Timeout:
+                last, code = "timeout", E_TIMEOUT
+            except requests.HTTPError as exc:
+                status = getattr(exc.response, "status_code", 0)
+                last = f"HTTP {status}"
+                if status in (400, 401, 403, 404):  # will not succeed on retry
+                    hint = {400: "the request was rejected (the model may not support tools)", 401: "the API key was rejected",
+                            403: "access was denied", 404: "the model name was not found"}[status]
+                    return Result.failure("E_LLM_FAILED", f"The language model call failed: {hint}.")
+            except requests.ConnectionError:
+                last = "could not connect (is the service running and the network available?)"
+            except (requests.RequestException, ValueError, KeyError, IndexError, TypeError) as exc:
+                last = f"unexpected response ({type(exc).__name__})"
+            if attempt == 0:
+                time.sleep(0.5)
+        return Result.failure(code, f"The language model did not respond: {last}.")
+
 
 def get_provider() -> Provider | None:
     name = config.get("llm_provider")
@@ -122,6 +161,17 @@ def available() -> bool:
     if get_provider() is None:
         return False
     return is_local() or config.get_bool("cloud_consent")
+
+
+def chat(messages: list[dict], tools: list[dict] | None = None, timeout: float = ANSWER_TIMEOUT,
+         max_tokens: int = ANSWER_TOKENS) -> Result:
+    """Tool-calling chat with the configured provider: a local model, or a cloud one only with consent and a key."""
+    if not is_local() and not config.get_bool("cloud_consent"):
+        return Result.failure(E_BLOCKED, "Cloud use is not enabled in Settings.")
+    provider = get_provider()
+    if provider is None:
+        return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
+    return provider.chat(messages, tools, timeout=timeout, max_tokens=max_tokens)
 
 
 def ask(prompt: str, timeout: float = 8.0, max_tokens: int = MAX_TOKENS) -> Result:

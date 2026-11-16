@@ -49,7 +49,10 @@ with st.form("llm"):
     ollama_model = st.text_input("Ollama model (installed locally, e.g. llama3.2:3b)", value=config.get("ollama_model"))
     embed_model = st.text_input("Gemini embedding model", value=config.get("embedding_model"))
     consent = st.checkbox("Allow sending questions and passages to the selected cloud provider (Groq, Gemini, Wikipedia lookup)", value=config.get_bool("cloud_consent"))
+    agent_on = st.checkbox("Let the language model use tools (agent). Every action still passes the safety gateway",
+                           value=config.get("agent_mode") != "off")
     if st.form_submit_button("Save language model settings", type="primary"):
+        config.set_value("agent_mode", "auto" if agent_on else "off")
         config.set_value("llm_provider", provider)
         config.set_value("groq_model", groq_model.strip())
         config.set_value("gemini_model", gemini_model.strip())

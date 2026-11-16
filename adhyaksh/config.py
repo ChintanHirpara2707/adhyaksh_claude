@@ -84,6 +84,7 @@ DEFAULTS: dict[str, str] = {
     "conversation_turns": "8",
     "active_model": "",
     "cloud_consent": "false",
+    "agent_mode": "auto",  # "auto": use the tool-calling agent whenever a language model is available; "off": rules only
     "voice_reply": "false",
     "voice_handsfree": "false",  # start listening automatically and speak replies to spoken commands
     "voice_wake_word": "false",  # in hands-free mode, only act on phrases that start with "Adhyaksh"

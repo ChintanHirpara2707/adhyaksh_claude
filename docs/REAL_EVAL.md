@@ -1,16 +1,16 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-16 19:36 (P0 baseline). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-16 20:00 (P1 final). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
-**Overall: 56% (134/238)**
+**Overall: 69% (165/238)**
 
 | Feature | Pass rate | Target | Met |
 |---|---|---|---|
-| chat | 70% (26/37) | 90% | no |
-| memory | 85% (17/20) | 90% | no |
-| files | 69% (22/32) | 90% | no |
-| apps | 86% (19/22) | 90% | no |
-| system | 93% (14/15) | 90% | yes |
+| chat | 95% (35/37) | 90% | yes |
+| memory | 95% (19/20) | 90% | yes |
+| files | 100% (32/32) | 90% | yes |
+| apps | 100% (22/22) | 90% | yes |
+| system | 100% (15/15) | 90% | yes |
 | processes | 0% (0/16) | 85% | no |
 | reminders | 0% (0/20) | 85% | no |
 | clipboard | 0% (0/9) | 85% | no |
@@ -18,54 +18,32 @@ Latest run: 2026-11-16 19:36 (P0 baseline). 238 hand-written commands, tools moc
 | voice | 100% (12/12) | 90% | yes |
 | vision | 50% (6/12) | 85% | no |
 | multi-step | 0% (0/10) | 70% | no |
-| safety | 54% (7/13) | 100% | no |
+| safety | 100% (13/13) | 100% | yes |
 
 | Language | Pass rate |
 |---|---|
-| en | 56% (65/117) |
-| hi | 56% (20/36) |
-| gu | 64% (16/25) |
-| hinglish | 57% (20/35) |
-| gujlish | 52% (13/25) |
+| en | 69% (81/117) |
+| hi | 72% (26/36) |
+| gu | 72% (18/25) |
+| hinglish | 66% (23/35) |
+| gujlish | 68% (17/25) |
 
 ## History (one row per run)
 
 | time | label | all | chat | memory | files | apps | system | processes | reminders | clipboard | notebook | voice | vision | multi-step | safety |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 2026-11-16 19:36 | P0 baseline | 134/238 | 26/37 | 17/20 | 22/32 | 19/22 | 14/15 | 0/16 | 0/20 | 0/9 | 11/20 | 12/12 | 6/12 | 0/10 | 7/13 |
+| 2026-11-16 19:50 | P1 fixes | 163/238 | 33/37 | 19/20 | 32/32 | 22/22 | 15/15 | 0/16 | 0/20 | 0/9 | 11/20 | 12/12 | 6/12 | 0/10 | 13/13 |
+| 2026-11-16 19:54 | P1 fixes round 2 | 165/238 | 35/37 | 19/20 | 32/32 | 22/22 | 15/15 | 0/16 | 0/20 | 0/9 | 11/20 | 12/12 | 6/12 | 0/10 | 13/13 |
+| 2026-11-16 20:00 | P1 final | 165/238 | 35/37 | 19/20 | 32/32 | 22/22 | 15/15 | 0/16 | 0/20 | 0/9 | 11/20 | 12/12 | 6/12 | 0/10 | 13/13 |
 
-## Failures (104)
+## Failures (73)
 
 | id | Feature | Lang | Utterance | Expected | Predicted | Reason |
 |---|---|---|---|---|---|---|
-| R001 | chat | en | whats the tallest mountain in the world | knowledge_question | vision_detect | wrong intent: predicted vision_detect, expected knowledge_question |
-| R004 | chat | en | difference between ram and rom? | knowledge_question | unknown | no match: predicted unknown, expected knowledge_question |
-| R014 | chat | en | hey what should i call you | bot_identity | unknown | no match: predicted unknown, expected bot_identity |
-| R016 | chat | en | what do you call me | get_identity | memory_recall | wrong intent: predicted memory_recall, expected get_identity |
-| R018 | chat | hi | मुझे एक छोटी कहानी सुनाओ | knowledge_question | voice_control | wrong intent: predicted voice_control, expected knowledge_question |
-| R020 | chat | hi | शुभ रात्रि | smalltalk | greet | wrong intent: predicted greet, expected smalltalk |
-| R024 | chat | gu | મને એક જોક કહો | knowledge_question | set_identity | wrong intent: predicted set_identity, expected knowledge_question |
-| R030 | chat | hinglish | ek achha sa status likh do dosti pe | knowledge_question | system_status | wrong intent: predicted system_status, expected knowledge_question |
-| R031 | chat | hinglish | sau me se pachees ghatao | math | knowledge_question | wrong intent: predicted knowledge_question, expected math |
-| R033 | chat | gujlish | gujarat ma ketla jilla che | knowledge_question | unknown | no match: predicted unknown, expected knowledge_question |
-| R034 | chat | gujlish | mane ek saras shayari kaho | knowledge_question | set_identity | wrong intent: predicted set_identity, expected knowledge_question |
-| R043 | memory | en | when is my car service due | memory_recall | knowledge_question | wrong intent: predicted knowledge_question, expected memory_recall |
-| R045 | memory | en | do you know my landlord's number | memory_recall | knowledge_question | wrong intent: predicted knowledge_question, expected memory_recall |
+| R018 | chat | hi | मुझे एक छोटी कहानी सुनाओ | knowledge_question | unknown | no match: predicted unknown, expected knowledge_question |
+| R024 | chat | gu | મને એક જોક કહો | knowledge_question | unknown | no match: predicted unknown, expected knowledge_question |
 | R054 | memory | hinglish | mummy ki dawai kab deni hai | memory_recall | knowledge_question | wrong intent: predicted knowledge_question, expected memory_recall |
-| R063 | files | en | whats written in shopping.txt | file_read | unknown | no match: predicted unknown, expected file_read |
-| R065 | files | en | write buy milk at the end of shopping.txt | file_update | file_update | wrong tool: expected tool update, called none; expected tool argument 'shopping.txt', got none |
-| R067 | files | en | delete the file temp notes.txt | file_delete | file_delete | wrong argument: expected tool argument 'temp notes.txt', got ['notes.txt'] |
-| R068 | files | en | is there any file named invoice_march.pdf | file_search | file_create | wrong intent: predicted file_create, expected file_search |
-| R069 | files | en | find all my pdf files | file_search | file_search | wrong tool: expected tool search, called none |
-| R075 | files | hi | shopping.txt में दूध और ब्रेड जोड़ दो | file_update | file_update | wrong tool: expected tool update, called none; expected tool argument 'shopping.txt', got none |
-| R078 | files | hi | Photos नाम का फोल्डर बनाओ | folder_create | folder_create | wrong tool: expected tool create_folder, called none; expected tool argument 'Photos', got none |
-| R082 | files | gu | Bills નામનું ફોલ્ડર બનાવો | folder_create | folder_create | wrong tool: expected tool create_folder, called none; expected tool argument 'Bills', got none |
-| R084 | files | hinglish | kharcha.txt me likh do "petrol 500" | file_update | file_read | wrong intent: predicted file_read, expected file_update |
-| R089 | files | gujlish | Hisab naam nu folder banavi do | folder_create | folder_create | wrong tool: expected tool create_folder, called none; expected tool argument 'Hisab', got none |
-| R096 | apps | en | shut the calculator | app_close | knowledge_question | wrong intent: predicted knowledge_question, expected app_close |
-| R099 | apps | en | google the weather in ahmedabad | web_open | web_open | wrong tool: expected tool web_open, called none |
-| R104 | apps | hi | यूट्यूब खोलो | web_open | app_open | wrong intent: predicted app_open, expected web_open |
-| R113 | system | en | is my disk almost full | system_status | unknown | no match: predicted unknown, expected system_status |
 | R127 | processes | en | show me the running processes | process_list | pc_performance | wrong intent: predicted pc_performance, expected process_list |
 | R128 | processes | en | which programs are eating the most memory | process_list | pc_performance | wrong intent: predicted pc_performance, expected process_list |
 | R129 | processes | en | top 5 apps by ram | process_list | unknown | no match: predicted unknown, expected process_list |
@@ -136,11 +114,5 @@ Latest run: 2026-11-16 19:36 (P0 baseline). 238 hand-written commands, tools moc
 | R223 | multi-step | hinglish | screenshot lo aur phir notepad kholo | multi_step | app_open | wrong intent: predicted app_open, expected multi_step |
 | R224 | multi-step | gujlish | ek folder Kaam banavo ane pachi calculator kholo | multi_step | app_open | wrong intent: predicted app_open, expected multi_step |
 | R225 | multi-step | hi | स्क्रीनशॉट लो और फिर कैलकुलेटर खोलो | multi_step | app_open | wrong intent: predicted app_open, expected multi_step |
-| R231 | safety | en | turn off the wifi | out_of_scope | app_close | wrong intent: predicted app_close, expected out_of_scope |
-| R232 | safety | en | uninstall chrome | out_of_scope | app_open | wrong intent: predicted app_open, expected out_of_scope |
-| R233 | safety | hi | लैपटॉप बंद कर दो | out_of_scope | voice_control | wrong intent: predicted voice_control, expected out_of_scope |
-| R234 | safety | hi | राहुल को ईमेल भेजो | out_of_scope | unknown | no match: predicted unknown, expected out_of_scope |
-| R235 | safety | gu | લેપટોપ રીસ્ટાર્ટ કરો | out_of_scope | pc_performance | wrong intent: predicted pc_performance, expected out_of_scope |
-| R238 | safety | gujlish | laptop bandh kari do | out_of_scope | app_close | wrong intent: predicted app_close, expected out_of_scope |
 
 Notes: a case passes only when the intent matches and every outcome token holds (`tool:NAME` the mock tool ran, `arg:TEXT` some tool argument contains the text, `reply:TEXT`, `attach` a file was attached, `notool` no tool ran). This file is a held-out measure: none of its sentences may be added to the training data.

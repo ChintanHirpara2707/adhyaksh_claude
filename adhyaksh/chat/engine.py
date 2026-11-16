@@ -8,6 +8,7 @@ from pathlib import Path
 
 from adhyaksh import config, responses
 from adhyaksh.chat import context, identity, router
+from adhyaksh.agent import native as agent_native
 from adhyaksh.agent import runner as agent_runner
 from adhyaksh.llm import base as llm
 from adhyaksh.memory import store
@@ -162,9 +163,49 @@ def _agent_dispatch(text: str, ctx: context.Context, convo_id: int, lang: str) -
     return _Reply(reply, "agent", 1.0)
 
 
+def _native_reply(res: dict, ctx: context.Context, text: str) -> _Reply:
+    """Turn a native agent result into a reply (final answer, or a pending confirmation)."""
+    confirmation = res.get("confirmation")
+    if confirmation:
+        ctx.pending_agent_confirm = {"token": confirmation["token"], "action": confirmation["action"],
+                                     "target": confirmation["target"], "text": text, "native": True}
+        return _Reply(f"Confirm {confirmation['action'].replace('_', ' ')} on {confirmation['target']}? Say yes to confirm or no to cancel.",
+                      "agent_confirm", action="agent_confirm", confirmation=confirmation, extra=res.get("ui") or {})
+    ctx.agent_steps = res.get("steps", [])
+    return _Reply(res.get("reply") or "I could not complete that.", "agent", 1.0, action="agent", extra=res.get("ui") or {})
+
+
+def _native_dispatch(text: str, ctx: context.Context, convo_id: int, lang: str, mode: str) -> _Reply | None:
+    """Tool-calling agent first. None means the model is unavailable or unreachable: use the offline path."""
+    res = agent_native.run(text, convo_id, lang, mode)
+    if res.get("disabled") or res.get("failed"):
+        return None
+    return _native_reply(res, ctx, text)
+
+
+def _context_answer(text: str, ctx: context.Context, lang: str) -> _Reply | None:
+    """Answer a question from the user's own memory or attached documents before guessing an intent."""
+    if not (_is_question(text) or _GENERAL_CUES.search(text)):
+        return None
+    hit = store.best_match(text)
+    if hit:
+        return _Reply(_t("memory_recall", lang, answer=hit["answer"]), "memory_recall", action="memory")
+    if ctx.has_sources:
+        res = answerer.answer(text)
+        if res.data.get("found"):
+            return _Reply(res.data["answer"], "doc_question", action="doc_answer", sources=res.data["sources"])
+    return None
+
+
 def _finish_agent_confirmation(ctx: context.Context, accept: bool,
                                convo_id: int, lang: str) -> _Reply:
     p, ctx.pending_agent_confirm = ctx.pending_agent_confirm, None
+    if p.get("native"):
+        if not accept:
+            policy.cancel_guarded(p["token"])
+            agent_native.cancel(p["token"])
+            return _Reply(_t("cancelled", lang), "agent_confirm", action="cancel")
+        return _native_reply(agent_native.resume(p["token"]), ctx, p["text"])
     if not accept:
         policy.cancel_guarded(p["token"])
         return _Reply(_t("cancelled", lang), "agent_confirm", action="cancel")
@@ -232,7 +273,8 @@ def _llm_answer(text: str, convo_id: int, lang: str, intent: str) -> _Reply:
         return _wiki_or_link(text, lang, intent)
     res = llm.ask(_general_prompt(text, convo_id), timeout=llm.ANSWER_TIMEOUT, max_tokens=llm.ANSWER_TOKENS)
     if res.ok:
-        return _Reply(res.data, intent, action="llm")
+        # A plain chat model has no tools: it must not claim to have done anything.
+        return _Reply(agent_native.guard_claims(res.data, []), intent, action="llm")
     if res.error_code == E_NO_API_KEY:
         return _wiki_or_link(text, lang, intent)
     return _Reply(_t("error", lang, reason=res.message.rstrip(".")) + " " + llm.search_link(text), intent)
@@ -259,18 +301,19 @@ _TOOLISH = re.compile(
 
 # Words that ask for knowledge or writing rather than an action on this computer.
 _GENERAL_CUES = re.compile(
-    r"\b(?:explain|describe|define|write|compose|translate|summari[sz]e|suggest|recommend|tips?|ideas?|advice|"
+    r"\b(?:whats|wats|hows|whos|wheres|ketl\w+|kitn\w+|likh\w*|lakh\w*|sunao|kahani|shayari|joke|kavita|caption|essay|nibandh|matlab|"
+    r"suggest|explain|describe|define|write|compose|translate|summari[sz]e|suggest|recommend|tips?|ideas?|advice|"
     r"difference\s+between|meaning\s+of|compare|why|how|who|whom|whose|which|when|where|what|"
     r"samjh?ao|samjavo|samjha|kyun|kyu|kaise|kisne|kaun|kab|kahan|kitna|kitni|kitne|kem|kevi|kevo|koe|kone|kyare|"
     r"ketlo|ketli|ketlu|shu|kon|jaankari|jankari|vishe|baare\s+mein)\b"
-    r"|समझाओ|समझाइए|क्यों|कैसे|कौन|किसने|कब|कहाँ|कितना|कितनी|कितने|क्या\s+होता|के\s+बारे\s+में|"
+    r"|सुनाओ|कहानी|कविता|चुटकुला|जोक|बताओ|लिखो|જોક|વાર્તા|કવિતા|શાયરી|કહો|લખો|સંભળાવો|समझाओ|समझाइए|क्यों|कैसे|कौन|किसने|कब|कहाँ|कितना|कितनी|कितने|क्या\s+होता|के\s+बारे\s+में|"
     r"સમજાવો|કેમ|કેવી|કોણ|ક્યારે|ક્યાં|કેટલો|કેટલી|કેટલું|વિશે", re.IGNORECASE)
 
 # Lexical evidence that a tool-style intent really was asked for. Without any, a question is general knowledge.
 _INTENT_SIGNAL = {
     "system_status": re.compile(r"cpu|ram\b|disk|storage|memory|battery|processor|laptop|computer|\bpc\b|system|"
                                 r"सीपीयू|रैम|डिस्क|सिस्टम|લેપટોપ|સિસ્ટમ|રેમ|ડિસ્ક|सीपीयू|मेमोरी|મેમરી", re.IGNORECASE),
-    "time_date": re.compile(r"\btime\b|\bdate\b|\bday\b|clock|baje|baja|vagya|vaage|tarikh|tareekh|din\b|vaar|"
+    "time_date": re.compile(r"\btime\b|\bdate\b|\bday\b|clock|baje|baja|vagya|vaage|vaag|tarikh|tareekh|din\b|vaar|"
                             r"समय|तारीख|बजे|दिन|સમય|તારીખ|વાગ્યા|દિવસ|વાર", re.IGNORECASE),
     "memory_recall": re.compile(r"\bmy\b|\bmine\b|\bmera\b|\bmeri\b|\bmaru\b|\bmaro\b|\bmari\b|\bmaine\b|\bme\b|"
                                 r"remember|recall|yaad|याद|मेरा|मेरी|मैंने|મારો|મારી|મારું|મેં|યાદ", re.IGNORECASE),
@@ -297,8 +340,16 @@ _INTENT_SIGNAL = {
 }
 
 
+# Phrases that are about knowledge even when a tool-like word (ram, file, memory) appears in them.
+_STRONG_KNOWLEDGE = re.compile(r"\b(?:difference\s+between|meaning\s+of|full\s+form\s+of|history\s+of|what\s+is\s+an?\s|"
+                               r"what\s+are\s|who\s+(?:was|is|invented|discovered)\b|explain\s+what|write\s+(?:a|an|me|some|one|two)\b|"
+                               r"likh\s+do\b|likho\b|lakhi\s+(?:do|apo)\b)", re.IGNORECASE)
+
+
 def _is_general_question(text: str) -> bool:
     """A question or request for knowledge or writing, not a tool."""
+    if _STRONG_KNOWLEDGE.search(text) and not router._has_file_extension(text) and not _UNSUPPORTED_ACTION.search(text):
+        return True
     if _TOOLISH.search(text) or _UNSUPPORTED_ACTION.search(text):
         return False
     return _is_question(text) or bool(_GENERAL_CUES.search(text))
@@ -659,20 +710,29 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
             return _Reply(_t("cancelled", lang), p["intent"])
         slots = dict(p["slots"])
         if p["need"] == "file":
-            slots["file"] = router.find_file(text) or text.strip().split()[0]
+            slots["file"] = router.find_file(text) or router.clean_slot_name(text)
         elif p["need"] == "app":
             slots["app"] = router.find_app(text) or text.strip()
         elif p["need"] == "folder":
-            slots["folder"] = text.strip()
+            slots["folder"] = router.clean_slot_name(text)
         elif p["need"] == "url":
             slots["url"] = router.extract_web_url(text)
         else:
             slots["content"] = text.strip()
         return _dispatch(p["intent"], text, slots, ctx, convo_id, lang, mode=mode)
+    if agent_native.available():
+        # A language model is usable: the tool-calling agent handles the request. Rules and the classifier
+        # below are the offline fallback (also used when the model cannot be reached).
+        r = _native_dispatch(text, ctx, convo_id, lang, mode)
+        if r is not None:
+            return r
     rule = router.understand(text)
     if rule:
         intent, slots = _correct_file_folder(rule.intent, rule.slots, text)
         return _dispatch(intent, text, slots, ctx, convo_id, lang, mode=mode)
+    hit = _context_answer(text, ctx, lang)
+    if hit:
+        return hit
     intent, conf, gap = registry.predict(text)
     cleaned = router.clean_command(text)
     if cleaned != text:
@@ -738,12 +798,18 @@ def _attachment_reply(text: str, ok: list[str], bad: list[str], ctx: context.Con
     if bad:
         note += "Could not index: " + "; ".join(bad) + ".\n"
     if not text:
+        ctx.has_sources = ctx.has_sources or bool(ok)
         return _Reply(note.strip() + (" Ask me anything about it." if ok else ""), "attachment", action="attach")
     if ok:
+        ctx.has_sources = True
         res = answerer.answer(text)
         if res.data.get("found"):
             return _Reply(note + "\n" + res.data["answer"], "doc_question", action="doc_answer",
                           sources=res.data["sources"])
+        if router.understand(text) is None:
+            # A question about the attachment that the attachment does not answer: say so instead of guessing a command.
+            return _Reply(note + "\nI could not find that in the attached file. Try different words, or ask for a summary.",
+                          "doc_question", action="doc_answer")
     r = _process(text, ctx, convo_id, lang, mode=mode)
     r.text = note + ("\n" if note else "") + r.text
     return r

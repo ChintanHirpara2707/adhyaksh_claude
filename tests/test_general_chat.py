@@ -33,6 +33,8 @@ def test_general_questions_use_model_wiki_or_link(monkeypatch):
         seen["prompt"] = prompt
         return Result.success("Because of scattering.")
     monkeypatch.setattr(llm, "ask", fake)
+    from adhyaksh.result import Result as _R
+    monkeypatch.setattr(llm, "chat", lambda *a, **k: _R.failure("E_TIMEOUT", "offline in tests"))  # agent unreachable: plain answer path
     r = engine.handle_message("explain how a transistor works", cid).data
     assert r["reply"] == "Because of scattering." and "ADHYAKSH" in seen["prompt"]
     # Tool-like requests the app cannot do are not handed to the model.

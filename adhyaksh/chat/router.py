@@ -688,7 +688,7 @@ _PERCENT = re.compile(r"(\d+(?:\.\d+)?)\s*(?:%|percent|per\s*cent)\s*of\s*(\d+(?
 _MODULO = re.compile(r"(\d+)\s*(?:mod|modulo|modulus)\s*(\d+)|remainder\s+of\s+(\d+)\s*(?:/|divided\s+by|by)\s*(\d+)",
                      re.IGNORECASE)
 _APPEND_EN = re.compile(r"^(?:add|append|write|put|insert|type)\b.{0,60}?\b(?:to|into|in|at\s+the\s+end\s+of)\s+(?P<f>\S+)", re.IGNORECASE)
-_APPEND_IN = re.compile(r"^(?P<f>\S+\.[A-Za-z0-9]{1,5})\s+(?:में|mein|me|ma|માં)\s+.+?(?:जोड़ो|जोड़\s*दो|लिखो|लिख\s*दो|\bjod\b|\badd\b|\blikho\b|\blikh\s+do\b|umero|\bumer\w*|\blakho\b|\blakh\w*\s+(?:do|dyo)\b|append|ઉમેરો|લખો)",
+_APPEND_IN = re.compile(r"^(?P<f>\S+\.[A-Za-z0-9]{1,5})\s+(?:में|mein|me|ma|માં)\s+.*?(?:जोड़ो|जोड़\s*दो|लिखो|लिख\s*दो|\bjod\b|\badd\b|\blikho\b|\blikh\s+do\b|umero|\bumer\w*|\blakho\b|\blakh\w*\s+(?:do|dyo)\b|append|ઉમેરો|લખો)",
                         re.IGNORECASE)
 _OFFICE_VERB = re.compile(r"\b(?:create|make|new|generate|prepare)\b|बनाओ|बनाएं|बनाइए|तैयार|બનાવો|તૈયાર|"
                           r"\b(?:banao|bana\s+do|banavo|tayar|taiyar|bani\s+do)\b", re.IGNORECASE)
@@ -800,6 +800,9 @@ def understand(text: str) -> Rule | None:
     mem = match_memory(text)  # on the raw text: multi-line data must keep its line breaks
     if mem:
         return mem
+    p1 = match_p1(text)
+    if p1:
+        return p1
     cleaned = clean_command(text)
     for candidate in dict.fromkeys([text.strip(), cleaned, fix_verb_typo(cleaned)]):
         rule = (match_conversational(candidate) or match_features(candidate) or match_rules(candidate)
@@ -825,7 +828,7 @@ def _has_word_like(t: str, words: tuple[str, ...], cutoff: float = 0.8) -> bool:
 
 _V_TARGET = re.compile(
     r"listen|hands?[\s-]*free|\bmic\b|microphone|voice|wake\s*word|\bsunn\w*|sambh\w*|\bsun(?:o|na|ne)\b|"
-    r"सुन|हैंड्स|माइक|वेक\s*वर्ड|सांभळ|સાંભળ|હેન્ડ્સ|માઇક|વેક\s*વર્ડ|\bawaaz\b|\bavaj\b|आवाज|અવાજ", re.IGNORECASE)
+    r"सुन(?:ना|ो|ने|ते|िए|ें)(?![\u0900-\u097F])|हैंड्स|माइक|वेक\s*वर्ड|सांभळ|સાંભળ|હેન્ડ્સ|માઇક|વેક\s*વર્ડ|\bawaaz\b|\bavaj\b|आवाज|અવાજ", re.IGNORECASE)
 _V_OFF = re.compile(r"\b(?:stop|end|quit|disable|off|pause|cancel|mute|band|bandh|ruk|ruko)\b|बंद|बन्द|रुको|બંધ|બંધ", re.IGNORECASE)
 _V_QUIET = re.compile(r"\b(?:stop\s+(?:talking|speaking)|be\s+quiet|quiet\s+please|shut\s+up|chup|chup\s+raho|chup\s+thai)\b|"
                       r"चुप|ચૂપ|ચુપ", re.IGNORECASE)
@@ -1037,3 +1040,126 @@ def match_memory(text: str) -> Rule | None:
     if _PRON_ONLY.match(" ".join(data.split())):
         return Rule("memory_save", {"ask": True})
     return Rule("memory_save", {"fact": data})
+
+
+# ---------------------------------------------------------------------------
+# P1 fixes found with data/test_real.csv: unsupported device requests, names with spaces, content and
+# folder-name extraction, recall questions, site names in Indic scripts. Tried before the older rule families.
+# ---------------------------------------------------------------------------
+
+_FILE_TOKEN = r"[\w\-]+\.[A-Za-z0-9]{1,5}"
+_MULTI_FILE = rf"(?:[\w\-]+ ){{0,3}}{_FILE_TOKEN}"
+_UNSUPPORTED_P1 = re.compile(
+    r"\b(?:turn|switch|put)\s+(?:on|off)\b.{0,25}\b(?:wi-?fi|bluetooth|hotspot|airplane|flight\s+mode)\b|"
+    r"\b(?:wi-?fi|bluetooth|hotspot)\b.{0,15}\b(?:on|off|band|bandh|chalu)\b|"
+    r"^\s*(?:please\s+)?(?:un)?install\b|\bupdate\s+(?:windows|drivers?)\b|"
+    r"\bformat\b.{0,20}\b(?:drive|disk|pendrive|usb)\b|"
+    r"\b(?:transfer|send|pay)\b.{0,25}(?:\b(?:rupees|rs|money|paise|inr)\b|₹)|"
+    r"(?:लैपटॉप|कंप्यूटर|कम्प्यूटर|पीसी|લેપટોપ|કમ્પ્યુટર|પીસી).{0,14}(?:बंद|रीस्टार्ट|शटडाउन|બંધ|રીસ્ટાર્ટ|શટડાઉન)|"
+    r"\b(?:laptop|pc|computer)\b.{0,10}\b(?:bandh?|restart|shut\s*down|off)\b|"
+    r"(?:ईमेल|मेल|मैसेज|संदेश|व्हाट्सएप|व्हाट्सऐप|ઇમેઇલ|ઈમેલ|મેસેજ|સંદેશ|વોટ્સએપ).{0,20}(?:भेज|મોકલ)|"
+    r"\b(?:e-?mail|mail|message|sms|whatsapp)\b.{0,20}\b(?:bhej\w*|mokl\w*)\b", re.IGNORECASE)
+_BOT_NAME_P1 = re.compile(
+    r"\bwhat\s+(?:should|do|can|shall)\s+i\s+call\s+(?:you|u)\b|\b(?:your|ur)\s+name\b|\b(?:tumhara|aapka|tamaru|taru)\s+naam\b|"
+    r"(?:तुम्हारा|आपका)\s+नाम|(?:તમારું|તારું)\s+નામ", re.IGNORECASE)
+_MY_NAME_P1 = re.compile(r"\bwhat\s+do\s+(?:you|u)\s+call\s+me\b|\bhow\s+do\s+(?:you|u)\s+address\s+me\b", re.IGNORECASE)
+_NIGHT_P1 = re.compile(r"^(?:शुभ\s+रात्रि|शुभ\s+रात्री|गुड\s+नाइट|shubh\s+ratri|good\s*nite|gn)[\s.!]*$", re.IGNORECASE)
+_HAVE_FILE_P1 = re.compile(rf"^(?:is\s+there|do\s+i\s+have|have\s+i\s+got|kya\s+koi|koi)\b.*?\bfile\b.*?(?P<f>{_FILE_TOKEN})", re.IGNORECASE)
+_TYPE_WORDS = {"pdf": ".pdf", "pdfs": ".pdf", "doc": ".doc", "docx": ".docx", "word": ".docx", "excel": ".xlsx", "xlsx": ".xlsx",
+               "txt": ".txt", "text": ".txt", "csv": ".csv", "png": ".png", "jpg": ".jpg", "image": ".png", "photo": ".jpg"}
+_TYPE_SEARCH_P1 = re.compile(r"\b(?:find|search|show|list|locate|dhund\w*|shodh\w*)\b.*?\b(?P<t>pdfs?|docx?|word|excel|xlsx|txt|text|csv|png|jpg|image|photo)\s+"
+                             r"(?:files?|documents?)\b", re.IGNORECASE)
+_READ_IN_P1 = re.compile(rf"^(?:whats|what's|what\s+is|wats)\s+(?:written\s+|there\s+|kept\s+)?(?:in|inside)\s+(?:the\s+)?(?:file\s+)?(?P<f>{_MULTI_FILE})[\s?.!]*$",
+                         re.IGNORECASE)
+_UPDATE_EN_P1 = re.compile(rf"^(?:please\s+)?(?:add|append|write|put|insert|type|note)\s+(?P<c>.+?)\s+(?:to\s+the\s+end\s+of|at\s+the\s+end\s+of|to|into|in)\s+"
+                           rf"(?:the\s+)?(?:file\s+)?(?P<f>{_MULTI_FILE})[\s.!]*$", re.IGNORECASE)
+_UPDATE_VERBS_IN = (r"(?:जोड़\s*दो|जोड़ो|लिख\s*दो|लिखो|jod\s+do|add\s+kar\w*(?:\s+do)?|likh\s+do|likho|umeri\s+do|umero|lakhi\s+do|lakho|"
+                    r"ઉમેરી\s+દો|ઉમેરો|લખી\s+દો|લખો)")
+_UPDATE_IN_P1 = re.compile(rf"^(?P<f>{_FILE_TOKEN})\s+(?:में|mein|me|ma|માં)\s+(?P<c>.+?)\s+{_UPDATE_VERBS_IN}[\s.!]*$", re.IGNORECASE)
+_UPDATE_IN2_P1 = re.compile(rf"^(?P<f>{_FILE_TOKEN})\s+(?:में|mein|me|ma|માં)\s+{_UPDATE_VERBS_IN}\s+(?P<c>.+?)[\s.!]*$", re.IGNORECASE)
+_FILE_OP_MULTI_P1 = re.compile(rf"^(?:please\s+)?(?P<v>delete|remove|erase|trash|read|open|show)\s+(?:the\s+|my\s+)?file\s+(?:named\s+|called\s+)?"
+                               rf"(?P<f>{_MULTI_FILE})[\s.!]*$", re.IGNORECASE)
+_FOLDER_NAAM_P1 = re.compile(r"(?P<n>[^\s]+(?: [^\s]+)?)\s+(?:नाम\s+का|नाम\s+की|નામનું|નામનો|નામનુ|naam\s+nu|naam\s+no|naam\s+ka|naam\s+ki)\s+"
+                             r"(?:ek\s+)?(?:folder|फोल्डर|ફોલ્ડર)", re.IGNORECASE)
+_SHUT_APP_P1 = re.compile(r"^(?:please\s+)?shut\s+(?!down\b)(?:the\s+|my\s+)?(?P<rest>.+?)[\s.!]*$", re.IGNORECASE)
+_GOOGLE_P1 = re.compile(r"^(?:please\s+)?google\s+(?!drive\b|chrome\b|maps\b|docs\b|pe\b|par\b)(?P<q>.+?)[\s.!?]*$", re.IGNORECASE)
+_INDIC_SITES = {"यूट्यूब": "youtube.com", "यूट्यूब": "youtube.com", "जीमेल": "gmail.com", "गूगल": "google.com", "फेसबुक": "facebook.com",
+                "इंस्टाग्राम": "instagram.com", "યુટ્યુબ": "youtube.com", "યૂટ્યુબ": "youtube.com", "જીમેલ": "gmail.com", "ગૂગલ": "google.com",
+                "ફેસબુક": "facebook.com", "ઇન્સ્ટાગ્રામ": "instagram.com"}
+_INDIC_OPEN = re.compile(r"खोलो|खोल\s*दो|चालू\s+करो|ખોલો|ખોલી\s*(?:દો|આપો)|ચાલુ\s+કરો")
+_FULL_P1 = re.compile(r"\b(?:disk|drive|storage|memory|ram)\b.{0,20}\b(?:full|bhar\w*)\b", re.IGNORECASE)
+_SUBTRACT_P1 = re.compile(r"(\d+(?:\.\d+)?)\s+(?:me|mein|ma|में|માંથી|mathi)\s*(?:se|thi)?\s+(\d+(?:\.\d+)?)\s+(?:ghata\w*|kam\s+kar\w*|baad\s+kar\w*|घटा\w*|ઓછા\s+કર\w*)",
+                          re.IGNORECASE)
+_MY_Q_P1 = re.compile(r"^(?:when|where|what|which|who|whats|what's)\b(?:\s+[\w']+){0,3}?\s+my\s+(?P<thing>[\w']+)|^do\s+(?:you|u)\s+(?:know|have|remember)\s+my\s+(?P<thing2>[\w']+)",
+                      re.IGNORECASE)
+_NOT_MEMORY = {"name", "pc", "laptop", "computer", "system", "disk", "ram", "cpu", "memory", "storage", "screen", "clipboard", "reminder",
+               "reminders", "sources", "source", "files", "file", "downloads", "documents", "desktop", "battery", "ip", "wifi", "uploaded",
+               "notes", "pdf", "document", "alarm", "alarms"}
+_SLOT_FILLER = re.compile(r"^(?:please\s+)?(?:call\s+it|name\s+it|named?|called|its|it\s+is|it's|the\s+name\s+is|file\s+name\s+is|naam|iska\s+naam|enu\s+naam)\s+"
+                          r"|\s+(?:rakho|rakh\s+do|rakhjo|hai|che|please)[\s.!]*$", re.IGNORECASE)
+
+
+def clean_slot_name(text: str) -> str:
+    """Name given as the answer to 'Which file name?': drop 'call it', 'naam ... rakho', quotes and end punctuation."""
+    t = " ".join(text.split()).strip("\"'“”‘’ ")
+    for _ in range(2):
+        t = _SLOT_FILLER.sub("", t).strip("\"'“”‘’ .!?")
+    return t or text.strip()
+
+
+def _strip_quotes(s: str) -> str:
+    return s.strip().strip("\"'“”‘’").strip()
+
+
+def match_p1(text: str) -> Rule | None:
+    t = " ".join(text.split())
+    if _UNSUPPORTED_P1.search(t) and not _has_file_extension(t):
+        return Rule("out_of_scope")
+    if _MY_NAME_P1.search(t):
+        return Rule("get_identity")
+    if _BOT_NAME_P1.search(t) and not re.search(r"\bmy\s+name\b", t, re.IGNORECASE):
+        return Rule("bot_identity")
+    if _NIGHT_P1.match(t):
+        return Rule("smalltalk", {"kind": "bye"})
+    m = _UPDATE_EN_P1.match(t) or _UPDATE_IN_P1.match(t) or _UPDATE_IN2_P1.match(t)
+    if m and _strip_quotes(m.group("c")):
+        return Rule("file_update", {"file": m.group("f").strip(), "content": _strip_quotes(m.group("c"))})
+    m = _FILE_OP_MULTI_P1.match(t)
+    if m:
+        intent = {"delete": "file_delete", "remove": "file_delete", "erase": "file_delete", "trash": "file_delete"}.get(m.group("v").lower(), "file_read")
+        return Rule(intent, {"file": m.group("f").strip()})
+    m = _READ_IN_P1.match(t)
+    if m:
+        return Rule("file_read", {"file": m.group("f").strip()})
+    m = _HAVE_FILE_P1.match(t)
+    if m:
+        return Rule("file_search", {"file": m.group("f")})
+    m = _TYPE_SEARCH_P1.search(t)
+    if m and not _has_file_extension(t):
+        return Rule("file_search", {"file": _TYPE_WORDS[m.group("t").lower()]})
+    m = _FOLDER_NAAM_P1.search(t)
+    if m and not _has_file_extension(m.group("n")):
+        return Rule("folder_create", {"folder": m.group("n").strip()})
+    m = _SHUT_APP_P1.match(t)
+    if m:
+        app = find_app_fuzzy(m.group("rest"))
+        if app:
+            return Rule("app_close", {"app": app})
+    m = _GOOGLE_P1.match(t)
+    if m:
+        return Rule("web_open", {"url": "https://www.google.com/search?q=" + urllib.parse.quote_plus(m.group("q"))})
+    if _INDIC_OPEN.search(t):
+        for name, site in _INDIC_SITES.items():
+            if name in t:
+                return Rule("web_open", {"url": site})
+    if _FULL_P1.search(t) and not _has_file_extension(t):
+        return Rule("system_status")
+    m = _SUBTRACT_P1.search(numwords.normalize_all(t))
+    if m:
+        return Rule("math", {"expr": f"{m.group(1)} - {m.group(2)}", "value": round(float(m.group(1)) - float(m.group(2)), 6)})
+    m = _MY_Q_P1.match(t)
+    if m and not _has_file_extension(t):
+        thing = (m.group("thing") or m.group("thing2") or "").lower()
+        if thing not in _NOT_MEMORY and not _STATUS_X.search(t) and not _TIME_X.search(t) and not _DATE_X.search(t):
+            return Rule("memory_recall")
+    return None

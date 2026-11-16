@@ -64,6 +64,30 @@ def recall(query: str) -> Result:
     return Result.success({"id": best["id"], "fact": best["fact"], "answer": _speak(best["fact"])})
 
 
+def _same(a: str, b: str) -> bool:
+    """Token match that tolerates endings: name/named, book/booking."""
+    return a == b or (len(a) >= 4 and len(b) >= 4 and (a.startswith(b) or b.startswith(a)))
+
+
+def best_match(query: str) -> dict | None:
+    """The stored fact that clearly answers a question, or None. Needs at least two shared content words that
+    cover half of the question's content words (or the only content word), so unrelated questions are left alone."""
+    q = _tokens(query)
+    if not q:
+        return None
+    best, best_score = None, 0
+    for row in db.query_all("SELECT id, fact FROM memory_facts ORDER BY id DESC"):
+        ft = _tokens(row["fact"])
+        score = sum(1 for a in q if any(_same(a, b) for b in ft))
+        if score > best_score:
+            best, best_score = row, score
+    if best is None:
+        return None
+    if (best_score >= 2 and best_score / len(q) >= 0.5) or (best_score == 1 and len(q) == 1):
+        return {"id": best["id"], "fact": best["fact"], "answer": _speak(best["fact"]), "score": best_score}
+    return None
+
+
 def list_facts(search: str | None = None) -> list[dict]:
     rows = db.query_all("SELECT * FROM memory_facts ORDER BY id DESC")
     if search:

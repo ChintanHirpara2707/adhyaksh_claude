@@ -19,6 +19,62 @@ class GeminiProvider(Provider):
         r.raise_for_status()
         return "".join(p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"])
 
+    def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
+        import requests
+
+        system, contents = to_gemini_contents(messages)
+        payload: dict = {"contents": contents, "generationConfig": {"maxOutputTokens": self.max_tokens}}
+        if system:
+            payload["systemInstruction"] = {"parts": [{"text": system}]}
+        if tools:
+            payload["tools"] = [{"functionDeclarations": [
+                {"name": t["name"], "description": t.get("description", ""), "parameters": to_gemini_schema(t["parameters"])}
+                for t in tools]}]
+        r = requests.post(f"{BASE}{self.model()}:generateContent", timeout=timeout,
+                          headers={"x-goog-api-key": api_key("gemini")}, json=payload)
+        r.raise_for_status()
+        parts = (r.json()["candidates"][0].get("content") or {}).get("parts") or []
+        text = "".join(p.get("text", "") for p in parts if "text" in p)
+        calls = [{"id": f"call_{i}", "name": p["functionCall"].get("name", ""), "arguments": p["functionCall"].get("args") or {}}
+                 for i, p in enumerate(parts) if "functionCall" in p]
+        return {"text": text, "tool_calls": calls}
+
+
+def to_gemini_schema(schema: dict) -> dict:
+    """JSON-schema subset accepted by Gemini function declarations (upper-case type names, no extra keys)."""
+    out: dict = {}
+    if "type" in schema:
+        out["type"] = str(schema["type"]).upper()
+    if "description" in schema:
+        out["description"] = schema["description"]
+    if "enum" in schema:
+        out["enum"] = list(schema["enum"])
+    if "properties" in schema:
+        out["properties"] = {k: to_gemini_schema(v) for k, v in schema["properties"].items()}
+    if "items" in schema:
+        out["items"] = to_gemini_schema(schema["items"])
+    if schema.get("required"):
+        out["required"] = list(schema["required"])
+    return out
+
+
+def to_gemini_contents(messages: list[dict]) -> tuple[str, list[dict]]:
+    """Neutral messages to (system instruction text, contents list)."""
+    system, contents = [], []
+    for m in messages:
+        if m["role"] == "system":
+            system.append(m.get("content", ""))
+        elif m["role"] == "assistant":
+            parts = [{"text": m["content"]}] if m.get("content") else []
+            parts += [{"functionCall": {"name": c["name"], "args": c.get("arguments") or {}}} for c in m.get("tool_calls") or []]
+            contents.append({"role": "model", "parts": parts or [{"text": ""}]})
+        elif m["role"] == "tool":
+            contents.append({"role": "user", "parts": [{"functionResponse": {"name": m.get("name", ""),
+                                                                               "response": {"result": m.get("content", "")}}}]})
+        else:
+            contents.append({"role": "user", "parts": [{"text": m.get("content", "")}]})
+    return "\n".join(system), contents
+
 
 def embed(texts: list[str], timeout: float = 8.0) -> list[list[float]]:
     """Embed texts with the configured Gemini embedding model (UNTESTED ON TARGET)."""

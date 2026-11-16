@@ -17,6 +17,7 @@ class Context:
     pending_name: str | None = None
     agent_steps: list | None = None       # steps from the last agent run
     images: list | None = None            # image bytes attached to the message being handled
+    has_sources: bool = False             # documents were attached in this conversation
 
 
 _CTX: dict[int, Context] = {}

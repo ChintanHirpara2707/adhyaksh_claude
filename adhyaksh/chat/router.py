@@ -578,7 +578,7 @@ _APP_VERB_LAST = re.compile(
     r"खोलो|चालू\s+करो|बंद\s+करो|ખોલો|ચાલુ\s+કરો|બંધ\s+કરો)[\s.!?।]*$", re.IGNORECASE)
 _SCREENSHOT_X = re.compile(
     r"\b(?:(?:take|capture|grab|snap|get)\s+(?:a\s+|the\s+|my\s+)?(?:screenshot|screen\s*shot|screen\s*capture|screen)|"
-    r"screen\s*shot\s+(?:lo|le\s+lo|karo|kari\s+lo|lo\s+ne)|screen\s*capture\s+karo)\b|"
+    r"screen\s*shot\s+(?:lo|le\s+lo|karo|kari\s+lo|lo\s+ne)|screen\s*capture\s+karo|screen\s*grab)\b|"
     r"स्क्रीनशॉट\s+(?:लो|लें)|સ્ક્રીનશોટ\s+લો", re.IGNORECASE)
 _STATUS_X = re.compile(
     r"\b(?:cpu|ram|disk|storage|processor|battery|system\s+(?:status|health|info)|pc\s+(?:status|health|speed)|"
@@ -896,6 +896,11 @@ _VISION_CUE = re.compile(
     r"क्या|कौन|कितन|बताओ|दिख|चलाओ|खोलो|કઈ|કેટલ|શું|દેખાય|કહો|ચલાવો|ખોલો|છે\s+કે", re.IGNORECASE)
 _VISION_DIRECT = re.compile(r"object\s*(?:s\s*)?detect\w*|ऑब्जेक्ट\s*डिटेक्शन|ઓબ્જેક્ટ\s*ડિટેક્શન|image\s*recogni\w+|"
                             r"इमेज\s*रिकग्निशन|ઇમેજ\s*રિકગ્નિશન|\bobjct\s+detecton\b", re.IGNORECASE)
+_OCR = re.compile(
+    r"\b(?:read|extract|copy|get|pull|scan|recogni[sz]e|transcribe|ocr)\b.{0,25}\b(?:text|words|writing|letters|numbers)\b|"
+    r"\bocr\b|\bwhat\s+(?:does|do|is)\s+(?:the|this|that)\s+(?:sign|board|label|note|poster|notice|paper|text|banner|screen)\b.{0,30}\b(?:say|says|written|read)\b|"
+    r"\bwhat(?:'s|\s+is)\s+written\b|\btext\b.{0,15}\b(?:nikal\w*|padh\w*|padho|vanch\w*|kadh\w*)\b|\b(?:likha|lakhel\w*|lakhyu)\b.{0,20}\b(?:text|padh\w*|vanch\w*|kya|shu)\b|"
+    r"(?:टेक्स्ट|लिखा|लिखावट).{0,20}(?:पढ़|निकाल)|(?:લખાણ|ટેક્સ્ટ|લખેલું).{0,20}(?:વાંચ|કાઢ)", re.IGNORECASE)
 _PAGE_WORDS = re.compile(r"\b(?:open|show|page|kholo|khol|kholi|launch|go\s+to)\b|खोलो|ખોલો|पेज|પેજ", re.IGNORECASE)
 
 _PERF_BOOST = re.compile(
@@ -928,6 +933,8 @@ def match_features(text: str) -> Rule | None:
     va = voice_action(t)
     if va and not _has_file_extension(t):
         return Rule("voice_control", {"action": va[0], "value": va[1]})
+    if _OCR.search(t) and not (_has_file_extension(t) and not re.search(r"\.(?:png|jpe?g|webp)\b", t, re.IGNORECASE)):
+        return Rule("ocr_read", {"screen": bool(re.search(r"\bscreen\b|स्क्रीन|સ્ક્રીન", t, re.IGNORECASE))})
     if _VISION_DIRECT.search(t) or (_VISION_NOUN.search(t) and _VISION_CUE.search(t)):
         if not re.search(r"screen|screenshot|screen\s*shot|स्क्रीन|સ્ક્રીન", t, re.IGNORECASE):
             return Rule("vision_detect", {"open": bool(_PAGE_WORDS.search(t))})
@@ -1117,8 +1124,19 @@ def _strip_quotes(s: str) -> str:
     return s.strip().strip("\"'“”‘’").strip()
 
 
+_READ_FILE_P5 = re.compile(rf"^(?P<f>{_FILE_TOKEN})\s+(?:को\s+|ko\s+|ne\s+|ને\s+)?(?:पढ़\S*|padh\w*|vanch\w*|વાંચ\S*|read|sunao|सुनाओ|સંભળાવ\S*)", re.IGNORECASE)
+_TOLD_P5 = re.compile(r"^(?:maine|mene|me|मैंने|મેં)\s+(?:apne|mara|mari|maro|अपने|अपनी|મારા|મારી|મારો)?\s*.{1,40}?"
+                      r"(?:ke\s+baare\s+m(?:e|ein)|vishe|के\s+बारे\s+में|વિશે)\s+(?:kya|shu|क्या|શું)\s+(?:bataya|kaha|kahyu|बताया|कहा|કહ્યું)",
+                      re.IGNORECASE)
+
+
 def match_p1(text: str) -> Rule | None:
     t = " ".join(text.split())
+    m = _READ_FILE_P5.match(t)
+    if m:
+        return Rule("file_read", {"file": m.group("f")})
+    if _TOLD_P5.match(t):
+        return Rule("memory_recall")
     if re.fullmatch(r"(?:helo+|hel+o+w|hii+|hey+y|hlo+|hallo|namastey|namaste+)[\s!.]*", t, re.IGNORECASE):
         return Rule("greet")
     m = _SPECIAL_P2.match(t)

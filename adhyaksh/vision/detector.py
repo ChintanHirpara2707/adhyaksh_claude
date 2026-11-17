@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import io
 import re
 from pathlib import Path
@@ -9,6 +10,9 @@ from pathlib import Path
 from PIL import Image, ImageStat
 
 from adhyaksh import config
+
+# Never let Ultralytics pip-install packages (such as CLIP) on its own: new dependencies are installed by the user.
+os.environ.setdefault("YOLO_AUTOINSTALL", "false")
 
 _MAX_BYTES = 10 * 1024 * 1024
 _MODELS: dict[str, object] = {}
@@ -302,6 +306,15 @@ def _load_world():
         _WORLD["m"] = YOLOWorld(str(path) if path.exists() else WORLD_MODEL)
         _WORLD["classes"] = None
     return _WORLD["m"]
+
+
+def world_available() -> bool:
+    """True when YOLO-World can run without any download: its weights are in models/ and CLIP is installed."""
+    try:
+        import clip  # noqa: F401
+    except Exception:
+        return False
+    return _model_path(WORLD_MODEL).exists()
 
 
 def detect_open_vocab(image_bytes: bytes, classes: list[str], conf: float = 0.2, imgsz: int = 640) -> list[dict]:

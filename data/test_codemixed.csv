@@ -221,3 +221,7 @@ atyare clipboard ma shu padyu che,clipboard_read,gujlish,latin,generated,false
 """thank you"" clipboard par copy karo",clipboard_write,hinglish,latin,generated,false
 """ok ji"" ne clipboard ma copy kari do",clipboard_write,gujlish,latin,generated,false
 """aabhar"" clipboard par copy karo",clipboard_write,gujlish,latin,generated,false
+is photo ki likhawat padh do,ocr_read,hinglish,latin,generated,false
+screenshot ka text nikal ke dikhao,ocr_read,hinglish,latin,generated,false
+aa photo nu lakhan vanchi apo,ocr_read,gujlish,latin,generated,false
+screenshot nu text kadhi ne batavo,ocr_read,gujlish,latin,generated,false

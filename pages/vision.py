@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 
 from adhyaksh import config
 from adhyaksh.ui import components as ui, theme
-from adhyaksh.vision import detector, descriptions
+from adhyaksh.vision import descriptions, detector, ocr, scene
 
 ui.page_header("Object Detection", "Detect objects in a camera snapshot or uploaded image.")
 theme.inject(config.get("theme") or "light")
@@ -40,6 +40,9 @@ if mode == "open":
     st.caption("Open-vocabulary detection is less reliable than the standard detector. "
                f"It needs about 400 MB of one-time downloads (YOLO-World weights and the CLIP text encoder).")
 also_named = st.checkbox("Also name other things in the picture (1000 general categories)", value=False)
+read_text = st.checkbox("Read the text in the picture (OCR, offline)", value=False,
+                        help="Reads printed Latin-script text (English, numbers, romanised Hindi and Gujarati). "
+                             "Devanagari and Gujarati script need Tesseract with the hin and guj language data.")
 
 tab_camera, tab_upload = st.tabs(["Camera", "Upload image"])
 
@@ -91,6 +94,16 @@ def render(key: str, file) -> None:
         draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
         draw.text((x1, max(0, y1 - 14)), f'{d["label"]} {d["confidence"]:.0%}', fill="red")
     st.image(img, caption="Detected objects", use_container_width=True)
+    st.markdown(scene.describe(image_bytes, detections)["summary"])
+    if read_text:
+        _ocr = ocr.read(image_bytes)
+        if not _ocr.ok:
+            st.info(_ocr.message)
+        elif _ocr.data["text"].strip():
+            st.markdown("**Text in the picture**")
+            st.code(_ocr.data["text"], language=None)
+        else:
+            st.caption("No printed text was found.")
 
     if not detections:
         st.info("No objects found. Try better light, or move the camera closer to the object.")

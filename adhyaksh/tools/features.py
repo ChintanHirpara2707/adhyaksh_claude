@@ -9,6 +9,7 @@ Every action goes through policy.run_guarded, so it is authorised by level and a
 """
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 
 from adhyaksh import config
@@ -107,3 +108,67 @@ def voice_command(action: str, value: str = "", *, ctx: dict | None = None) -> R
             config.set_value("voice_lang", value)
         return Result.success({"action": action, "value": value})
     return policy.run_guarded("voice_control", action, go, **_ctx(ctx))
+
+
+# ---------------------------------------------------------------------------
+# Vision in chat (P5): richer scene description, named objects, small objects, OCR
+# ---------------------------------------------------------------------------
+_NAMED = re.compile(r"\b(?:find|look\s+for|spot|search\s+for|locate|is\s+there\s+(?:a|an|any)|are\s+there\s+(?:any)?|do\s+you\s+see\s+(?:a|an|any)?)\s+"
+                    r"(?P<names>[a-z ,]+?)(?:\s+(?:in|on)\s+(?:this|the|my)\s+(?:photo|picture|image|pic))?[\s?.!]*$", re.IGNORECASE)
+_SMALL = re.compile(r"\bsmall\b|\btiny\b|\bfar\b|\bdistant\b|\bchhot\w*|\bnan\w*|छोट|નાન", re.IGNORECASE)
+
+
+def requested_names(text: str) -> list[str]:
+    """Object names the user asked to look for ('find a mug and a stapler'), else []."""
+    m = _NAMED.search(text or "")
+    if not m:
+        return []
+    raw = re.split(r",|\band\b|\bor\b", m.group("names"))
+    skip = {"a", "an", "the", "any", "some", "small", "tiny", "little", "big", "far", "distant", "all"}
+    names = [" ".join(w for w in n.split() if w not in skip) for n in raw]
+    generic = ("object", "objects", "thing", "things", "item", "items", "stuff", "something", "anything")
+    return [n for n in names if n and not any(n == g or n.endswith(" " + g) for g in generic)][:10]
+
+
+def analyze_image(image_bytes: bytes, request: str = "", *, ctx: dict | None = None) -> Result:
+    """Detect objects and describe the scene (counts, positions, sizes, colours). Looks for objects the user names
+    (open-vocabulary model when installed, else among the 80 known types), scans in tiles for 'small objects', and
+    falls back to the 1,000-category classifier when nothing is found. L0, audited as vision_detect."""
+    def go() -> Result:
+        from adhyaksh.vision import descriptions, detector, scene
+        names = requested_names(request)
+        model = config.get("vision_model") or "balanced"
+        unknown = [n for n in names if n not in descriptions.COCO_NAMES and n.rstrip("s") not in descriptions.COCO_NAMES]
+        mode = "standard"
+        dets = None
+        if names and unknown and detector.world_available():  # never downloads: only when already installed
+            dets = detector.detect_open_vocab(image_bytes, names)
+            mode = "named"
+            if dets and "error" in dets[0]:
+                dets, mode = None, "standard"
+        if dets is None and _SMALL.search(request or ""):
+            dets, mode = detector.detect_tiled(image_bytes, conf=0.25, model_choice=model), "tiled"
+        elif dets is None:
+            dets = detector.detect(image_bytes, conf=0.25, model_choice=model)
+        err = [d for d in dets if "error" in d]
+        if err:
+            return Result.failure(E_ACTION_FAILED, err[0]["error"])
+        desc = scene.describe(image_bytes, dets)
+        guesses = []
+        if not dets:
+            g = detector.classify(image_bytes)
+            guesses = g[:3] if isinstance(g, list) else []
+        found = {d["label"] for d in dets}
+        asked = [{"name": n, "found": n in found or n.rstrip("s") in found,
+                  "known": n not in unknown or mode == "named"} for n in names]
+        return Result.success({**desc, "mode": mode, "requested": asked, "guesses": guesses,
+                               "objects": [{"label": i["label"], "count": i["count"], "best": i["confidence"]} for i in desc["items"]]})
+    return policy.run_guarded("vision_detect", "image", go, **_ctx(ctx))
+
+
+def read_text(image_bytes: bytes, *, ctx: dict | None = None) -> Result:
+    """Text printed in an image (OCR, offline). L0, audited as ocr_read."""
+    def go() -> Result:
+        from adhyaksh.vision import ocr
+        return ocr.read(image_bytes)
+    return policy.run_guarded("ocr_read", "image", go, **_ctx(ctx))

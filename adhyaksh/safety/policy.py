@@ -26,7 +26,7 @@ LEVELS: dict[str, int] = {
     "voice_control": 1,
     "file_overwrite": 2, "file_delete": 2, "app_close": 2, "memory_delete": 2,
     "run_python": 2, "temp_clean": 2, "source_delete": 2, "process_kill": 2, "reminder_cancel_all": 2,
-    "process_list": 0, "reminder_list": 0, "clipboard_read": 0,
+    "process_list": 0, "reminder_list": 0, "clipboard_read": 0, "ocr_read": 0,
     "reminder_add": 1, "reminder_cancel": 1, "clipboard_write": 1,
     "shell_exec": 3,
 }

@@ -20,7 +20,7 @@ INTENTS = ["greet", "set_identity", "get_identity", "memory_save", "memory_recal
            "out_of_scope", "bot_identity", "time_date", "folder_create", "screenshot",
            "special_folder_open", "web_open", "vision_detect", "pc_performance", "voice_control",
            "source_list", "source_summary", "source_delete",
-           "process_list", "process_kill", "reminder_set", "reminder_list", "reminder_cancel", "clipboard_read", "clipboard_write"]
+           "process_list", "process_kill", "reminder_set", "reminder_list", "reminder_cancel", "clipboard_read", "clipboard_write", "ocr_read"]
 LANGS = ["en", "hi", "gu", "hinglish", "gujlish"]
 SCRIPTS = ["latin", "devanagari", "gujarati"]
 SOURCES = ["generated", "author", "corrected"]
@@ -849,7 +849,18 @@ FEATURE_TEMPLATES.update({
         "hi": ["\"कल मिलते हैं\" क्लिपबोर्ड में कॉपी करो", "यह टेक्स्ट क्लिपबोर्ड में डाल दो: हो गया"],
         "gu": ["\"કાલે મળીએ\" ક્લિપબોર્ડમાં કોપી કરો", "આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું"]},
 })
+FEATURE_TEMPLATES.update({
+    "ocr_read": {
+        "en": ["scan the words in this picture", "get the text out of this photo", "what is written on this board",
+               "copy the writing from this image", "ocr this image", "transcribe the text in the photo"],
+        "hinglish": ["is tasveer ka text padho", "photo me kya likha hai padh ke batao", "image se likhawat nikal do", "board pe kya likha hai"],
+        "gujlish": ["aa tasveer nu text vancho", "photo ma shu lakhyu che vanchi ne kaho", "image mathi lakhan kadhi apo", "board par shu lakhyu che"],
+        "hi": ["इस तस्वीर का टेक्स्ट पढ़ो", "फोटो में क्या लिखा है पढ़कर बताओ", "इमेज से लिखावट निकालो", "बोर्ड पर क्या लिखा है"],
+        "gu": ["આ તસવીરનું લખાણ વાંચો", "ફોટામાં શું લખ્યું છે વાંચીને કહો", "ઇમેજમાંથી લખાણ કાઢો", "બોર્ડ પર શું લખ્યું છે"]},
+})
 _FEATURE_TEST = {
+    "ocr_read": {"hinglish": ["is photo ki likhawat padh do", "screenshot ka text nikal ke dikhao"],
+                 "gujlish": ["aa photo nu lakhan vanchi apo", "screenshot nu text kadhi ne batavo"]},
     "process_list": {"hinglish": ["abhi kaun kaun se apps chal rahe hain", "ram sabse jyada kaun use kar raha hai"],
                      "gujlish": ["atyare kaya apps chalu che", "ram sauthi vadhare kon vapre che"]},
     "process_kill": {"hinglish": ["atka hua zoom ka process kill karo", "vlc ka task end karo"],

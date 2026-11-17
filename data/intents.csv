@@ -4037,3 +4037,106 @@ aa text clipboard ma muki do: done atyare,clipboard_write,gujlish,latin,generate
 "સાંભળો, આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું જલ્દી",clipboard_write,gu,gujarati,generated,false
 કૃપા કરીને આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું જલ્દી,clipboard_write,gu,gujarati,generated,false
 આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું જલ્દી,clipboard_write,gu,gujarati,generated,false
+scan the words in this picture,ocr_read,en,latin,generated,false
+please scan the words in this picture please,ocr_read,en,latin,generated,false
+scan the words in this picture please,ocr_read,en,latin,generated,false
+"hey, scan the words in this picture",ocr_read,en,latin,generated,false
+"hey, scan the words in this picture now",ocr_read,en,latin,generated,false
+get the text out of this photo,ocr_read,en,latin,generated,false
+"hey, get the text out of this photo",ocr_read,en,latin,generated,false
+"assistant, get the text out of this photo",ocr_read,en,latin,generated,false
+get the text out of this photo now,ocr_read,en,latin,generated,false
+what is written on this board,ocr_read,en,latin,generated,false
+what is written on this board now,ocr_read,en,latin,generated,false
+"hey, what is written on this board",ocr_read,en,latin,generated,false
+what is written on this board please,ocr_read,en,latin,generated,false
+"assistant, what is written on this board",ocr_read,en,latin,generated,false
+copy the writing from this image,ocr_read,en,latin,generated,false
+"hey, copy the writing from this image please",ocr_read,en,latin,generated,false
+copy the writing from this image now,ocr_read,en,latin,generated,false
+"assistant, copy the writing from this image please",ocr_read,en,latin,generated,false
+"hey, copy the writing from this image now",ocr_read,en,latin,generated,false
+ocr this image,ocr_read,en,latin,generated,false
+"hey, ocr this image please",ocr_read,en,latin,generated,false
+"hey, ocr this image now",ocr_read,en,latin,generated,false
+"assistant, ocr this image please",ocr_read,en,latin,generated,false
+transcribe the text in the photo,ocr_read,en,latin,generated,false
+"assistant, transcribe the text in the photo",ocr_read,en,latin,generated,false
+please transcribe the text in the photo please,ocr_read,en,latin,generated,false
+"hey, transcribe the text in the photo please",ocr_read,en,latin,generated,false
+transcribe the text in the photo now,ocr_read,en,latin,generated,false
+is tasveer ka text padho,ocr_read,hinglish,latin,generated,false
+is tasveer ka text padho jaldi,ocr_read,hinglish,latin,generated,false
+"suno, is tasveer ka text padho abhi",ocr_read,hinglish,latin,generated,false
+is tasveer ka text padho abhi,ocr_read,hinglish,latin,generated,false
+photo me kya likha hai padh ke batao,ocr_read,hinglish,latin,generated,false
+photo me kya likha hai padh ke batao abhi,ocr_read,hinglish,latin,generated,false
+"suno, photo me kya likha hai padh ke batao",ocr_read,hinglish,latin,generated,false
+"suno, photo me kya likha hai padh ke batao jaldi",ocr_read,hinglish,latin,generated,false
+"suno, photo me kya likha hai padh ke batao abhi",ocr_read,hinglish,latin,generated,false
+image se likhawat nikal do,ocr_read,hinglish,latin,generated,false
+image se likhawat nikal do abhi,ocr_read,hinglish,latin,generated,false
+"suno, image se likhawat nikal do",ocr_read,hinglish,latin,generated,false
+please image se likhawat nikal do abhi,ocr_read,hinglish,latin,generated,false
+image se likhawat nikal do jaldi,ocr_read,hinglish,latin,generated,false
+board pe kya likha hai,ocr_read,hinglish,latin,generated,false
+please board pe kya likha hai,ocr_read,hinglish,latin,generated,false
+please board pe kya likha hai jaldi,ocr_read,hinglish,latin,generated,false
+"suno, board pe kya likha hai",ocr_read,hinglish,latin,generated,false
+aa tasveer nu text vancho,ocr_read,gujlish,latin,generated,false
+"sambhdo, aa tasveer nu text vancho jaldi",ocr_read,gujlish,latin,generated,false
+please aa tasveer nu text vancho atyare,ocr_read,gujlish,latin,generated,false
+"sambhdo, aa tasveer nu text vancho",ocr_read,gujlish,latin,generated,false
+photo ma shu lakhyu che vanchi ne kaho,ocr_read,gujlish,latin,generated,false
+photo ma shu lakhyu che vanchi ne kaho atyare,ocr_read,gujlish,latin,generated,false
+please photo ma shu lakhyu che vanchi ne kaho atyare,ocr_read,gujlish,latin,generated,false
+photo ma shu lakhyu che vanchi ne kaho jaldi,ocr_read,gujlish,latin,generated,false
+please photo ma shu lakhyu che vanchi ne kaho,ocr_read,gujlish,latin,generated,false
+image mathi lakhan kadhi apo,ocr_read,gujlish,latin,generated,false
+"sambhdo, image mathi lakhan kadhi apo atyare",ocr_read,gujlish,latin,generated,false
+please image mathi lakhan kadhi apo jaldi,ocr_read,gujlish,latin,generated,false
+image mathi lakhan kadhi apo atyare,ocr_read,gujlish,latin,generated,false
+image mathi lakhan kadhi apo jaldi,ocr_read,gujlish,latin,generated,false
+board par shu lakhyu che,ocr_read,gujlish,latin,generated,false
+board par shu lakhyu che atyare,ocr_read,gujlish,latin,generated,false
+"sambhdo, board par shu lakhyu che jaldi",ocr_read,gujlish,latin,generated,false
+please board par shu lakhyu che atyare,ocr_read,gujlish,latin,generated,false
+"sambhdo, board par shu lakhyu che",ocr_read,gujlish,latin,generated,false
+इस तस्वीर का टेक्स्ट पढ़ो,ocr_read,hi,devanagari,generated,false
+इस तस्वीर का टेक्स्ट पढ़ो जल्दी,ocr_read,hi,devanagari,generated,false
+"सुनो, इस तस्वीर का टेक्स्ट पढ़ो अभी",ocr_read,hi,devanagari,generated,false
+इस तस्वीर का टेक्स्ट पढ़ो अभी,ocr_read,hi,devanagari,generated,false
+फोटो में क्या लिखा है पढ़कर बताओ,ocr_read,hi,devanagari,generated,false
+फोटो में क्या लिखा है पढ़कर बताओ जल्दी,ocr_read,hi,devanagari,generated,false
+"सुनो, फोटो में क्या लिखा है पढ़कर बताओ",ocr_read,hi,devanagari,generated,false
+"सुनो, फोटो में क्या लिखा है पढ़कर बताओ जल्दी",ocr_read,hi,devanagari,generated,false
+कृपया फोटो में क्या लिखा है पढ़कर बताओ,ocr_read,hi,devanagari,generated,false
+इमेज से लिखावट निकालो,ocr_read,hi,devanagari,generated,false
+कृपया इमेज से लिखावट निकालो अभी,ocr_read,hi,devanagari,generated,false
+"सुनो, इमेज से लिखावट निकालो जल्दी",ocr_read,hi,devanagari,generated,false
+"सुनो, इमेज से लिखावट निकालो अभी",ocr_read,hi,devanagari,generated,false
+"सुनो, इमेज से लिखावट निकालो",ocr_read,hi,devanagari,generated,false
+बोर्ड पर क्या लिखा है,ocr_read,hi,devanagari,generated,false
+"सुनो, बोर्ड पर क्या लिखा है",ocr_read,hi,devanagari,generated,false
+कृपया बोर्ड पर क्या लिखा है जल्दी,ocr_read,hi,devanagari,generated,false
+कृपया बोर्ड पर क्या लिखा है अभी,ocr_read,hi,devanagari,generated,false
+"सुनो, बोर्ड पर क्या लिखा है जल्दी",ocr_read,hi,devanagari,generated,false
+આ તસવીરનું લખાણ વાંચો,ocr_read,gu,gujarati,generated,false
+કૃપા કરીને આ તસવીરનું લખાણ વાંચો હમણાં,ocr_read,gu,gujarati,generated,false
+"સાંભળો, આ તસવીરનું લખાણ વાંચો જલ્દી",ocr_read,gu,gujarati,generated,false
+આ તસવીરનું લખાણ વાંચો હમણાં,ocr_read,gu,gujarati,generated,false
+ફોટામાં શું લખ્યું છે વાંચીને કહો,ocr_read,gu,gujarati,generated,false
+કૃપા કરીને ફોટામાં શું લખ્યું છે વાંચીને કહો હમણાં,ocr_read,gu,gujarati,generated,false
+ફોટામાં શું લખ્યું છે વાંચીને કહો જલ્દી,ocr_read,gu,gujarati,generated,false
+"સાંભળો, ફોટામાં શું લખ્યું છે વાંચીને કહો હમણાં",ocr_read,gu,gujarati,generated,false
+"સાંભળો, ફોટામાં શું લખ્યું છે વાંચીને કહો",ocr_read,gu,gujarati,generated,false
+ઇમેજમાંથી લખાણ કાઢો,ocr_read,gu,gujarati,generated,false
+"સાંભળો, ઇમેજમાંથી લખાણ કાઢો જલ્દી",ocr_read,gu,gujarati,generated,false
+કૃપા કરીને ઇમેજમાંથી લખાણ કાઢો જલ્દી,ocr_read,gu,gujarati,generated,false
+કૃપા કરીને ઇમેજમાંથી લખાણ કાઢો,ocr_read,gu,gujarati,generated,false
+ઇમેજમાંથી લખાણ કાઢો જલ્દી,ocr_read,gu,gujarati,generated,false
+બોર્ડ પર શું લખ્યું છે,ocr_read,gu,gujarati,generated,false
+"સાંભળો, બોર્ડ પર શું લખ્યું છે હમણાં",ocr_read,gu,gujarati,generated,false
+"સાંભળો, બોર્ડ પર શું લખ્યું છે જલ્દી",ocr_read,gu,gujarati,generated,false
+બોર્ડ પર શું લખ્યું છે જલ્દી,ocr_read,gu,gujarati,generated,false
+કૃપા કરીને બોર્ડ પર શું લખ્યું છે,ocr_read,gu,gujarati,generated,false

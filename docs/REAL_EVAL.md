@@ -1,8 +1,8 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-17 18:07 (P4 final). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-17 18:37 (P5 vision). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
-**Overall: 97% (231/238)**
+**Overall: 100% (237/238)**
 
 | Feature | Pass rate | Target | Met |
 |---|---|---|---|
@@ -16,17 +16,17 @@ Latest run: 2026-11-17 18:07 (P4 final). 238 hand-written commands, tools mocked
 | clipboard | 100% (9/9) | 85% | yes |
 | notebook | 100% (20/20) | 85% | yes |
 | voice | 100% (12/12) | 90% | yes |
-| vision | 50% (6/12) | 85% | no |
+| vision | 100% (12/12) | 85% | yes |
 | multi-step | 100% (10/10) | 70% | yes |
 | safety | 100% (13/13) | 100% | yes |
 
 | Language | Pass rate |
 |---|---|
-| en | 97% (114/117) |
-| hi | 97% (35/36) |
+| en | 100% (117/117) |
+| hi | 100% (36/36) |
 | gu | 100% (25/25) |
-| hinglish | 94% (33/35) |
-| gujlish | 96% (24/25) |
+| hinglish | 97% (34/35) |
+| gujlish | 100% (25/25) |
 
 ## History (one row per run)
 
@@ -42,17 +42,13 @@ Latest run: 2026-11-17 18:07 (P4 final). 238 hand-written commands, tools mocked
 | 2026-11-17 17:39 | P3 voice | 176/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 0/16 | 0/20 | 0/9 | 20/20 | 12/12 | 6/12 | 0/10 | 13/13 |
 | 2026-11-17 18:00 | P4 cowork | 229/238 | 36/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 6/12 | 10/10 | 12/13 |
 | 2026-11-17 18:07 | P4 final | 231/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 6/12 | 10/10 | 13/13 |
+| 2026-11-17 18:26 | P5 vision | 236/238 | 37/37 | 19/20 | 31/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-17 18:37 | P5 vision | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 
-## Failures (7)
+## Failures (1)
 
 | id | Feature | Lang | Utterance | Expected | Predicted | Reason |
 |---|---|---|---|---|---|---|
 | R054 | memory | hinglish | mummy ki dawai kab deni hai | memory_recall | knowledge_question | wrong intent: predicted knowledge_question, expected memory_recall |
-| R207 | vision | en | read the text in this image | ocr_read | vision_detect | wrong intent: predicted vision_detect, expected ocr_read |
-| R208 | vision | en | extract the text from this screenshot | ocr_read | screenshot | wrong intent: predicted screenshot, expected ocr_read |
-| R209 | vision | en | what does the sign in this photo say | ocr_read | vision_detect | wrong intent: predicted vision_detect, expected ocr_read |
-| R211 | vision | hi | इस फोटो में लिखा हुआ टेक्स्ट पढ़ो | ocr_read | unknown | no match: predicted unknown, expected ocr_read |
-| R214 | vision | hinglish | is image ka text nikal do | ocr_read | knowledge_question | wrong intent: predicted knowledge_question, expected ocr_read |
-| R215 | vision | gujlish | aa photo ma lakhelu text vancho | ocr_read | vision_detect | wrong intent: predicted vision_detect, expected ocr_read |
 
 Notes: a case passes only when the intent matches and every outcome token holds (`tool:NAME` the mock tool ran, `arg:TEXT` some tool argument contains the text, `reply:TEXT`, `attach` a file was attached, `notool` no tool ran). This file is a held-out measure: none of its sentences may be added to the training data.

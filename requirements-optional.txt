@@ -6,3 +6,5 @@
 # fastembed
 # Local, offline speech-to-text for voice commands (about 140 MB of packages; the 'base' model is a separate download of about 205 MB from Settings).
 # faster-whisper
+# Offline text reading (OCR) from photos and the screen (about 24 MB of packages; models are bundled).
+# rapidocr_onnxruntime

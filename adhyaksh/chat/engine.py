@@ -341,6 +341,7 @@ _INTENT_SIGNAL = {
                                  r"tez|तेज|धीमा|परफॉर्म|रैम|मेमोरी|પરફોર્મ|ઝડપી|રેમ|મેમરી|હેંગ", re.IGNORECASE),
     "voice_control": re.compile(r"listen|voice|hands.?free|wake|speak|talk|quiet|mute|aloud|\bmic\b|sunn|sambh|chup|bol|"
                                 r"सुन|बोल|चुप|आवाज|माइक|સાંભળ|બોલ|ચૂપ|અવાજ|માઇક", re.IGNORECASE),
+    "ocr_read": re.compile(r"text|read|written|sign|ocr|words|likh|lakh|padh|vanch|टेक्स्ट|लिख|पढ़|લખ|વાંચ|ટેક્સ્ટ", re.IGNORECASE),
     "process_list": re.compile(r"process|program|\bapps?\b|\bram\b|memory|cpu|running|chal|task|प्रोग्राम|प्रोसेस|रैम|પ્રોગ્રામ|પ્રોસેસ|રેમ",
                                re.IGNORECASE),
     "process_kill": re.compile(r"kill|process|terminate|end\s+task|force|band|bandh|बंद|ખતમ|બંધ|प्रोसेस|પ્રોસેસ", re.IGNORECASE),
@@ -387,18 +388,29 @@ _KILL = re.compile(r"\b(?:kill|terminate|end)\b", re.IGNORECASE)
 
 
 def _vision_reply(text: str, slots: dict, ctx: context.Context, c: dict) -> _Reply:
-    """Detect objects in an attached image, or open the Object Detection page, or say how to give an image."""
+    """Describe an attached image (objects, positions, sizes, colours; named or small objects on request), read its
+    text when asked, or open the Object Detection page, or say how to give an image."""
+    if ctx.images and router._OCR.search(text or ""):
+        return _ocr_reply(text, {}, ctx, c)
     if ctx.images:
-        res = features.detect_objects(ctx.images[0], ctx=c)
+        res = features.analyze_image(ctx.images[0], text, ctx=c)
         if not res.ok:
             return _Reply("I could not analyse that image: " + res.message.rstrip(".") + ".", "vision_detect", action="vision")
         d = res.data
-        if not d["total"]:
-            return _Reply("I did not find any known objects. Try a clearer or closer photo, or use the Object Detection "
-                          "page with the 'Small objects' mode.", "vision_detect", action="vision")
-        items = ", ".join(f"{o['count']} {o['label']}" if o["count"] > 1 else o["label"] for o in d["objects"])
-        return _Reply(f"I found {d['total']} object(s): {items}. The standard detector knows 80 everyday object types; "
-                      "the Object Detection page can also look for objects you name.", "vision_detect", action="vision")
+        lines = [d["summary"]]
+        for a in d.get("requested", []):
+            if a["found"]:
+                lines.append(f"Yes, I can see a {a['name']}.")
+            elif not a["known"]:
+                lines.append(f"I cannot look for '{a['name']}': it is not one of the 80 object types I know, and the "
+                             "open-vocabulary model is not installed.")
+            else:
+                lines.append(f"I do not see a {a['name']}.")
+        if not d["total"] and d.get("guesses"):
+            lines.append("Best guess for the whole picture: " + ", ".join(f"{g['label']} ({g['confidence']:.0%})" for g in d["guesses"]) + ".")
+        if d.get("mode") == "tiled":
+            lines.append("(Scanned in tiles to find small objects.)")
+        return _Reply("\n".join(lines), "vision_detect", action="vision")
     if slots.get("open"):
         res = features.open_page("vision", ctx=c)
         if res.ok:
@@ -406,6 +418,26 @@ def _vision_reply(text: str, slots: dict, ctx: context.Context, c: dict) -> _Rep
                           extra={"open_page": "vision"})
     return _Reply("Attach a photo to your message (paperclip) and I will list the objects in it, or open the "
                   "Object Detection page to use the camera.", "vision_detect", action="vision")
+
+
+def _ocr_reply(text: str, slots: dict, ctx: context.Context, c: dict) -> _Reply:
+    """Read printed text from an attached image, or from the screen when asked."""
+    image, source = (ctx.images[0] if ctx.images else None), "image"
+    if image is None and slots.get("screen"):
+        shot = system.screenshot(ctx=c)
+        if not shot.ok:
+            return _Reply("I could not take a screenshot to read: " + shot.message.rstrip(".") + ".", "ocr_read", action="ocr")
+        image, source = Path(shot.data["path"]).read_bytes(), "screen"
+    if image is None:
+        return _Reply("Attach a photo or screenshot (paperclip) and ask me to read the text in it, or say: read the text on my screen.",
+                      "ocr_read", action="ocr")
+    res = features.read_text(image, ctx=c)
+    if not res.ok:
+        return _Reply("I could not read text: " + res.message.rstrip(".") + ".", "ocr_read", action="ocr")
+    if not res.data["text"].strip():
+        return _Reply("I could not find printed text in that " + source + ". Hindi and Gujarati script need Tesseract "
+                      "with the hin and guj language data.", "ocr_read", action="ocr")
+    return _Reply(f"Text in the {source}:\n" + res.data["text"], "ocr_read", action="ocr")
 
 
 def _performance_reply(text: str, slots: dict, ctx: context.Context, lang: str, c: dict, intent: str) -> _Reply:
@@ -470,6 +502,8 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         return _Reply(_t("needs_cowork", lang), intent, action="needs_cowork", suggest_mode="cowork")
     if intent == "vision_detect":
         return _vision_reply(text, slots, ctx, c)
+    if intent == "ocr_read":
+        return _ocr_reply(text, slots, ctx, c)
     if intent == "pc_performance":
         return _performance_reply(text, slots, ctx, lang, c, intent)
     if intent == "voice_control":

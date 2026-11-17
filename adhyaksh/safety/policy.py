@@ -25,7 +25,7 @@ LEVELS: dict[str, int] = {
     "screenshot": 1, "web_open": 1, "special_folder_open": 1,
     "voice_control": 1,
     "file_overwrite": 2, "file_delete": 2, "app_close": 2, "memory_delete": 2,
-    "run_python": 2, "temp_clean": 2,
+    "run_python": 2, "temp_clean": 2, "source_delete": 2,
     "shell_exec": 3,
 }
 PATH_ACTIONS = {

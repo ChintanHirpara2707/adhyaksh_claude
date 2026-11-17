@@ -43,7 +43,10 @@ def extract(path: Path) -> list[tuple[str, str]]:
     return _sections(path.read_text(encoding="utf-8", errors="replace"))
 
 
-def ingest(path: str) -> Result:
+def ingest(path: str, notebook_id: int | None = None) -> Result:
+    """Index one file into a notebook (the active one by default)."""
+    from adhyaksh.rag import embedder, sources
+    notebook_id = notebook_id or sources.active_id()
     src = Path(path)
     if not src.is_file():
         return Result.failure(E_FILE_NOT_FOUND, "The file was not found.")
@@ -69,12 +72,21 @@ def ingest(path: str) -> Result:
     if not chunks:
         dest.unlink(missing_ok=True)
         return Result.failure(E_ACTION_FAILED, "The document contains no readable text.")
-    doc_id = db.execute("INSERT INTO documents(filename,filepath,pages,indexed_at,status) VALUES(?,?,?,?,?)",
-                        (name, str(dest), len(units), db.utcnow(), "indexed"))
+    summary = sources.extractive_summary(" ".join(text for _, text in units)[:12000])
+    doc_id = db.execute("INSERT INTO documents(filename,filepath,pages,indexed_at,status,notebook_id,summary) VALUES(?,?,?,?,?,?,?)",
+                        (name, str(dest), len(units), db.utcnow(), "indexed", notebook_id, summary))
     blobs: list[bytes | None] = [None] * len(chunks)
     method = "tfidf"
     from adhyaksh.rag import retriever
-    if retriever.embedding_mode() == "gemini":
+    mode = retriever.embedding_mode()
+    if mode == "local":
+        try:
+            vecs = embedder.embed([c for _, c in chunks])
+            blobs = [v.tobytes() for v in vecs]
+            method = "local"
+        except Exception:  # model missing or broken: offline TF-IDF still works
+            blobs, method = [None] * len(chunks), "tfidf"
+    elif mode == "gemini":
         try:
             import numpy as np
             from adhyaksh.llm.gemini import embed
@@ -84,12 +96,17 @@ def ingest(path: str) -> Result:
             blobs, method = [None] * len(chunks), "tfidf"
     db.executemany("INSERT INTO doc_chunks(document_id,chunk_index,page_or_section,text,embedding,method) VALUES(?,?,?,?,?,?)",
                    [(doc_id, i, label, text, blobs[i], method) for i, (label, text) in enumerate(chunks)])
-    return Result.success({"id": doc_id, "filename": name, "units": len(units), "chunks": len(chunks), "method": method})
+    return Result.success({"id": doc_id, "filename": name, "units": len(units), "chunks": len(chunks), "method": method,
+                           "notebook_id": notebook_id, "summary": summary})
 
 
-def list_documents() -> list[dict]:
+def list_documents(notebook_id: int | None = None) -> list[dict]:
+    """Documents of one notebook, or of every notebook when notebook_id is None."""
+    if notebook_id is None:
+        return db.query_all("SELECT d.*, (SELECT COUNT(*) FROM doc_chunks c WHERE c.document_id=d.id) AS chunks "
+                            "FROM documents d ORDER BY d.id DESC")
     return db.query_all("SELECT d.*, (SELECT COUNT(*) FROM doc_chunks c WHERE c.document_id=d.id) AS chunks "
-                        "FROM documents d ORDER BY d.id DESC")
+                        "FROM documents d WHERE d.notebook_id=? ORDER BY d.id DESC", (notebook_id,))
 
 
 def delete_document(doc_id: int) -> Result:
@@ -101,7 +118,7 @@ def delete_document(doc_id: int) -> Result:
     return Result.success()
 
 
-def ingest_bytes(name: str, data: bytes) -> Result:
+def ingest_bytes(name: str, data: bytes, notebook_id: int | None = None) -> Result:
     """Ingest an uploaded file held in memory."""
     import tempfile
     if len(data) > MAX_BYTES:
@@ -113,4 +130,4 @@ def ingest_bytes(name: str, data: bytes) -> Result:
     with tempfile.TemporaryDirectory() as tmp:
         p = Path(tmp) / name
         p.write_bytes(data)
-        return ingest(str(p))
+        return ingest(str(p), notebook_id)

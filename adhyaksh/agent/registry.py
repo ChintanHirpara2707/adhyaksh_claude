@@ -577,3 +577,49 @@ register("performance_report", "CPU, RAM and disk use now, plus the applications
          {"type": "object", "properties": {}}, 0, _performance_report)
 register("clean_temp_files", "Delete temporary files older than one day to free disk space (needs confirmation).",
          {"type": "object", "properties": {}}, 2, _clean_temp_files)
+
+
+# ---------------------------------------------------------------------------
+# Notebook tools (P2)
+# ---------------------------------------------------------------------------
+
+def _source_list(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.rag import sources
+    return sources.list_sources(ctx=ctx)
+
+
+def _source_summary(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.rag import sources
+    return sources.summarize(arguments.get("name") or None, ctx=ctx)
+
+
+def _source_delete(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.rag import sources
+    return sources.delete_source(str(arguments.get("name", "")), ctx=ctx, token=ctx.get("token"))
+
+
+def _notebook_list(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.rag import sources
+    return Result.success({"active": sources.active()["name"],
+                           "notebooks": [{"name": n["name"], "sources": n["sources"]} for n in sources.list_notebooks()]})
+
+
+def _notebook_open(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.rag import sources
+    name = str(arguments.get("name", ""))
+    found = sources.find_notebook(name)
+    if found:
+        sources.set_active(found["id"])
+        return Result.success({"name": found["name"], "created": False})
+    res = sources.create_notebook(name)
+    return Result.success({"name": res.data["name"], "created": True}) if res.ok else res
+
+
+register("source_list", "List the sources (documents) in the active notebook.", {"type": "object", "properties": {}}, 0, _source_list)
+register("source_summary", "Summarise one source by file name, or every source in the active notebook when no name is given.",
+         {"type": "object", "properties": {"name": {"type": "string", "description": "File name of the source (optional)."}}}, 0, _source_summary)
+register("source_delete", "Remove one source from the active notebook (needs confirmation).",
+         {"type": "object", "properties": {"name": {"type": "string", "description": "File name of the source."}}, "required": ["name"]}, 2, _source_delete)
+register("notebook_list", "List notebooks and show which one is active.", {"type": "object", "properties": {}}, 0, _notebook_list)
+register("notebook_open", "Switch to a notebook by name, creating it if it does not exist. New attachments and document questions use it.",
+         {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"]}, 1, _notebook_open)

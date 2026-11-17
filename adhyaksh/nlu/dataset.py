@@ -18,7 +18,8 @@ INTENTS = ["greet", "set_identity", "get_identity", "memory_save", "memory_recal
            "file_read", "file_update", "file_delete", "file_search", "office_create", "app_open",
            "app_close", "system_status", "doc_question", "knowledge_question", "help", "unknown",
            "out_of_scope", "bot_identity", "time_date", "folder_create", "screenshot",
-           "special_folder_open", "web_open", "vision_detect", "pc_performance", "voice_control"]
+           "special_folder_open", "web_open", "vision_detect", "pc_performance", "voice_control",
+           "source_list", "source_summary", "source_delete"]
 LANGS = ["en", "hi", "gu", "hinglish", "gujlish"]
 SCRIPTS = ["latin", "devanagari", "gujarati"]
 SOURCES = ["generated", "author", "corrected"]
@@ -770,7 +771,38 @@ FEATURE_TEMPLATES: dict[str, dict[str, list[str]]] = {
         "gu": ["મારો અવાજ સાંભળવાનું શરૂ કરો", "માઇક બંધ કરી દો", "હંમેશા સાંભળતા રહો", "વેક વર્ડ બંધ કરો",
                "જવાબ બોલીને કહેજો", "જવાબ બોલવાનું બંધ કરો", "તમે ચૂપ રહો", "બોલવાની ભાષા અંગ્રેજી કરો"]},
 }
+FEATURE_TEMPLATES.update({
+    "source_list": {
+        "en": ["list the documents in this notebook", "what files are in my notebook", "show the sources of this notebook",
+               "display all attached documents", "how many sources do i have", "show me my source list"],
+        "hinglish": ["is notebook ke sources dikhao", "kaun kaun se documents add kiye hain", "meri attached files ki list do",
+                     "notebook me kitne sources hain"],
+        "gujlish": ["aa notebook na sources batavo", "kaya documents add karya che", "mari attached files ni list apo",
+                    "notebook ma ketla sources che"],
+        "hi": ["इस नोटबुक के सोर्स दिखाओ", "कौन से दस्तावेज़ जोड़े गए हैं", "अटैच की गई फाइलों की सूची दो", "नोटबुक में कितने सोर्स हैं"],
+        "gu": ["આ નોટબુકના સોર્સ બતાવો", "કયા દસ્તાવેજો ઉમેર્યા છે", "જોડેલી ફાઇલોની યાદી આપો", "નોટબુકમાં કેટલા સોર્સ છે"]},
+    "source_delete": {
+        "en": ["delete the source {f}", "drop {f} from my sources", "take {f} out of the notebook", "remove {f} from this notebook",
+               "forget the document {f}", "unlink the source {f}"],
+        "hinglish": ["{f} ko sources se hata do", "notebook se {f} nikal do", "source {f} delete kar do", "{f} wala source hatao"],
+        "gujlish": ["{f} ne sources mathi kadhi nakho", "notebook mathi {f} kadhi do", "source {f} delete kari do", "{f} valo source kadho"],
+        "hi": ["{f} को सोर्स से हटा दो", "नोटबुक से {f} निकाल दो", "सोर्स {f} डिलीट करो", "{f} वाला सोर्स हटाओ"],
+        "gu": ["{f} ને સોર્સમાંથી કાઢી નાખો", "નોટબુકમાંથી {f} કાઢો", "સોર્સ {f} ડિલીટ કરો", "{f} વાળો સોર્સ કાઢો"]},
+    "source_summary": {
+        "en": ["summarise this notebook", "give me the gist of my documents", "short overview of the uploaded file",
+               "what are my sources about in brief", "summarize {f}", "key takeaways from the attached document"],
+        "hinglish": ["is notebook ka saar batao", "mere documents ka short summary do", "attached file ka nichod batao", "{f} ka summary bana do"],
+        "gujlish": ["aa notebook no saar kaho", "mara documents no tunko summary apo", "attached file no saransh kaho", "{f} no summary banavi do"],
+        "hi": ["इस नोटबुक का सार बताओ", "मेरे दस्तावेज़ों का संक्षिप्त सारांश दो", "अटैच फाइल का निचोड़ बताओ", "{f} का सारांश बना दो"],
+        "gu": ["આ નોટબુકનો સાર કહો", "મારા દસ્તાવેજોનો ટૂંકો સારાંશ આપો", "જોડેલી ફાઇલનો નિચોડ કહો", "{f} નો સારાંશ બનાવી દો"]},
+})
 _FEATURE_TEST = {
+    "source_list": {"hinglish": ["mere notebook ke saare sources ki list dikhao", "kitne documents attach hain batao"],
+                    "gujlish": ["mara notebook na badha sources ni list batavo", "ketla documents attach che kaho"]},
+    "source_delete": {"hinglish": ["notebook se report.txt wala source hata do", "sources me se notes.txt delete karo"],
+                      "gujlish": ["notebook mathi report.txt valo source kadhi nakho", "sources mathi notes.txt delete karo"]},
+    "source_summary": {"hinglish": ["attached documents ka chhota sa saar bata do", "is notebook ka summary chahiye"],
+                       "gujlish": ["attached documents no nano saar kahi do", "aa notebook no summary joiye che"]},
     "vision_detect": {"hinglish": ["is image mein objects detect karke batao", "camera wala detection page kholo"],
                       "gujlish": ["aa image ma objects detect kari ne kaho", "camera vado detection page kholo"]},
     "pc_performance": {"hinglish": ["computer ko speed up karo", "ram khane wale apps dikhao"],
@@ -833,11 +865,11 @@ def main(argv: list[str]) -> int:
         return 0
     if cmd == "augment-knowledge":
         forbidden = set()
-        eval_csv = config.ROOT / "tests" / "eval" / "cases.csv"
-        if eval_csv.exists():
-            import csv
-            with eval_csv.open(encoding="utf-8", newline="") as f:
-                forbidden = {r["utterance"] for r in csv.DictReader(f)}
+        import csv
+        for held_out in (config.ROOT / "tests" / "eval" / "cases.csv", config.ROOT / "data" / "test_real.csv"):
+            if held_out.exists():
+                with held_out.open(encoding="utf-8", newline="") as f:
+                    forbidden |= {r["utterance"] for r in csv.DictReader(f)}
         print(f"added {augment_knowledge(forbidden=forbidden)} training rows, {augment_test()} test rows")
         a, b = augment_features(forbidden=forbidden)
         print(f"added {a} feature training rows, {b} feature test rows")

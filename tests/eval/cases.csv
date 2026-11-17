@@ -247,7 +247,7 @@ C245,math,please solve 1000 - 1,math,reply:999,en
 C246,documents (attachments),what does the document say about the budget,doc_question,attach,en
 C247,documents (attachments),according to my pdf what is the deadline,doc_question,attach,en
 C248,documents (attachments),search my documents for safety rules,doc_question,attach,en
-C249,documents (attachments),summarize the attached file,doc_question,attach,en
+C249,documents (attachments),summarize the attached file,source_summary,attach,en
 C250,documents (attachments),what is the main finding in this report,doc_question,attach,en
 C251,documents (attachments),who is the author mentioned in the file,doc_question,attach,en
 C252,documents (attachments),find the section about methodology in my pdf,doc_question,attach,en
@@ -256,22 +256,22 @@ C254,documents (attachments),does the attached doc mention a deadline,doc_questi
 C255,documents (attachments),tell me what page 2 of the pdf says,doc_question,attach,en
 C256,documents (attachments),दस्तावेज़ में बजट के बारे में क्या लिखा है,doc_question,attach,hi
 C257,documents (attachments),मेरी पीडीएफ के अनुसार समय सीमा क्या है,doc_question,attach,hi
-C258,documents (attachments),इस फाइल का सारांश बताओ,doc_question,attach,hi
+C258,documents (attachments),इस फाइल का सारांश बताओ,source_summary,attach,hi
 C259,documents (attachments),मेरे दस्तावेज़ों में सुरक्षा नियम खोजो,doc_question,attach,hi
 C260,documents (attachments),रिपोर्ट में मुख्य निष्कर्ष क्या है,doc_question,attach,hi
 C261,documents (attachments),દસ્તાવેજમાં બજેટ વિશે શું લખ્યું છે,doc_question,attach,gu
 C262,documents (attachments),મારી પીડીએફ મુજબ સમયમર્યાદા શું છે,doc_question,attach,gu
-C263,documents (attachments),આ ફાઇલનો સારાંશ કહો,doc_question,attach,gu
+C263,documents (attachments),આ ફાઇલનો સારાંશ કહો,source_summary,attach,gu
 C264,documents (attachments),મારા દસ્તાવેજોમાં સલામતીના નિયમો શોધો,doc_question,attach,gu
 C265,documents (attachments),રિપોર્ટમાં મુખ્ય તારણ શું છે,doc_question,attach,gu
 C266,documents (attachments),document mein budget ke baare mein kya likha hai,doc_question,attach,hinglish
 C267,documents (attachments),meri pdf ke according deadline kya hai,doc_question,attach,hinglish
-C268,documents (attachments),is file ka summary batao,doc_question,attach,hinglish
+C268,documents (attachments),is file ka summary batao,source_summary,attach,hinglish
 C269,documents (attachments),mere documents mein safety rules search karo,doc_question,attach,hinglish
 C270,documents (attachments),report ka main finding kya hai,doc_question,attach,hinglish
 C271,documents (attachments),document ma budget vishe shu lakhyu che,doc_question,attach,gujlish
 C272,documents (attachments),mari pdf mujab deadline shu che,doc_question,attach,gujlish
-C273,documents (attachments),aa file no summary kaho,doc_question,attach,gujlish
+C273,documents (attachments),aa file no summary kaho,source_summary,attach,gujlish
 C274,documents (attachments),mara documents ma safety rules shodho,doc_question,attach,gujlish
 C275,documents (attachments),report nu main finding shu che,doc_question,attach,gujlish
 C276,general questions,what is the capital of Australia,knowledge_question,,en

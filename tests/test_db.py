@@ -78,9 +78,10 @@ def test_backup_and_restore():
 def test_upgrade_existing_database_preserves_data():
     fresh_env()
     db.set_setting("keep", "me")
-    db.MIGRATIONS.append((2, "CREATE TABLE extra_t(id INTEGER PRIMARY KEY);"))
+    nxt = db.MIGRATIONS[-1][0] + 1
+    db.MIGRATIONS.append((nxt, "CREATE TABLE extra_t(id INTEGER PRIMARY KEY);"))
     try:
-        assert db.init() == 2 and db.schema_version() == 2
+        assert db.init() == nxt and db.schema_version() == nxt
         assert db.get_setting("keep") == "me"
         assert "extra_t" in _tables()
     finally:

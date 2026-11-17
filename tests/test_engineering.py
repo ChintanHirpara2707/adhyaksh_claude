@@ -47,11 +47,12 @@ def test_boundary_check_catches_a_direct_tool_import(tmp_path):
 
 
 def test_every_page_has_a_service_an_icon_and_a_route():
+    from adhyaksh.services import shell
     from adhyaksh.ui import icons
-    app = (ROOT / "app.py").read_text(encoding="utf-8")
+    routed = [slug for slug, _ in shell.pages()]
     for p in PAGES:
         assert (ROOT / "adhyaksh" / "services" / p.name).exists(), p.name
-        assert p.stem in icons.PAGE_ICONS and f'("{p.stem}",' in app, p.stem
+        assert p.stem in icons.PAGE_ICONS and p.stem in routed, p.stem
 
 
 def test_services_expose_what_the_pages_use():

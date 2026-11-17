@@ -6,6 +6,7 @@ from adhyaksh.services import model_lab as svc
 from adhyaksh.ui import components as ui
 from adhyaksh.ui import theme
 
+ui.wide()
 ui.page_header("Model Lab", "Dataset, training, model comparison and evaluation.")
 tab_cmp, tab_data, tab_train = st.tabs(["Comparison", "Dataset", "Training"])
 

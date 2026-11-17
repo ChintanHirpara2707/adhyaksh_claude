@@ -22,6 +22,23 @@ def error_state(message: str, reason: str, next_step: str) -> None:
     st.error(f"{message} Reason: {reason}. Next step: {next_step}")
 
 
+def human_size(n: int | float | None) -> str:
+    """Bytes as a short readable size: 512 B, 3.4 KB, 12.0 MB, 1.2 GB."""
+    if n is None:
+        return ""
+    n = float(n)
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1024 or unit == "GB":
+            return f"{int(n)} B" if unit == "B" else f"{n:.1f} {unit}"
+        n /= 1024
+    return f"{n:.1f} GB"
+
+
+def wide(px: int = 1240) -> None:
+    """Wider main column for pages that are mostly tables and charts."""
+    chat_width(px)
+
+
 def chat_width(px: int = 820) -> None:
     st.markdown(
         f'<style>[data-testid="stMainBlockContainer"]{{max-width:{int(px)}px}}</style>',

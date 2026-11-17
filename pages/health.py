@@ -8,6 +8,7 @@ from adhyaksh.ui import components as ui
 
 LABELS = {"ok": "OK", "optional": "Optional, not installed", "missing": "Missing", "problem": "Problem"}
 
+ui.wide()
 ui.page_header("Health", "What is installed and working. Nothing on this page downloads anything or sends data online.")
 
 probe = st.checkbox("Check that Ollama is running (only if Ollama is the chosen provider)", value=True)

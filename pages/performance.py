@@ -4,10 +4,10 @@ from __future__ import annotations
 import streamlit as st
 
 from adhyaksh.services import performance as svc
-from adhyaksh.ui import components as ui, theme
+from adhyaksh.ui import components as ui
 
+ui.wide()
 ui.page_header("PC Performance", "CPU, RAM and disk stats, plus temp file cleanup.")
-theme.inject(svc.get("theme") or "light")
 
 
 @st.fragment(run_every=3)

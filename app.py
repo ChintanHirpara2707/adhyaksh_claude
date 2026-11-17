@@ -2,6 +2,7 @@
 import streamlit as st
 
 from adhyaksh import db, logging_setup
+from adhyaksh.services import shell
 from adhyaksh.ui import icons, theme
 
 st.set_page_config(page_title="ADHYAKSH", layout="wide")
@@ -16,30 +17,30 @@ def _boot() -> bool:
 
 _boot()
 
-PAGES = [("chat", "Chat"), ("memory", "Memory"), ("tools", "Tools"),
-         ("model_lab", "Model Lab"), ("activity", "Activity"), ("settings", "Settings"),
-         ("vision", "Object Detection"), ("performance", "PC Performance"), ("health", "Health")]
-pages = [
-    st.Page(f"pages/{slug}.py", title=title, icon=icons.page_icon(slug), url_path=slug,
-            default=(slug == "chat"))
+PAGES = shell.pages()
+pages = {
+    slug: st.Page(f"pages/{slug}.py", title=title, icon=icons.page_icon(slug), url_path=slug,
+                  default=(slug == "chat"))
     for slug, title in PAGES
-]
-current = st.navigation(pages, position="hidden")
+}
+current = st.navigation(list(pages.values()), position="hidden")
 saved_theme = theme.sidebar_header()
 theme.inject(saved_theme)
-for page in pages:
-    st.sidebar.page_link(page)
+for section, group in shell.NAV:
+    st.sidebar.markdown(f'<p class="adhy-nav-section">{section}</p>', unsafe_allow_html=True)
+    for slug, _ in group:
+        st.sidebar.page_link(pages[slug])
 
 
 @st.fragment(run_every=20)
 def _reminder_alerts() -> None:
     """Show reminders that are due (while the app is open in a browser)."""
-    from adhyaksh.tools import reminders
-    for r in reminders.due():
+    for r in shell.due_reminders():
         st.toast(f"Reminder: {r['text']}")
         st.sidebar.warning(f"Reminder: {r['text']}")
 
 
 with st.sidebar:
     _reminder_alerts()
+    st.markdown('<div class="adhy-status">' + "<br>".join(shell.status()) + "</div>", unsafe_allow_html=True)
 current.run()

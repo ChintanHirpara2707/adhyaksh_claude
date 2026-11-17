@@ -7,10 +7,10 @@ import streamlit as st
 from PIL import Image, ImageDraw
 
 from adhyaksh.services import vision as svc
-from adhyaksh.ui import components as ui, theme
+from adhyaksh.ui import components as ui
 
+ui.wide()
 ui.page_header("Object Detection", "Detect objects in a camera snapshot or uploaded image.")
-theme.inject(svc.get("theme") or "light")
 
 MODEL_CHOICES = {"fast": "Fast (yolov8n)", "balanced": "Balanced (yolov8s)", "accurate": "Accurate (yolov8m)"}
 
@@ -92,7 +92,7 @@ def render(key: str, file) -> None:
         x1, y1, x2, y2 = d["box"]
         draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
         draw.text((x1, max(0, y1 - 14)), f'{d["label"]} {d["confidence"]:.0%}', fill="red")
-    st.image(img, caption="Detected objects", use_container_width=True)
+    st.image(img, caption="Detected objects", width="stretch")
     st.markdown(svc.scene_describe(image_bytes, detections)["summary"])
     if read_text:
         _ocr = svc.ocr_read(image_bytes)

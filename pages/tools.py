@@ -3,6 +3,7 @@ import streamlit as st
 from adhyaksh.services import tools as svc
 from adhyaksh.ui import components as ui
 
+ui.wide()
 ui.page_header("Tools", "System status, workspace files and allowed applications. All actions are checked and logged.")
 st.subheader("System status")
 if st.button("Refresh status") or "status_loaded" not in st.session_state:
@@ -20,7 +21,9 @@ st.subheader("Workspace files")
 st.caption(f"Folder: {svc.get('default_work_folder')}")
 res = svc.files_list_dir(ctx={"user_text": "tools page", "intent": "file_list"})
 if res.ok and res.data["items"]:
-    st.table([{"Name": i["name"], "Type": "folder" if i["is_dir"] else "file", "Size (bytes)": i["size"]} for i in res.data["items"]])
+    st.dataframe([{"Name": i["name"], "Type": "folder" if i["is_dir"] else "file",
+                   "Size": "" if i["is_dir"] else ui.human_size(i["size"])} for i in res.data["items"]],
+                 hide_index=True, width="stretch")
 elif res.ok:
     ui.empty_state("The workspace folder is empty.")
 else:
@@ -63,8 +66,8 @@ if st.button("Refresh process list") or "procs" not in st.session_state:
     st.session_state["procs"] = _r.data["processes"] if _r.ok else []
 _procs = st.session_state.get("procs") or []
 if _procs:
-    st.table([{"Program": p["name"], "Memory (MB)": round(p["ram_mb"]), "CPU %": p["cpu_percent"], "Processes": p["count"],
-               "System": "yes" if p["protected"] else ""} for p in _procs])
+    st.dataframe([{"Program": p["name"], "Memory (MB)": round(p["ram_mb"]), "CPU %": p["cpu_percent"], "Processes": p["count"],
+               "System": "yes" if p["protected"] else ""} for p in _procs], hide_index=True, width="stretch")
     _choices = [p["name"] for p in _procs if not p["protected"]]
     if _choices:
         _victim = st.selectbox("Program to end", _choices)

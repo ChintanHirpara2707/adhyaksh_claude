@@ -95,6 +95,13 @@ button[data-baseweb="tab"][aria-selected="true"]{{color:var(--text)}}
  background:var(--subtle);border-radius:var(--radius)}}
 [data-testid="stBottom"]>div,[data-testid="stChatInput"]{{background:var(--bg)}}
 [data-testid="stChatInput"] textarea{{background:var(--surface)!important}}
+.adhy-nav-section{{color:var(--muted);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+ margin:1rem 0 .15rem .6rem}}
+.adhy-status{{color:var(--muted);font-size:.78rem;line-height:1.5;border-top:1px solid var(--border);
+ margin-top:1.25rem;padding-top:.75rem}}
+[data-testid="stMetric"]{{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+ padding:.6rem .9rem}}
+[data-testid="stDataFrame"]{{border:1px solid var(--border);border-radius:var(--radius)}}
 """
 
 

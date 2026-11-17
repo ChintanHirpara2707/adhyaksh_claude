@@ -91,9 +91,7 @@ def test_apps_allowlist_open_refuse_close():
     assert refused.error_code == E_BLOCKED
     res = _one_row(lambda: apps.open_app("Sleeper"))
     assert res.ok and res.data["pid"]
-    c = apps.close_app("sleeper")
-    assert c.error_code == E_NEEDS_CONFIRM
-    done = apps.close_app("sleeper", ctx={"token": c.data["token"]})
+    done = apps.close_app("sleeper")  # no confirmation step
     assert done.ok and done.data["closed"] == 1
     time.sleep(0.2)
 

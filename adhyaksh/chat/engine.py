@@ -623,6 +623,8 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         res = apps.close_app(app, ctx=c)
         if res.error_code == E_NEEDS_CONFIRM:
             return _confirm_reply(res, lang, ctx, lambda tok, a=app: apps.close_app(a, ctx=_ctx_for(text, intent, tok)), intent, app)
+        if res.ok and (res.data or {}).get("waiting") and not res.data.get("closed"):
+            return _Reply(_t("app_close_waiting", lang, app=app), intent, action="app_close")
         return _Reply(_t("app_closed", lang, app=app) if res.ok else (
             _t("app_refused", lang, app=app) if res.error_code == E_BLOCKED else _error_reply(res, lang)), intent, action="app_close")
     if intent == "office_create":

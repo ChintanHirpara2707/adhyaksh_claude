@@ -77,21 +77,17 @@ def test_model_claiming_an_action_without_any_tool_is_corrected(monkeypatch):
     assert native.guard_claims("The capital of France is Paris.", []) == "The capital of France is Paris."
 
 
-def test_app_close_always_needs_confirmation(monkeypatch):
-    _setup(monkeypatch, [call("app_close", app="notepad"), {"text": "Notepad is closed.", "tool_calls": []}])
+def test_app_close_runs_without_confirmation(monkeypatch):
+    _setup(monkeypatch, [call("app_close", app="notepad"), {"text": "Notepad was not running.", "tool_calls": []}])
     from adhyaksh.tools import apps
     ran = []
     import psutil
     monkeypatch.setattr(psutil, "process_iter", lambda *a, **k: ran.append("iter") or [])
     cid = context.new_conversation()
     r = engine.handle_message("close notepad", cid).data
-    assert r["intent"] == "agent_confirm" and r["confirmation"]["action"] == "app_close" and not ran
-    assert context.get(cid).pending_agent_confirm["native"] is True
-    # cancel: nothing runs
-    r2 = engine.handle_message("no", cid).data
-    assert "cancelled" in r2["reply"].lower() and not ran
-    # direct tool call without a token is refused as well
-    assert apps.close_app("notepad").error_code == "E_NEEDS_CONFIRM" and not ran
+    assert r["intent"] != "agent_confirm" and ran
+    res = apps.close_app("notepad")
+    assert res.error_code != "E_NEEDS_CONFIRM" and "not running" in res.message
 
 
 def test_confirmation_yes_runs_the_tool_and_finishes(monkeypatch):

@@ -1335,7 +1335,7 @@ def match_cowork(text: str) -> Rule | None:
             target = pid.group(1) or pid.group(2)
         strong = re.search(r"process|\bpid\b|\btask\b|\.exe\b|प्रोसेस|પ્રોસેસ", t, re.IGNORECASE)
         if find_app(target) and not strong:
-            return None  # an allow-listed app ("terminate paint"): closed through app_close with its own confirmation
+            return None  # an allow-listed app ("terminate paint"): closed through app_close
         if target.lower() not in ("process", "the", "it", "a", "task", "program", "listening"):
             return Rule("process_kill", {"target": target})
     if _PROC_LIST.search(t):

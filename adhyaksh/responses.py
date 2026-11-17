@@ -87,6 +87,7 @@ TEMPLATES: dict[str, dict[str, str]] = {
     "doc_created": {"en": "Created {name} in {folder}."},
     "app_opened": {"en": "Opened {app}."},
     "app_closed": {"en": "Closed {app}."},
+    "app_close_waiting": {"en": "Asked {app} to close. It is showing a save prompt, so answer it there to finish."},
     "app_refused": {"en": "{app} is not on the allowed applications list."},
     "status": {"en": "CPU {cpu:.0f} percent, memory {ram:.0f} percent, disk {disk:.0f} percent used."},
     "help": {"en": "I can create, read, update, delete and search files; create Excel and Word files; "

@@ -23,10 +23,10 @@ from adhyaksh.safety.confirm import STORE, ConfirmationStore
 LEVELS: dict[str, int] = {
     "file_list": 0, "file_read": 0, "file_search": 0, "memory_read": 0,
     "doc_query": 0, "system_status": 0, "perf_stats": 0, "vision_detect": 0, "page_open": 0,
-    "file_create": 1, "file_append": 1, "office_create": 1, "app_open": 1, "memory_write": 1,
+    "file_create": 1, "file_append": 1, "office_create": 1, "app_open": 1, "app_close": 1, "memory_write": 1,
     "screenshot": 1, "web_open": 1, "special_folder_open": 1,
     "voice_control": 1,
-    "file_overwrite": 2, "file_delete": 2, "app_close": 2, "memory_delete": 2,
+    "file_overwrite": 2, "file_delete": 2, "memory_delete": 2,
     "run_python": 2, "temp_clean": 2, "source_delete": 2, "process_kill": 2, "reminder_cancel_all": 2,
     "process_list": 0, "reminder_list": 0, "clipboard_read": 0, "ocr_read": 0,
     "reminder_add": 1, "reminder_cancel": 1, "clipboard_write": 1,

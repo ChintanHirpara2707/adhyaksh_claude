@@ -20,7 +20,7 @@ def test_levels_by_action():
     d = policy.authorize("file_delete", f, r)
     assert d.level == 2 and d.allowed and d.needs_confirmation
     assert policy.authorize("file_overwrite", f, r).needs_confirmation
-    assert policy.authorize("app_close", "notepad").needs_confirmation
+    assert not policy.authorize("app_close", "notepad").needs_confirmation  # closes without asking
     assert not policy.authorize("app_open", "notepad").needs_confirmation
 
 

@@ -4,7 +4,7 @@ import time
 from adhyaksh import config, db
 from adhyaksh.chat import context, engine, identity
 from adhyaksh.nlu import dataset
-from adhyaksh.rag import loader
+from adhyaksh.rag import loader, retriever, sources
 from adhyaksh.ui import components as ui
 from adhyaksh.voice import bridge
 
@@ -100,16 +100,33 @@ for m in history:
 #             if result:
 #                 st.code(result)
 
-with st.expander("Attached documents"):
-    _docs = loader.list_documents()
+_nbs = sources.list_notebooks()
+_active = sources.active()
+with st.expander(f"Notebook: {_active['name']} ({sources.count()} sources)"):
+    _names = [n["name"] for n in _nbs]
+    _pick = st.selectbox("Active notebook", _names, index=_names.index(_active["name"]) if _active["name"] in _names else 0,
+                         help="Attachments go into the active notebook, and document questions are answered from it only.")
+    if _pick != _active["name"]:
+        sources.set_active(next(n["id"] for n in _nbs if n["name"] == _pick))
+        st.rerun()
+    _n1, _n2 = st.columns([4, 1])
+    _new = _n1.text_input("New notebook name", max_chars=60, label_visibility="collapsed", placeholder="New notebook name")
+    if _n2.button("Create") and _new.strip():
+        sources.create_notebook(_new)
+        st.rerun()
+    _docs = loader.list_documents(_active["id"])
     if not _docs:
-        st.caption("None yet. Use the paperclip in the message box to attach a file.")
+        st.caption("No sources yet. Use the paperclip in the message box to attach a PDF, DOCX or text file.")
     for _d in _docs:
         _c1, _c2 = st.columns([5, 1])
-        _c1.caption(f"{_d['filename']} - {_d['chunks']} passages")
+        _c1.markdown(f"**{_d['filename']}** - {_d['chunks']} passages")
+        if _d.get("summary"):
+            _c1.caption(_d["summary"][:280])
         if _c2.button("Remove", key=f"rmdoc_{_d['id']}"):
             loader.delete_document(int(_d["id"]))
             st.rerun()
+    st.caption("Search method: " + {"local": "local embeddings (multilingual)", "gemini": "Gemini embeddings (cloud)",
+                                    "tfidf": "TF-IDF keywords (offline)"}[retriever.embedding_mode()])
 
 pending = context.get(cid).pending_confirm
 if pending:

@@ -13,7 +13,7 @@ from adhyaksh.agent import runner as agent_runner
 from adhyaksh.llm import base as llm
 from adhyaksh.memory import store
 from adhyaksh.nlu import registry
-from adhyaksh.rag import answerer
+from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
 from adhyaksh.tools import apps, features, files, office, system
@@ -190,7 +190,7 @@ def _context_answer(text: str, ctx: context.Context, lang: str) -> _Reply | None
     hit = store.best_match(text)
     if hit:
         return _Reply(_t("memory_recall", lang, answer=hit["answer"]), "memory_recall", action="memory")
-    if ctx.has_sources:
+    if sources.count() > 0:  # the active notebook has sources: answer from them when they match
         res = answerer.answer(text)
         if res.data.get("found"):
             return _Reply(res.data["answer"], "doc_question", action="doc_answer", sources=res.data["sources"])
@@ -332,6 +332,9 @@ _INTENT_SIGNAL = {
                                  r"tez|तेज|धीमा|परफॉर्म|रैम|मेमोरी|પરફોર્મ|ઝડપી|રેમ|મેમરી|હેંગ", re.IGNORECASE),
     "voice_control": re.compile(r"listen|voice|hands.?free|wake|speak|talk|quiet|mute|aloud|\bmic\b|sunn|sambh|chup|bol|"
                                 r"सुन|बोल|चुप|आवाज|माइक|સાંભળ|બોલ|ચૂપ|અવાજ|માઇક", re.IGNORECASE),
+    "source_list": re.compile(r"source|document|file|notebook|attach|upload|सोर्स|दस्तावेज़|नोटबुक|સોર્સ|દસ્તાવેજ|નોટબુક", re.IGNORECASE),
+    "source_summary": re.compile(r"source|document|file|notebook|attach|pdf|सोर्स|दस्तावेज़|फाइल|नोटबुक|સોર્સ|દસ્તાવેજ|ફાઇલ|નોટબુક", re.IGNORECASE),
+    "source_delete": re.compile(r"source|notebook|सोर्स|नोटबुक|સોર્સ|નોટબુક", re.IGNORECASE),
     "app_open": re.compile(r"\bopen\b|launch|\bstart\b|\brun\b|kholo|khol\b|chalu|shuru|खोल|चालू|शुरू|ખોલ|ચાલુ|શરૂ",
                            re.IGNORECASE),
     "app_close": re.compile(r"close|quit|exit|kill|stop|band|bandh|off\b|बंद|બંધ", re.IGNORECASE),
@@ -477,6 +480,8 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
     if intent == "set_identity":
         name, conf = (slots.get("name"), slots.get("conf", 0)) if slots.get("name") else identity.extract_name(text)
         if not name:
+            if _is_general_question(text):  # "tell me a joke" in any language is a request, not a name
+                return _llm_answer(text, convo_id, lang, "knowledge_question")
             # A statement without a name is not an identity declaration (e.g. "Current time is 10:15 AM").
             return _Reply(_t("unknown", lang), "unknown")
         if conf >= 0.75:
@@ -588,6 +593,8 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
                       intent, action="office_create")
     if intent in ("file_create", "file_read", "file_update", "file_delete", "file_search"):
         return _file_intent(intent, text, slots, ctx, lang, c)
+    if intent in ("source_list", "source_summary", "source_delete"):
+        return _sources_reply(intent, text, slots, ctx, lang, c)
     if intent == "doc_question":
         res = answerer.answer(text)
         if res.data.get("found"):
@@ -663,6 +670,8 @@ def _finish_confirmation(ctx: context.Context, accept: bool, lang: str) -> _Repl
     if p["action"] == "file_delete":
         ctx.last_file = None
         return _Reply(_t("file_deleted", lang, path=d.get("path", p["target"])), "confirmation", action=p["action"])
+    if p["action"] == "source_delete":
+        return _Reply(f"Removed the source {d.get('file', p['target'])}.", "confirmation", action=p["action"])
     if p["action"] == "temp_clean":
         return _Reply(f"Cleaned {d.get('mb', 0)} MB of temp files. Skipped {d.get('skipped', 0)} files in use.",
                       "confirmation", action=p["action"])
@@ -717,6 +726,8 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
             slots["folder"] = router.clean_slot_name(text)
         elif p["need"] == "url":
             slots["url"] = router.extract_web_url(text)
+        elif p["need"] == "source":
+            slots["name"] = text.strip()
         else:
             slots["content"] = text.strip()
         return _dispatch(p["intent"], text, slots, ctx, convo_id, lang, mode=mode)
@@ -777,21 +788,53 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
     return r
 
 
-def _ingest_attachments(attachments: list[tuple[str, bytes]]) -> tuple[list[str], list[str]]:
-    """Index attached files. Returns (ok lines, failure lines)."""
+def _ingest_attachments(attachments: list[tuple[str, bytes]]) -> tuple[list[str], list[str], list[str]]:
+    """Index attached files into the active notebook. Returns (ok lines, failure lines, indexed file names)."""
     from adhyaksh.rag import loader
-    ok, bad = [], []
+    ok, bad, names = [], [], []
     for name, data in attachments:
         res = loader.ingest_bytes(name, data)
         if res.ok:
             ok.append(f"{res.data['filename']} ({res.data['chunks']} passages)")
+            names.append(res.data["filename"])
         else:
             bad.append(f"{name}: {res.message.rstrip('.')}")
-    return ok, bad
+    return ok, bad, names
+
+
+def _summary_text(data: dict) -> str:
+    parts = [f"**{s['file']}**\n{s['summary']}" for s in data["summaries"]]
+    return f"Summary of notebook {data['notebook']}:\n\n" + "\n\n".join(parts)
+
+
+def _sources_reply(intent: str, text: str, slots: dict, ctx: context.Context, lang: str, c: dict) -> _Reply:
+    """Notebook source commands: list, summarise, delete (delete needs confirmation)."""
+    if intent == "source_list":
+        res = sources.list_sources(ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent)
+        items = res.data["sources"]
+        if not items:
+            return _Reply(f"Notebook {res.data['notebook']} has no sources yet. Attach a document with the paperclip.", intent, action="sources")
+        lines = "\n".join(f"{i + 1}. {s['file']} ({s['passages']} passages)" for i, s in enumerate(items))
+        return _Reply(f"Notebook {res.data['notebook']} has {len(items)} source(s):\n{lines}", intent, action="sources")
+    if intent == "source_summary":
+        res = sources.summarize(slots.get("name"), ctx=c)
+        return _Reply(_summary_text(res.data) if res.ok else _error_reply(res, lang), intent, action="sources")
+    name = slots.get("name") or router.find_file(text)
+    if not name:
+        return _need(ctx, intent, "source", slots, "Which source should I remove?", lang)
+    res = sources.delete_source(name, ctx=c)
+    if res.error_code == E_NEEDS_CONFIRM:
+        r = _confirm_reply(res, lang, ctx, lambda tok: sources.delete_source(name, ctx=_ctx_for(text, intent, tok), token=tok),
+                           intent, res.data["target"])
+        r.text = f"Remove the source {res.data['target']} from this notebook? Confirm or cancel."
+        return r
+    return _Reply(f"Removed the source {res.data['file']}." if res.ok else _error_reply(res, lang), intent, action="sources")
 
 
 def _attachment_reply(text: str, ok: list[str], bad: list[str], ctx: context.Context,
-                      convo_id: int, lang: str, mode: str) -> _Reply:
+                      convo_id: int, lang: str, mode: str, names: list[str] | None = None) -> _Reply:
     note = ""
     if ok:
         note += "Indexed: " + ", ".join(ok) + ".\n"
@@ -800,6 +843,10 @@ def _attachment_reply(text: str, ok: list[str], bad: list[str], ctx: context.Con
     if not text:
         ctx.has_sources = ctx.has_sources or bool(ok)
         return _Reply(note.strip() + (" Ask me anything about it." if ok else ""), "attachment", action="attach")
+    if ok and router.is_summary_request(text):
+        res = sources.summarize(names[0] if names and len(names) == 1 else None, ctx=_ctx_for(text, "source_summary"))
+        if res.ok:
+            return _Reply(note + "\n" + _summary_text(res.data), "source_summary", action="sources")
     if ok:
         ctx.has_sources = True
         res = answerer.answer(text)
@@ -839,8 +886,8 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
         if images and not attachments:
             r = _vision_reply(text, {}, ctx, _ctx_for(text, "vision_detect"))
         elif attachments:
-            ok, bad = _ingest_attachments(attachments)
-            r = _attachment_reply(text, ok, bad, ctx, conversation_id, lang, mode)
+            ok, bad, names = _ingest_attachments(attachments)
+            r = _attachment_reply(text, ok, bad, ctx, conversation_id, lang, mode, names)
         else:
             r = _process(text, ctx, conversation_id, lang, mode=mode)
     except Exception as exc:  # never raise to the UI for expected failures

@@ -3142,3 +3142,320 @@ please bolvani bhasha english karo atyare,voice_control,gujlish,latin,generated,
 "સાંભળો, બોલવાની ભાષા અંગ્રેજી કરો",voice_control,gu,gujarati,generated,false
 બોલવાની ભાષા અંગ્રેજી કરો હમણાં,voice_control,gu,gujarati,generated,false
 કૃપા કરીને બોલવાની ભાષા અંગ્રેજી કરો હમણાં,voice_control,gu,gujarati,generated,false
+list the documents in this notebook,source_list,en,latin,generated,false
+"assistant, list the documents in this notebook",source_list,en,latin,generated,false
+list the documents in this notebook please,source_list,en,latin,generated,false
+list the documents in this notebook now,source_list,en,latin,generated,false
+"hey, list the documents in this notebook",source_list,en,latin,generated,false
+what files are in my notebook,source_list,en,latin,generated,false
+please what files are in my notebook please,source_list,en,latin,generated,false
+"hey, what files are in my notebook",source_list,en,latin,generated,false
+"assistant, what files are in my notebook now",source_list,en,latin,generated,false
+show the sources of this notebook,source_list,en,latin,generated,false
+"assistant, show the sources of this notebook",source_list,en,latin,generated,false
+"hey, show the sources of this notebook please",source_list,en,latin,generated,false
+"hey, show the sources of this notebook now",source_list,en,latin,generated,false
+display all attached documents,source_list,en,latin,generated,false
+display all attached documents now,source_list,en,latin,generated,false
+"assistant, display all attached documents now",source_list,en,latin,generated,false
+"assistant, display all attached documents",source_list,en,latin,generated,false
+"hey, display all attached documents now",source_list,en,latin,generated,false
+how many sources do i have,source_list,en,latin,generated,false
+"hey, how many sources do i have now",source_list,en,latin,generated,false
+please how many sources do i have please,source_list,en,latin,generated,false
+"hey, how many sources do i have",source_list,en,latin,generated,false
+how many sources do i have now,source_list,en,latin,generated,false
+show me my source list,source_list,en,latin,generated,false
+"assistant, show me my source list please",source_list,en,latin,generated,false
+show me my source list please,source_list,en,latin,generated,false
+"hey, show me my source list",source_list,en,latin,generated,false
+"assistant, show me my source list now",source_list,en,latin,generated,false
+is notebook ke sources dikhao,source_list,hinglish,latin,generated,false
+is notebook ke sources dikhao jaldi,source_list,hinglish,latin,generated,false
+"suno, is notebook ke sources dikhao jaldi",source_list,hinglish,latin,generated,false
+please is notebook ke sources dikhao,source_list,hinglish,latin,generated,false
+kaun kaun se documents add kiye hain,source_list,hinglish,latin,generated,false
+"suno, kaun kaun se documents add kiye hain",source_list,hinglish,latin,generated,false
+kaun kaun se documents add kiye hain jaldi,source_list,hinglish,latin,generated,false
+please kaun kaun se documents add kiye hain,source_list,hinglish,latin,generated,false
+meri attached files ki list do,source_list,hinglish,latin,generated,false
+"suno, meri attached files ki list do",source_list,hinglish,latin,generated,false
+please meri attached files ki list do,source_list,hinglish,latin,generated,false
+meri attached files ki list do jaldi,source_list,hinglish,latin,generated,false
+please meri attached files ki list do abhi,source_list,hinglish,latin,generated,false
+notebook me kitne sources hain,source_list,hinglish,latin,generated,false
+notebook me kitne sources hain abhi,source_list,hinglish,latin,generated,false
+"suno, notebook me kitne sources hain abhi",source_list,hinglish,latin,generated,false
+"suno, notebook me kitne sources hain",source_list,hinglish,latin,generated,false
+"suno, notebook me kitne sources hain jaldi",source_list,hinglish,latin,generated,false
+aa notebook na sources batavo,source_list,gujlish,latin,generated,false
+please aa notebook na sources batavo,source_list,gujlish,latin,generated,false
+"sambhdo, aa notebook na sources batavo",source_list,gujlish,latin,generated,false
+please aa notebook na sources batavo jaldi,source_list,gujlish,latin,generated,false
+aa notebook na sources batavo jaldi,source_list,gujlish,latin,generated,false
+kaya documents add karya che,source_list,gujlish,latin,generated,false
+please kaya documents add karya che,source_list,gujlish,latin,generated,false
+kaya documents add karya che jaldi,source_list,gujlish,latin,generated,false
+"sambhdo, kaya documents add karya che",source_list,gujlish,latin,generated,false
+please kaya documents add karya che jaldi,source_list,gujlish,latin,generated,false
+mari attached files ni list apo,source_list,gujlish,latin,generated,false
+mari attached files ni list apo jaldi,source_list,gujlish,latin,generated,false
+"sambhdo, mari attached files ni list apo atyare",source_list,gujlish,latin,generated,false
+"sambhdo, mari attached files ni list apo jaldi",source_list,gujlish,latin,generated,false
+notebook ma ketla sources che,source_list,gujlish,latin,generated,false
+"sambhdo, notebook ma ketla sources che atyare",source_list,gujlish,latin,generated,false
+notebook ma ketla sources che atyare,source_list,gujlish,latin,generated,false
+please notebook ma ketla sources che,source_list,gujlish,latin,generated,false
+इस नोटबुक के सोर्स दिखाओ,source_list,hi,devanagari,generated,false
+"सुनो, इस नोटबुक के सोर्स दिखाओ अभी",source_list,hi,devanagari,generated,false
+कृपया इस नोटबुक के सोर्स दिखाओ,source_list,hi,devanagari,generated,false
+इस नोटबुक के सोर्स दिखाओ जल्दी,source_list,hi,devanagari,generated,false
+कृपया इस नोटबुक के सोर्स दिखाओ जल्दी,source_list,hi,devanagari,generated,false
+कौन से दस्तावेज़ जोड़े गए हैं,source_list,hi,devanagari,generated,false
+कृपया कौन से दस्तावेज़ जोड़े गए हैं जल्दी,source_list,hi,devanagari,generated,false
+"सुनो, कौन से दस्तावेज़ जोड़े गए हैं",source_list,hi,devanagari,generated,false
+"सुनो, कौन से दस्तावेज़ जोड़े गए हैं अभी",source_list,hi,devanagari,generated,false
+अटैच की गई फाइलों की सूची दो,source_list,hi,devanagari,generated,false
+"सुनो, अटैच की गई फाइलों की सूची दो जल्दी",source_list,hi,devanagari,generated,false
+कृपया अटैच की गई फाइलों की सूची दो जल्दी,source_list,hi,devanagari,generated,false
+अटैच की गई फाइलों की सूची दो अभी,source_list,hi,devanagari,generated,false
+"सुनो, अटैच की गई फाइलों की सूची दो",source_list,hi,devanagari,generated,false
+नोटबुक में कितने सोर्स हैं,source_list,hi,devanagari,generated,false
+नोटबुक में कितने सोर्स हैं जल्दी,source_list,hi,devanagari,generated,false
+"सुनो, नोटबुक में कितने सोर्स हैं जल्दी",source_list,hi,devanagari,generated,false
+"सुनो, नोटबुक में कितने सोर्स हैं अभी",source_list,hi,devanagari,generated,false
+नोटबुक में कितने सोर्स हैं अभी,source_list,hi,devanagari,generated,false
+આ નોટબુકના સોર્સ બતાવો,source_list,gu,gujarati,generated,false
+"સાંભળો, આ નોટબુકના સોર્સ બતાવો",source_list,gu,gujarati,generated,false
+આ નોટબુકના સોર્સ બતાવો જલ્દી,source_list,gu,gujarati,generated,false
+આ નોટબુકના સોર્સ બતાવો હમણાં,source_list,gu,gujarati,generated,false
+"સાંભળો, આ નોટબુકના સોર્સ બતાવો જલ્દી",source_list,gu,gujarati,generated,false
+કયા દસ્તાવેજો ઉમેર્યા છે,source_list,gu,gujarati,generated,false
+"સાંભળો, કયા દસ્તાવેજો ઉમેર્યા છે હમણાં",source_list,gu,gujarati,generated,false
+"સાંભળો, કયા દસ્તાવેજો ઉમેર્યા છે",source_list,gu,gujarati,generated,false
+કયા દસ્તાવેજો ઉમેર્યા છે જલ્દી,source_list,gu,gujarati,generated,false
+કયા દસ્તાવેજો ઉમેર્યા છે હમણાં,source_list,gu,gujarati,generated,false
+જોડેલી ફાઇલોની યાદી આપો,source_list,gu,gujarati,generated,false
+"સાંભળો, જોડેલી ફાઇલોની યાદી આપો જલ્દી",source_list,gu,gujarati,generated,false
+"સાંભળો, જોડેલી ફાઇલોની યાદી આપો",source_list,gu,gujarati,generated,false
+કૃપા કરીને જોડેલી ફાઇલોની યાદી આપો,source_list,gu,gujarati,generated,false
+જોડેલી ફાઇલોની યાદી આપો હમણાં,source_list,gu,gujarati,generated,false
+નોટબુકમાં કેટલા સોર્સ છે,source_list,gu,gujarati,generated,false
+"સાંભળો, નોટબુકમાં કેટલા સોર્સ છે હમણાં",source_list,gu,gujarati,generated,false
+"સાંભળો, નોટબુકમાં કેટલા સોર્સ છે જલ્દી",source_list,gu,gujarati,generated,false
+નોટબુકમાં કેટલા સોર્સ છે જલ્દી,source_list,gu,gujarati,generated,false
+"સાંભળો, નોટબુકમાં કેટલા સોર્સ છે",source_list,gu,gujarati,generated,false
+delete the source {f},source_delete,en,latin,generated,false
+"hey, delete the source todo.docx now",source_delete,en,latin,generated,false
+"assistant, delete the source summary.txt now",source_delete,en,latin,generated,false
+please delete the source notes.txt please,source_delete,en,latin,generated,false
+delete the source diary.txt please,source_delete,en,latin,generated,false
+drop {f} from my sources,source_delete,en,latin,generated,false
+"assistant, drop budget.xlsx from my sources please",source_delete,en,latin,generated,false
+please drop data.csv from my sources,source_delete,en,latin,generated,false
+"assistant, drop report.txt from my sources now",source_delete,en,latin,generated,false
+drop report.txt from my sources,source_delete,en,latin,generated,false
+take {f} out of the notebook,source_delete,en,latin,generated,false
+"assistant, take list.txt out of the notebook now",source_delete,en,latin,generated,false
+take summary.txt out of the notebook now,source_delete,en,latin,generated,false
+take marks.xlsx out of the notebook,source_delete,en,latin,generated,false
+take notes.txt out of the notebook,source_delete,en,latin,generated,false
+remove {f} from this notebook,source_delete,en,latin,generated,false
+remove list.txt from this notebook now,source_delete,en,latin,generated,false
+please remove data.csv from this notebook,source_delete,en,latin,generated,false
+remove data.csv from this notebook please,source_delete,en,latin,generated,false
+"assistant, remove todo.docx from this notebook now",source_delete,en,latin,generated,false
+forget the document {f},source_delete,en,latin,generated,false
+"assistant, forget the document invoice.docx",source_delete,en,latin,generated,false
+"assistant, forget the document budget.xlsx now",source_delete,en,latin,generated,false
+forget the document summary.txt,source_delete,en,latin,generated,false
+forget the document notes.txt now,source_delete,en,latin,generated,false
+unlink the source {f},source_delete,en,latin,generated,false
+"assistant, unlink the source list.txt",source_delete,en,latin,generated,false
+unlink the source summary.txt please,source_delete,en,latin,generated,false
+please unlink the source list.txt please,source_delete,en,latin,generated,false
+please unlink the source list.txt now,source_delete,en,latin,generated,false
+{f} ko sources se hata do,source_delete,hinglish,latin,generated,false
+"suno, summary.txt ko sources se hata do",source_delete,hinglish,latin,generated,false
+"suno, plan.docx ko sources se hata do",source_delete,hinglish,latin,generated,false
+"suno, data.csv ko sources se hata do jaldi",source_delete,hinglish,latin,generated,false
+"suno, marks.xlsx ko sources se hata do jaldi",source_delete,hinglish,latin,generated,false
+notebook se {f} nikal do,source_delete,hinglish,latin,generated,false
+please notebook se budget.xlsx nikal do jaldi,source_delete,hinglish,latin,generated,false
+notebook se list.txt nikal do jaldi,source_delete,hinglish,latin,generated,false
+notebook se summary.txt nikal do,source_delete,hinglish,latin,generated,false
+notebook se marks.xlsx nikal do abhi,source_delete,hinglish,latin,generated,false
+source {f} delete kar do,source_delete,hinglish,latin,generated,false
+"suno, source list.txt delete kar do abhi",source_delete,hinglish,latin,generated,false
+"suno, source marks.xlsx delete kar do jaldi",source_delete,hinglish,latin,generated,false
+source report.txt delete kar do abhi,source_delete,hinglish,latin,generated,false
+please source todo.docx delete kar do abhi,source_delete,hinglish,latin,generated,false
+{f} wala source hatao,source_delete,hinglish,latin,generated,false
+"suno, todo.docx wala source hatao abhi",source_delete,hinglish,latin,generated,false
+please todo.docx wala source hatao,source_delete,hinglish,latin,generated,false
+"suno, invoice.docx wala source hatao jaldi",source_delete,hinglish,latin,generated,false
+plan.docx wala source hatao abhi,source_delete,hinglish,latin,generated,false
+{f} ne sources mathi kadhi nakho,source_delete,gujlish,latin,generated,false
+todo.docx ne sources mathi kadhi nakho jaldi,source_delete,gujlish,latin,generated,false
+diary.txt ne sources mathi kadhi nakho atyare,source_delete,gujlish,latin,generated,false
+please invoice.docx ne sources mathi kadhi nakho,source_delete,gujlish,latin,generated,false
+list.txt ne sources mathi kadhi nakho jaldi,source_delete,gujlish,latin,generated,false
+notebook mathi {f} kadhi do,source_delete,gujlish,latin,generated,false
+notebook mathi report.txt kadhi do atyare,source_delete,gujlish,latin,generated,false
+notebook mathi data.csv kadhi do atyare,source_delete,gujlish,latin,generated,false
+"sambhdo, notebook mathi summary.txt kadhi do jaldi",source_delete,gujlish,latin,generated,false
+"sambhdo, notebook mathi resume.pdf kadhi do jaldi",source_delete,gujlish,latin,generated,false
+source {f} delete kari do,source_delete,gujlish,latin,generated,false
+please source plan.docx delete kari do jaldi,source_delete,gujlish,latin,generated,false
+source resume.pdf delete kari do jaldi,source_delete,gujlish,latin,generated,false
+"sambhdo, source data.csv delete kari do",source_delete,gujlish,latin,generated,false
+source data.csv delete kari do atyare,source_delete,gujlish,latin,generated,false
+{f} valo source kadho,source_delete,gujlish,latin,generated,false
+"sambhdo, invoice.docx valo source kadho atyare",source_delete,gujlish,latin,generated,false
+please budget.xlsx valo source kadho jaldi,source_delete,gujlish,latin,generated,false
+invoice.docx valo source kadho atyare,source_delete,gujlish,latin,generated,false
+marks.xlsx valo source kadho atyare,source_delete,gujlish,latin,generated,false
+{f} को सोर्स से हटा दो,source_delete,hi,devanagari,generated,false
+कृपया diary.txt को सोर्स से हटा दो जल्दी,source_delete,hi,devanagari,generated,false
+कृपया diary.txt को सोर्स से हटा दो,source_delete,hi,devanagari,generated,false
+"सुनो, budget.xlsx को सोर्स से हटा दो अभी",source_delete,hi,devanagari,generated,false
+कृपया data.csv को सोर्स से हटा दो अभी,source_delete,hi,devanagari,generated,false
+नोटबुक से {f} निकाल दो,source_delete,hi,devanagari,generated,false
+"सुनो, नोटबुक से diary.txt निकाल दो अभी",source_delete,hi,devanagari,generated,false
+कृपया नोटबुक से notes.txt निकाल दो जल्दी,source_delete,hi,devanagari,generated,false
+कृपया नोटबुक से list.txt निकाल दो जल्दी,source_delete,hi,devanagari,generated,false
+कृपया नोटबुक से marks.xlsx निकाल दो,source_delete,hi,devanagari,generated,false
+सोर्स {f} डिलीट करो,source_delete,hi,devanagari,generated,false
+सोर्स report.txt डिलीट करो अभी,source_delete,hi,devanagari,generated,false
+कृपया सोर्स data.csv डिलीट करो,source_delete,hi,devanagari,generated,false
+कृपया सोर्स list.txt डिलीट करो,source_delete,hi,devanagari,generated,false
+कृपया सोर्स budget.xlsx डिलीट करो जल्दी,source_delete,hi,devanagari,generated,false
+{f} वाला सोर्स हटाओ,source_delete,hi,devanagari,generated,false
+कृपया marks.xlsx वाला सोर्स हटाओ अभी,source_delete,hi,devanagari,generated,false
+"सुनो, plan.docx वाला सोर्स हटाओ अभी",source_delete,hi,devanagari,generated,false
+"सुनो, invoice.docx वाला सोर्स हटाओ जल्दी",source_delete,hi,devanagari,generated,false
+summary.txt वाला सोर्स हटाओ जल्दी,source_delete,hi,devanagari,generated,false
+{f} ને સોર્સમાંથી કાઢી નાખો,source_delete,gu,gujarati,generated,false
+કૃપા કરીને data.csv ને સોર્સમાંથી કાઢી નાખો,source_delete,gu,gujarati,generated,false
+"સાંભળો, summary.txt ને સોર્સમાંથી કાઢી નાખો હમણાં",source_delete,gu,gujarati,generated,false
+todo.docx ને સોર્સમાંથી કાઢી નાખો,source_delete,gu,gujarati,generated,false
+કૃપા કરીને list.txt ને સોર્સમાંથી કાઢી નાખો જલ્દી,source_delete,gu,gujarati,generated,false
+નોટબુકમાંથી {f} કાઢો,source_delete,gu,gujarati,generated,false
+કૃપા કરીને નોટબુકમાંથી marks.xlsx કાઢો,source_delete,gu,gujarati,generated,false
+કૃપા કરીને નોટબુકમાંથી budget.xlsx કાઢો હમણાં,source_delete,gu,gujarati,generated,false
+નોટબુકમાંથી budget.xlsx કાઢો જલ્દી,source_delete,gu,gujarati,generated,false
+નોટબુકમાંથી report.txt કાઢો,source_delete,gu,gujarati,generated,false
+સોર્સ {f} ડિલીટ કરો,source_delete,gu,gujarati,generated,false
+કૃપા કરીને સોર્સ summary.txt ડિલીટ કરો,source_delete,gu,gujarati,generated,false
+કૃપા કરીને સોર્સ marks.xlsx ડિલીટ કરો જલ્દી,source_delete,gu,gujarati,generated,false
+કૃપા કરીને સોર્સ summary.txt ડિલીટ કરો જલ્દી,source_delete,gu,gujarati,generated,false
+સોર્સ list.txt ડિલીટ કરો,source_delete,gu,gujarati,generated,false
+{f} વાળો સોર્સ કાઢો,source_delete,gu,gujarati,generated,false
+કૃપા કરીને plan.docx વાળો સોર્સ કાઢો હમણાં,source_delete,gu,gujarati,generated,false
+"સાંભળો, plan.docx વાળો સોર્સ કાઢો જલ્દી",source_delete,gu,gujarati,generated,false
+invoice.docx વાળો સોર્સ કાઢો હમણાં,source_delete,gu,gujarati,generated,false
+diary.txt વાળો સોર્સ કાઢો હમણાં,source_delete,gu,gujarati,generated,false
+summarise this notebook,source_summary,en,latin,generated,false
+please summarise this notebook,source_summary,en,latin,generated,false
+summarise this notebook now,source_summary,en,latin,generated,false
+please summarise this notebook now,source_summary,en,latin,generated,false
+"assistant, summarise this notebook please",source_summary,en,latin,generated,false
+give me the gist of my documents,source_summary,en,latin,generated,false
+give me the gist of my documents now,source_summary,en,latin,generated,false
+"hey, give me the gist of my documents",source_summary,en,latin,generated,false
+"hey, give me the gist of my documents please",source_summary,en,latin,generated,false
+"assistant, give me the gist of my documents please",source_summary,en,latin,generated,false
+short overview of the uploaded file,source_summary,en,latin,generated,false
+please short overview of the uploaded file now,source_summary,en,latin,generated,false
+"hey, short overview of the uploaded file now",source_summary,en,latin,generated,false
+short overview of the uploaded file please,source_summary,en,latin,generated,false
+short overview of the uploaded file now,source_summary,en,latin,generated,false
+what are my sources about in brief,source_summary,en,latin,generated,false
+"assistant, what are my sources about in brief now",source_summary,en,latin,generated,false
+please what are my sources about in brief now,source_summary,en,latin,generated,false
+please what are my sources about in brief please,source_summary,en,latin,generated,false
+summarize {f},source_summary,en,latin,generated,false
+"assistant, summarize notes.txt please",source_summary,en,latin,generated,false
+summarize marks.xlsx now,source_summary,en,latin,generated,false
+"hey, summarize resume.pdf now",source_summary,en,latin,generated,false
+"assistant, summarize report.txt now",source_summary,en,latin,generated,false
+key takeaways from the attached document,source_summary,en,latin,generated,false
+please key takeaways from the attached document now,source_summary,en,latin,generated,false
+"assistant, key takeaways from the attached document now",source_summary,en,latin,generated,false
+"hey, key takeaways from the attached document",source_summary,en,latin,generated,false
+is notebook ka saar batao,source_summary,hinglish,latin,generated,false
+please is notebook ka saar batao abhi,source_summary,hinglish,latin,generated,false
+"suno, is notebook ka saar batao jaldi",source_summary,hinglish,latin,generated,false
+please is notebook ka saar batao,source_summary,hinglish,latin,generated,false
+is notebook ka saar batao abhi,source_summary,hinglish,latin,generated,false
+mere documents ka short summary do,source_summary,hinglish,latin,generated,false
+mere documents ka short summary do jaldi,source_summary,hinglish,latin,generated,false
+"suno, mere documents ka short summary do",source_summary,hinglish,latin,generated,false
+mere documents ka short summary do abhi,source_summary,hinglish,latin,generated,false
+"suno, mere documents ka short summary do abhi",source_summary,hinglish,latin,generated,false
+attached file ka nichod batao,source_summary,hinglish,latin,generated,false
+"suno, attached file ka nichod batao",source_summary,hinglish,latin,generated,false
+"suno, attached file ka nichod batao abhi",source_summary,hinglish,latin,generated,false
+attached file ka nichod batao abhi,source_summary,hinglish,latin,generated,false
+attached file ka nichod batao jaldi,source_summary,hinglish,latin,generated,false
+{f} ka summary bana do,source_summary,hinglish,latin,generated,false
+please report.txt ka summary bana do abhi,source_summary,hinglish,latin,generated,false
+"suno, todo.docx ka summary bana do abhi",source_summary,hinglish,latin,generated,false
+"suno, marks.xlsx ka summary bana do jaldi",source_summary,hinglish,latin,generated,false
+please budget.xlsx ka summary bana do jaldi,source_summary,hinglish,latin,generated,false
+aa notebook no saar kaho,source_summary,gujlish,latin,generated,false
+aa notebook no saar kaho jaldi,source_summary,gujlish,latin,generated,false
+please aa notebook no saar kaho,source_summary,gujlish,latin,generated,false
+"sambhdo, aa notebook no saar kaho atyare",source_summary,gujlish,latin,generated,false
+mara documents no tunko summary apo,source_summary,gujlish,latin,generated,false
+mara documents no tunko summary apo atyare,source_summary,gujlish,latin,generated,false
+please mara documents no tunko summary apo jaldi,source_summary,gujlish,latin,generated,false
+"sambhdo, mara documents no tunko summary apo jaldi",source_summary,gujlish,latin,generated,false
+please mara documents no tunko summary apo atyare,source_summary,gujlish,latin,generated,false
+attached file no saransh kaho,source_summary,gujlish,latin,generated,false
+attached file no saransh kaho atyare,source_summary,gujlish,latin,generated,false
+"sambhdo, attached file no saransh kaho jaldi",source_summary,gujlish,latin,generated,false
+"sambhdo, attached file no saransh kaho",source_summary,gujlish,latin,generated,false
+"sambhdo, attached file no saransh kaho atyare",source_summary,gujlish,latin,generated,false
+{f} no summary banavi do,source_summary,gujlish,latin,generated,false
+please marks.xlsx no summary banavi do jaldi,source_summary,gujlish,latin,generated,false
+"sambhdo, resume.pdf no summary banavi do atyare",source_summary,gujlish,latin,generated,false
+"sambhdo, diary.txt no summary banavi do jaldi",source_summary,gujlish,latin,generated,false
+please marks.xlsx no summary banavi do,source_summary,gujlish,latin,generated,false
+इस नोटबुक का सार बताओ,source_summary,hi,devanagari,generated,false
+"सुनो, इस नोटबुक का सार बताओ जल्दी",source_summary,hi,devanagari,generated,false
+इस नोटबुक का सार बताओ जल्दी,source_summary,hi,devanagari,generated,false
+"सुनो, इस नोटबुक का सार बताओ",source_summary,hi,devanagari,generated,false
+"सुनो, इस नोटबुक का सार बताओ अभी",source_summary,hi,devanagari,generated,false
+मेरे दस्तावेज़ों का संक्षिप्त सारांश दो,source_summary,hi,devanagari,generated,false
+"सुनो, मेरे दस्तावेज़ों का संक्षिप्त सारांश दो जल्दी",source_summary,hi,devanagari,generated,false
+"सुनो, मेरे दस्तावेज़ों का संक्षिप्त सारांश दो",source_summary,hi,devanagari,generated,false
+मेरे दस्तावेज़ों का संक्षिप्त सारांश दो अभी,source_summary,hi,devanagari,generated,false
+अटैच फाइल का निचोड़ बताओ,source_summary,hi,devanagari,generated,false
+कृपया अटैच फाइल का निचोड़ बताओ अभी,source_summary,hi,devanagari,generated,false
+"सुनो, अटैच फाइल का निचोड़ बताओ अभी",source_summary,hi,devanagari,generated,false
+कृपया अटैच फाइल का निचोड़ बताओ,source_summary,hi,devanagari,generated,false
+"सुनो, अटैच फाइल का निचोड़ बताओ जल्दी",source_summary,hi,devanagari,generated,false
+{f} का सारांश बना दो,source_summary,hi,devanagari,generated,false
+कृपया resume.pdf का सारांश बना दो,source_summary,hi,devanagari,generated,false
+"सुनो, notes.txt का सारांश बना दो",source_summary,hi,devanagari,generated,false
+कृपया plan.docx का सारांश बना दो अभी,source_summary,hi,devanagari,generated,false
+कृपया budget.xlsx का सारांश बना दो,source_summary,hi,devanagari,generated,false
+આ નોટબુકનો સાર કહો,source_summary,gu,gujarati,generated,false
+"સાંભળો, આ નોટબુકનો સાર કહો હમણાં",source_summary,gu,gujarati,generated,false
+આ નોટબુકનો સાર કહો હમણાં,source_summary,gu,gujarati,generated,false
+કૃપા કરીને આ નોટબુકનો સાર કહો જલ્દી,source_summary,gu,gujarati,generated,false
+કૃપા કરીને આ નોટબુકનો સાર કહો,source_summary,gu,gujarati,generated,false
+મારા દસ્તાવેજોનો ટૂંકો સારાંશ આપો,source_summary,gu,gujarati,generated,false
+"સાંભળો, મારા દસ્તાવેજોનો ટૂંકો સારાંશ આપો",source_summary,gu,gujarati,generated,false
+મારા દસ્તાવેજોનો ટૂંકો સારાંશ આપો હમણાં,source_summary,gu,gujarati,generated,false
+"સાંભળો, મારા દસ્તાવેજોનો ટૂંકો સારાંશ આપો જલ્દી",source_summary,gu,gujarati,generated,false
+જોડેલી ફાઇલનો નિચોડ કહો,source_summary,gu,gujarati,generated,false
+જોડેલી ફાઇલનો નિચોડ કહો જલ્દી,source_summary,gu,gujarati,generated,false
+"સાંભળો, જોડેલી ફાઇલનો નિચોડ કહો જલ્દી",source_summary,gu,gujarati,generated,false
+"સાંભળો, જોડેલી ફાઇલનો નિચોડ કહો હમણાં",source_summary,gu,gujarati,generated,false
+{f} નો સારાંશ બનાવી દો,source_summary,gu,gujarati,generated,false
+કૃપા કરીને list.txt નો સારાંશ બનાવી દો જલ્દી,source_summary,gu,gujarati,generated,false
+resume.pdf નો સારાંશ બનાવી દો,source_summary,gu,gujarati,generated,false
+કૃપા કરીને todo.docx નો સારાંશ બનાવી દો,source_summary,gu,gujarati,generated,false
+invoice.docx નો સારાંશ બનાવી દો હમણાં,source_summary,gu,gujarati,generated,false

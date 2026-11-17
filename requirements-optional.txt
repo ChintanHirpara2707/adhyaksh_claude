@@ -2,3 +2,5 @@
 # sentence-transformers
 # easyocr
 # ultralytics
+# Local multilingual embeddings for notebook search (about 28 MB of packages; the model is a separate 240 MB download from Settings).
+# fastembed

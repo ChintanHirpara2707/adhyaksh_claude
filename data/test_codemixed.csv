@@ -181,3 +181,15 @@ sunna band karo abhi,voice_control,hinglish,latin,generated,false
 bolkar jawab dena shuru karo,voice_control,hinglish,latin,generated,false
 sambhadvanu bandh karo have,voice_control,gujlish,latin,generated,false
 boline javab apvo chalu karo,voice_control,gujlish,latin,generated,false
+mere notebook ke saare sources ki list dikhao,source_list,hinglish,latin,generated,false
+kitne documents attach hain batao,source_list,hinglish,latin,generated,false
+mara notebook na badha sources ni list batavo,source_list,gujlish,latin,generated,false
+ketla documents attach che kaho,source_list,gujlish,latin,generated,false
+notebook se report.txt wala source hata do,source_delete,hinglish,latin,generated,false
+sources me se notes.txt delete karo,source_delete,hinglish,latin,generated,false
+notebook mathi report.txt valo source kadhi nakho,source_delete,gujlish,latin,generated,false
+sources mathi notes.txt delete karo,source_delete,gujlish,latin,generated,false
+attached documents ka chhota sa saar bata do,source_summary,hinglish,latin,generated,false
+is notebook ka summary chahiye,source_summary,hinglish,latin,generated,false
+attached documents no nano saar kahi do,source_summary,gujlish,latin,generated,false
+aa notebook no summary joiye che,source_summary,gujlish,latin,generated,false

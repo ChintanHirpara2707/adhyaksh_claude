@@ -65,6 +65,26 @@ with st.form("llm"):
 if config.get_bool("cloud_consent") and config.get("llm_provider") in llm.PROVIDERS:
     st.warning("Cloud use is ON. Questions and document passages may be sent to the selected provider.")
 
+st.subheader("Document search")
+from adhyaksh.rag import embedder  # noqa: E402
+_mode = retriever.embedding_mode()
+st.caption("Current method: " + {"local": "local multilingual embeddings", "gemini": "Gemini embeddings (cloud)",
+                                 "tfidf": "TF-IDF keywords (offline)"}[_mode]
+           + ". Local embeddings find answers even when the question uses different words or another language. "
+             "Sources indexed before a change of method keep working with keywords until they are attached again.")
+if not embedder.installed():
+    st.info("Optional: run `pip install fastembed` (about 28 MB) to enable local embeddings.")
+elif not embedder.model_present():
+    if st.button("Download the local embedding model (about 240 MB, one time)"):
+        with st.spinner("Working"):
+            _ok, _msg = embedder.download()
+        (st.success if _ok else st.error)(_msg)
+else:
+    _use = st.checkbox("Use local embeddings for document search", value=config.get("embeddings_local") != "off")
+    if _use != (config.get("embeddings_local") != "off"):
+        config.set_value("embeddings_local", "auto" if _use else "off")
+        st.rerun()
+
 st.subheader("Power mode (dangerous)")
 power = st.checkbox(
     "Enable run_python tool (execute Python code in the workspace)",

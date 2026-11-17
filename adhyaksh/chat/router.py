@@ -800,6 +800,9 @@ def understand(text: str) -> Rule | None:
     mem = match_memory(text)  # on the raw text: multi-line data must keep its line breaks
     if mem:
         return mem
+    src = match_sources(text)
+    if src:
+        return src
     p1 = match_p1(text)
     if p1:
         return p1
@@ -1113,6 +1116,14 @@ def _strip_quotes(s: str) -> str:
 
 def match_p1(text: str) -> Rule | None:
     t = " ".join(text.split())
+    m = _SPECIAL_P2.match(t)
+    if m:
+        return Rule("special_folder_open", {"folder": " ".join(m.group("n").lower().split())})
+    m = _NEW_FILE_WITH_P2.match(t)
+    if m:
+        return Rule("file_create", {"file": m.group("f")})
+    if _SYS_REPORT_P2.search(t) and not _has_file_extension(t):
+        return Rule("system_status")
     if _UNSUPPORTED_P1.search(t) and not _has_file_extension(t):
         return Rule("out_of_scope")
     if _MY_NAME_P1.search(t):
@@ -1163,3 +1174,56 @@ def match_p1(text: str) -> Rule | None:
         if thing not in _NOT_MEMORY and not _STATUS_X.search(t) and not _TIME_X.search(t) and not _DATE_X.search(t):
             return Rule("memory_recall")
     return None
+
+
+# ---------------------------------------------------------------------------
+# Notebook sources: list, delete, summarise (P2)
+# ---------------------------------------------------------------------------
+_SUM_CUE = re.compile(r"\b(?:summar\w+|gist|overview|tl;?dr|key\s+takeaways|saar|saransh|saaransh|nichod)\b|(?<![ऀ-ॿ])सार(?![ऀ-ॿ])|सारांश|निचोड़|"
+                      r"(?<![઀-૿])સાર(?![઀-૿])|સારાંશ|નિચોડ|"
+                      r"\bkis\s+baare\s+m(?:e|ein)\b.{0,25}\bshort\b|\bshort\s+m(?:e|ein|a)\s+(?:bata\w*|kaho)\b", re.IGNORECASE)
+_DOC_NOUN = re.compile(r"\b(?:files?|pdfs?|documents?|docs?|attach\w*|sources?|notebook|report|paper)\b|फाइल|दस्तावेज़|दस्तावेज|पीडीएफ|नोटबुक|सोर्स|"
+                       r"ફાઇલ|દસ્તાવેજ|પીડીએફ|નોટબુક|સોર્સ", re.IGNORECASE)
+_SRC_LIST = re.compile(
+    r"\b(?:show|list|display|see)\b.{0,25}\b(?:sources?|uploaded\s+(?:documents?|files?)|attached\s+(?:documents?|files?))\b|"
+    r"\b(?:which|what|how\s+many)\s+(?:sources?|documents?|files?)\s+(?:have|did|do)\s+i\s+(?:added|add|uploaded|upload|attached|attach|given|have)\b|"
+    r"\b(?:what|which)\s+(?:files|documents|sources)\s+are\s+in\s+(?:my|this|the)\s+notebook\b|"
+    r"\bsources?\b.{0,20}\b(?:batavo|batao|dikhao|dikha\s+do|ni\s+list|ki\s+list)\b|\bkaun\s+kaun\s+se\s+documents\b|\bkaya\s+documents\b|"
+    r"(?:सोर्स|स्रोत).{0,15}(?:दिखाओ|बताओ)|कौन\s+से\s+दस्तावेज़\s+जोड़|(?:સોર્સ|સ્ત્રોત).{0,15}(?:બતાવો|કહો)|કયા\s+દસ્તાવેજો\s+ઉમેર", re.IGNORECASE)
+_SRC_DELETE = re.compile(
+    rf"^(?:please\s+)?(?:remove|delete|drop|forget|unlink)\s+(?:the\s+)?(?:source|uploaded\s+(?:file|document)|attached\s+(?:file|document)|document)\s+"
+    rf"(?:named\s+|called\s+)?(?P<n>.+?)[\s.!]*$|"
+    rf"^(?:please\s+)?(?:remove|delete|drop|take)\s+(?P<n2>{_MULTI_FILE})\s+(?:from|out\s+of)\s+(?:my\s+|the\s+|this\s+)?(?:sources|notebook)\b|"
+    rf"(?P<n3>{_FILE_TOKEN})\s+(?:ko\s+|ne\s+|को\s+|ને\s+)?(?:sources?|notebook|सोर्स|नोटबुक|સોર્સ|નોટબુક)\S*\s+(?:se\s+|mathi\s+|से\s+|માંથી\s+)?"
+    rf"(?:hata\w*|nikal\w*|kadh\w*|remove|delete|हटा|निकाल|કાઢ)|"
+    rf"\b(?:source|सोर्स|સોર્સ)\s+(?P<n4>{_FILE_TOKEN})\s+(?:delete|remove|hata\w*|kadh\w*|डिलीट|हटा|ડિલીટ|કાઢ)", re.IGNORECASE)
+
+
+def is_summary_request(text: str) -> bool:
+    return bool(_SUM_CUE.search(text))
+
+
+def match_sources(text: str) -> Rule | None:
+    t = " ".join(text.split())
+    m = _SRC_DELETE.search(t)
+    if m:
+        name = next(g for g in (m.group("n"), m.group("n2"), m.group("n3"), m.group("n4")) if g)
+        return Rule("source_delete", {"name": name.strip().strip("\"'")})
+    if _SUM_CUE.search(t) and _DOC_NOUN.search(t):
+        f = FILE_RE.search(t)
+        return Rule("source_summary", {"name": f.group(1)} if f else {})
+    if _SRC_LIST.search(t):
+        return Rule("source_list")
+    if _IN_MY_DOC.search(t) and not _has_file_extension(t):
+        return Rule("doc_question")
+    return None
+
+
+# A question that names the user's own document as the place to look.
+_IN_MY_DOC = re.compile(r"\b(?:in|from|according\s+to|as\s+per|inside)\s+(?:my|the|this)\s+(?:[\w\-]+\s+){0,2}"
+                        r"(?:pdf|document|notes|report|sources?|notebook|attachment)\b.{3,}", re.IGNORECASE)
+_SPECIAL_P2 = re.compile(r"^(?:please\s+)?(?:open|show|go\s+to|take\s+me\s+to)\s+(?:my\s+|the\s+)?(?P<n>recycle\s*bin|downloads|documents|desktop)"
+                         r"(?:\s+folder)?[\s.!?]*$", re.IGNORECASE)
+_SYS_REPORT_P2 = re.compile(r"\bsystem\s+(?:report|summary|check|details|overview|stats)\b", re.IGNORECASE)
+_NEW_FILE_WITH_P2 = re.compile(rf"^(?:please\s+)?(?:new|create|make)\s+(?:a\s+)?(?:new\s+)?(?:text\s+)?file\s+(?:named\s+|called\s+)?(?P<f>{_FILE_TOKEN})\s+"
+                               r"(?:with|containing|having)\b", re.IGNORECASE)

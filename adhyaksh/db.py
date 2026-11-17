@@ -62,7 +62,16 @@ CREATE TABLE feedback(
   correct_intent TEXT NOT NULL, note TEXT, created_at TEXT NOT NULL);
 """
 
-MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1)]
+# v2: notebooks (named collections of sources); every document belongs to one notebook and keeps a summary.
+SCHEMA_V2 = """
+CREATE TABLE notebooks(id INTEGER PRIMARY KEY, name TEXT NOT NULL, created_at TEXT NOT NULL);
+INSERT INTO notebooks(id, name, created_at) VALUES(1, 'General', datetime('now'));
+ALTER TABLE documents ADD COLUMN notebook_id INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE documents ADD COLUMN summary TEXT;
+CREATE INDEX idx_documents_notebook ON documents(notebook_id);
+"""
+
+MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2)]
 
 
 def utcnow() -> str:

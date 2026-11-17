@@ -98,6 +98,10 @@ DEFAULTS: dict[str, str] = {
     "gemini_model": "gemini-3.5-flash-lite",  # per Google docs, checked 2026-11-06; editable in Settings
     "ollama_model": "llama3.2:3b",  # local model name for the optional Ollama provider
     "doc_min_score": "0.15",
+    "doc_min_score_embed": "0.35",  # minimum cosine similarity when embeddings are used for document search
+    "active_notebook": "1",  # notebook that receives attachments and answers document questions
+    "embeddings_local": "auto",  # "auto": use the local embedding model when its files are present; "off": never
+    "embedding_local_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "power_mode": "false",
     "vision_model": "balanced",
     "vision_imgsz": "640",

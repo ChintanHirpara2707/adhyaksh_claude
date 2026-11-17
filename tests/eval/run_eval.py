@@ -101,6 +101,12 @@ def mocked_tools(calls: list[str]):
         mock.patch.object(engine.system, "web_open", rec("web_open", {})),
         mock.patch.object(engine.store, "save_fact", rec("save_fact", lambda t, **k: {"fact": t, "duplicate": False})),
         mock.patch.object(engine.store, "recall", rec("recall", {"answer": "mock fact"})),
+        mock.patch.object(engine.sources, "list_sources", rec("source_list", {"notebook": "General", "sources": [
+            {"id": 1, "file": "mock.pdf", "pages": 2, "passages": 5, "search": "tfidf"}]})),
+        mock.patch.object(engine.sources, "summarize", rec("source_summary", {"notebook": "General", "summaries": [
+            {"file": "mock.pdf", "summary": "Mock summary.", "mode": "extractive"}]})),
+        mock.patch.object(engine.sources, "delete_source", rec("source_delete", lambda name, **k: {"file": name})),
+        mock.patch.object(engine.sources, "count", lambda *a, **k: 0),
         mock.patch.object(engine.features, "perf_report", rec("perf_report", {
             "cpu_percent": 10.0, "ram_percent": 20.0, "ram_available_gb": 8.0, "disk_percent": 30.0,
             "disk_free_gb": 100.0, "top": [{"name": "mock.exe", "ram_percent": 5.0}]})),

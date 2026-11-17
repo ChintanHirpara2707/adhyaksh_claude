@@ -662,7 +662,7 @@ _STATUS_INDIC_ACT = re.compile(r"कितन|धीम|खाली|बचा|�
 _TIME_MORE = re.compile(r"\bwhat(?:'s|s|\s+is)\s+the\s+time\b|\btime\s+(?:pls|please|batao|kaho|bata\s+do)\b|"
                         r"\b(?:ab|abhi)\s+kya\s+baj\w*|\bghadi\b.{0,15}\b(?:time|baj\w*)\b|"
                         r"(?:સમય|ટાઇમ|ટાઈમ)\s*(?:જણાવો|કહો|શું|બતાવો)|(?:समय|टाइम)\s*(?:बताओ|बताइए|क्या)|"
-                        r"(?:કેટલા|કેટલાં)\s+વાગ્ય|ketla\s+vag\w+", re.IGNORECASE)
+                        r"(?:કેટલા|કેટલાં)\s+વાગ્ય|ketla\s+va+g\w*", re.IGNORECASE)
 _DAY_MORE = re.compile(r"\b(?:which|what)\s+(?:week)?day\b|\bweekday\b|\bkaun\s*sa\s+(?:din|weekday)\b|"
                        r"\bkons[ao]\s+(?:din|weekday)\b|\bkayo\s+(?:divas|vaar)\b|"
                        r"कौन\s*सा\s+(?:दिन|वार)|કયો\s+દિવસ|ક્યો\s+દિવસ|કયો\s+વાર", re.IGNORECASE)
@@ -672,7 +672,7 @@ _ASK_CUE = re.compile(r"\b(?:what|wat|whats|wats|tell|current|now|pls|please|che
 _CLOCK = re.compile(r"\bclock\b|घड़ी|घडी|ઘડિયાળ|\bghadi\b", re.IGNORECASE)
 _HI_TIME = re.compile(r"(?:वक्त|वक़्त|टाइम|समय)(?!\s*सीमा)|इस\s+समय|\bwaqt\b|\bvakt\b", re.IGNORECASE)
 _HI_DATE = re.compile(r"डेट|तारीख|तारिख|तिथि|ડેટ|તારીખ|તિથિ", re.IGNORECASE)
-_HI_TIME_CUE = re.compile(r"क्या|कितना|कितने|बताओ|बताइए|हुआ|हुई|बजा|बजे|हो\s+रहा|है\s*$|\bkya\b|\bkitna\b|\bbata", re.IGNORECASE)
+_HI_TIME_CUE = re.compile(r"કઈ|કયો|શું|કેટલા|કહો|જણાવો|બતાવો|क्या|कितना|कितने|बताओ|बताइए|हुआ|हुई|बजा|बजे|हो\s+रहा|है\s*$|\bkya\b|\bkitna\b|\bbata", re.IGNORECASE)
 _RECALL_MORE = re.compile(
     r"^(?:what(?:'s|s|\s+is|\s+was)|tell\s+me|remind\s+me\s+(?:of|what)|wat\s+is)\s+my\s+\w+|"
     r"^(?:mera|meri|mere)\s+\w+(?:\s+\w+){0,2}\s+(?:kya|kaun|kahan|kab|kitne)\b|"
@@ -693,7 +693,7 @@ _APPEND_IN = re.compile(r"^(?P<f>\S+\.[A-Za-z0-9]{1,5})\s+(?:में|mein|me|m
 _OFFICE_VERB = re.compile(r"\b(?:create|make|new|generate|prepare)\b|बनाओ|बनाएं|बनाइए|तैयार|બનાવો|તૈયાર|"
                           r"\b(?:banao|bana\s+do|banavo|tayar|taiyar|bani\s+do)\b", re.IGNORECASE)
 _SCREEN_MORE = re.compile(r"\bss\s+(?:le|lo|karo|kheench|kheench\s+lo)\b|"
-                          r"\b(?:capture|grab|snap|take|save)\b.{0,30}\b(?:display|screen|monitor)\b", re.IGNORECASE)
+                          r"\b(?:capture|grab|snap|take|save|store|keep)\b.{0,30}\b(?:display|screen|monitor)\b", re.IGNORECASE)
 _GREET_SHORT = re.compile(r"^(?:\S+\s+){0,2}(?:namaste|namaskar|नमस्ते|नमस्कार|નમસ્તે|kem\s+ch+o|કેમ\s+છો)(?:\s+\S+){0,2}[\s.!?]*$",
                           re.IGNORECASE)
 
@@ -800,6 +800,9 @@ def understand(text: str) -> Rule | None:
     mem = match_memory(text)  # on the raw text: multi-line data must keep its line breaks
     if mem:
         return mem
+    cw = match_cowork(text)
+    if cw:
+        return cw
     src = match_sources(text)
     if src:
         return src
@@ -881,7 +884,7 @@ _POWER = re.compile(
     re.IGNORECASE)
 _NO_TOOL = re.compile(
     r"^(?:please\s+)?(?:send|write|compose|draft)\s+(?:an?\s+|the\s+|my\s+)?(?:e-?mail|mail|sms|text\s+message|message|whatsapp)\b|"
-    r"^(?:please\s+)?(?:call|dial|phone|ring)\s+(?!me\b|us\b|it\b|this\b)\w+|^(?:please\s+)?(?:book|order|buy|pay|recharge)\s+\w+",
+    r"\brecharge\b|^(?:please\s+)?(?:call|dial|phone|ring)\s+(?!me\b|us\b|it\b|this\b)\w+|^(?:please\s+)?(?:book|order|buy|pay|recharge)\s+\w+",
     re.IGNORECASE)
 _VISION_NOUN = re.compile(
     r"\b(?:photos?|images?|pictures?|pics?|webcam|camera|tasveer|tasvir|foto|vision)\b|तस्वीर|फोटो|इमेज|कैमरा|कैमरे|विज़न|विजन|"
@@ -1116,6 +1119,8 @@ def _strip_quotes(s: str) -> str:
 
 def match_p1(text: str) -> Rule | None:
     t = " ".join(text.split())
+    if re.fullmatch(r"(?:helo+|hel+o+w|hii+|hey+y|hlo+|hallo|namastey|namaste+)[\s!.]*", t, re.IGNORECASE):
+        return Rule("greet")
     m = _SPECIAL_P2.match(t)
     if m:
         return Rule("special_folder_open", {"folder": " ".join(m.group("n").lower().split())})
@@ -1222,8 +1227,165 @@ def match_sources(text: str) -> Rule | None:
 # A question that names the user's own document as the place to look.
 _IN_MY_DOC = re.compile(r"\b(?:in|from|according\s+to|as\s+per|inside)\s+(?:my|the|this)\s+(?:[\w\-]+\s+){0,2}"
                         r"(?:pdf|document|notes|report|sources?|notebook|attachment)\b.{3,}", re.IGNORECASE)
-_SPECIAL_P2 = re.compile(r"^(?:please\s+)?(?:open|show|go\s+to|take\s+me\s+to)\s+(?:my\s+|the\s+)?(?P<n>recycle\s*bin|downloads|documents|desktop)"
+_SPECIAL_P2 = re.compile(r"^(?:please\s+)?(?:open|show(?:\s+me)?|go\s+to|take\s+me\s+to)\s+(?:my\s+|the\s+)?(?P<n>recycle\s*bin|downloads|documents|desktop)"
                          r"(?:\s+folder)?[\s.!?]*$", re.IGNORECASE)
 _SYS_REPORT_P2 = re.compile(r"\bsystem\s+(?:report|summary|check|details|overview|stats)\b", re.IGNORECASE)
 _NEW_FILE_WITH_P2 = re.compile(rf"^(?:please\s+)?(?:new|create|make)\s+(?:a\s+)?(?:new\s+)?(?:text\s+)?file\s+(?:named\s+|called\s+)?(?P<f>{_FILE_TOKEN})\s+"
                                r"(?:with|containing|having)\b", re.IGNORECASE)
+
+
+# ---------------------------------------------------------------------------
+# Cowork (P4): processes, reminders, clipboard, and splitting multi-step requests
+# ---------------------------------------------------------------------------
+_PROC_LIST = re.compile(
+    r"\b(?:running\s+(?:processes|programs|apps|tasks)|(?:processes|programs|apps)\s+(?:that\s+are\s+)?running|what(?:'s|\s+is)\s+running|"
+    r"everything\s+(?:that\s+is\s+)?running|task\s*manager|process\s+list|list\s+(?:of\s+)?processes)\b|"
+    r"\b(?:which|what)\s+(?:programs?|apps?|applications?|processe?s?)\b.{0,30}\b(?:ram|memory|cpu)\b|"
+    r"\b(?:eating|hogging|using|consuming|uses|eats)\s+(?:the\s+)?(?:most|more|all\s+(?:the|my))\s+(?:ram|memory|cpu)\b|"
+    r"\btop\s*\d*\s+(?:apps?|programs?|processe?s?)\b|\b(?:apps?|programs?|processe?s?)\s+by\s+(?:ram|memory|cpu)\b|"
+    r"\bsabse\s+(?:zyada|jyada|adhik)\s+(?:ram|memory|cpu)\b|\b(?:ram|memory|cpu)\s+(?:sabse\s+)?(?:zyada|jyada)\s+(?:kaun|kon)\b|"
+    r"\bkaun\s+(?:kaun\s+)?(?:se|si|sa)\s+(?:program|app|process)\w*\b.{0,25}\b(?:chal|ram|memory|kha)|"
+    r"\b(?:kaya|kai|kayo)\s+(?:program|app|process)\w*\b.{0,30}\b(?:chal|chalu|ram|memory|vapr)|"
+    r"\b(?:sauthi|sauthee)\s+(?:vadhare|vadhu)\s+(?:ram|memory)\b|\bprocess\w*\s+(?:dikhao|batavo|batao|list)\b|"
+    r"कौन\s*(?:कौन\s*)?से\s+(?:प्रोग्राम|ऐप|प्रोसेस).{0,20}(?:चल|रैम)|(?:सबसे\s+ज्यादा|सबसे\s+ज़्यादा)\s+(?:रैम|मेमोरी)|"
+    r"(?:कौन|कौन\s*सा|कौन\s*सी)\s+(?:ऐप|प्रोग्राम).{0,25}(?:रैम|मेमोरी)|"
+    r"કયા\s+(?:પ્રોગ્રામ|એપ|પ્રોસેસ).{0,20}(?:ચાલી|રેમ)|(?:કઈ|કયો)\s+(?:એપ|પ્રોગ્રામ).{0,25}(?:રેમ|મેમરી)|સૌથી\s+વધુ\s+(?:રેમ|મેમરી)",
+    re.IGNORECASE)
+_PROC_SORT_CPU = re.compile(r"\bcpu\b|सीपीयू|સીપીયુ", re.IGNORECASE)
+_TOP_N = re.compile(r"\btop\s*(\d{1,2})\b", re.IGNORECASE)
+_KILL_EN = re.compile(
+    r"^(?:please\s+)?(?:kill|terminate|end|stop|force\s+(?:close|quit|stop)|end\s+task(?:\s+for)?)\s+(?:the\s+)?(?:process\s+(?:with\s+)?(?:pid\s+|id\s+)?|"
+    r"task\s+|pid\s+|program\s+)?(?P<t>[\w.\-]+(?:\.exe)?)(?:\s+(?:process|task))?\b(?P<tail>.*)$", re.IGNORECASE)
+_KILL_CUE = re.compile(r"\bprocess\w*\b|\bpid\b|\bend\s+task\b|\bforce\s+(?:close|quit|stop)\b|\bterminate\b|\.exe\b|प्रोसेस|પ્રોસેસ",
+                       re.IGNORECASE)
+_KILL_IN = re.compile(
+    r"^(?P<t>[\w.\-]+)\s+(?:ka|ki|ke|no|ni|nu|ના|નો|का|की)?\s*(?:process|प्रोसेस|પ્રોસેસ)\s+(?:ko\s+|ne\s+)?"
+    r"(?:kill|band|bandh|khatam|end|बंद|ख़त्म|खत्म|બંધ|કિલ)\b|"
+    r"^(?P<t2>[\w.\-]+(?:\.exe)?)\s+(?:प्रोसेस|પ્રોસેસ)\s+(?:बंद|ખતમ|બંધ)", re.IGNORECASE)
+_HEAVIEST = re.compile(r"\b(?:kill|end|stop|terminate|close)\b.{0,15}\b(?:heaviest|biggest|largest|top)\b.{0,15}\b(?:process|program|app)", re.IGNORECASE)
+
+_REM_CUE = re.compile(r"\bremind(?:er)?\b|\bremind\s+me\b|\balarm\b|\bwake\s+me\s+up\b|\byaad\s+dila\w*|\byaad\s+apav\w*|"
+                      r"याद\s+दिला|रिमाइंडर|अलार्म|યાદ\s+અપાવ|રિમાઇન્ડર|એલાર્મ", re.IGNORECASE)
+_REM_LIST = re.compile(r"\b(?:what|which|show|list|see|display|any)\b.{0,20}\breminders?\b|\breminders?\b.{0,20}\b(?:dikhao|batao|batavo|kya|kaun|list|today|for\s+today)\b|"
+                       r"\bmy\s+reminders\b|\bmere\s+reminders\b|\bmara\s+reminders?\b|(?:रिमाइंडर|अलार्म).{0,15}(?:दिखाओ|बताओ)|"
+                       r"(?:રિમાઇન્ડર|એલાર્મ).{0,15}(?:બતાવો|કહો)|\balarms?\b.{0,10}\b(?:set\s+hain|list|show)\b", re.IGNORECASE)
+_REM_CANCEL = re.compile(r"\b(?:cancel|delete|remove|clear|stop|turn\s+off)\b.{0,25}\b(?:reminders?|alarms?)\b|"
+                         r"\b(?:reminders?|alarms?)\b.{0,25}\b(?:cancel|delete|hata\w*|band|bandh|kadhi)\b|"
+                         r"(?:रिमाइंडर|अलार्म).{0,20}(?:रद्द|हटा|कैंसिल|बंद)|(?:રિમાઇન્ડર|એલાર્મ).{0,20}(?:રદ|કાઢ|કેન્સલ|બંધ)", re.IGNORECASE)
+_REM_ALL = re.compile(r"\ball\b|\bevery\b|\bbadha\b|\bsab\b|\bsaare\b|सब|सभी|બધા|બધાં", re.IGNORECASE)
+_REM_ABOUT = re.compile(r"\b(?:about|for|of|wala|walo|valu|vala|nu|ka)\s+(?:the\s+)?(?P<q>.+?)\s*(?:reminder)?[\s.!]*$", re.IGNORECASE)
+
+_CLIP = r"(?:clipboard|clip\s*board|क्लिपबोर्ड|ક્લિપબોર્ડ)"
+_CLIP_WRITE = re.compile(
+    rf"\bcopy\s+(?P<q1>[\"'“].+?[\"'”])\s+(?:to|on|onto|in|into)\s+(?:the\s+|my\s+)?{_CLIP}|"
+    rf"^(?:please\s+)?(?:put|place|set|copy)\s+(?P<q2>.+?)\s+(?:on|in|to|into)\s+(?:the\s+|my\s+)?{_CLIP}|"
+    rf"(?P<q3>[\"'“].+?[\"'”])\s+(?:ko\s+|ne\s+)?{_CLIP}\s*(?:pe|par|me|mein|ma|માં|में|पर)?\s+(?:copy|कॉपी|કોપી)", re.IGNORECASE)
+_CLIP_READ = re.compile(rf"{_CLIP}|\bwhat\s+(?:did|have)\s+i\s+(?:just\s+)?cop(?:y|ied)\b|\blast\s+copied\b|\bwhat\s+i\s+copied\b", re.IGNORECASE)
+
+
+def match_cowork(text: str) -> Rule | None:
+    t = " ".join(text.split())
+    m = _CLIP_WRITE.search(t)
+    if m:
+        q = next(g for g in (m.group("q1"), m.group("q2"), m.group("q3")) if g)
+        return Rule("clipboard_write", {"text": q.strip().strip("\"'“”‘’")})
+    if _CLIP_READ.search(t) and not re.search(r"\bcopy\b.+\bto\b", t, re.IGNORECASE):
+        return Rule("clipboard_read")
+    if _REM_CANCEL.search(t):
+        if _REM_ALL.search(t):
+            return Rule("reminder_cancel", {"all": True})
+        m = _REM_ABOUT.search(re.sub(r"\b(?:cancel|delete|remove|clear|the|my|reminders?|alarms?)\b", " ", t, flags=re.IGNORECASE).strip())
+        return Rule("reminder_cancel", {"query": (m.group("q") if m else "").strip()})
+    if _REM_LIST.search(t):
+        return Rule("reminder_list")
+    if _REM_CUE.search(t):
+        if re.match(r"^(?:please\s+)?remind\s+me\s+(?:what|who|where|which|when|of\s+my|about\s+my)\b", t, re.IGNORECASE):
+            from adhyaksh.tools import when as _when
+            if _when.parse(t).due is None:
+                return Rule("memory_recall")  # "remind me what my sister likes" asks the memory
+        return Rule("reminder_set")
+    if _HEAVIEST.search(t):
+        return Rule("process_kill", {"target": "heaviest"})
+    m = _KILL_IN.match(t)
+    if m:
+        return Rule("process_kill", {"target": m.group("t") or m.group("t2")})
+    m = _KILL_EN.match(t)
+    if m and _KILL_CUE.search(t) and not _has_file_extension(m.group("t").replace(".exe", "")):
+        target = m.group("t")
+        pid = re.search(r"\bpid\s+(\d+)|\bprocess\s+(?:with\s+)?(?:pid\s+|id\s+)?(\d+)", t, re.IGNORECASE)
+        if pid:
+            target = pid.group(1) or pid.group(2)
+        strong = re.search(r"process|\bpid\b|\btask\b|\.exe\b|प्रोसेस|પ્રોસેસ", t, re.IGNORECASE)
+        if find_app(target) and not strong:
+            return None  # an allow-listed app ("terminate paint"): closed through app_close with its own confirmation
+        if target.lower() not in ("process", "the", "it", "a", "task", "program", "listening"):
+            return Rule("process_kill", {"target": target})
+    if _PROC_LIST.search(t):
+        n = _TOP_N.search(t)
+        return Rule("process_list", {"sort": "cpu" if _PROC_SORT_CPU.search(t) else "memory", "top": int(n.group(1)) if n else 10})
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Multi-step requests: "create plan.txt and then open notepad", "screenshot lo aur phir notepad kholo"
+# ---------------------------------------------------------------------------
+_STRONG_SEP = re.compile(r"\s*(?:,\s*)?\b(?:and\s+then|then|after\s+that|afterwards|aur\s+phir|aur\s+fir|phir|fir|uske\s+baad|ane\s+pachi|"
+                         r"pachi|tyar\s+pachi)\b\s*,?\s*|\s*(?:और\s+फिर|फिर|उसके\s+बाद|અને\s+પછી|પછી|ત્યાર\s+પછી)\s*", re.IGNORECASE)
+_WEAK_SEP = re.compile(r"\s+(?:and|aur|ane|और|અને)\s+|\s*,\s+", re.IGNORECASE)
+_ACTION_START = re.compile(
+    r"^(?:please\s+)?(?:open|close|launch|start|create|make|new|delete|remove|read|show|list|take|tell|remind|set|copy|search|find|"
+    r"write|add|save|remember|kill|end|check|give|screenshot|ek|usme|isme|ema|aama)\b|"
+    r"(?:kholo|khol\s+do|banao|bana\s+do|band\s+kar\w*|likh\s+do|dikhao|batao|banavo|kholi\s+do|batavo|lo|le\s+lo)[\s.!]*$|"
+    r"(?:खोलो|बनाओ|बंद\s+करो|लिखो|दिखाओ|बताओ|लो)[\s.!]*$|(?:ખોલો|બનાવો|બંધ\s+કરો|લખો|બતાવો|કહો|લો)[\s.!]*$", re.IGNORECASE)
+_NON_ACTION = {"greet", "smalltalk", "unknown", "knowledge_question", "help", "bot_identity", "get_identity"}
+_REF_UPDATE = re.compile(r"^(?:usme|usmein|isme|ismein|ema|aama|उसमें|इसमें|તેમાં|એમાં|in\s+it|into\s+it|to\s+it)\s+(?P<c>.+?)\s+"
+                         r"(?:likh\s+do|likho|lakhi\s+do|lakho|jod\s+do|add\s+kar\s+do|लिख\s+दो|लिखो|जोड़\s+दो|લખી\s+દો|લખો)[\s.!]*$|"
+                         r"^(?:write|add|put|append)\s+(?P<c2>.+?)\s+(?:in|into|to)\s+it[\s.!]*$", re.IGNORECASE)
+_FOLDER_PLAIN = re.compile(r"^(?:please\s+)?(?:make|create)\s+(?:a\s+|an\s+)?(?:new\s+)?folder\s+(?P<n>[\w\- ]{1,40}?)[\s.!]*$|"
+                           r"^(?:ek\s+)?(?:folder|फोल्डर|ફોલ્ડર)\s+(?P<n2>[\w\-]{1,40})\s+(?:banao|bana\s+do|banavo|banavi\s+do|बनाओ|બનાવો)[\s.!]*$",
+                           re.IGNORECASE)
+
+
+_FILE_MAKE_IN = re.compile(rf"^(?:ek\s+)?(?:file\s+)?(?P<f>{_FILE_TOKEN})\s+(?:file\s+)?(?:banao|bana\s+do|banavo|banavi\s+do|create\s+karo|"
+                           r"बनाओ|बना\s+दो|બનાવો|બનાવી\s+દો)[\s.!]*$", re.IGNORECASE)
+
+
+def understand_step(text: str) -> Rule | None:
+    """Rules for one step of a multi-step request, including 'write X in it' about the file made in an earlier step."""
+    t = " ".join(text.split()).strip(" ,.")
+    m = _REF_UPDATE.match(t)
+    if m:
+        return Rule("file_update", {"reference": True, "content": (m.group("c") or m.group("c2")).strip().strip("\"'“”")})
+    m = _FILE_MAKE_IN.match(t)
+    if m:
+        return Rule("file_create", {"file": m.group("f")})
+    m = _FOLDER_PLAIN.match(t)
+    if m and not _has_file_extension(t):
+        return Rule("folder_create", {"folder": (m.group("n") or m.group("n2")).strip()})
+    return understand(t)
+
+
+def split_steps(text: str) -> list[tuple[str, "Rule"]] | None:
+    """Split a request into two or more steps when every part is a recognised command. Returns None otherwise.
+    A plain 'and' only splits when the next part starts like a new command, so 'tea and coffee' stays whole."""
+    t = " ".join(text.split())
+    if len(t) > 300 or "\n" in text:
+        return None
+    parts = [p for p in _STRONG_SEP.split(t) if p and p.strip(" ,.")]
+    pieces: list[str] = []
+    for p in parts:
+        sub = _WEAK_SEP.split(p)
+        if len(sub) > 1 and all(_ACTION_START.search(s.strip()) for s in sub[1:]):
+            pieces.extend(sub)
+        else:
+            pieces.append(p)
+    pieces = [p.strip(" ,.") for p in pieces if p.strip(" ,.")]
+    if len(pieces) < 2 or len(pieces) > 5:
+        return None
+    steps = []
+    for p in pieces:
+        r = understand_step(p)
+        if r is None or r.intent in _NON_ACTION:
+            return None
+        steps.append((p, r))
+    return steps

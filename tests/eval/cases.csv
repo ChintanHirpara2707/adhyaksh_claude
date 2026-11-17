@@ -336,33 +336,33 @@ C334,vision,image ma ketla manas che,vision_detect,,gujlish
 C335,vision,object detection page kholo,vision_detect,,gujlish
 C336,vision,photo ma cup che ke,vision_detect,,gujlish
 C337,performance,boost my pc,pc_performance,,en
-C338,performance,which apps are using the most ram,pc_performance,,en
+C338,performance,which apps are using the most ram,process_list,,en
 C339,performance,why is my computer lagging,pc_performance,,en
 C340,performance,open the pc performance page,pc_performance,,en
 C341,performance,clean up my laptop to make it faster,pc_performance,,en
-C342,performance,kill the heaviest process,pc_performance,,en
+C342,performance,kill the heaviest process,process_kill,,en
 C343,performance,speed up my system,pc_performance,,en
-C344,performance,show running processes by memory,pc_performance,,en
+C344,performance,show running processes by memory,process_list,,en
 C345,performance,free up memory now,pc_performance,,en
 C346,performance,performence boost,pc_performance,,en
 C347,performance,turn on power mode for speed,pc_performance,,en
 C348,performance,मेरा पीसी तेज़ करो,pc_performance,,hi
-C349,performance,कौन सा ऐप सबसे ज्यादा रैम ले रहा है,pc_performance,,hi
+C349,performance,कौन सा ऐप सबसे ज्यादा रैम ले रहा है,process_list,,hi
 C350,performance,पीसी परफॉर्मेंस पेज खोलो,pc_performance,,hi
 C351,performance,मेमोरी खाली करो,pc_performance,,hi
 C352,performance,लैपटॉप को तेज़ चलाने के लिए सफाई करो,pc_performance,,hi
 C353,performance,મારા પીસીને ઝડપી બનાવો,pc_performance,,gu
-C354,performance,કઈ એપ સૌથી વધુ રેમ વાપરે છે,pc_performance,,gu
+C354,performance,કઈ એપ સૌથી વધુ રેમ વાપરે છે,process_list,,gu
 C355,performance,પીસી પરફોર્મન્સ પેજ ખોલો,pc_performance,,gu
 C356,performance,મેમરી ખાલી કરો,pc_performance,,gu
 C357,performance,લેપટોપ ઝડપી ચલાવવા સફાઈ કરો,pc_performance,,gu
 C358,performance,pc ko fast karo,pc_performance,,hinglish
-C359,performance,kaun si app sabse zyada ram kha rahi hai,pc_performance,,hinglish
+C359,performance,kaun si app sabse zyada ram kha rahi hai,process_list,,hinglish
 C360,performance,pc performance page kholo,pc_performance,,hinglish
 C361,performance,memory free kar do,pc_performance,,hinglish
 C362,performance,laptop ko tez chalane ke liye clean karo,pc_performance,,hinglish
 C363,performance,pc ne fast karo,pc_performance,,gujlish
-C364,performance,kai app sauthi vadhare ram vapre che,pc_performance,,gujlish
+C364,performance,kai app sauthi vadhare ram vapre che,process_list,,gujlish
 C365,performance,pc performance page kholo,pc_performance,,gujlish
 C366,performance,memory free kari do,pc_performance,,gujlish
 C367,performance,laptop ne tez karva clean karo,pc_performance,,gujlish

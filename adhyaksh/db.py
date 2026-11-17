@@ -71,7 +71,15 @@ ALTER TABLE documents ADD COLUMN summary TEXT;
 CREATE INDEX idx_documents_notebook ON documents(notebook_id);
 """
 
-MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2)]
+# v3: reminders (one-shot or daily), checked by the app while it is open.
+SCHEMA_V3 = """
+CREATE TABLE reminders(
+  id INTEGER PRIMARY KEY, text TEXT NOT NULL, due_at TEXT NOT NULL, repeat TEXT NOT NULL DEFAULT 'none',
+  status TEXT NOT NULL DEFAULT 'pending', created_at TEXT NOT NULL, fired_at TEXT);
+CREATE INDEX idx_reminders_due ON reminders(status, due_at);
+"""
+
+MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2), (3, SCHEMA_V3)]
 
 
 def utcnow() -> str:

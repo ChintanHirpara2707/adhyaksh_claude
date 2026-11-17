@@ -26,7 +26,8 @@ TIMEOUT = 25.0
 MAX_TOOL_TEXT = 4000
 # Tools that answer or inform without touching files, applications or the system: allowed in Chat mode.
 CHAT_MODE_TOOLS = {"memory_save", "memory_recall", "memory_list", "doc_question", "get_time", "voice_control",
-                   "open_page", "set_user_name", "source_list", "source_summary", "notebook_list", "notebook_open"}
+                   "open_page", "set_user_name", "source_list", "source_summary", "notebook_list", "notebook_open",
+                   "reminder_add", "reminder_list", "reminder_cancel"}
 _PENDING: dict[str, dict] = {}  # confirmation token -> paused loop state
 
 

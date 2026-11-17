@@ -12,7 +12,7 @@ from tests.helpers import fresh_env
 @pytest.mark.parametrize("text,intent", [
     ("analyze the picture and name objects", "vision_detect"), ("open the vision page", "vision_detect"),
     ("इस फोटो में क्या है", "vision_detect"), ("object detection chalao", "vision_detect"),
-    ("speed up my laptop", "pc_performance"), ("list apps using the most memory", "pc_performance"),
+    ("speed up my laptop", "pc_performance"), ("list apps using the most memory", "process_list"),
     ("performance page kholo", "pc_performance"), ("पीसी तेज़ करो", "pc_performance"),
     ("start hands-free", "voice_control"), ("stop listening", "voice_control"), ("be quiet", "voice_control"),
     ("hands free off", "voice_control"), ("sunna band karo", "voice_control"), ("stp listening", "voice_control"),
@@ -67,7 +67,7 @@ def test_engine_handlers(monkeypatch):
     monkeypatch.setattr(features, "perf_report", lambda **k: Result.success({
         "cpu_percent": 5.0, "ram_percent": 40.0, "ram_available_gb": 9.0, "disk_percent": 50.0, "disk_free_gb": 80.0,
         "top": [{"name": "chrome.exe", "ram_percent": 12.0}]}))
-    r = engine.handle_message("which apps are using the most ram", cid).data
+    r = engine.handle_message("is my pc lagging", cid).data  # performance report (top memory users now live in process_list)
     assert r["intent"] == "pc_performance" and "chrome.exe" in r["reply"] and "CPU 5%" in r["reply"]
     r = engine.handle_message("open the performance page", cid).data
     assert r["open_page"] == "performance"
@@ -75,8 +75,11 @@ def test_engine_handlers(monkeypatch):
     assert r["intent"] == "vision_detect" and r["open_page"] == "vision"
     r = engine.handle_message("stop listening", cid).data
     assert r["intent"] == "voice_control" and r["voice_cmd"]["action"] == "stop"
-    r = engine.handle_message("kill the heaviest process", cid).data
-    assert "do not stop processes" in r["reply"]
+    from adhyaksh.tools import processes
+    monkeypatch.setattr(processes, "kill_process", lambda target, **k: Result.failure("E_NEEDS_CONFIRM", "Confirmation required.",
+                                                                                   {"token": "t1", "action": "process_kill", "target": target}))
+    r = engine.handle_message("kill the heaviest process", cid).data  # since P4: ends the top program, after confirmation
+    assert r["intent"] == "process_kill" and r["confirmation"]["target"] == "heaviest"
 
 
 def test_image_attachment_runs_detection(monkeypatch):

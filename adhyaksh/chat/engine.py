@@ -16,7 +16,7 @@ from adhyaksh.nlu import registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, features, files, office, system
+from adhyaksh.tools import apps, clipboard, features, files, office, processes, reminders, system
 from adhyaksh.voice import speech
 
 MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
@@ -24,6 +24,7 @@ OS_INTENTS = {
     "file_create", "file_read", "file_update", "file_delete", "file_search",
     "folder_create", "office_create", "app_open", "app_close",
     "special_folder_open", "web_open", "screenshot", "system_status", "pc_performance",
+    "process_list", "process_kill", "clipboard_read", "clipboard_write",
 }
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 YES = {"yes", "y", "confirm", "yes please", "haan", "ha", "हाँ", "हां", "હા", "ok confirm"}
@@ -106,7 +107,14 @@ def _correct_file_folder(intent: str, slots: dict, text: str) -> tuple[str, dict
     return intent, slots
 
 
+COWORK_INTENTS = {"process_list", "process_kill", "reminder_set", "reminder_list", "reminder_cancel", "clipboard_read",
+                  "clipboard_write"}
+
+
 def _model_slots(intent: str, text: str) -> dict:
+    if intent in COWORK_INTENTS:
+        r = router.match_cowork(text)
+        return dict(r.slots) if r and r.intent == intent else {}
     """Extract slots for a model-predicted intent, using the same extractors
     as the rule layer (filename, folder name, URL, app). Verbs and filler
     words are never taken as the name."""
@@ -333,6 +341,15 @@ _INTENT_SIGNAL = {
                                  r"tez|तेज|धीमा|परफॉर्म|रैम|मेमोरी|પરફોર્મ|ઝડપી|રેમ|મેમરી|હેંગ", re.IGNORECASE),
     "voice_control": re.compile(r"listen|voice|hands.?free|wake|speak|talk|quiet|mute|aloud|\bmic\b|sunn|sambh|chup|bol|"
                                 r"सुन|बोल|चुप|आवाज|माइक|સાંભળ|બોલ|ચૂપ|અવાજ|માઇક", re.IGNORECASE),
+    "process_list": re.compile(r"process|program|\bapps?\b|\bram\b|memory|cpu|running|chal|task|प्रोग्राम|प्रोसेस|रैम|પ્રોગ્રામ|પ્રોસેસ|રેમ",
+                               re.IGNORECASE),
+    "process_kill": re.compile(r"kill|process|terminate|end\s+task|force|band|bandh|बंद|ખતમ|બંધ|प्रोसेस|પ્રોસેસ", re.IGNORECASE),
+    "reminder_set": re.compile(r"remind|alarm|wake|yaad\s+dila|yaad\s+apav|याद\s+दिला|अलार्म|रिमाइंडर|યાદ\s+અપાવ|એલાર્મ|રિમાઇન્ડર",
+                               re.IGNORECASE),
+    "reminder_list": re.compile(r"reminder|alarm|रिमाइंडर|अलार्म|રિમાઇન્ડર|એલાર્મ", re.IGNORECASE),
+    "reminder_cancel": re.compile(r"reminder|alarm|रिमाइंडर|अलार्म|રિમાઇન્ડર|એલાર્મ", re.IGNORECASE),
+    "clipboard_read": re.compile(r"clip\s*board|cop(?:y|ied)|क्लिपबोर्ड|કોપી|ક્લિપબોર્ડ|कॉपी", re.IGNORECASE),
+    "clipboard_write": re.compile(r"clip\s*board|copy|क्लिपबोर्ड|कॉपी|ક્લિપબોર્ડ|કોપી", re.IGNORECASE),
     "source_list": re.compile(r"source|document|file|notebook|attach|upload|सोर्स|दस्तावेज़|नोटबुक|સોર્સ|દસ્તાવેજ|નોટબુક", re.IGNORECASE),
     "source_summary": re.compile(r"source|document|file|notebook|attach|pdf|सोर्स|दस्तावेज़|फाइल|नोटबुक|સોર્સ|દસ્તાવેજ|ફાઇલ|નોટબુક", re.IGNORECASE),
     "source_delete": re.compile(r"source|notebook|सोर्स|नोटबुक|સોર્સ|નોટબુક", re.IGNORECASE),
@@ -594,6 +611,8 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
                       intent, action="office_create")
     if intent in ("file_create", "file_read", "file_update", "file_delete", "file_search"):
         return _file_intent(intent, text, slots, ctx, lang, c)
+    if intent in COWORK_INTENTS:
+        return _cowork_reply(intent, text, slots, ctx, lang, c)
     if intent in ("source_list", "source_summary", "source_delete"):
         return _sources_reply(intent, text, slots, ctx, lang, c)
     if intent == "doc_question":
@@ -671,6 +690,11 @@ def _finish_confirmation(ctx: context.Context, accept: bool, lang: str) -> _Repl
     if p["action"] == "file_delete":
         ctx.last_file = None
         return _Reply(_t("file_deleted", lang, path=d.get("path", p["target"])), "confirmation", action=p["action"])
+    if p["action"] == "process_kill":
+        return _Reply(f"Ended {d.get('name', p['target'])} ({d.get('ended', 0)} process(es), about {d.get('freed_mb', 0)} MB freed).",
+                      "confirmation", action=p["action"])
+    if p["action"] == "reminder_cancel_all":
+        return _Reply(f"Cancelled {d.get('cancelled', 0)} reminder(s).", "confirmation", action=p["action"])
     if p["action"] == "source_delete":
         return _Reply(f"Removed the source {d.get('file', p['target'])}.", "confirmation", action=p["action"])
     if p["action"] == "temp_clean":
@@ -731,6 +755,13 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
             slots["folder"] = router.clean_slot_name(text)
         elif p["need"] == "url":
             slots["url"] = router.extract_web_url(text)
+        elif p["need"] == "when":
+            # "When should I remind you?" answered: combine the saved text with the time just given.
+            return _dispatch("reminder_set", f"remind me to {p['slots'].get('text', 'Reminder')} {text}", {}, ctx, convo_id, lang, mode=mode)
+        elif p["need"] == "target":
+            slots["target"] = text.strip()
+        elif p["need"] == "reminder":
+            slots["query"] = text.strip()
         elif p["need"] == "source":
             slots["name"] = text.strip()
         else:
@@ -742,6 +773,9 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
         r = _native_dispatch(text, ctx, convo_id, lang, mode)
         if r is not None:
             return r
+    steps = router.split_steps(text)
+    if steps:
+        return _run_steps(steps, ctx, convo_id, lang, mode)
     rule = router.understand(text)
     if rule:
         intent, slots = _correct_file_folder(rule.intent, rule.slots, text)
@@ -908,3 +942,99 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
         result["suggest_mode"] = r.suggest_mode
     result.update(r.extra)
     return Result.success(result)
+
+
+# ---------------------------------------------------------------------------
+# Cowork handlers (P4): processes, reminders, clipboard, multi-step requests
+# ---------------------------------------------------------------------------
+
+def _cowork_reply(intent: str, text: str, slots: dict, ctx: context.Context, lang: str, c: dict) -> _Reply:
+    if intent == "process_list":
+        res = processes.list_processes(slots.get("top", 10), slots.get("sort", "memory"), ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent)
+        rows = res.data["processes"]
+        key = "CPU" if res.data["sort"] == "cpu" else "memory"
+        lines = "\n".join(f"{i + 1}. {r['name']}: {r['ram_mb']:.0f} MB, CPU {r['cpu_percent']:.0f}%"
+                          + (f" ({r['count']} processes)" if r["count"] > 1 else "") for i, r in enumerate(rows))
+        return _Reply(f"Top programs by {key} ({res.data['total']} running):\n{lines}\n"
+                      "To end one, say for example: end task <name>.", intent, action="process_list")
+    if intent == "process_kill":
+        target = slots.get("target")
+        if not target:
+            return _need(ctx, intent, "target", slots, "Which program should I end?", lang)
+        res = processes.kill_process(target, ctx=c)
+        if res.error_code == E_NEEDS_CONFIRM:
+            r = _confirm_reply(res, lang, ctx, lambda tok: processes.kill_process(target, ctx=_ctx_for(text, intent, tok), token=tok),
+                               intent, res.data["target"])
+            r.text = f"End {res.data['target']}? Unsaved work in it will be lost. Confirm or cancel."
+            return r
+        if res.ok:
+            return _Reply(f"Ended {res.data['name']}.", intent, action="process_kill")
+        return _Reply(res.message, intent, action="process_kill")
+    if intent == "reminder_set":
+        res = reminders.add_natural(text, ctx=c)
+        if not res.ok and res.data and res.data.get("need") == "when":
+            return _need(ctx, intent, "when", {"text": res.data["text"]}, "When should I remind you?", lang)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent)
+        return _Reply(f"Reminder set: {res.data['text']}, {res.data['when']}. I will remind you while ADHYAKSH is open.",
+                      intent, action="reminder_set")
+    if intent == "reminder_list":
+        res = reminders.list_pending(ctx=c)
+        items = res.data["reminders"] if res.ok else []
+        if not items:
+            return _Reply("You have no pending reminders.", intent, action="reminder_list")
+        return _Reply("Your reminders:\n" + "\n".join(f"{i + 1}. {r['text']}, {r['when']}" for i, r in enumerate(items)),
+                      intent, action="reminder_list")
+    if intent == "reminder_cancel":
+        if slots.get("all"):
+            res = reminders.cancel(all_pending=True, ctx=c)
+            if res.error_code == E_NEEDS_CONFIRM:
+                r = _confirm_reply(res, lang, ctx, lambda tok: reminders.cancel(all_pending=True, ctx=_ctx_for(text, intent, tok), token=tok),
+                                   intent, res.data["target"])
+                r.text = f"Cancel all {res.data['target']}? Confirm or cancel."
+                return r
+            return _Reply(res.message if not res.ok else f"Cancelled {res.data['cancelled']} reminder(s).", intent, action="reminder_cancel")
+        query = slots.get("query", "")
+        if not query:
+            pending = reminders.list_pending(ctx=c).data["reminders"]
+            if len(pending) == 1:
+                query = str(pending[0]["id"])
+            elif not pending:
+                return _Reply("You have no pending reminders.", intent)
+            else:
+                return _need(ctx, intent, "reminder", slots, "Which reminder should I cancel? Say a word from it.", lang)
+        res = reminders.cancel(query, ctx=c)
+        return _Reply(f"Cancelled the reminder: {res.data['text']}." if res.ok else res.message, intent, action="reminder_cancel")
+    if intent == "clipboard_read":
+        res = clipboard.read(ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent)
+        if res.data["empty"]:
+            return _Reply("The clipboard has no text.", intent, action="clipboard_read")
+        shown = res.data["text"][:600] + (" ..." if len(res.data["text"]) > 600 else "")
+        return _Reply("Your clipboard has:\n" + shown, intent, action="clipboard_read")
+    # clipboard_write
+    value = slots.get("text") or router.find_content(text) or ""
+    if not value:
+        return _need(ctx, intent, "content", slots, "What should I copy to the clipboard?", lang)
+    res = clipboard.write(value, ctx=c)
+    return _Reply(f"Copied to the clipboard: {value[:200]}" if res.ok else _error_reply(res, lang), intent, action="clipboard_write")
+
+
+def _run_steps(steps: list, ctx: context.Context, convo_id: int, lang: str, mode: str) -> _Reply:
+    """Run each step in order through the normal handlers (each goes through the safety gateway). Stops at a step
+    that needs a confirmation, an answer, or Cowork mode, and says which steps were not done."""
+    lines, confirmation = [], None
+    for i, (part, rule) in enumerate(steps):
+        intent, slots = _correct_file_folder(rule.intent, rule.slots, part)
+        r = _dispatch(intent, part, slots, ctx, convo_id, lang, mode=mode)
+        lines.append(f"{i + 1}. {r.text}")
+        if r.confirmation or r.action in ("clarify", "needs_cowork"):
+            confirmation = r.confirmation
+            rest = [p for p, _ in steps[i + 1:]]
+            if rest:
+                lines.append("Not done yet (ask again after this): " + "; ".join(rest) + ".")
+            break
+    return _Reply("\n".join(lines), "multi_step", action="multi_step", confirmation=confirmation)

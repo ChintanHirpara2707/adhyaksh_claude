@@ -623,3 +623,64 @@ register("source_delete", "Remove one source from the active notebook (needs con
 register("notebook_list", "List notebooks and show which one is active.", {"type": "object", "properties": {}}, 0, _notebook_list)
 register("notebook_open", "Switch to a notebook by name, creating it if it does not exist. New attachments and document questions use it.",
          {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"]}, 1, _notebook_open)
+
+
+# ---------------------------------------------------------------------------
+# Cowork tools (P4): processes, reminders, clipboard
+# ---------------------------------------------------------------------------
+
+def _process_list(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import processes
+    return processes.list_processes(int(arguments.get("top") or 10), str(arguments.get("sort") or "memory"), ctx=ctx)
+
+
+def _process_kill(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import processes
+    return processes.kill_process(str(arguments.get("target", "")), ctx=ctx, token=ctx.get("token"))
+
+
+def _reminder_add(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import reminders, when
+    text = str(arguments.get("text") or "Reminder")
+    w = when.parse(str(arguments.get("when") or ""))
+    if w.due is None:
+        return Result.failure(E_ACTION_FAILED, "I could not understand the time. Use words like 'at 6 pm', 'in 20 minutes' or 'tomorrow 9 am'.")
+    return reminders.add(text, w.due.strftime(reminders.FMT), "daily" if (w.repeat == "daily" or arguments.get("daily")) else "none", ctx=ctx)
+
+
+def _reminder_list(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import reminders
+    return reminders.list_pending(ctx=ctx)
+
+
+def _reminder_cancel(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import reminders
+    return reminders.cancel(str(arguments.get("query") or ""), all_pending=bool(arguments.get("all")), ctx=ctx, token=ctx.get("token"))
+
+
+def _clipboard_read(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import clipboard
+    return clipboard.read(ctx=ctx)
+
+
+def _clipboard_write(arguments: dict, ctx: dict) -> Result:
+    from adhyaksh.tools import clipboard
+    return clipboard.write(str(arguments.get("text", "")), ctx=ctx)
+
+
+register("process_list", "List the programs using the most memory (or CPU) right now.",
+         {"type": "object", "properties": {"top": {"type": "integer", "description": "How many programs (1-30)."},
+                                           "sort": {"type": "string", "enum": ["memory", "cpu"]}}}, 0, _process_list)
+register("process_kill", "End a running program by name or process id (needs confirmation; system processes are refused).",
+         {"type": "object", "properties": {"target": {"type": "string", "description": "Program name (e.g. chrome.exe), process id, or 'heaviest'."}},
+          "required": ["target"]}, 2, _process_kill)
+register("reminder_add", "Set a reminder or alarm.",
+         {"type": "object", "properties": {"text": {"type": "string", "description": "What to remind about."},
+                                           "when": {"type": "string", "description": "Time in words, e.g. 'at 6 pm', 'in 20 minutes', 'tomorrow 9 am', 'every day at 8 pm'."},
+                                           "daily": {"type": "boolean"}}, "required": ["text", "when"]}, 1, _reminder_add)
+register("reminder_list", "List pending reminders.", {"type": "object", "properties": {}}, 0, _reminder_list)
+register("reminder_cancel", "Cancel one reminder by a word from it, or all reminders (all needs confirmation).",
+         {"type": "object", "properties": {"query": {"type": "string"}, "all": {"type": "boolean"}}}, 1, _reminder_cancel)
+register("clipboard_read", "Read the text currently on the clipboard.", {"type": "object", "properties": {}}, 0, _clipboard_read)
+register("clipboard_write", "Copy text to the clipboard.",
+         {"type": "object", "properties": {"text": {"type": "string"}}, "required": ["text"]}, 1, _clipboard_write)

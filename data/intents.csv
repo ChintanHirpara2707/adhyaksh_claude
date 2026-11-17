@@ -3459,3 +3459,581 @@ please marks.xlsx no summary banavi do,source_summary,gujlish,latin,generated,fa
 resume.pdf નો સારાંશ બનાવી દો,source_summary,gu,gujarati,generated,false
 કૃપા કરીને todo.docx નો સારાંશ બનાવી દો,source_summary,gu,gujarati,generated,false
 invoice.docx નો સારાંશ બનાવી દો હમણાં,source_summary,gu,gujarati,generated,false
+which processes use the most cpu,process_list,en,latin,generated,false
+"assistant, which processes use the most cpu please",process_list,en,latin,generated,false
+please which processes use the most cpu please,process_list,en,latin,generated,false
+please which processes use the most cpu,process_list,en,latin,generated,false
+please which processes use the most cpu now,process_list,en,latin,generated,false
+list the top programs by memory,process_list,en,latin,generated,false
+please list the top programs by memory,process_list,en,latin,generated,false
+list the top programs by memory please,process_list,en,latin,generated,false
+list the top programs by memory now,process_list,en,latin,generated,false
+please list the top programs by memory please,process_list,en,latin,generated,false
+what programs are running right now,process_list,en,latin,generated,false
+"hey, what programs are running right now now",process_list,en,latin,generated,false
+what programs are running right now now,process_list,en,latin,generated,false
+please what programs are running right now please,process_list,en,latin,generated,false
+open task manager style list,process_list,en,latin,generated,false
+please open task manager style list,process_list,en,latin,generated,false
+"assistant, open task manager style list now",process_list,en,latin,generated,false
+"hey, open task manager style list",process_list,en,latin,generated,false
+"assistant, open task manager style list",process_list,en,latin,generated,false
+show what is hogging my ram,process_list,en,latin,generated,false
+"hey, show what is hogging my ram please",process_list,en,latin,generated,false
+show what is hogging my ram please,process_list,en,latin,generated,false
+"assistant, show what is hogging my ram please",process_list,en,latin,generated,false
+show what is hogging my ram now,process_list,en,latin,generated,false
+show heavy processes,process_list,en,latin,generated,false
+please show heavy processes now,process_list,en,latin,generated,false
+show heavy processes please,process_list,en,latin,generated,false
+"hey, show heavy processes",process_list,en,latin,generated,false
+show heavy processes now,process_list,en,latin,generated,false
+kaun se programs chal rahe hain dikhao,process_list,hinglish,latin,generated,false
+kaun se programs chal rahe hain dikhao abhi,process_list,hinglish,latin,generated,false
+please kaun se programs chal rahe hain dikhao abhi,process_list,hinglish,latin,generated,false
+please kaun se programs chal rahe hain dikhao,process_list,hinglish,latin,generated,false
+sabse zyada cpu kaun le raha hai,process_list,hinglish,latin,generated,false
+please sabse zyada cpu kaun le raha hai,process_list,hinglish,latin,generated,false
+"suno, sabse zyada cpu kaun le raha hai",process_list,hinglish,latin,generated,false
+sabse zyada cpu kaun le raha hai abhi,process_list,hinglish,latin,generated,false
+chalte hue processes ki list do,process_list,hinglish,latin,generated,false
+chalte hue processes ki list do abhi,process_list,hinglish,latin,generated,false
+"suno, chalte hue processes ki list do abhi",process_list,hinglish,latin,generated,false
+please chalte hue processes ki list do abhi,process_list,hinglish,latin,generated,false
+please chalte hue processes ki list do jaldi,process_list,hinglish,latin,generated,false
+ram kaun kha raha hai batao,process_list,hinglish,latin,generated,false
+please ram kaun kha raha hai batao jaldi,process_list,hinglish,latin,generated,false
+ram kaun kha raha hai batao jaldi,process_list,hinglish,latin,generated,false
+please ram kaun kha raha hai batao abhi,process_list,hinglish,latin,generated,false
+kaya programs chalu che batavo,process_list,gujlish,latin,generated,false
+please kaya programs chalu che batavo,process_list,gujlish,latin,generated,false
+please kaya programs chalu che batavo atyare,process_list,gujlish,latin,generated,false
+"sambhdo, kaya programs chalu che batavo atyare",process_list,gujlish,latin,generated,false
+"sambhdo, kaya programs chalu che batavo jaldi",process_list,gujlish,latin,generated,false
+sauthi vadhare cpu kon vapre che,process_list,gujlish,latin,generated,false
+please sauthi vadhare cpu kon vapre che atyare,process_list,gujlish,latin,generated,false
+"sambhdo, sauthi vadhare cpu kon vapre che jaldi",process_list,gujlish,latin,generated,false
+"sambhdo, sauthi vadhare cpu kon vapre che atyare",process_list,gujlish,latin,generated,false
+chalta processes ni list apo,process_list,gujlish,latin,generated,false
+chalta processes ni list apo jaldi,process_list,gujlish,latin,generated,false
+please chalta processes ni list apo jaldi,process_list,gujlish,latin,generated,false
+"sambhdo, chalta processes ni list apo jaldi",process_list,gujlish,latin,generated,false
+please chalta processes ni list apo,process_list,gujlish,latin,generated,false
+ram kon khay che kaho,process_list,gujlish,latin,generated,false
+please ram kon khay che kaho atyare,process_list,gujlish,latin,generated,false
+ram kon khay che kaho jaldi,process_list,gujlish,latin,generated,false
+"sambhdo, ram kon khay che kaho jaldi",process_list,gujlish,latin,generated,false
+कौन से प्रोग्राम चल रहे हैं दिखाओ,process_list,hi,devanagari,generated,false
+कौन से प्रोग्राम चल रहे हैं दिखाओ अभी,process_list,hi,devanagari,generated,false
+कृपया कौन से प्रोग्राम चल रहे हैं दिखाओ अभी,process_list,hi,devanagari,generated,false
+कौन से प्रोग्राम चल रहे हैं दिखाओ जल्दी,process_list,hi,devanagari,generated,false
+कृपया कौन से प्रोग्राम चल रहे हैं दिखाओ जल्दी,process_list,hi,devanagari,generated,false
+सबसे ज्यादा सीपीयू कौन ले रहा है,process_list,hi,devanagari,generated,false
+कृपया सबसे ज्यादा सीपीयू कौन ले रहा है,process_list,hi,devanagari,generated,false
+"सुनो, सबसे ज्यादा सीपीयू कौन ले रहा है",process_list,hi,devanagari,generated,false
+सबसे ज्यादा सीपीयू कौन ले रहा है जल्दी,process_list,hi,devanagari,generated,false
+कृपया सबसे ज्यादा सीपीयू कौन ले रहा है अभी,process_list,hi,devanagari,generated,false
+चल रहे प्रोसेस की सूची दो,process_list,hi,devanagari,generated,false
+चल रहे प्रोसेस की सूची दो जल्दी,process_list,hi,devanagari,generated,false
+कृपया चल रहे प्रोसेस की सूची दो अभी,process_list,hi,devanagari,generated,false
+"सुनो, चल रहे प्रोसेस की सूची दो जल्दी",process_list,hi,devanagari,generated,false
+रैम कौन खा रहा है बताओ,process_list,hi,devanagari,generated,false
+कृपया रैम कौन खा रहा है बताओ जल्दी,process_list,hi,devanagari,generated,false
+कृपया रैम कौन खा रहा है बताओ,process_list,hi,devanagari,generated,false
+रैम कौन खा रहा है बताओ अभी,process_list,hi,devanagari,generated,false
+कृपया रैम कौन खा रहा है बताओ अभी,process_list,hi,devanagari,generated,false
+કયા પ્રોગ્રામ ચાલુ છે બતાવો,process_list,gu,gujarati,generated,false
+કૃપા કરીને કયા પ્રોગ્રામ ચાલુ છે બતાવો,process_list,gu,gujarati,generated,false
+કૃપા કરીને કયા પ્રોગ્રામ ચાલુ છે બતાવો હમણાં,process_list,gu,gujarati,generated,false
+"સાંભળો, કયા પ્રોગ્રામ ચાલુ છે બતાવો હમણાં",process_list,gu,gujarati,generated,false
+સૌથી વધુ સીપીયુ કોણ વાપરે છે,process_list,gu,gujarati,generated,false
+સૌથી વધુ સીપીયુ કોણ વાપરે છે હમણાં,process_list,gu,gujarati,generated,false
+"સાંભળો, સૌથી વધુ સીપીયુ કોણ વાપરે છે",process_list,gu,gujarati,generated,false
+"સાંભળો, સૌથી વધુ સીપીયુ કોણ વાપરે છે જલ્દી",process_list,gu,gujarati,generated,false
+ચાલતા પ્રોસેસની યાદી આપો,process_list,gu,gujarati,generated,false
+કૃપા કરીને ચાલતા પ્રોસેસની યાદી આપો,process_list,gu,gujarati,generated,false
+ચાલતા પ્રોસેસની યાદી આપો હમણાં,process_list,gu,gujarati,generated,false
+"સાંભળો, ચાલતા પ્રોસેસની યાદી આપો જલ્દી",process_list,gu,gujarati,generated,false
+"સાંભળો, ચાલતા પ્રોસેસની યાદી આપો",process_list,gu,gujarati,generated,false
+રેમ કોણ ખાય છે કહો,process_list,gu,gujarati,generated,false
+"સાંભળો, રેમ કોણ ખાય છે કહો જલ્દી",process_list,gu,gujarati,generated,false
+કૃપા કરીને રેમ કોણ ખાય છે કહો હમણાં,process_list,gu,gujarati,generated,false
+કૃપા કરીને રેમ કોણ ખાય છે કહો,process_list,gu,gujarati,generated,false
+રેમ કોણ ખાય છે કહો જલ્દી,process_list,gu,gujarati,generated,false
+end task chrome,process_kill,en,latin,generated,false
+please end task chrome now,process_kill,en,latin,generated,false
+end task chrome now,process_kill,en,latin,generated,false
+please end task chrome,process_kill,en,latin,generated,false
+please end task chrome please,process_kill,en,latin,generated,false
+kill the process zoom.exe,process_kill,en,latin,generated,false
+"hey, kill the process zoom.exe now",process_kill,en,latin,generated,false
+"hey, kill the process zoom.exe",process_kill,en,latin,generated,false
+"assistant, kill the process zoom.exe",process_kill,en,latin,generated,false
+force quit excel it is frozen,process_kill,en,latin,generated,false
+"hey, force quit excel it is frozen please",process_kill,en,latin,generated,false
+"hey, force quit excel it is frozen now",process_kill,en,latin,generated,false
+force quit excel it is frozen please,process_kill,en,latin,generated,false
+please force quit excel it is frozen now,process_kill,en,latin,generated,false
+terminate the vlc process,process_kill,en,latin,generated,false
+please terminate the vlc process please,process_kill,en,latin,generated,false
+please terminate the vlc process now,process_kill,en,latin,generated,false
+terminate the vlc process please,process_kill,en,latin,generated,false
+"assistant, terminate the vlc process now",process_kill,en,latin,generated,false
+stop the process with id 1200,process_kill,en,latin,generated,false
+"assistant, stop the process with id 1200",process_kill,en,latin,generated,false
+please stop the process with id 1200,process_kill,en,latin,generated,false
+"hey, stop the process with id 1200 please",process_kill,en,latin,generated,false
+"assistant, stop the process with id 1200 now",process_kill,en,latin,generated,false
+end the hung program teams,process_kill,en,latin,generated,false
+end the hung program teams please,process_kill,en,latin,generated,false
+"hey, end the hung program teams now",process_kill,en,latin,generated,false
+please end the hung program teams now,process_kill,en,latin,generated,false
+end the hung program teams now,process_kill,en,latin,generated,false
+zoom ka process band kar do,process_kill,hinglish,latin,generated,false
+zoom ka process band kar do jaldi,process_kill,hinglish,latin,generated,false
+please zoom ka process band kar do abhi,process_kill,hinglish,latin,generated,false
+please zoom ka process band kar do jaldi,process_kill,hinglish,latin,generated,false
+"suno, zoom ka process band kar do abhi",process_kill,hinglish,latin,generated,false
+excel ka task end kar do,process_kill,hinglish,latin,generated,false
+excel ka task end kar do jaldi,process_kill,hinglish,latin,generated,false
+excel ka task end kar do abhi,process_kill,hinglish,latin,generated,false
+please excel ka task end kar do abhi,process_kill,hinglish,latin,generated,false
+"suno, excel ka task end kar do",process_kill,hinglish,latin,generated,false
+vlc process kill karo,process_kill,hinglish,latin,generated,false
+please vlc process kill karo,process_kill,hinglish,latin,generated,false
+"suno, vlc process kill karo jaldi",process_kill,hinglish,latin,generated,false
+"suno, vlc process kill karo",process_kill,hinglish,latin,generated,false
+"suno, vlc process kill karo abhi",process_kill,hinglish,latin,generated,false
+atka hua teams band kar do process,process_kill,hinglish,latin,generated,false
+"suno, atka hua teams band kar do process jaldi",process_kill,hinglish,latin,generated,false
+please atka hua teams band kar do process jaldi,process_kill,hinglish,latin,generated,false
+please atka hua teams band kar do process abhi,process_kill,hinglish,latin,generated,false
+zoom no process bandh kari do,process_kill,gujlish,latin,generated,false
+"sambhdo, zoom no process bandh kari do jaldi",process_kill,gujlish,latin,generated,false
+zoom no process bandh kari do jaldi,process_kill,gujlish,latin,generated,false
+please zoom no process bandh kari do jaldi,process_kill,gujlish,latin,generated,false
+"sambhdo, zoom no process bandh kari do atyare",process_kill,gujlish,latin,generated,false
+excel nu task end kari do,process_kill,gujlish,latin,generated,false
+excel nu task end kari do jaldi,process_kill,gujlish,latin,generated,false
+excel nu task end kari do atyare,process_kill,gujlish,latin,generated,false
+please excel nu task end kari do jaldi,process_kill,gujlish,latin,generated,false
+"sambhdo, excel nu task end kari do",process_kill,gujlish,latin,generated,false
+please vlc process kill karo atyare,process_kill,gujlish,latin,generated,false
+"sambhdo, vlc process kill karo atyare",process_kill,gujlish,latin,generated,false
+vlc process kill karo atyare,process_kill,gujlish,latin,generated,false
+atkelo teams process bandh karo,process_kill,gujlish,latin,generated,false
+"sambhdo, atkelo teams process bandh karo atyare",process_kill,gujlish,latin,generated,false
+please atkelo teams process bandh karo atyare,process_kill,gujlish,latin,generated,false
+"sambhdo, atkelo teams process bandh karo",process_kill,gujlish,latin,generated,false
+"sambhdo, atkelo teams process bandh karo jaldi",process_kill,gujlish,latin,generated,false
+ज़ूम का प्रोसेस बंद करो,process_kill,hi,devanagari,generated,false
+"सुनो, ज़ूम का प्रोसेस बंद करो अभी",process_kill,hi,devanagari,generated,false
+कृपया ज़ूम का प्रोसेस बंद करो,process_kill,hi,devanagari,generated,false
+ज़ूम का प्रोसेस बंद करो जल्दी,process_kill,hi,devanagari,generated,false
+एक्सेल का टास्क खत्म करो,process_kill,hi,devanagari,generated,false
+कृपया एक्सेल का टास्क खत्म करो,process_kill,hi,devanagari,generated,false
+"सुनो, एक्सेल का टास्क खत्म करो",process_kill,hi,devanagari,generated,false
+कृपया एक्सेल का टास्क खत्म करो अभी,process_kill,hi,devanagari,generated,false
+वीएलसी प्रोसेस किल करो,process_kill,hi,devanagari,generated,false
+वीएलसी प्रोसेस किल करो जल्दी,process_kill,hi,devanagari,generated,false
+वीएलसी प्रोसेस किल करो अभी,process_kill,hi,devanagari,generated,false
+कृपया वीएलसी प्रोसेस किल करो जल्दी,process_kill,hi,devanagari,generated,false
+"सुनो, वीएलसी प्रोसेस किल करो",process_kill,hi,devanagari,generated,false
+अटका हुआ टीम्स प्रोसेस बंद करो,process_kill,hi,devanagari,generated,false
+"सुनो, अटका हुआ टीम्स प्रोसेस बंद करो जल्दी",process_kill,hi,devanagari,generated,false
+"सुनो, अटका हुआ टीम्स प्रोसेस बंद करो",process_kill,hi,devanagari,generated,false
+"सुनो, अटका हुआ टीम्स प्रोसेस बंद करो अभी",process_kill,hi,devanagari,generated,false
+ઝૂમનો પ્રોસેસ બંધ કરો,process_kill,gu,gujarati,generated,false
+ઝૂમનો પ્રોસેસ બંધ કરો હમણાં,process_kill,gu,gujarati,generated,false
+"સાંભળો, ઝૂમનો પ્રોસેસ બંધ કરો હમણાં",process_kill,gu,gujarati,generated,false
+ઝૂમનો પ્રોસેસ બંધ કરો જલ્દી,process_kill,gu,gujarati,generated,false
+એક્સેલનું ટાસ્ક ખતમ કરો,process_kill,gu,gujarati,generated,false
+એક્સેલનું ટાસ્ક ખતમ કરો હમણાં,process_kill,gu,gujarati,generated,false
+"સાંભળો, એક્સેલનું ટાસ્ક ખતમ કરો",process_kill,gu,gujarati,generated,false
+"સાંભળો, એક્સેલનું ટાસ્ક ખતમ કરો હમણાં",process_kill,gu,gujarati,generated,false
+વીએલસી પ્રોસેસ કિલ કરો,process_kill,gu,gujarati,generated,false
+"સાંભળો, વીએલસી પ્રોસેસ કિલ કરો",process_kill,gu,gujarati,generated,false
+કૃપા કરીને વીએલસી પ્રોસેસ કિલ કરો,process_kill,gu,gujarati,generated,false
+"સાંભળો, વીએલસી પ્રોસેસ કિલ કરો હમણાં",process_kill,gu,gujarati,generated,false
+અટકેલો ટીમ્સ પ્રોસેસ બંધ કરો,process_kill,gu,gujarati,generated,false
+કૃપા કરીને અટકેલો ટીમ્સ પ્રોસેસ બંધ કરો હમણાં,process_kill,gu,gujarati,generated,false
+"સાંભળો, અટકેલો ટીમ્સ પ્રોસેસ બંધ કરો હમણાં",process_kill,gu,gujarati,generated,false
+"સાંભળો, અટકેલો ટીમ્સ પ્રોસેસ બંધ કરો જલ્દી",process_kill,gu,gujarati,generated,false
+કૃપા કરીને અટકેલો ટીમ્સ પ્રોસેસ બંધ કરો,process_kill,gu,gujarati,generated,false
+remind me to drink water in 30 minutes,reminder_set,en,latin,generated,false
+"hey, remind me to drink water in 30 minutes please",reminder_set,en,latin,generated,false
+"assistant, remind me to drink water in 30 minutes now",reminder_set,en,latin,generated,false
+remind me to drink water in 30 minutes please,reminder_set,en,latin,generated,false
+set a reminder at 4 pm for the meeting,reminder_set,en,latin,generated,false
+"hey, set a reminder at 4 pm for the meeting",reminder_set,en,latin,generated,false
+please set a reminder at 4 pm for the meeting now,reminder_set,en,latin,generated,false
+"assistant, set a reminder at 4 pm for the meeting please",reminder_set,en,latin,generated,false
+alarm at 6 tomorrow morning,reminder_set,en,latin,generated,false
+"hey, alarm at 6 tomorrow morning now",reminder_set,en,latin,generated,false
+please alarm at 6 tomorrow morning,reminder_set,en,latin,generated,false
+"hey, alarm at 6 tomorrow morning please",reminder_set,en,latin,generated,false
+"assistant, alarm at 6 tomorrow morning please",reminder_set,en,latin,generated,false
+remind me every day at 9 pm to lock the door,reminder_set,en,latin,generated,false
+"assistant, remind me every day at 9 pm to lock the door please",reminder_set,en,latin,generated,false
+"assistant, remind me every day at 9 pm to lock the door",reminder_set,en,latin,generated,false
+please remind me every day at 9 pm to lock the door now,reminder_set,en,latin,generated,false
+please remind me about the call at 3,reminder_set,en,latin,generated,false
+please remind me about the call at 3 please,reminder_set,en,latin,generated,false
+"hey, please remind me about the call at 3 now",reminder_set,en,latin,generated,false
+"assistant, please remind me about the call at 3 please",reminder_set,en,latin,generated,false
+please please remind me about the call at 3 now,reminder_set,en,latin,generated,false
+wake me up at 6 am,reminder_set,en,latin,generated,false
+"assistant, wake me up at 6 am now",reminder_set,en,latin,generated,false
+please wake me up at 6 am please,reminder_set,en,latin,generated,false
+"assistant, wake me up at 6 am please",reminder_set,en,latin,generated,false
+"hey, wake me up at 6 am please",reminder_set,en,latin,generated,false
+30 minute baad paani peene ki yaad dilana,reminder_set,hinglish,latin,generated,false
+please 30 minute baad paani peene ki yaad dilana,reminder_set,hinglish,latin,generated,false
+please 30 minute baad paani peene ki yaad dilana jaldi,reminder_set,hinglish,latin,generated,false
+30 minute baad paani peene ki yaad dilana jaldi,reminder_set,hinglish,latin,generated,false
+please 30 minute baad paani peene ki yaad dilana abhi,reminder_set,hinglish,latin,generated,false
+4 baje meeting ka reminder laga do,reminder_set,hinglish,latin,generated,false
+please 4 baje meeting ka reminder laga do abhi,reminder_set,hinglish,latin,generated,false
+please 4 baje meeting ka reminder laga do jaldi,reminder_set,hinglish,latin,generated,false
+4 baje meeting ka reminder laga do jaldi,reminder_set,hinglish,latin,generated,false
+please 4 baje meeting ka reminder laga do,reminder_set,hinglish,latin,generated,false
+kal subah 6 baje alarm lagao,reminder_set,hinglish,latin,generated,false
+"suno, kal subah 6 baje alarm lagao jaldi",reminder_set,hinglish,latin,generated,false
+please kal subah 6 baje alarm lagao,reminder_set,hinglish,latin,generated,false
+kal subah 6 baje alarm lagao jaldi,reminder_set,hinglish,latin,generated,false
+"suno, kal subah 6 baje alarm lagao",reminder_set,hinglish,latin,generated,false
+roz raat 9 baje darwaza band karne ki yaad dilana,reminder_set,hinglish,latin,generated,false
+please roz raat 9 baje darwaza band karne ki yaad dilana,reminder_set,hinglish,latin,generated,false
+"suno, roz raat 9 baje darwaza band karne ki yaad dilana abhi",reminder_set,hinglish,latin,generated,false
+roz raat 9 baje darwaza band karne ki yaad dilana jaldi,reminder_set,hinglish,latin,generated,false
+"suno, roz raat 9 baje darwaza band karne ki yaad dilana",reminder_set,hinglish,latin,generated,false
+30 minute pachi paani pivanu yaad apavjo,reminder_set,gujlish,latin,generated,false
+30 minute pachi paani pivanu yaad apavjo jaldi,reminder_set,gujlish,latin,generated,false
+please 30 minute pachi paani pivanu yaad apavjo,reminder_set,gujlish,latin,generated,false
+"sambhdo, 30 minute pachi paani pivanu yaad apavjo atyare",reminder_set,gujlish,latin,generated,false
+4 vage meeting nu reminder mukjo,reminder_set,gujlish,latin,generated,false
+please 4 vage meeting nu reminder mukjo,reminder_set,gujlish,latin,generated,false
+please 4 vage meeting nu reminder mukjo jaldi,reminder_set,gujlish,latin,generated,false
+4 vage meeting nu reminder mukjo jaldi,reminder_set,gujlish,latin,generated,false
+kale savare 6 vage alarm mukjo,reminder_set,gujlish,latin,generated,false
+"sambhdo, kale savare 6 vage alarm mukjo",reminder_set,gujlish,latin,generated,false
+please kale savare 6 vage alarm mukjo,reminder_set,gujlish,latin,generated,false
+please kale savare 6 vage alarm mukjo jaldi,reminder_set,gujlish,latin,generated,false
+roj rate 9 vage darwajo bandh karvanu yaad apavjo,reminder_set,gujlish,latin,generated,false
+roj rate 9 vage darwajo bandh karvanu yaad apavjo jaldi,reminder_set,gujlish,latin,generated,false
+roj rate 9 vage darwajo bandh karvanu yaad apavjo atyare,reminder_set,gujlish,latin,generated,false
+please roj rate 9 vage darwajo bandh karvanu yaad apavjo atyare,reminder_set,gujlish,latin,generated,false
+30 मिनट बाद पानी पीने की याद दिलाना,reminder_set,hi,devanagari,generated,false
+कृपया 30 मिनट बाद पानी पीने की याद दिलाना,reminder_set,hi,devanagari,generated,false
+30 मिनट बाद पानी पीने की याद दिलाना अभी,reminder_set,hi,devanagari,generated,false
+कृपया 30 मिनट बाद पानी पीने की याद दिलाना जल्दी,reminder_set,hi,devanagari,generated,false
+4 बजे मीटिंग का रिमाइंडर लगा दो,reminder_set,hi,devanagari,generated,false
+4 बजे मीटिंग का रिमाइंडर लगा दो अभी,reminder_set,hi,devanagari,generated,false
+कृपया 4 बजे मीटिंग का रिमाइंडर लगा दो,reminder_set,hi,devanagari,generated,false
+कृपया 4 बजे मीटिंग का रिमाइंडर लगा दो अभी,reminder_set,hi,devanagari,generated,false
+कल सुबह 6 बजे अलार्म लगाओ,reminder_set,hi,devanagari,generated,false
+कृपया कल सुबह 6 बजे अलार्म लगाओ,reminder_set,hi,devanagari,generated,false
+कृपया कल सुबह 6 बजे अलार्म लगाओ अभी,reminder_set,hi,devanagari,generated,false
+"सुनो, कल सुबह 6 बजे अलार्म लगाओ जल्दी",reminder_set,hi,devanagari,generated,false
+रोज़ रात 9 बजे दरवाज़ा बंद करने की याद दिलाना,reminder_set,hi,devanagari,generated,false
+रोज़ रात 9 बजे दरवाज़ा बंद करने की याद दिलाना जल्दी,reminder_set,hi,devanagari,generated,false
+"सुनो, रोज़ रात 9 बजे दरवाज़ा बंद करने की याद दिलाना अभी",reminder_set,hi,devanagari,generated,false
+कृपया रोज़ रात 9 बजे दरवाज़ा बंद करने की याद दिलाना,reminder_set,hi,devanagari,generated,false
+कृपया रोज़ रात 9 बजे दरवाज़ा बंद करने की याद दिलाना अभी,reminder_set,hi,devanagari,generated,false
+30 મિનિટ પછી પાણી પીવાનું યાદ અપાવજો,reminder_set,gu,gujarati,generated,false
+"સાંભળો, 30 મિનિટ પછી પાણી પીવાનું યાદ અપાવજો જલ્દી",reminder_set,gu,gujarati,generated,false
+30 મિનિટ પછી પાણી પીવાનું યાદ અપાવજો જલ્દી,reminder_set,gu,gujarati,generated,false
+30 મિનિટ પછી પાણી પીવાનું યાદ અપાવજો હમણાં,reminder_set,gu,gujarati,generated,false
+કૃપા કરીને 30 મિનિટ પછી પાણી પીવાનું યાદ અપાવજો હમણાં,reminder_set,gu,gujarati,generated,false
+4 વાગ્યે મીટિંગનું રિમાઇન્ડર મૂકો,reminder_set,gu,gujarati,generated,false
+કૃપા કરીને 4 વાગ્યે મીટિંગનું રિમાઇન્ડર મૂકો જલ્દી,reminder_set,gu,gujarati,generated,false
+કૃપા કરીને 4 વાગ્યે મીટિંગનું રિમાઇન્ડર મૂકો હમણાં,reminder_set,gu,gujarati,generated,false
+"સાંભળો, 4 વાગ્યે મીટિંગનું રિમાઇન્ડર મૂકો હમણાં",reminder_set,gu,gujarati,generated,false
+કાલે સવારે 6 વાગ્યે એલાર્મ મૂકો,reminder_set,gu,gujarati,generated,false
+"સાંભળો, કાલે સવારે 6 વાગ્યે એલાર્મ મૂકો",reminder_set,gu,gujarati,generated,false
+કાલે સવારે 6 વાગ્યે એલાર્મ મૂકો હમણાં,reminder_set,gu,gujarati,generated,false
+કૃપા કરીને કાલે સવારે 6 વાગ્યે એલાર્મ મૂકો,reminder_set,gu,gujarati,generated,false
+રોજ રાત્રે 9 વાગ્યે દરવાજો બંધ કરવાનું યાદ અપાવજો,reminder_set,gu,gujarati,generated,false
+રોજ રાત્રે 9 વાગ્યે દરવાજો બંધ કરવાનું યાદ અપાવજો જલ્દી,reminder_set,gu,gujarati,generated,false
+"સાંભળો, રોજ રાત્રે 9 વાગ્યે દરવાજો બંધ કરવાનું યાદ અપાવજો જલ્દી",reminder_set,gu,gujarati,generated,false
+"સાંભળો, રોજ રાત્રે 9 વાગ્યે દરવાજો બંધ કરવાનું યાદ અપાવજો હમણાં",reminder_set,gu,gujarati,generated,false
+કૃપા કરીને રોજ રાત્રે 9 વાગ્યે દરવાજો બંધ કરવાનું યાદ અપાવજો જલ્દી,reminder_set,gu,gujarati,generated,false
+list my reminders,reminder_list,en,latin,generated,false
+please list my reminders now,reminder_list,en,latin,generated,false
+"hey, list my reminders please",reminder_list,en,latin,generated,false
+"assistant, list my reminders now",reminder_list,en,latin,generated,false
+do i have any reminders,reminder_list,en,latin,generated,false
+"assistant, do i have any reminders now",reminder_list,en,latin,generated,false
+please do i have any reminders now,reminder_list,en,latin,generated,false
+do i have any reminders please,reminder_list,en,latin,generated,false
+which alarms are set,reminder_list,en,latin,generated,false
+"assistant, which alarms are set now",reminder_list,en,latin,generated,false
+please which alarms are set please,reminder_list,en,latin,generated,false
+"hey, which alarms are set",reminder_list,en,latin,generated,false
+please which alarms are set,reminder_list,en,latin,generated,false
+what are my upcoming reminders,reminder_list,en,latin,generated,false
+"hey, what are my upcoming reminders",reminder_list,en,latin,generated,false
+please what are my upcoming reminders,reminder_list,en,latin,generated,false
+"assistant, what are my upcoming reminders now",reminder_list,en,latin,generated,false
+what are my upcoming reminders please,reminder_list,en,latin,generated,false
+mere saare reminders batao,reminder_list,hinglish,latin,generated,false
+please mere saare reminders batao jaldi,reminder_list,hinglish,latin,generated,false
+please mere saare reminders batao,reminder_list,hinglish,latin,generated,false
+"suno, mere saare reminders batao jaldi",reminder_list,hinglish,latin,generated,false
+mere saare reminders batao jaldi,reminder_list,hinglish,latin,generated,false
+koi reminder laga hai kya,reminder_list,hinglish,latin,generated,false
+"suno, koi reminder laga hai kya",reminder_list,hinglish,latin,generated,false
+please koi reminder laga hai kya jaldi,reminder_list,hinglish,latin,generated,false
+koi reminder laga hai kya jaldi,reminder_list,hinglish,latin,generated,false
+koi reminder laga hai kya abhi,reminder_list,hinglish,latin,generated,false
+kaun se alarm set hain,reminder_list,hinglish,latin,generated,false
+kaun se alarm set hain abhi,reminder_list,hinglish,latin,generated,false
+kaun se alarm set hain jaldi,reminder_list,hinglish,latin,generated,false
+"suno, kaun se alarm set hain",reminder_list,hinglish,latin,generated,false
+mara badha reminders batavo,reminder_list,gujlish,latin,generated,false
+mara badha reminders batavo atyare,reminder_list,gujlish,latin,generated,false
+please mara badha reminders batavo jaldi,reminder_list,gujlish,latin,generated,false
+mara badha reminders batavo jaldi,reminder_list,gujlish,latin,generated,false
+koi reminder mukelu che,reminder_list,gujlish,latin,generated,false
+"sambhdo, koi reminder mukelu che jaldi",reminder_list,gujlish,latin,generated,false
+please koi reminder mukelu che jaldi,reminder_list,gujlish,latin,generated,false
+please koi reminder mukelu che,reminder_list,gujlish,latin,generated,false
+kaya alarm set che,reminder_list,gujlish,latin,generated,false
+please kaya alarm set che jaldi,reminder_list,gujlish,latin,generated,false
+please kaya alarm set che atyare,reminder_list,gujlish,latin,generated,false
+"sambhdo, kaya alarm set che jaldi",reminder_list,gujlish,latin,generated,false
+please kaya alarm set che,reminder_list,gujlish,latin,generated,false
+मेरे सारे रिमाइंडर बताओ,reminder_list,hi,devanagari,generated,false
+मेरे सारे रिमाइंडर बताओ अभी,reminder_list,hi,devanagari,generated,false
+कृपया मेरे सारे रिमाइंडर बताओ,reminder_list,hi,devanagari,generated,false
+"सुनो, मेरे सारे रिमाइंडर बताओ जल्दी",reminder_list,hi,devanagari,generated,false
+कोई रिमाइंडर लगा है क्या,reminder_list,hi,devanagari,generated,false
+कोई रिमाइंडर लगा है क्या जल्दी,reminder_list,hi,devanagari,generated,false
+कृपया कोई रिमाइंडर लगा है क्या अभी,reminder_list,hi,devanagari,generated,false
+"सुनो, कोई रिमाइंडर लगा है क्या",reminder_list,hi,devanagari,generated,false
+कृपया कोई रिमाइंडर लगा है क्या,reminder_list,hi,devanagari,generated,false
+कौन से अलार्म लगे हैं,reminder_list,hi,devanagari,generated,false
+कृपया कौन से अलार्म लगे हैं,reminder_list,hi,devanagari,generated,false
+"सुनो, कौन से अलार्म लगे हैं",reminder_list,hi,devanagari,generated,false
+कृपया कौन से अलार्म लगे हैं जल्दी,reminder_list,hi,devanagari,generated,false
+મારા બધા રિમાઇન્ડર કહો,reminder_list,gu,gujarati,generated,false
+"સાંભળો, મારા બધા રિમાઇન્ડર કહો હમણાં",reminder_list,gu,gujarati,generated,false
+કૃપા કરીને મારા બધા રિમાઇન્ડર કહો,reminder_list,gu,gujarati,generated,false
+કૃપા કરીને મારા બધા રિમાઇન્ડર કહો હમણાં,reminder_list,gu,gujarati,generated,false
+"સાંભળો, મારા બધા રિમાઇન્ડર કહો",reminder_list,gu,gujarati,generated,false
+કોઈ રિમાઇન્ડર મૂકેલું છે,reminder_list,gu,gujarati,generated,false
+કોઈ રિમાઇન્ડર મૂકેલું છે જલ્દી,reminder_list,gu,gujarati,generated,false
+કૃપા કરીને કોઈ રિમાઇન્ડર મૂકેલું છે,reminder_list,gu,gujarati,generated,false
+કૃપા કરીને કોઈ રિમાઇન્ડર મૂકેલું છે હમણાં,reminder_list,gu,gujarati,generated,false
+કયા એલાર્મ સેટ છે,reminder_list,gu,gujarati,generated,false
+"સાંભળો, કયા એલાર્મ સેટ છે હમણાં",reminder_list,gu,gujarati,generated,false
+કૃપા કરીને કયા એલાર્મ સેટ છે,reminder_list,gu,gujarati,generated,false
+કૃપા કરીને કયા એલાર્મ સેટ છે જલ્દી,reminder_list,gu,gujarati,generated,false
+કયા એલાર્મ સેટ છે જલ્દી,reminder_list,gu,gujarati,generated,false
+cancel the meeting reminder,reminder_cancel,en,latin,generated,false
+"assistant, cancel the meeting reminder",reminder_cancel,en,latin,generated,false
+cancel the meeting reminder now,reminder_cancel,en,latin,generated,false
+"assistant, cancel the meeting reminder now",reminder_cancel,en,latin,generated,false
+"hey, cancel the meeting reminder now",reminder_cancel,en,latin,generated,false
+remove my water reminder,reminder_cancel,en,latin,generated,false
+"hey, remove my water reminder",reminder_cancel,en,latin,generated,false
+"hey, remove my water reminder please",reminder_cancel,en,latin,generated,false
+please remove my water reminder,reminder_cancel,en,latin,generated,false
+turn off the morning alarm,reminder_cancel,en,latin,generated,false
+"assistant, turn off the morning alarm please",reminder_cancel,en,latin,generated,false
+turn off the morning alarm now,reminder_cancel,en,latin,generated,false
+"assistant, turn off the morning alarm",reminder_cancel,en,latin,generated,false
+"hey, turn off the morning alarm please",reminder_cancel,en,latin,generated,false
+clear all reminders,reminder_cancel,en,latin,generated,false
+"assistant, clear all reminders now",reminder_cancel,en,latin,generated,false
+"hey, clear all reminders",reminder_cancel,en,latin,generated,false
+clear all reminders now,reminder_cancel,en,latin,generated,false
+"assistant, clear all reminders",reminder_cancel,en,latin,generated,false
+meeting wala reminder hata do,reminder_cancel,hinglish,latin,generated,false
+"suno, meeting wala reminder hata do abhi",reminder_cancel,hinglish,latin,generated,false
+meeting wala reminder hata do jaldi,reminder_cancel,hinglish,latin,generated,false
+meeting wala reminder hata do abhi,reminder_cancel,hinglish,latin,generated,false
+"suno, meeting wala reminder hata do",reminder_cancel,hinglish,latin,generated,false
+paani ka reminder cancel karo,reminder_cancel,hinglish,latin,generated,false
+paani ka reminder cancel karo abhi,reminder_cancel,hinglish,latin,generated,false
+please paani ka reminder cancel karo abhi,reminder_cancel,hinglish,latin,generated,false
+please paani ka reminder cancel karo jaldi,reminder_cancel,hinglish,latin,generated,false
+paani ka reminder cancel karo jaldi,reminder_cancel,hinglish,latin,generated,false
+subah ka alarm band kar do,reminder_cancel,hinglish,latin,generated,false
+"suno, subah ka alarm band kar do abhi",reminder_cancel,hinglish,latin,generated,false
+please subah ka alarm band kar do,reminder_cancel,hinglish,latin,generated,false
+subah ka alarm band kar do jaldi,reminder_cancel,hinglish,latin,generated,false
+subah ka alarm band kar do abhi,reminder_cancel,hinglish,latin,generated,false
+meeting valu reminder kadhi nakho,reminder_cancel,gujlish,latin,generated,false
+please meeting valu reminder kadhi nakho,reminder_cancel,gujlish,latin,generated,false
+"sambhdo, meeting valu reminder kadhi nakho jaldi",reminder_cancel,gujlish,latin,generated,false
+"sambhdo, meeting valu reminder kadhi nakho",reminder_cancel,gujlish,latin,generated,false
+meeting valu reminder kadhi nakho jaldi,reminder_cancel,gujlish,latin,generated,false
+paani nu reminder cancel karo,reminder_cancel,gujlish,latin,generated,false
+please paani nu reminder cancel karo,reminder_cancel,gujlish,latin,generated,false
+"sambhdo, paani nu reminder cancel karo atyare",reminder_cancel,gujlish,latin,generated,false
+please paani nu reminder cancel karo atyare,reminder_cancel,gujlish,latin,generated,false
+paani nu reminder cancel karo atyare,reminder_cancel,gujlish,latin,generated,false
+savar nu alarm bandh kari do,reminder_cancel,gujlish,latin,generated,false
+please savar nu alarm bandh kari do jaldi,reminder_cancel,gujlish,latin,generated,false
+"sambhdo, savar nu alarm bandh kari do",reminder_cancel,gujlish,latin,generated,false
+savar nu alarm bandh kari do jaldi,reminder_cancel,gujlish,latin,generated,false
+please savar nu alarm bandh kari do atyare,reminder_cancel,gujlish,latin,generated,false
+मीटिंग वाला रिमाइंडर हटा दो,reminder_cancel,hi,devanagari,generated,false
+"सुनो, मीटिंग वाला रिमाइंडर हटा दो अभी",reminder_cancel,hi,devanagari,generated,false
+कृपया मीटिंग वाला रिमाइंडर हटा दो अभी,reminder_cancel,hi,devanagari,generated,false
+कृपया मीटिंग वाला रिमाइंडर हटा दो जल्दी,reminder_cancel,hi,devanagari,generated,false
+पानी का रिमाइंडर रद्द करो,reminder_cancel,hi,devanagari,generated,false
+पानी का रिमाइंडर रद्द करो जल्दी,reminder_cancel,hi,devanagari,generated,false
+कृपया पानी का रिमाइंडर रद्द करो,reminder_cancel,hi,devanagari,generated,false
+कृपया पानी का रिमाइंडर रद्द करो अभी,reminder_cancel,hi,devanagari,generated,false
+पानी का रिमाइंडर रद्द करो अभी,reminder_cancel,hi,devanagari,generated,false
+सुबह का अलार्म बंद कर दो,reminder_cancel,hi,devanagari,generated,false
+सुबह का अलार्म बंद कर दो अभी,reminder_cancel,hi,devanagari,generated,false
+"सुनो, सुबह का अलार्म बंद कर दो",reminder_cancel,hi,devanagari,generated,false
+कृपया सुबह का अलार्म बंद कर दो,reminder_cancel,hi,devanagari,generated,false
+कृपया सुबह का अलार्म बंद कर दो अभी,reminder_cancel,hi,devanagari,generated,false
+મીટિંગવાળું રિમાઇન્ડર કાઢી નાખો,reminder_cancel,gu,gujarati,generated,false
+કૃપા કરીને મીટિંગવાળું રિમાઇન્ડર કાઢી નાખો,reminder_cancel,gu,gujarati,generated,false
+મીટિંગવાળું રિમાઇન્ડર કાઢી નાખો જલ્દી,reminder_cancel,gu,gujarati,generated,false
+"સાંભળો, મીટિંગવાળું રિમાઇન્ડર કાઢી નાખો જલ્દી",reminder_cancel,gu,gujarati,generated,false
+"સાંભળો, મીટિંગવાળું રિમાઇન્ડર કાઢી નાખો",reminder_cancel,gu,gujarati,generated,false
+પાણીનું રિમાઇન્ડર રદ કરો,reminder_cancel,gu,gujarati,generated,false
+પાણીનું રિમાઇન્ડર રદ કરો જલ્દી,reminder_cancel,gu,gujarati,generated,false
+કૃપા કરીને પાણીનું રિમાઇન્ડર રદ કરો જલ્દી,reminder_cancel,gu,gujarati,generated,false
+"સાંભળો, પાણીનું રિમાઇન્ડર રદ કરો હમણાં",reminder_cancel,gu,gujarati,generated,false
+"સાંભળો, પાણીનું રિમાઇન્ડર રદ કરો જલ્દી",reminder_cancel,gu,gujarati,generated,false
+સવારનું એલાર્મ બંધ કરી દો,reminder_cancel,gu,gujarati,generated,false
+"સાંભળો, સવારનું એલાર્મ બંધ કરી દો જલ્દી",reminder_cancel,gu,gujarati,generated,false
+કૃપા કરીને સવારનું એલાર્મ બંધ કરી દો,reminder_cancel,gu,gujarati,generated,false
+"સાંભળો, સવારનું એલાર્મ બંધ કરી દો",reminder_cancel,gu,gujarati,generated,false
+કૃપા કરીને સવારનું એલાર્મ બંધ કરી દો હમણાં,reminder_cancel,gu,gujarati,generated,false
+what is in my clipboard,clipboard_read,en,latin,generated,false
+please what is in my clipboard,clipboard_read,en,latin,generated,false
+"assistant, what is in my clipboard please",clipboard_read,en,latin,generated,false
+please what is in my clipboard please,clipboard_read,en,latin,generated,false
+what is in my clipboard now,clipboard_read,en,latin,generated,false
+tell me the copied text,clipboard_read,en,latin,generated,false
+please tell me the copied text please,clipboard_read,en,latin,generated,false
+"assistant, tell me the copied text",clipboard_read,en,latin,generated,false
+"hey, tell me the copied text please",clipboard_read,en,latin,generated,false
+paste what i copied here,clipboard_read,en,latin,generated,false
+"assistant, paste what i copied here",clipboard_read,en,latin,generated,false
+please paste what i copied here,clipboard_read,en,latin,generated,false
+please paste what i copied here please,clipboard_read,en,latin,generated,false
+show the clipboard text,clipboard_read,en,latin,generated,false
+please show the clipboard text now,clipboard_read,en,latin,generated,false
+"assistant, show the clipboard text now",clipboard_read,en,latin,generated,false
+please show the clipboard text please,clipboard_read,en,latin,generated,false
+please show the clipboard text,clipboard_read,en,latin,generated,false
+clipboard me kya hai batao,clipboard_read,hinglish,latin,generated,false
+clipboard me kya hai batao abhi,clipboard_read,hinglish,latin,generated,false
+"suno, clipboard me kya hai batao",clipboard_read,hinglish,latin,generated,false
+please clipboard me kya hai batao abhi,clipboard_read,hinglish,latin,generated,false
+"suno, clipboard me kya hai batao jaldi",clipboard_read,hinglish,latin,generated,false
+maine kya copy kiya tha,clipboard_read,hinglish,latin,generated,false
+maine kya copy kiya tha jaldi,clipboard_read,hinglish,latin,generated,false
+"suno, maine kya copy kiya tha",clipboard_read,hinglish,latin,generated,false
+"suno, maine kya copy kiya tha abhi",clipboard_read,hinglish,latin,generated,false
+maine kya copy kiya tha abhi,clipboard_read,hinglish,latin,generated,false
+copy kiya hua text dikhao,clipboard_read,hinglish,latin,generated,false
+"suno, copy kiya hua text dikhao",clipboard_read,hinglish,latin,generated,false
+please copy kiya hua text dikhao jaldi,clipboard_read,hinglish,latin,generated,false
+"suno, copy kiya hua text dikhao abhi",clipboard_read,hinglish,latin,generated,false
+please copy kiya hua text dikhao abhi,clipboard_read,hinglish,latin,generated,false
+clipboard ma shu che kaho,clipboard_read,gujlish,latin,generated,false
+clipboard ma shu che kaho jaldi,clipboard_read,gujlish,latin,generated,false
+please clipboard ma shu che kaho,clipboard_read,gujlish,latin,generated,false
+clipboard ma shu che kaho atyare,clipboard_read,gujlish,latin,generated,false
+"sambhdo, clipboard ma shu che kaho",clipboard_read,gujlish,latin,generated,false
+me shu copy karyu hatu,clipboard_read,gujlish,latin,generated,false
+please me shu copy karyu hatu,clipboard_read,gujlish,latin,generated,false
+"sambhdo, me shu copy karyu hatu",clipboard_read,gujlish,latin,generated,false
+"sambhdo, me shu copy karyu hatu jaldi",clipboard_read,gujlish,latin,generated,false
+me shu copy karyu hatu jaldi,clipboard_read,gujlish,latin,generated,false
+copy karelu text batavo,clipboard_read,gujlish,latin,generated,false
+"sambhdo, copy karelu text batavo",clipboard_read,gujlish,latin,generated,false
+copy karelu text batavo jaldi,clipboard_read,gujlish,latin,generated,false
+please copy karelu text batavo atyare,clipboard_read,gujlish,latin,generated,false
+copy karelu text batavo atyare,clipboard_read,gujlish,latin,generated,false
+क्लिपबोर्ड में क्या है बताओ,clipboard_read,hi,devanagari,generated,false
+कृपया क्लिपबोर्ड में क्या है बताओ जल्दी,clipboard_read,hi,devanagari,generated,false
+क्लिपबोर्ड में क्या है बताओ जल्दी,clipboard_read,hi,devanagari,generated,false
+"सुनो, क्लिपबोर्ड में क्या है बताओ",clipboard_read,hi,devanagari,generated,false
+कृपया क्लिपबोर्ड में क्या है बताओ अभी,clipboard_read,hi,devanagari,generated,false
+मैंने क्या कॉपी किया था,clipboard_read,hi,devanagari,generated,false
+मैंने क्या कॉपी किया था अभी,clipboard_read,hi,devanagari,generated,false
+"सुनो, मैंने क्या कॉपी किया था",clipboard_read,hi,devanagari,generated,false
+"सुनो, मैंने क्या कॉपी किया था जल्दी",clipboard_read,hi,devanagari,generated,false
+"सुनो, मैंने क्या कॉपी किया था अभी",clipboard_read,hi,devanagari,generated,false
+कॉपी किया हुआ टेक्स्ट दिखाओ,clipboard_read,hi,devanagari,generated,false
+कॉपी किया हुआ टेक्स्ट दिखाओ अभी,clipboard_read,hi,devanagari,generated,false
+"सुनो, कॉपी किया हुआ टेक्स्ट दिखाओ अभी",clipboard_read,hi,devanagari,generated,false
+कृपया कॉपी किया हुआ टेक्स्ट दिखाओ अभी,clipboard_read,hi,devanagari,generated,false
+ક્લિપબોર્ડમાં શું છે કહો,clipboard_read,gu,gujarati,generated,false
+ક્લિપબોર્ડમાં શું છે કહો હમણાં,clipboard_read,gu,gujarati,generated,false
+"સાંભળો, ક્લિપબોર્ડમાં શું છે કહો હમણાં",clipboard_read,gu,gujarati,generated,false
+કૃપા કરીને ક્લિપબોર્ડમાં શું છે કહો હમણાં,clipboard_read,gu,gujarati,generated,false
+કૃપા કરીને ક્લિપબોર્ડમાં શું છે કહો જલ્દી,clipboard_read,gu,gujarati,generated,false
+મેં શું કોપી કર્યું હતું,clipboard_read,gu,gujarati,generated,false
+કૃપા કરીને મેં શું કોપી કર્યું હતું હમણાં,clipboard_read,gu,gujarati,generated,false
+મેં શું કોપી કર્યું હતું જલ્દી,clipboard_read,gu,gujarati,generated,false
+"સાંભળો, મેં શું કોપી કર્યું હતું",clipboard_read,gu,gujarati,generated,false
+"સાંભળો, મેં શું કોપી કર્યું હતું હમણાં",clipboard_read,gu,gujarati,generated,false
+કોપી કરેલું ટેક્સ્ટ બતાવો,clipboard_read,gu,gujarati,generated,false
+કોપી કરેલું ટેક્સ્ટ બતાવો હમણાં,clipboard_read,gu,gujarati,generated,false
+કોપી કરેલું ટેક્સ્ટ બતાવો જલ્દી,clipboard_read,gu,gujarati,generated,false
+"સાંભળો, કોપી કરેલું ટેક્સ્ટ બતાવો",clipboard_read,gu,gujarati,generated,false
+કૃપા કરીને કોપી કરેલું ટેક્સ્ટ બતાવો,clipboard_read,gu,gujarati,generated,false
+"copy ""see you at 5"" to clipboard",clipboard_write,en,latin,generated,false
+"assistant, copy ""see you at 5"" to clipboard now",clipboard_write,en,latin,generated,false
+"copy ""see you at 5"" to clipboard now",clipboard_write,en,latin,generated,false
+"hey, copy ""see you at 5"" to clipboard now",clipboard_write,en,latin,generated,false
+"please copy ""see you at 5"" to clipboard now",clipboard_write,en,latin,generated,false
+put my email address on the clipboard,clipboard_write,en,latin,generated,false
+"assistant, put my email address on the clipboard please",clipboard_write,en,latin,generated,false
+"assistant, put my email address on the clipboard now",clipboard_write,en,latin,generated,false
+please put my email address on the clipboard please,clipboard_write,en,latin,generated,false
+put my email address on the clipboard please,clipboard_write,en,latin,generated,false
+copy this line to the clipboard: thank you,clipboard_write,en,latin,generated,false
+please copy this line to the clipboard: thank you now,clipboard_write,en,latin,generated,false
+please copy this line to the clipboard: thank you,clipboard_write,en,latin,generated,false
+please copy this line to the clipboard: thank you please,clipboard_write,en,latin,generated,false
+"""kal milte hain"" clipboard pe copy karo",clipboard_write,hinglish,latin,generated,false
+"suno, ""kal milte hain"" clipboard pe copy karo",clipboard_write,hinglish,latin,generated,false
+"please ""kal milte hain"" clipboard pe copy karo abhi",clipboard_write,hinglish,latin,generated,false
+"""kal milte hain"" clipboard pe copy karo jaldi",clipboard_write,hinglish,latin,generated,false
+"""kal milte hain"" clipboard pe copy karo abhi",clipboard_write,hinglish,latin,generated,false
+ye text clipboard me daal do: done,clipboard_write,hinglish,latin,generated,false
+ye text clipboard me daal do: done jaldi,clipboard_write,hinglish,latin,generated,false
+"suno, ye text clipboard me daal do: done jaldi",clipboard_write,hinglish,latin,generated,false
+please ye text clipboard me daal do: done abhi,clipboard_write,hinglish,latin,generated,false
+"suno, ye text clipboard me daal do: done",clipboard_write,hinglish,latin,generated,false
+"""kale malishu"" clipboard ma copy karo",clipboard_write,gujlish,latin,generated,false
+"""kale malishu"" clipboard ma copy karo jaldi",clipboard_write,gujlish,latin,generated,false
+"please ""kale malishu"" clipboard ma copy karo atyare",clipboard_write,gujlish,latin,generated,false
+"""kale malishu"" clipboard ma copy karo atyare",clipboard_write,gujlish,latin,generated,false
+"please ""kale malishu"" clipboard ma copy karo",clipboard_write,gujlish,latin,generated,false
+aa text clipboard ma muki do: done,clipboard_write,gujlish,latin,generated,false
+please aa text clipboard ma muki do: done,clipboard_write,gujlish,latin,generated,false
+"sambhdo, aa text clipboard ma muki do: done",clipboard_write,gujlish,latin,generated,false
+aa text clipboard ma muki do: done atyare,clipboard_write,gujlish,latin,generated,false
+"sambhdo, aa text clipboard ma muki do: done atyare",clipboard_write,gujlish,latin,generated,false
+"""कल मिलते हैं"" क्लिपबोर्ड में कॉपी करो",clipboard_write,hi,devanagari,generated,false
+"कृपया ""कल मिलते हैं"" क्लिपबोर्ड में कॉपी करो जल्दी",clipboard_write,hi,devanagari,generated,false
+"सुनो, ""कल मिलते हैं"" क्लिपबोर्ड में कॉपी करो अभी",clipboard_write,hi,devanagari,generated,false
+"सुनो, ""कल मिलते हैं"" क्लिपबोर्ड में कॉपी करो जल्दी",clipboard_write,hi,devanagari,generated,false
+यह टेक्स्ट क्लिपबोर्ड में डाल दो: हो गया,clipboard_write,hi,devanagari,generated,false
+कृपया यह टेक्स्ट क्लिपबोर्ड में डाल दो: हो गया,clipboard_write,hi,devanagari,generated,false
+"सुनो, यह टेक्स्ट क्लिपबोर्ड में डाल दो: हो गया जल्दी",clipboard_write,hi,devanagari,generated,false
+"सुनो, यह टेक्स्ट क्लिपबोर्ड में डाल दो: हो गया",clipboard_write,hi,devanagari,generated,false
+"""કાલે મળીએ"" ક્લિપબોર્ડમાં કોપી કરો",clipboard_write,gu,gujarati,generated,false
+"""કાલે મળીએ"" ક્લિપબોર્ડમાં કોપી કરો જલ્દી",clipboard_write,gu,gujarati,generated,false
+"સાંભળો, ""કાલે મળીએ"" ક્લિપબોર્ડમાં કોપી કરો જલ્દી",clipboard_write,gu,gujarati,generated,false
+"કૃપા કરીને ""કાલે મળીએ"" ક્લિપબોર્ડમાં કોપી કરો હમણાં",clipboard_write,gu,gujarati,generated,false
+"સાંભળો, ""કાલે મળીએ"" ક્લિપબોર્ડમાં કોપી કરો હમણાં",clipboard_write,gu,gujarati,generated,false
+આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું,clipboard_write,gu,gujarati,generated,false
+"સાંભળો, આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું હમણાં",clipboard_write,gu,gujarati,generated,false
+"સાંભળો, આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું જલ્દી",clipboard_write,gu,gujarati,generated,false
+કૃપા કરીને આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું જલ્દી,clipboard_write,gu,gujarati,generated,false
+આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું જલ્દી,clipboard_write,gu,gujarati,generated,false

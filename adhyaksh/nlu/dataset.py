@@ -19,7 +19,8 @@ INTENTS = ["greet", "set_identity", "get_identity", "memory_save", "memory_recal
            "app_close", "system_status", "doc_question", "knowledge_question", "help", "unknown",
            "out_of_scope", "bot_identity", "time_date", "folder_create", "screenshot",
            "special_folder_open", "web_open", "vision_detect", "pc_performance", "voice_control",
-           "source_list", "source_summary", "source_delete"]
+           "source_list", "source_summary", "source_delete",
+           "process_list", "process_kill", "reminder_set", "reminder_list", "reminder_cancel", "clipboard_read", "clipboard_write"]
 LANGS = ["en", "hi", "gu", "hinglish", "gujlish"]
 SCRIPTS = ["latin", "devanagari", "gujarati"]
 SOURCES = ["generated", "author", "corrected"]
@@ -796,7 +797,73 @@ FEATURE_TEMPLATES.update({
         "hi": ["इस नोटबुक का सार बताओ", "मेरे दस्तावेज़ों का संक्षिप्त सारांश दो", "अटैच फाइल का निचोड़ बताओ", "{f} का सारांश बना दो"],
         "gu": ["આ નોટબુકનો સાર કહો", "મારા દસ્તાવેજોનો ટૂંકો સારાંશ આપો", "જોડેલી ફાઇલનો નિચોડ કહો", "{f} નો સારાંશ બનાવી દો"]},
 })
+FEATURE_TEMPLATES.update({
+    "process_list": {
+        "en": ["which processes use the most cpu", "list the top programs by memory", "what programs are running right now",
+               "open task manager style list", "show what is hogging my ram", "show heavy processes"],
+        "hinglish": ["kaun se programs chal rahe hain dikhao", "sabse zyada cpu kaun le raha hai", "chalte hue processes ki list do",
+                     "ram kaun kha raha hai batao"],
+        "gujlish": ["kaya programs chalu che batavo", "sauthi vadhare cpu kon vapre che", "chalta processes ni list apo",
+                    "ram kon khay che kaho"],
+        "hi": ["कौन से प्रोग्राम चल रहे हैं दिखाओ", "सबसे ज्यादा सीपीयू कौन ले रहा है", "चल रहे प्रोसेस की सूची दो", "रैम कौन खा रहा है बताओ"],
+        "gu": ["કયા પ્રોગ્રામ ચાલુ છે બતાવો", "સૌથી વધુ સીપીયુ કોણ વાપરે છે", "ચાલતા પ્રોસેસની યાદી આપો", "રેમ કોણ ખાય છે કહો"]},
+    "process_kill": {
+        "en": ["end task chrome", "kill the process zoom.exe", "force quit excel it is frozen", "terminate the vlc process",
+               "stop the process with id 1200", "end the hung program teams"],
+        "hinglish": ["zoom ka process band kar do", "excel ka task end kar do", "vlc process kill karo", "atka hua teams band kar do process"],
+        "gujlish": ["zoom no process bandh kari do", "excel nu task end kari do", "vlc process kill karo", "atkelo teams process bandh karo"],
+        "hi": ["ज़ूम का प्रोसेस बंद करो", "एक्सेल का टास्क खत्म करो", "वीएलसी प्रोसेस किल करो", "अटका हुआ टीम्स प्रोसेस बंद करो"],
+        "gu": ["ઝૂમનો પ્રોસેસ બંધ કરો", "એક્સેલનું ટાસ્ક ખતમ કરો", "વીએલસી પ્રોસેસ કિલ કરો", "અટકેલો ટીમ્સ પ્રોસેસ બંધ કરો"]},
+    "reminder_set": {
+        "en": ["remind me to drink water in 30 minutes", "set a reminder at 4 pm for the meeting", "alarm at 6 tomorrow morning",
+               "remind me every day at 9 pm to lock the door", "please remind me about the call at 3", "wake me up at 6 am"],
+        "hinglish": ["30 minute baad paani peene ki yaad dilana", "4 baje meeting ka reminder laga do", "kal subah 6 baje alarm lagao",
+                     "roz raat 9 baje darwaza band karne ki yaad dilana"],
+        "gujlish": ["30 minute pachi paani pivanu yaad apavjo", "4 vage meeting nu reminder mukjo", "kale savare 6 vage alarm mukjo",
+                    "roj rate 9 vage darwajo bandh karvanu yaad apavjo"],
+        "hi": ["30 मिनट बाद पानी पीने की याद दिलाना", "4 बजे मीटिंग का रिमाइंडर लगा दो", "कल सुबह 6 बजे अलार्म लगाओ", "रोज़ रात 9 बजे दरवाज़ा बंद करने की याद दिलाना"],
+        "gu": ["30 મિનિટ પછી પાણી પીવાનું યાદ અપાવજો", "4 વાગ્યે મીટિંગનું રિમાઇન્ડર મૂકો", "કાલે સવારે 6 વાગ્યે એલાર્મ મૂકો",
+               "રોજ રાત્રે 9 વાગ્યે દરવાજો બંધ કરવાનું યાદ અપાવજો"]},
+    "reminder_list": {
+        "en": ["list my reminders", "do i have any reminders", "which alarms are set", "what are my upcoming reminders"],
+        "hinglish": ["mere saare reminders batao", "koi reminder laga hai kya", "kaun se alarm set hain"],
+        "gujlish": ["mara badha reminders batavo", "koi reminder mukelu che", "kaya alarm set che"],
+        "hi": ["मेरे सारे रिमाइंडर बताओ", "कोई रिमाइंडर लगा है क्या", "कौन से अलार्म लगे हैं"],
+        "gu": ["મારા બધા રિમાઇન્ડર કહો", "કોઈ રિમાઇન્ડર મૂકેલું છે", "કયા એલાર્મ સેટ છે"]},
+    "reminder_cancel": {
+        "en": ["cancel the meeting reminder", "remove my water reminder", "turn off the morning alarm", "clear all reminders"],
+        "hinglish": ["meeting wala reminder hata do", "paani ka reminder cancel karo", "subah ka alarm band kar do"],
+        "gujlish": ["meeting valu reminder kadhi nakho", "paani nu reminder cancel karo", "savar nu alarm bandh kari do"],
+        "hi": ["मीटिंग वाला रिमाइंडर हटा दो", "पानी का रिमाइंडर रद्द करो", "सुबह का अलार्म बंद कर दो"],
+        "gu": ["મીટિંગવાળું રિમાઇન્ડર કાઢી નાખો", "પાણીનું રિમાઇન્ડર રદ કરો", "સવારનું એલાર્મ બંધ કરી દો"]},
+    "clipboard_read": {
+        "en": ["what is in my clipboard", "tell me the copied text", "paste what i copied here", "show the clipboard text"],
+        "hinglish": ["clipboard me kya hai batao", "maine kya copy kiya tha", "copy kiya hua text dikhao"],
+        "gujlish": ["clipboard ma shu che kaho", "me shu copy karyu hatu", "copy karelu text batavo"],
+        "hi": ["क्लिपबोर्ड में क्या है बताओ", "मैंने क्या कॉपी किया था", "कॉपी किया हुआ टेक्स्ट दिखाओ"],
+        "gu": ["ક્લિપબોર્ડમાં શું છે કહો", "મેં શું કોપી કર્યું હતું", "કોપી કરેલું ટેક્સ્ટ બતાવો"]},
+    "clipboard_write": {
+        "en": ["copy \"see you at 5\" to clipboard", "put my email address on the clipboard", "copy this line to the clipboard: thank you"],
+        "hinglish": ["\"kal milte hain\" clipboard pe copy karo", "ye text clipboard me daal do: done"],
+        "gujlish": ["\"kale malishu\" clipboard ma copy karo", "aa text clipboard ma muki do: done"],
+        "hi": ["\"कल मिलते हैं\" क्लिपबोर्ड में कॉपी करो", "यह टेक्स्ट क्लिपबोर्ड में डाल दो: हो गया"],
+        "gu": ["\"કાલે મળીએ\" ક્લિપબોર્ડમાં કોપી કરો", "આ ટેક્સ્ટ ક્લિપબોર્ડમાં મૂકી દો: થઈ ગયું"]},
+})
 _FEATURE_TEST = {
+    "process_list": {"hinglish": ["abhi kaun kaun se apps chal rahe hain", "ram sabse jyada kaun use kar raha hai"],
+                     "gujlish": ["atyare kaya apps chalu che", "ram sauthi vadhare kon vapre che"]},
+    "process_kill": {"hinglish": ["atka hua zoom ka process kill karo", "vlc ka task end karo"],
+                     "gujlish": ["atkelo zoom no process kill karo", "vlc nu task end karo"]},
+    "reminder_set": {"hinglish": ["shaam 7 baje dawai ki yaad dilana", "20 minute baad chai ka reminder laga do"],
+                     "gujlish": ["sanje 7 vage dava nu yaad apavjo", "20 minute pachi chaa nu reminder mukjo"]},
+    "reminder_list": {"hinglish": ["aaj ke reminders kaun se hain", "set kiye hue alarm dikhao"],
+                      "gujlish": ["aaj na reminders kaya che", "set karela alarm batavo"]},
+    "reminder_cancel": {"hinglish": ["dawai wala reminder cancel kar do", "saare alarm hata do"],
+                        "gujlish": ["dava valu reminder cancel kari do", "badha alarm kadhi nakho"]},
+    "clipboard_read": {"hinglish": ["clipboard ka text padh ke batao", "abhi clipboard me kya pada hai"],
+                       "gujlish": ["clipboard nu text vanchi ne kaho", "atyare clipboard ma shu padyu che"]},
+    "clipboard_write": {"hinglish": ["\"ok ji\" ko clipboard me copy kar do", "\"thank you\" clipboard par copy karo"],
+                        "gujlish": ["\"ok ji\" ne clipboard ma copy kari do", "\"aabhar\" clipboard par copy karo"]},
     "source_list": {"hinglish": ["mere notebook ke saare sources ki list dikhao", "kitne documents attach hain batao"],
                     "gujlish": ["mara notebook na badha sources ni list batavo", "ketla documents attach che kaho"]},
     "source_delete": {"hinglish": ["notebook se report.txt wala source hata do", "sources me se notes.txt delete karo"],

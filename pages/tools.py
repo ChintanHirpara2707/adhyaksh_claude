@@ -58,3 +58,48 @@ else:
             policy.cancel_guarded(pend["token"])
             st.session_state.pop("close_pending")
             st.rerun()
+
+st.subheader("Processes")
+from adhyaksh.tools import processes, reminders  # noqa: E402
+_sort = st.radio("Sort by", ["memory", "cpu"], horizontal=True, key="proc_sort")
+if st.button("Refresh process list") or "procs" not in st.session_state:
+    _r = processes.list_processes(10, _sort, ctx={"user_text": "tools page", "intent": "process_list"})
+    st.session_state["procs"] = _r.data["processes"] if _r.ok else []
+_procs = st.session_state.get("procs") or []
+if _procs:
+    st.table([{"Program": p["name"], "Memory (MB)": round(p["ram_mb"]), "CPU %": p["cpu_percent"], "Processes": p["count"],
+               "System": "yes" if p["protected"] else ""} for p in _procs])
+    _choices = [p["name"] for p in _procs if not p["protected"]]
+    if _choices:
+        _victim = st.selectbox("Program to end", _choices)
+        if st.button("End program"):
+            _r = processes.kill_process(_victim, ctx={"user_text": "tools page", "intent": "process_kill"})
+            if _r.error_code == E_NEEDS_CONFIRM:
+                st.session_state["kill_pending"] = {"name": _victim, "token": _r.data["token"], "shown": _r.data["target"]}
+            else:
+                st.toast(_r.message or "Done.")
+    _kp = st.session_state.get("kill_pending")
+    if _kp:
+        _choice = ui.confirmation_card(f"End {_kp['shown']}", _kp["name"], key="kill_proc")
+        if _choice == "confirm":
+            _r = processes.kill_process(_kp["name"], ctx={"user_text": "tools page", "intent": "process_kill"}, token=_kp["token"])
+            st.toast(f"Ended {_kp['name']}." if _r.ok else _r.message)
+            st.session_state.pop("kill_pending")
+            st.session_state.pop("procs", None)
+            st.rerun()
+        elif _choice == "cancel":
+            policy.cancel_guarded(_kp["token"])
+            st.session_state.pop("kill_pending")
+            st.rerun()
+
+st.subheader("Reminders")
+_rem = reminders.list_pending(ctx={"user_text": "tools page", "intent": "reminder_list"})
+_items = _rem.data["reminders"] if _rem.ok else []
+if not _items:
+    ui.empty_state("No pending reminders. Say, for example: remind me to call mom at 6 pm.")
+for _it in _items:
+    _a, _b = st.columns([5, 1])
+    _a.markdown(f"**{_it['text']}** - {_it['when']}")
+    if _b.button("Cancel", key=f"rem_{_it['id']}"):
+        reminders.cancel(str(_it["id"]), ctx={"user_text": "tools page", "intent": "reminder_cancel"})
+        st.rerun()

@@ -107,6 +107,16 @@ def mocked_tools(calls: list[str]):
             {"file": "mock.pdf", "summary": "Mock summary.", "mode": "extractive"}]})),
         mock.patch.object(engine.sources, "delete_source", rec("source_delete", lambda name, **k: {"file": name})),
         mock.patch.object(engine.sources, "count", lambda *a, **k: 0),
+        mock.patch.object(engine.processes, "list_processes", rec("process_list", {"sort": "memory", "total": 90, "processes": [
+            {"name": "chrome.exe", "count": 3, "ram_mb": 500.0, "ram_percent": 5.0, "cpu_percent": 1.0, "protected": False}]})),
+        mock.patch.object(engine.processes, "kill_process", rec("process_kill", lambda target, **k: {"name": target, "ended": 1, "freed_mb": 100})),
+        mock.patch.object(engine.reminders, "add_natural", rec("reminder_add", lambda text, **k: {
+            "id": 1, "text": text, "due": "2030-01-01T18:00:00", "repeat": "none", "when": "today at 6:00 PM"})),
+        mock.patch.object(engine.reminders, "list_pending", rec("reminder_list", {"reminders": [
+            {"id": 1, "text": "call mom", "due": "2030-01-01T18:00:00", "repeat": "none", "when": "today at 6:00 PM", "status": "pending"}]})),
+        mock.patch.object(engine.reminders, "cancel", rec("reminder_cancel", {"cancelled": 1, "text": "call mom"})),
+        mock.patch.object(engine.clipboard, "read", rec("clipboard_read", {"text": "mock copied text", "truncated": False, "empty": False})),
+        mock.patch.object(engine.clipboard, "write", rec("clipboard_write", lambda text, **k: {"text": text})),
         mock.patch.object(engine.features, "perf_report", rec("perf_report", {
             "cpu_percent": 10.0, "ram_percent": 20.0, "ram_available_gb": 8.0, "disk_percent": 30.0,
             "disk_free_gb": 100.0, "top": [{"name": "mock.exe", "ram_percent": 5.0}]})),

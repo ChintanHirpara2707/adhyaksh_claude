@@ -29,4 +29,17 @@ saved_theme = theme.sidebar_header()
 theme.inject(saved_theme)
 for page in pages:
     st.sidebar.page_link(page)
+
+
+@st.fragment(run_every=20)
+def _reminder_alerts() -> None:
+    """Show reminders that are due (while the app is open in a browser)."""
+    from adhyaksh.tools import reminders
+    for r in reminders.due():
+        st.toast(f"Reminder: {r['text']}")
+        st.sidebar.warning(f"Reminder: {r['text']}")
+
+
+with st.sidebar:
+    _reminder_alerts()
 current.run()

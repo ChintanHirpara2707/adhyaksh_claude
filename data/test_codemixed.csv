@@ -193,3 +193,31 @@ attached documents ka chhota sa saar bata do,source_summary,hinglish,latin,gener
 is notebook ka summary chahiye,source_summary,hinglish,latin,generated,false
 attached documents no nano saar kahi do,source_summary,gujlish,latin,generated,false
 aa notebook no summary joiye che,source_summary,gujlish,latin,generated,false
+abhi kaun kaun se apps chal rahe hain,process_list,hinglish,latin,generated,false
+ram sabse jyada kaun use kar raha hai,process_list,hinglish,latin,generated,false
+atyare kaya apps chalu che,process_list,gujlish,latin,generated,false
+ram sauthi vadhare kon vapre che,process_list,gujlish,latin,generated,false
+atka hua zoom ka process kill karo,process_kill,hinglish,latin,generated,false
+vlc ka task end karo,process_kill,hinglish,latin,generated,false
+atkelo zoom no process kill karo,process_kill,gujlish,latin,generated,false
+vlc nu task end karo,process_kill,gujlish,latin,generated,false
+shaam 7 baje dawai ki yaad dilana,reminder_set,hinglish,latin,generated,false
+20 minute baad chai ka reminder laga do,reminder_set,hinglish,latin,generated,false
+sanje 7 vage dava nu yaad apavjo,reminder_set,gujlish,latin,generated,false
+20 minute pachi chaa nu reminder mukjo,reminder_set,gujlish,latin,generated,false
+aaj ke reminders kaun se hain,reminder_list,hinglish,latin,generated,false
+set kiye hue alarm dikhao,reminder_list,hinglish,latin,generated,false
+aaj na reminders kaya che,reminder_list,gujlish,latin,generated,false
+set karela alarm batavo,reminder_list,gujlish,latin,generated,false
+dawai wala reminder cancel kar do,reminder_cancel,hinglish,latin,generated,false
+saare alarm hata do,reminder_cancel,hinglish,latin,generated,false
+dava valu reminder cancel kari do,reminder_cancel,gujlish,latin,generated,false
+badha alarm kadhi nakho,reminder_cancel,gujlish,latin,generated,false
+clipboard ka text padh ke batao,clipboard_read,hinglish,latin,generated,false
+abhi clipboard me kya pada hai,clipboard_read,hinglish,latin,generated,false
+clipboard nu text vanchi ne kaho,clipboard_read,gujlish,latin,generated,false
+atyare clipboard ma shu padyu che,clipboard_read,gujlish,latin,generated,false
+"""ok ji"" ko clipboard me copy kar do",clipboard_write,hinglish,latin,generated,false
+"""thank you"" clipboard par copy karo",clipboard_write,hinglish,latin,generated,false
+"""ok ji"" ne clipboard ma copy kari do",clipboard_write,gujlish,latin,generated,false
+"""aabhar"" clipboard par copy karo",clipboard_write,gujlish,latin,generated,false

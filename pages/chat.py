@@ -6,7 +6,7 @@ from adhyaksh.chat import context, engine, identity
 from adhyaksh.nlu import dataset
 from adhyaksh.rag import loader, retriever, sources
 from adhyaksh.ui import components as ui
-from adhyaksh.voice import bridge
+from adhyaksh.voice import bridge, speech, stt
 
 ui.chat_width()
 
@@ -142,8 +142,13 @@ st.session_state.setdefault("seen_assistant", last_id)
 new_reply = last is not None and last_id != st.session_state["seen_assistant"]
 speak = new_reply and (config.get_bool("voice_reply") or st.session_state.pop("voice_reply_pending", False))
 vcmd = st.session_state.get("voice_cmd") or {}
+_speak_text = last["content"] if speak else ""
+if speak and (last.get("intent") == "agent_confirm" or "Confirm or cancel" in _speak_text) and "say yes" not in _speak_text.lower():
+    # Spoken confirmation: the question is read out and answered with a spoken yes or no.
+    _speak_text = _speak_text.replace("Confirm or cancel.", "").strip() + " " + speech.confirm_prompt(config.get("voice_lang"))
 heard = bridge.voice_input(theme_name=config.get("theme") or "light", lang=config.get("voice_lang") or "en-IN",
-                           speak_text=last["content"] if speak else "",
+                           speak_text=_speak_text,
+                           status=st.session_state.pop("voice_status", ""),
                            speak_nonce=str(last_id) if speak else "",
                            command=vcmd or None, command_nonce=vcmd.get("nonce", ""),
                            handsfree_default=config.get_bool("voice_handsfree"),
@@ -154,6 +159,17 @@ if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
     st.session_state["voice_nonce"] = heard["nonce"]
     config.set_value("voice_handsfree", "true" if heard.get("handsfree") else "false")
     config.set_value("voice_wake_word", "true" if heard.get("wake") else "false")
+    if not heard.get("setting") and heard.get("audio_b64"):
+        with st.spinner("Transcribing on this laptop"):
+            _out = bridge.handle_audio(heard["audio_b64"], heard.get("lang", "en-IN"), bool(heard.get("handsfree")), bool(heard.get("wake")))
+        if _out.get("text"):
+            heard["text"] = _out["text"]
+        elif _out.get("error"):
+            st.session_state["voice_status"] = _out["error"]
+            st.rerun()
+        else:
+            st.session_state["voice_status"] = "Waiting for the wake word 'Adhyaksh'" if _out.get("ignore") == "no wake word" else "Yes? I am listening"
+            st.rerun()
     if not heard.get("setting") and heard.get("text"):
         st.caption(f"Heard: {heard['text']}")
         st.session_state["suggest_switch"] = False
@@ -186,10 +202,21 @@ if new_mode != mode:
     st.session_state["suggest_switch"] = False
     st.rerun()
 
+_local_stt = stt.available()
 prompt = st.chat_input("Type a command, or attach a document or a photo", accept_file="multiple",
-                       file_type=["pdf", "docx", "txt", "md", "csv", "jpg", "jpeg", "png", "webp"])
+                       file_type=["pdf", "docx", "txt", "md", "csv", "jpg", "jpeg", "png", "webp"],
+                       accept_audio=_local_stt)
 if prompt:
     text = (getattr(prompt, "text", None) if not isinstance(prompt, str) else prompt) or ""
+    _audio = None if isinstance(prompt, str) else getattr(prompt, "audio", None)
+    if _audio is not None and not text:
+        with st.spinner("Transcribing on this laptop"):
+            _tr = stt.transcribe(_audio.getvalue(), config.get("voice_lang"))
+        if _tr.ok:
+            text = speech.clean_transcript(_tr.data["text"])
+            st.session_state["voice_reply_pending"] = True
+        else:
+            st.session_state["voice_status"] = _tr.message
     files = [] if isinstance(prompt, str) else [(f.name, f.getvalue()) for f in (prompt.files or [])]
     st.session_state["suggest_switch"] = False
     with st.spinner("Working"):

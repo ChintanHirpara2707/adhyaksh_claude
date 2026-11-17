@@ -17,6 +17,7 @@ from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
 from adhyaksh.tools import apps, features, files, office, system
+from adhyaksh.voice import speech
 
 MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
 OS_INTENTS = {
@@ -696,13 +697,17 @@ def confirm(conversation_id: int, accept: bool) -> Result:
 
 def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: str = "cowork") -> _Reply:
     low = text.strip().casefold().rstrip(".!")
-    if ctx.pending_agent_confirm and low in YES | NO:
-        return _finish_agent_confirmation(ctx, low in YES, convo_id, lang)
-    if ctx.pending_confirm and low in YES | NO:
-        return _finish_confirmation(ctx, low in YES, lang)
-    if ctx.pending_name and low in YES | NO:
+    answer = speech.yes_no(text)  # True, False or None; accepts spoken forms in five language styles
+    if ctx.pending_agent_confirm and answer is not None:
+        return _finish_agent_confirmation(ctx, answer, convo_id, lang)
+    if ctx.pending_confirm and answer is not None:
+        return _finish_confirmation(ctx, answer, lang)
+    if (ctx.pending_confirm or ctx.pending_agent_confirm) and len(text.split()) <= 2 and not router.understand(text):
+        # A very short unclear reply ("hmm", "what?") while a confirmation is open: ask again, never guess.
+        return _Reply("Please say yes to confirm or no to cancel.", "confirmation", action="clarify")
+    if ctx.pending_name and answer is not None:
         name, ctx.pending_name = ctx.pending_name, None
-        if low in YES:
+        if answer:
             identity.save_name(name)
             return _Reply(_t("identity_saved", lang, name=name), "set_identity", action="profile")
         return _Reply(_t("cancelled", lang), "set_identity")
@@ -715,7 +720,7 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
     ctx.agent_steps = None
     if ctx.pending_slot:
         p, ctx.pending_slot = ctx.pending_slot, None
-        if low in NO:
+        if low in NO or answer is False and len(text.split()) <= 3:
             return _Reply(_t("cancelled", lang), p["intent"])
         slots = dict(p["slots"])
         if p["need"] == "file":

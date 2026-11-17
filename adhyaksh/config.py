@@ -89,6 +89,12 @@ DEFAULTS: dict[str, str] = {
     "voice_handsfree": "false",  # start listening automatically and speak replies to spoken commands
     "voice_wake_word": "false",  # in hands-free mode, only act on phrases that start with "Adhyaksh"
     "voice_lang": "en-IN",  # speech recognition and spoken-reply language
+    "stt_engine": "browser",  # "browser": the browser's speech recognition; "local": faster-whisper on this laptop
+    "stt_model": "base",  # local speech model size: tiny, base or small
+    "tts_rate": "1.0",  # spoken-reply speed, 0.6 to 1.6
+    "tts_voice": "",  # preferred browser voice name; empty = best available for the language
+    "voice_barge_in": "true",  # stop speaking when the user starts talking
+    "wake_words": "adhyaksh, adhyaksha, adyaksh, hey assistant",  # extra wake words, comma separated
     "llm_provider": "",
     "allowed_folders": json.dumps([str(default_workspace())]),
     "default_work_folder": str(default_workspace()),

@@ -65,6 +65,39 @@ with st.form("llm"):
 if config.get_bool("cloud_consent") and config.get("llm_provider") in llm.PROVIDERS:
     st.warning("Cloud use is ON. Questions and document passages may be sent to the selected provider.")
 
+st.subheader("Voice")
+from adhyaksh.voice import stt  # noqa: E402
+with st.form("voice"):
+    _engine = st.radio("Speech recognition", ["browser", "local"], horizontal=True,
+                       index=0 if config.get("stt_engine") != "local" else 1,
+                       format_func=lambda x: {"browser": "Browser (Chrome or Edge; online in Chrome)",
+                                              "local": "On this laptop (faster-whisper; offline, private)"}[x])
+    _size = st.selectbox("Local speech model", list(stt.SIZES), index=list(stt.SIZES).index(stt.model_size()),
+                         format_func=lambda k: f"{k} ({stt.SIZES[k]})")
+    _rate = st.slider("Speaking speed", 0.6, 1.6, float(config.get("tts_rate") or 1.0), 0.1)
+    _voice = st.text_input("Preferred voice name (blank = best available for the language)", value=config.get("tts_voice"),
+                           help="For example 'Microsoft Swara Online (Natural) - Hindi (India)' in Edge.")
+    _barge = st.checkbox("Stop speaking when I start talking (barge-in)", value=config.get_bool("voice_barge_in"))
+    _wake = st.text_input("Extra wake words (comma separated)", value=config.get("wake_words"))
+    if st.form_submit_button("Save voice settings", type="primary"):
+        config.set_value("stt_engine", _engine)
+        config.set_value("stt_model", _size)
+        config.set_value("tts_rate", f"{_rate:.1f}")
+        config.set_value("tts_voice", _voice.strip())
+        config.set_value("voice_barge_in", "true" if _barge else "false")
+        config.set_value("wake_words", _wake.strip())
+        st.toast("Saved.")
+if config.get("stt_engine") == "local":
+    if not stt.installed():
+        st.warning("Local speech recognition needs `pip install faster-whisper` (about 140 MB). The browser engine is used until then.")
+    elif not stt.model_present():
+        if st.button(f"Download the '{stt.model_size()}' speech model ({stt.SIZES[stt.model_size()].split(',')[0]})"):
+            with st.spinner("Working"):
+                _ok, _msg = stt.download()
+            (st.success if _ok else st.error)(_msg)
+    else:
+        st.caption(f"Local speech model '{stt.model_size()}' is ready. Audio never leaves this laptop.")
+
 st.subheader("Document search")
 from adhyaksh.rag import embedder  # noqa: E402
 _mode = retriever.embedding_mode()

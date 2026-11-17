@@ -4,3 +4,5 @@
 # ultralytics
 # Local multilingual embeddings for notebook search (about 28 MB of packages; the model is a separate 240 MB download from Settings).
 # fastembed
+# Local, offline speech-to-text for voice commands (about 140 MB of packages; the 'base' model is a separate download of about 205 MB from Settings).
+# faster-whisper

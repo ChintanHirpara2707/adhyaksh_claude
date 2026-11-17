@@ -1,6 +1,6 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-17 07:13 (P2 final). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-17 17:39 (P3 voice). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
 **Overall: 74% (176/238)**
 
@@ -39,6 +39,7 @@ Latest run: 2026-11-17 07:13 (P2 final). 238 hand-written commands, tools mocked
 | 2026-11-17 07:03 | P2 notebooks | 170/238 | 35/37 | 19/20 | 31/32 | 21/22 | 14/15 | 0/16 | 0/20 | 0/9 | 19/20 | 12/12 | 6/12 | 0/10 | 13/13 |
 | 2026-11-17 07:06 | P2 notebooks round 2 | 176/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 0/16 | 0/20 | 0/9 | 20/20 | 12/12 | 6/12 | 0/10 | 13/13 |
 | 2026-11-17 07:13 | P2 final | 176/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 0/16 | 0/20 | 0/9 | 20/20 | 12/12 | 6/12 | 0/10 | 13/13 |
+| 2026-11-17 17:39 | P3 voice | 176/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 0/16 | 0/20 | 0/9 | 20/20 | 12/12 | 6/12 | 0/10 | 13/13 |
 
 ## Failures (62)
 

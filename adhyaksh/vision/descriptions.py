@@ -2,10 +2,7 @@
 from __future__ import annotations
 
 import io
-import json
-import urllib.error
 import urllib.parse
-import urllib.request
 
 import streamlit as st
 
@@ -126,11 +123,11 @@ def describe(label: str) -> str:
 @st.cache_data(ttl=3600)
 def _wiki_fetch(title: str) -> str | None:
     """Fetch the first two sentences of a Wikipedia summary. Returns None on failure."""
+    from adhyaksh import net
+
     url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + urllib.parse.quote(title)
-    req = urllib.request.Request(url, headers={"User-Agent": "Adhyaksh/1.0"})
     try:
-        with urllib.request.urlopen(url, timeout=5) as r:
-            data = json.loads(r.read().decode("utf-8"))
+        data = net.get(url, timeout=5, attempts=2).json()
         extract = data.get("extract", "")
         sentences = [s.strip() for s in extract.split(". ") if s.strip()]
         summary = ". ".join(sentences[:2])

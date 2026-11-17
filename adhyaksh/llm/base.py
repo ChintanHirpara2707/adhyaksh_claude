@@ -9,7 +9,9 @@ import os
 import urllib.parse
 from abc import ABC, abstractmethod
 
-from adhyaksh import config
+import logging
+
+from adhyaksh import config, logging_setup
 from adhyaksh.llm import cache
 from adhyaksh.result import E_BLOCKED, E_NO_API_KEY, E_TIMEOUT, Result
 
@@ -95,6 +97,7 @@ class Provider(ABC):
             except requests.RequestException as exc:
                 last = f"request failed ({type(exc).__name__})"
         code = E_TIMEOUT if last == "timeout" else "E_LLM_FAILED"
+        logging_setup.event("llm_failed", logging.WARNING, provider=self.name, call="complete", reason=last)
         return Result.failure(code, f"The language model did not respond: {last}.")
 
     def model(self) -> str:
@@ -130,6 +133,7 @@ class Provider(ABC):
                 if status in (400, 401, 403, 404):  # will not succeed on retry
                     hint = {400: "the request was rejected (the model may not support tools)", 401: "the API key was rejected",
                             403: "access was denied", 404: "the model name was not found"}[status]
+                    logging_setup.event("llm_failed", logging.WARNING, provider=self.name, call="chat", reason=f"HTTP {status}")
                     return Result.failure("E_LLM_FAILED", f"The language model call failed: {hint}.")
             except requests.ConnectionError:
                 last = "could not connect (is the service running and the network available?)"
@@ -137,6 +141,7 @@ class Provider(ABC):
                 last = f"unexpected response ({type(exc).__name__})"
             if attempt == 0:
                 time.sleep(0.5)
+        logging_setup.event("llm_failed", logging.WARNING, provider=self.name, call="chat", reason=last)
         return Result.failure(code, f"The language model did not respond: {last}.")
 
 

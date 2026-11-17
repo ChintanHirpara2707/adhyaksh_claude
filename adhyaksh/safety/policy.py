@@ -6,12 +6,14 @@ rejected or cancelled). Creating a pending confirmation is not yet an action and
 """
 from __future__ import annotations
 
+import logging
 import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Iterable
 
-from adhyaksh import config
+from adhyaksh import config, logging_setup
 from adhyaksh.result import (
     E_ACTION_FAILED, E_BLOCKED, E_CONFIRM_INVALID, E_NEEDS_CONFIRM, E_PATH_DENIED, Result,
 )
@@ -142,11 +144,17 @@ def run_guarded(
             return Result.failure(E_CONFIRM_INVALID, "The confirmation is invalid or has expired.")
         confirmed = "confirmed"
 
+    t0 = time.perf_counter()
     try:
         res = runner()
     except Exception as exc:  # expected tool failures must not reach the UI as exceptions
         log(f"error: {type(exc).__name__}", confirmed)
-        return Result.failure(E_ACTION_FAILED, "The action raised an unexpected error.")
+        logging_setup.event("tool_error", logging.ERROR, exc_info=exc, action=action, perm_level=d.level,
+                            ms=round((time.perf_counter() - t0) * 1000, 1))
+        return Result.failure(E_ACTION_FAILED, f"The action raised an unexpected error ({type(exc).__name__}). "
+                                               "Details are in the log on the Health page.")
+    logging_setup.event("tool_action", action=action, perm_level=d.level, ok=res.ok, error_code=res.error_code,
+                        confirmed=confirmed, ms=round((time.perf_counter() - t0) * 1000, 1))
     log("ok" if res.ok else f"failed: {res.error_code}", confirmed)
     return res
 

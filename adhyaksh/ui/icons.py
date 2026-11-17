@@ -8,6 +8,7 @@ PAGE_ICONS = {
     "settings": ":material/settings:",
     "vision": ":material/camera:",
     "performance": ":material/speed:",
+    "health": ":material/monitor_heart:",
 }
 
 

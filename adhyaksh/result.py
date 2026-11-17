@@ -14,6 +14,9 @@ E_UNSUPPORTED_OS = "E_UNSUPPORTED_OS"
 E_BLOCKED = "E_BLOCKED"
 E_ACTION_FAILED = "E_ACTION_FAILED"
 E_CONFIRM_INVALID = "E_CONFIRM_INVALID"
+E_LLM_FAILED = "E_LLM_FAILED"
+E_NETWORK = "E_NETWORK"
+E_BAD_SETTING = "E_BAD_SETTING"
 
 
 @dataclass(frozen=True)
@@ -31,4 +34,8 @@ class Result:
 
     @classmethod
     def failure(cls, error_code: str, message: str = "", data: Any = None) -> "Result":
+        """A failure always carries a readable message: the caller's, else the standard one for the code."""
+        if not message:
+            from adhyaksh.errors import message_for
+            message = message_for(error_code)
         return cls(False, data, error_code, message)

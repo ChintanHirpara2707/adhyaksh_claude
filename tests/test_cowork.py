@@ -183,3 +183,16 @@ def test_chat_mode_refuses_pc_control_but_allows_reminders():
     assert engine.handle_message("show running processes", cid, mode="chat").data["action"] == "needs_cowork"
     assert engine.handle_message("what is on my clipboard", cid, mode="chat").data["action"] == "needs_cowork"
     assert engine.handle_message("remind me to stretch in 30 minutes", cid, mode="chat").data["intent"] == "reminder_set"
+
+
+def test_confirmation_survives_a_change_in_memory_use(monkeypatch):
+    """The yes must still match when the program's memory use or process count changed after the question."""
+    fresh_env()
+    from adhyaksh.result import E_CONFIRM_INVALID
+    snaps = iter([[{"name": "fakeapp.exe", "count": 1, "ram_mb": 100.0, "ram_percent": 1.0, "cpu": 0.0, "pids": [999991], "protected": False}],
+                  [{"name": "fakeapp.exe", "count": 2, "ram_mb": 180.0, "ram_percent": 2.0, "cpu": 0.0, "pids": [999991, 999992], "protected": False}]])
+    monkeypatch.setattr(processes, "snapshot", lambda *a, **k: next(snaps))
+    r = processes.kill_process("fakeapp")
+    assert r.error_code == E_NEEDS_CONFIRM and r.data["target"] == "fakeapp.exe"
+    done = processes.kill_process("fakeapp", token=r.data["token"])
+    assert done.error_code != E_CONFIRM_INVALID  # the pids do not exist, so ending fails for that reason only

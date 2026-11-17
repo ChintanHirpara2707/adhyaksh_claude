@@ -1,10 +1,10 @@
 import streamlit as st
 
-from adhyaksh.safety import audit
+from adhyaksh.services import activity as svc
 from adhyaksh.ui import components as ui
 
 ui.page_header("Activity", "Append-only record of every action the assistant performed or refused.")
-rows = audit.list_recent(50)
+rows = svc.audit_list_recent(50)
 if not rows:
     ui.empty_state("No actions recorded yet.")
 else:

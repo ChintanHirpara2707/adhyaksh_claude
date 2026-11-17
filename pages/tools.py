@@ -1,16 +1,13 @@
 import streamlit as st
 
-from adhyaksh import config
-from adhyaksh.result import E_NEEDS_CONFIRM
-from adhyaksh.safety import policy
-from adhyaksh.tools import apps, files, system
+from adhyaksh.services import tools as svc
 from adhyaksh.ui import components as ui
 
 ui.page_header("Tools", "System status, workspace files and allowed applications. All actions are checked and logged.")
 st.subheader("System status")
 if st.button("Refresh status") or "status_loaded" not in st.session_state:
     st.session_state["status_loaded"] = True
-    res = system.status(ctx={"user_text": "tools page", "intent": "system_status"})
+    res = svc.system_status(ctx={"user_text": "tools page", "intent": "system_status"})
     if res.ok:
         a, b, c = st.columns(3)
         a.metric("CPU", f"{res.data['cpu']:.0f}%")
@@ -20,8 +17,8 @@ if st.button("Refresh status") or "status_loaded" not in st.session_state:
         ui.error_state("Status is unavailable.", res.message.rstrip("."), "install psutil")
 
 st.subheader("Workspace files")
-st.caption(f"Folder: {config.get('default_work_folder')}")
-res = files.list_dir(ctx={"user_text": "tools page", "intent": "file_list"})
+st.caption(f"Folder: {svc.get('default_work_folder')}")
+res = svc.files_list_dir(ctx={"user_text": "tools page", "intent": "file_list"})
 if res.ok and res.data["items"]:
     st.table([{"Name": i["name"], "Type": "folder" if i["is_dir"] else "file", "Size (bytes)": i["size"]} for i in res.data["items"]])
 elif res.ok:
@@ -30,7 +27,7 @@ else:
     ui.error_state("The workspace could not be listed.", res.message.rstrip("."), "check allowed folders in Settings")
 
 st.subheader("Applications")
-allowed = sorted(apps.allowlist())
+allowed = sorted(svc.apps_allowlist())
 if not allowed:
     ui.empty_state("No applications are on the allow-list. Add some in Settings.")
 else:
@@ -38,11 +35,11 @@ else:
     ctx = {"user_text": "tools page", "intent": "app"}
     left, right = st.columns(2)
     if left.button("Open", type="primary"):
-        r = apps.open_app(app, ctx=ctx)
+        r = svc.apps_open_app(app, ctx=ctx)
         st.toast(f"Opened {app}." if r.ok else r.message)
     if right.button("Close"):
-        r = apps.close_app(app, ctx=ctx)
-        if r.error_code == E_NEEDS_CONFIRM:
+        r = svc.apps_close_app(app, ctx=ctx)
+        if r.error_code == svc.E_NEEDS_CONFIRM:
             st.session_state["close_pending"] = {"app": app, "token": r.data["token"]}
         else:
             st.toast(f"Closed {app}." if r.ok else r.message)
@@ -50,20 +47,19 @@ else:
     if pend:
         choice = ui.confirmation_card(f"Close {pend['app']}", pend["app"], key="close_app")
         if choice == "confirm":
-            r = apps.close_app(pend["app"], ctx={**ctx, "token": pend["token"]})
+            r = svc.apps_close_app(pend["app"], ctx={**ctx, "token": pend["token"]})
             st.toast(f"Closed {pend['app']}." if r.ok else r.message)
             st.session_state.pop("close_pending")
             st.rerun()
         elif choice == "cancel":
-            policy.cancel_guarded(pend["token"])
+            svc.policy_cancel_guarded(pend["token"])
             st.session_state.pop("close_pending")
             st.rerun()
 
 st.subheader("Processes")
-from adhyaksh.tools import processes, reminders  # noqa: E402
 _sort = st.radio("Sort by", ["memory", "cpu"], horizontal=True, key="proc_sort")
 if st.button("Refresh process list") or "procs" not in st.session_state:
-    _r = processes.list_processes(10, _sort, ctx={"user_text": "tools page", "intent": "process_list"})
+    _r = svc.processes_list_processes(10, _sort, ctx={"user_text": "tools page", "intent": "process_list"})
     st.session_state["procs"] = _r.data["processes"] if _r.ok else []
 _procs = st.session_state.get("procs") or []
 if _procs:
@@ -73,8 +69,8 @@ if _procs:
     if _choices:
         _victim = st.selectbox("Program to end", _choices)
         if st.button("End program"):
-            _r = processes.kill_process(_victim, ctx={"user_text": "tools page", "intent": "process_kill"})
-            if _r.error_code == E_NEEDS_CONFIRM:
+            _r = svc.processes_kill_process(_victim, ctx={"user_text": "tools page", "intent": "process_kill"})
+            if _r.error_code == svc.E_NEEDS_CONFIRM:
                 st.session_state["kill_pending"] = {"name": _victim, "token": _r.data["token"], "shown": _r.data["target"]}
             else:
                 st.toast(_r.message or "Done.")
@@ -82,18 +78,18 @@ if _procs:
     if _kp:
         _choice = ui.confirmation_card(f"End {_kp['shown']}", _kp["name"], key="kill_proc")
         if _choice == "confirm":
-            _r = processes.kill_process(_kp["name"], ctx={"user_text": "tools page", "intent": "process_kill"}, token=_kp["token"])
+            _r = svc.processes_kill_process(_kp["name"], ctx={"user_text": "tools page", "intent": "process_kill"}, token=_kp["token"])
             st.toast(f"Ended {_kp['name']}." if _r.ok else _r.message)
             st.session_state.pop("kill_pending")
             st.session_state.pop("procs", None)
             st.rerun()
         elif _choice == "cancel":
-            policy.cancel_guarded(_kp["token"])
+            svc.policy_cancel_guarded(_kp["token"])
             st.session_state.pop("kill_pending")
             st.rerun()
 
 st.subheader("Reminders")
-_rem = reminders.list_pending(ctx={"user_text": "tools page", "intent": "reminder_list"})
+_rem = svc.reminders_list_pending(ctx={"user_text": "tools page", "intent": "reminder_list"})
 _items = _rem.data["reminders"] if _rem.ok else []
 if not _items:
     ui.empty_state("No pending reminders. Say, for example: remind me to call mom at 6 pm.")
@@ -101,5 +97,5 @@ for _it in _items:
     _a, _b = st.columns([5, 1])
     _a.markdown(f"**{_it['text']}** - {_it['when']}")
     if _b.button("Cancel", key=f"rem_{_it['id']}"):
-        reminders.cancel(str(_it["id"]), ctx={"user_text": "tools page", "intent": "reminder_cancel"})
+        svc.reminders_cancel(str(_it["id"]), ctx={"user_text": "tools page", "intent": "reminder_cancel"})
         st.rerun()

@@ -11,19 +11,19 @@ def lookup(question: str, lang: str = "en", timeout: float = 6.0) -> str | None:
     """Return a short extract of the best-matching article, or None."""
     import requests
 
+    from adhyaksh import net
+
     host = f"https://{_LANGS.get(lang, 'en')}.wikipedia.org"
     try:
-        r = requests.get(f"{host}/w/api.php", timeout=timeout, headers=_UA,
-                         params={"action": "query", "list": "search", "srsearch": question,
-                                 "srlimit": 1, "format": "json"})
-        r.raise_for_status()
+        r = net.get(f"{host}/w/api.php", timeout=timeout, attempts=2, headers=_UA,
+                    params={"action": "query", "list": "search", "srsearch": question,
+                            "srlimit": 1, "format": "json"})
         hits = r.json().get("query", {}).get("search", [])
         if not hits:
             return None
         title = hits[0]["title"]
-        r = requests.get(f"{host}/api/rest_v1/page/summary/{requests.utils.quote(title.replace(' ', '_'))}",
-                         timeout=timeout, headers=_UA)
-        r.raise_for_status()
+        r = net.get(f"{host}/api/rest_v1/page/summary/{requests.utils.quote(title.replace(' ', '_'))}",
+                    timeout=timeout, attempts=2, headers=_UA)
         extract = (r.json().get("extract") or "").strip()
         return f"{extract}\n\n(Source: Wikipedia, {title})" if extract else None
     except (requests.RequestException, ValueError, KeyError):

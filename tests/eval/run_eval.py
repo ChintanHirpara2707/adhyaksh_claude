@@ -299,6 +299,11 @@ def main() -> int:
         print(f"WARNING: {len(leak)} eval utterances are in the training file: {leak[:5]}")
     ok = sum(r["pass"] == "PASS" for r in results)
     print(f"{ok}/{len(results)} passed; report written to {REPORT}")
+    if "--min-pass" in sys.argv:  # CI gate: fail when fewer cases pass
+        need = int(sys.argv[sys.argv.index("--min-pass") + 1])
+        if ok < need:
+            print(f"FAILED: {ok} passed, at least {need} required")
+            return 1
     return 0
 
 

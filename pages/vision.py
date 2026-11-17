@@ -6,12 +6,11 @@ import io
 import streamlit as st
 from PIL import Image, ImageDraw
 
-from adhyaksh import config
+from adhyaksh.services import vision as svc
 from adhyaksh.ui import components as ui, theme
-from adhyaksh.vision import descriptions, detector, ocr, scene
 
 ui.page_header("Object Detection", "Detect objects in a camera snapshot or uploaded image.")
-theme.inject(config.get("theme") or "light")
+theme.inject(svc.get("theme") or "light")
 
 MODEL_CHOICES = {"fast": "Fast (yolov8n)", "balanced": "Balanced (yolov8s)", "accurate": "Accurate (yolov8m)"}
 
@@ -19,10 +18,10 @@ col_model, col_imgsz = st.columns(2)
 with col_model:
     model_choice = st.selectbox("Detection model", list(MODEL_CHOICES),
                                 format_func=lambda k: MODEL_CHOICES[k],
-                                index=list(MODEL_CHOICES).index(config.get("vision_model") or "balanced"))
+                                index=list(MODEL_CHOICES).index(svc.get("vision_model") or "balanced"))
 with col_imgsz:
     imgsz = st.selectbox("Image size", [640, 960],
-                         index=[640, 960].index(int(config.get("vision_imgsz") or "640")))
+                         index=[640, 960].index(int(svc.get("vision_imgsz") or "640")))
 
 conf = st.slider("Confidence threshold", 0.10, 0.80, 0.25, 0.05)
 
@@ -36,7 +35,7 @@ open_classes: list[str] = []
 if mode == "open":
     typed = st.text_input("Objects to look for, separated by commas",
                           placeholder="mug, stapler, red pen, houseplant", max_chars=300)
-    open_classes = detector.parse_classes(typed)
+    open_classes = svc.detector_parse_classes(typed)
     st.caption("Open-vocabulary detection is less reliable than the standard detector. "
                f"It needs about 400 MB of one-time downloads (YOLO-World weights and the CLIP text encoder).")
 also_named = st.checkbox("Also name other things in the picture (1000 general categories)", value=False)
@@ -67,11 +66,11 @@ def render(key: str, file) -> None:
         new_key = f"{_cache_key(image_bytes)}:{conf}:{imgsz}:{model_choice}:{mode}:{'|'.join(open_classes)}"
         if ck is None or ck.get("key") != new_key:
             if mode == "tiled":
-                detections = detector.detect_tiled(image_bytes, conf=conf, imgsz=imgsz, model_choice=model_choice)
+                detections = svc.detector_detect_tiled(image_bytes, conf=conf, imgsz=imgsz, model_choice=model_choice)
             elif mode == "open":
-                detections = detector.detect_open_vocab(image_bytes, open_classes, conf=min(conf, 0.3), imgsz=imgsz)
+                detections = svc.detector_detect_open_vocab(image_bytes, open_classes, conf=min(conf, 0.3), imgsz=imgsz)
             else:
-                detections = detector.detect(image_bytes, conf=conf, imgsz=imgsz, model_choice=model_choice)
+                detections = svc.detector_detect(image_bytes, conf=conf, imgsz=imgsz, model_choice=model_choice)
             state[key] = {"key": new_key, "bytes": image_bytes, "detections": detections}
         else:
             detections = ck.get("detections")
@@ -94,9 +93,9 @@ def render(key: str, file) -> None:
         draw.rectangle([x1, y1, x2, y2], outline="red", width=3)
         draw.text((x1, max(0, y1 - 14)), f'{d["label"]} {d["confidence"]:.0%}', fill="red")
     st.image(img, caption="Detected objects", use_container_width=True)
-    st.markdown(scene.describe(image_bytes, detections)["summary"])
+    st.markdown(svc.scene_describe(image_bytes, detections)["summary"])
     if read_text:
-        _ocr = ocr.read(image_bytes)
+        _ocr = svc.ocr_read(image_bytes)
         if not _ocr.ok:
             st.info(_ocr.message)
         elif _ocr.data["text"].strip():
@@ -108,16 +107,16 @@ def render(key: str, file) -> None:
     if not detections:
         st.info("No objects found. Try better light, or move the camera closer to the object.")
         # Classifier fallback when detection found nothing
-        fallback = detector.classify(image_bytes, imgsz=imgsz)
+        fallback = svc.detector_classify(image_bytes, imgsz=imgsz)
         if isinstance(fallback, str):
             st.info(fallback)
         elif fallback:
             st.markdown("**Closest match** — best guess for the main object in the image:")
             for g in fallback[:3]:
-                wiki = descriptions.wikipedia(g["label"])
+                wiki = svc.descriptions_wikipedia(g["label"])
                 st.markdown(
                     f"**{g['label']}** — {g['confidence']:.0%}.\n"
-                    f"{descriptions.describe(g['label'])}{wiki}"
+                    f"{svc.descriptions_describe(g['label'])}{wiki}"
                 )
         return
 
@@ -126,14 +125,14 @@ def render(key: str, file) -> None:
         grouped.setdefault(d["label"], []).append(d)
     for label, items in grouped.items():
         best = max(items, key=lambda x: x["confidence"])
-        wiki = descriptions.wikipedia(label)
+        wiki = svc.descriptions_wikipedia(label)
         st.markdown(
             f"**{label}** — {len(items)} found, best confidence {best['confidence']:.0%}.\n"
-            f"{descriptions.describe(label)}{wiki}"
+            f"{svc.descriptions_describe(label)}{wiki}"
         )
 
     if also_named:
-        named = detector.classify(image_bytes, imgsz=imgsz)
+        named = svc.detector_classify(image_bytes, imgsz=imgsz)
         if isinstance(named, str):
             st.info(named)
         elif named:
@@ -142,10 +141,10 @@ def render(key: str, file) -> None:
 
     # Collapsible Details section
     w, h = img.size
-    bright = detector.average_brightness(image_bytes)
-    raw = detector.detect_raw(image_bytes, model_choice=model_choice)
+    bright = svc.detector_average_brightness(image_bytes)
+    raw = svc.detector_detect_raw(image_bytes, model_choice=model_choice)
     camera_bytes = len(image_bytes) if key == "camera" else None
-    model_name = detector.DETECTION_MODELS.get(model_choice, model_choice)
+    model_name = svc.DETECTION_MODELS.get(model_choice, model_choice)
     with st.expander("Details", expanded=False):
         st.markdown(f"- Size: {w} × {h} pixels")
         st.markdown(f"- File size: {len(image_bytes)} bytes")

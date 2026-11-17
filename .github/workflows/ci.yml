@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master-upgrade]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    env:
+      PYTHONIOENCODING: utf-8
+      ADHYAKSH_NO_OPEN: "1"
+      YOLO_AUTOINSTALL: "false"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-core.txt
+
+      - name: Install required packages (no API keys, no optional models)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-core.txt
+
+      - name: Check the training data
+        run: python -m adhyaksh.nlu.dataset validate
+
+      - name: Train the intent models (PyTorch model is skipped when torch is absent)
+        run: python -m adhyaksh.nlu.train --all
+
+      - name: Unit tests
+        run: python -m pytest tests -q --ignore=tests/test_tools.py
+
+      - name: Voice logic tests (Node)
+        run: node tests/js/test_voice_logic.js
+
+      - name: Regression suite
+        run: python tests/eval/run_eval.py --min-pass 390
+
+      - name: Held-out real-command eval
+        run: python tests/eval/run_real_eval.py --label ci --min-rate 95

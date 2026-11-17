@@ -18,7 +18,7 @@ _boot()
 
 PAGES = [("chat", "Chat"), ("memory", "Memory"), ("tools", "Tools"),
          ("model_lab", "Model Lab"), ("activity", "Activity"), ("settings", "Settings"),
-         ("vision", "Object Detection"), ("performance", "PC Performance")]
+         ("vision", "Object Detection"), ("performance", "PC Performance"), ("health", "Health")]
 pages = [
     st.Page(f"pages/{slug}.py", title=title, icon=icons.page_icon(slug), url_path=slug,
             default=(slug == "chat"))

@@ -114,21 +114,112 @@ DEFAULTS: dict[str, str] = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Validation: every setting has a type. Wrong types and unknown choices are rejected when saved; numbers
+# outside their range are clamped; a bad value already in the database is ignored (the default is used).
+# ---------------------------------------------------------------------------
+_BOOL = ("bool",)
+RULES: dict[str, tuple] = {
+    "theme": ("choice", {"", "light", "dark"}),
+    "confidence_threshold": ("float", 0.0, 1.0),
+    "conversation_turns": ("int", 1, 50),
+    "cloud_consent": _BOOL, "voice_reply": _BOOL, "voice_handsfree": _BOOL, "voice_wake_word": _BOOL,
+    "voice_barge_in": _BOOL, "power_mode": _BOOL,
+    "agent_mode": ("choice", {"auto", "off"}),
+    "voice_lang": ("choice", {"en-IN", "hi-IN", "gu-IN"}),
+    "stt_engine": ("choice", {"browser", "local"}),
+    "stt_model": ("choice", {"tiny", "base", "small"}),
+    "tts_rate": ("float", 0.6, 1.6),
+    "llm_provider": ("choice", {"", "groq", "gemini", "ollama"}),
+    "allowed_folders": ("json", list),
+    "app_allowlist": ("json", dict),
+    "doc_min_score": ("float", 0.0, 1.0),
+    "doc_min_score_embed": ("float", 0.0, 1.0),
+    "active_notebook": ("int", 1, 10**9),
+    "embeddings_local": ("choice", {"auto", "off"}),
+    "vision_model": ("choice", {"fast", "balanced", "accurate"}),
+    "vision_imgsz": ("int", 160, 1920),
+}
+
+
+class SettingError(ValueError):
+    """A setting value of the wrong type or outside its allowed choices."""
+
+
+def normalize(key: str, value) -> str:
+    """The value as it will be stored, or SettingError with a plain explanation."""
+    if key not in DEFAULTS:
+        raise KeyError(f"Unknown setting: {key}")
+    text = str(value).strip() if not isinstance(value, bool) else ("true" if value else "false")
+    rule = RULES.get(key)
+    if rule is None:
+        return str(value)
+    kind = rule[0]
+    if kind == "bool":
+        if text.lower() not in ("true", "false"):
+            raise SettingError(f"{key} must be true or false, not '{text}'.")
+        return text.lower()
+    if kind in ("float", "int"):
+        try:
+            num = float(text)
+        except ValueError:
+            raise SettingError(f"{key} must be a number, not '{text}'.") from None
+        if num != num:  # NaN
+            raise SettingError(f"{key} must be a number.")
+        clamped = min(rule[2], max(rule[1], num))
+        if kind == "int":
+            return text if clamped == num and text.lstrip("-").isdigit() else str(int(round(clamped)))
+        return text if clamped == num else f"{clamped:g}"
+    if kind == "choice":
+        if text not in rule[1]:
+            raise SettingError(f"{key} must be one of: {', '.join(sorted(c or '(empty)' for c in rule[1]))}.")
+        return text
+    if kind == "json":
+        try:
+            parsed = json.loads(text)
+        except ValueError:
+            raise SettingError(f"{key} must be valid JSON.") from None
+        if not isinstance(parsed, rule[1]):
+            raise SettingError(f"{key} must be a JSON {'list' if rule[1] is list else 'object'}.")
+        return str(value)
+    return str(value)
+
+
 def get(key: str) -> str:
     from adhyaksh import db
 
     if key not in DEFAULTS:
         raise KeyError(f"Unknown setting: {key}")
     value = db.get_setting(key)
-    return DEFAULTS[key] if value is None else value
+    if value is None:
+        return DEFAULTS[key]
+    try:
+        normalize(key, value)
+    except SettingError:  # a hand-edited or old value: fall back to the default instead of crashing
+        return DEFAULTS[key]
+    return value
 
 
 def set_value(key: str, value: str) -> None:
     from adhyaksh import db
 
-    if key not in DEFAULTS:
-        raise KeyError(f"Unknown setting: {key}")
-    db.set_setting(key, str(value))
+    db.set_setting(key, normalize(key, value))
+
+
+def validate_all() -> list[dict]:
+    """Stored settings that are invalid (they are ignored and the default is used). For the Health page."""
+    from adhyaksh import db
+
+    problems = []
+    for key in DEFAULTS:
+        value = db.get_setting(key)
+        if value is None:
+            continue
+        try:
+            normalize(key, value)
+        except SettingError as exc:
+            problems.append({"key": key, "value": value[:80], "problem": str(exc), "using": DEFAULTS[key]})
+    return problems
 
 
 def get_float(key: str) -> float:

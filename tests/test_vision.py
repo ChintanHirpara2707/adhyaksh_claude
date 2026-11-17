@@ -326,6 +326,9 @@ class _FakeResponse:
     def read(self):
         return json.dumps(self._data).encode("utf-8")
 
+    def json(self):
+        return self._data
+
     def __enter__(self):
         return self
 
@@ -357,8 +360,9 @@ def test_wikipedia_summary(monkeypatch):
         "extract": "A mouse is a handheld device used to control a computer cursor. It is moved on a desk to point and click.",
         "content_urls": {"desktop": {"page": "https://en.wikipedia.org/wiki/Computer_mouse"}},
     }
+    from adhyaksh import net
     fake = _FakeUrlopen(data)
-    monkeypatch.setattr(descriptions.urllib.request, "urlopen", fake)
+    monkeypatch.setattr(net, "get", lambda url, **k: fake(url, k.get("timeout")))
     result = descriptions.wikipedia("mouse")
     assert "Computer mouse" in result or "A mouse is a handheld" in result
     assert "More from Wikipedia" in result
@@ -366,8 +370,9 @@ def test_wikipedia_summary(monkeypatch):
 
 
 def test_wikipedia_failure_returns_empty(monkeypatch):
+    from adhyaksh import net
     fake = _FakeUrlopen(fail=True)
-    monkeypatch.setattr(descriptions.urllib.request, "urlopen", fake)
+    monkeypatch.setattr(net, "get", lambda url, **k: fake(url, k.get("timeout")))
     result = descriptions.wikipedia("person")
     assert result == ""
 

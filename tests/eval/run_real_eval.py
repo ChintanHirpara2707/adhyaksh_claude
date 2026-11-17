@@ -110,4 +110,10 @@ if __name__ == "__main__":
     lab = ""
     if "--label" in sys.argv:
         lab = sys.argv[sys.argv.index("--label") + 1]
-    run(lab)
+    out = run(lab)
+    if "--min-rate" in sys.argv:  # CI gate: fail below this pass rate (percent)
+        need = float(sys.argv[sys.argv.index("--min-rate") + 1])
+        ok, n = out["total"]
+        if 100 * ok / n < need:
+            print(f"FAILED: {100 * ok / n:.1f}% passed, at least {need}% required")
+            sys.exit(1)

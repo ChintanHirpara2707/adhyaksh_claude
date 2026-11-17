@@ -1,12 +1,13 @@
 """Chat engine: message in, reply out. Rules, then the trained model, then tools via safety."""
 from __future__ import annotations
 
+import logging
 import re
 import time
 from datetime import datetime
 from pathlib import Path
 
-from adhyaksh import config, responses
+from adhyaksh import config, logging_setup, responses
 from adhyaksh.chat import context, identity, router
 from adhyaksh.agent import native as agent_native
 from adhyaksh.agent import runner as agent_runner
@@ -964,10 +965,14 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
         else:
             r = _process(text, ctx, conversation_id, lang, mode=mode)
     except Exception as exc:  # never raise to the UI for expected failures
-        r = _Reply(_t("error", lang, reason=f"internal error ({type(exc).__name__})"), "error", 0.0)
+        logging_setup.event("chat_error", logging.ERROR, exc_info=exc, lang=lang, mode=mode)
+        r = _Reply(_t("error", lang, reason=f"internal error ({type(exc).__name__}); details are in the log on the Health page"),
+                   "error", 0.0)
     finally:
         ctx.images = None
     ms = (time.perf_counter() - t0) * 1000
+    logging_setup.event("chat_message", intent=r.intent, confidence=round(r.conf, 3), action=r.action or "",
+                        lang=lang, mode=mode, voice=voice, ms=round(ms, 1))
     context.save_message(conversation_id, "assistant", r.text, r.intent, r.conf, ms)
     result = {"reply": r.text, "intent": r.intent, "confidence": round(r.conf, 3), "action": r.action,
               "latency_ms": round(ms, 1), "confirmation": r.confirmation, "sources": r.sources,

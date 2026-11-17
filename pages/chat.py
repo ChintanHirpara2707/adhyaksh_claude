@@ -1,12 +1,8 @@
 import streamlit as st
 import time
 
-from adhyaksh import config, db
-from adhyaksh.chat import context, engine, identity
-from adhyaksh.nlu import dataset
-from adhyaksh.rag import loader, retriever, sources
+from adhyaksh.services import chat as svc
 from adhyaksh.ui import components as ui
-from adhyaksh.voice import bridge, speech, stt
 
 ui.chat_width()
 
@@ -22,20 +18,20 @@ def apply_ui_hints(res) -> None:
         st.session_state["goto_page"] = page
 
 ui.page_header("Chat", "Type or speak a command in English, Hindi, Gujarati or a mix.")
-if identity.get_name() is None:
+if svc.identity_get_name() is None:
     ui.first_run_form()
     st.stop()
 
 if "cid" not in st.session_state:
-    st.session_state["cid"] = context.latest_conversation()
+    st.session_state["cid"] = svc.context_latest_conversation()
 cid = st.session_state["cid"]
 st.session_state.setdefault("mode", "cowork")
 mode = st.session_state["mode"]
 if st.button("New conversation"):
-    st.session_state["cid"] = context.new_conversation()
+    st.session_state["cid"] = svc.context_new_conversation()
     st.rerun()
 
-history = context.history(cid, 50)
+history = svc.context_history(cid, 50)
 if not history:
     ui.empty_state("No messages yet. Try: create notes.txt, remember that my car is Audi, or show system status.")
 
@@ -65,21 +61,18 @@ for m in history:
                 st.rerun()
             if st.session_state.get(f"correcting_{m['id']}"):
                 st.caption(f"Detected intent: {intent_val}")
-                correct = st.selectbox("Correct intent", dataset.INTENTS,
-                                       index=dataset.INTENTS.index(intent_val)
-                                       if intent_val in dataset.INTENTS else 0,
+                correct = st.selectbox("Correct intent", svc.INTENTS,
+                                       index=svc.INTENTS.index(intent_val)
+                                       if intent_val in svc.INTENTS else 0,
                                        key=f"intent_{m['id']}")
                 if st.button("Save correction", key=f"save_{m['id']}"):
-                    db.execute(
-                        "INSERT INTO feedback(message_id, correct_intent, note, created_at) "
-                        "VALUES(?,?,?,?)",
-                        (m["id"], correct, "", db.utcnow()))
+                    svc.save_intent_correction(m["id"], correct)
                     st.session_state[f"correcting_{m['id']}"] = False
                     st.success("Correction saved. Retrain to use it.")
                     st.rerun()
 
 # Show the agent steps live (collapsible), attached to the latest turn.
-# ctx = context.get(cid)
+# ctx = svc.context_get(cid)
 # steps = ctx.agent_steps or []
 # if steps:
 #     with st.expander("Agent steps", expanded=True):
@@ -100,21 +93,21 @@ for m in history:
 #             if result:
 #                 st.code(result)
 
-_nbs = sources.list_notebooks()
-_active = sources.active()
-with st.expander(f"Notebook: {_active['name']} ({sources.count()} sources)"):
+_nbs = svc.sources_list_notebooks()
+_active = svc.sources_active()
+with st.expander(f"Notebook: {_active['name']} ({svc.sources_count()} sources)"):
     _names = [n["name"] for n in _nbs]
     _pick = st.selectbox("Active notebook", _names, index=_names.index(_active["name"]) if _active["name"] in _names else 0,
                          help="Attachments go into the active notebook, and document questions are answered from it only.")
     if _pick != _active["name"]:
-        sources.set_active(next(n["id"] for n in _nbs if n["name"] == _pick))
+        svc.sources_set_active(next(n["id"] for n in _nbs if n["name"] == _pick))
         st.rerun()
     _n1, _n2 = st.columns([4, 1])
     _new = _n1.text_input("New notebook name", max_chars=60, label_visibility="collapsed", placeholder="New notebook name")
     if _n2.button("Create") and _new.strip():
-        sources.create_notebook(_new)
+        svc.sources_create_notebook(_new)
         st.rerun()
-    _docs = loader.list_documents(_active["id"])
+    _docs = svc.loader_list_documents(_active["id"])
     if not _docs:
         st.caption("No sources yet. Use the paperclip in the message box to attach a PDF, DOCX or text file.")
     for _d in _docs:
@@ -123,16 +116,16 @@ with st.expander(f"Notebook: {_active['name']} ({sources.count()} sources)"):
         if _d.get("summary"):
             _c1.caption(_d["summary"][:280])
         if _c2.button("Remove", key=f"rmdoc_{_d['id']}"):
-            loader.delete_document(int(_d["id"]))
+            svc.loader_delete_document(int(_d["id"]))
             st.rerun()
     st.caption("Search method: " + {"local": "local embeddings (multilingual)", "gemini": "Gemini embeddings (cloud)",
-                                    "tfidf": "TF-IDF keywords (offline)"}[retriever.embedding_mode()])
+                                    "tfidf": "TF-IDF keywords (offline)"}[svc.retriever_embedding_mode()])
 
-pending = context.get(cid).pending_confirm
+pending = svc.context_get(cid).pending_confirm
 if pending:
     choice = ui.confirmation_card(pending["action"].replace("_", " "), pending["target"], key=f"c_{pending['token']}")
     if choice:
-        engine.confirm(cid, choice == "confirm")
+        svc.engine_confirm(cid, choice == "confirm")
         st.rerun()
 
 last = next((m for m in reversed(history) if m["role"] == "assistant"), None)
@@ -140,28 +133,28 @@ last_id = last["id"] if last else 0
 st.session_state.setdefault("seen_assistant", last_id)
 # Replies are spoken when "Speak replies aloud" is on, or when the reply answers a spoken command.
 new_reply = last is not None and last_id != st.session_state["seen_assistant"]
-speak = new_reply and (config.get_bool("voice_reply") or st.session_state.pop("voice_reply_pending", False))
+speak = new_reply and (svc.get_bool("voice_reply") or st.session_state.pop("voice_reply_pending", False))
 vcmd = st.session_state.get("voice_cmd") or {}
 _speak_text = last["content"] if speak else ""
 if speak and (last.get("intent") == "agent_confirm" or "Confirm or cancel" in _speak_text) and "say yes" not in _speak_text.lower():
     # Spoken confirmation: the question is read out and answered with a spoken yes or no.
-    _speak_text = _speak_text.replace("Confirm or cancel.", "").strip() + " " + speech.confirm_prompt(config.get("voice_lang"))
-heard = bridge.voice_input(theme_name=config.get("theme") or "light", lang=config.get("voice_lang") or "en-IN",
+    _speak_text = _speak_text.replace("Confirm or cancel.", "").strip() + " " + svc.speech_confirm_prompt(svc.get("voice_lang"))
+heard = svc.bridge_voice_input(theme_name=svc.get("theme") or "light", lang=svc.get("voice_lang") or "en-IN",
                            speak_text=_speak_text,
                            status=st.session_state.pop("voice_status", ""),
                            speak_nonce=str(last_id) if speak else "",
                            command=vcmd or None, command_nonce=vcmd.get("nonce", ""),
-                           handsfree_default=config.get_bool("voice_handsfree"),
-                           wake_default=config.get_bool("voice_wake_word"))
+                           handsfree_default=svc.get_bool("voice_handsfree"),
+                           wake_default=svc.get_bool("voice_wake_word"))
 if new_reply:
     st.session_state["seen_assistant"] = last_id
 if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
     st.session_state["voice_nonce"] = heard["nonce"]
-    config.set_value("voice_handsfree", "true" if heard.get("handsfree") else "false")
-    config.set_value("voice_wake_word", "true" if heard.get("wake") else "false")
+    svc.set_value("voice_handsfree", "true" if heard.get("handsfree") else "false")
+    svc.set_value("voice_wake_word", "true" if heard.get("wake") else "false")
     if not heard.get("setting") and heard.get("audio_b64"):
         with st.spinner("Transcribing on this laptop"):
-            _out = bridge.handle_audio(heard["audio_b64"], heard.get("lang", "en-IN"), bool(heard.get("handsfree")), bool(heard.get("wake")))
+            _out = svc.bridge_handle_audio(heard["audio_b64"], heard.get("lang", "en-IN"), bool(heard.get("handsfree")), bool(heard.get("wake")))
         if _out.get("text"):
             heard["text"] = _out["text"]
         elif _out.get("error"):
@@ -174,7 +167,7 @@ if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
         st.caption(f"Heard: {heard['text']}")
         st.session_state["suggest_switch"] = False
         with st.spinner("Working"):
-            result = engine.handle_message(heard["text"], cid, voice=True, mode=mode)
+            result = svc.engine_handle_message(heard["text"], cid, voice=True, mode=mode)
         st.session_state["voice_reply_pending"] = True
         apply_ui_hints(result)
         if result.data and result.data.get("suggest_mode") == "cowork":
@@ -202,7 +195,7 @@ if new_mode != mode:
     st.session_state["suggest_switch"] = False
     st.rerun()
 
-_local_stt = stt.available()
+_local_stt = svc.stt_available()
 prompt = st.chat_input("Type a command, or attach a document or a photo", accept_file="multiple",
                        file_type=["pdf", "docx", "txt", "md", "csv", "jpg", "jpeg", "png", "webp"],
                        accept_audio=_local_stt)
@@ -211,16 +204,16 @@ if prompt:
     _audio = None if isinstance(prompt, str) else getattr(prompt, "audio", None)
     if _audio is not None and not text:
         with st.spinner("Transcribing on this laptop"):
-            _tr = stt.transcribe(_audio.getvalue(), config.get("voice_lang"))
+            _tr = svc.stt_transcribe(_audio.getvalue(), svc.get("voice_lang"))
         if _tr.ok:
-            text = speech.clean_transcript(_tr.data["text"])
+            text = svc.speech_clean_transcript(_tr.data["text"])
             st.session_state["voice_reply_pending"] = True
         else:
             st.session_state["voice_status"] = _tr.message
     files = [] if isinstance(prompt, str) else [(f.name, f.getvalue()) for f in (prompt.files or [])]
     st.session_state["suggest_switch"] = False
     with st.spinner("Working"):
-        result = engine.handle_message(text, cid, mode=mode, attachments=files)
+        result = svc.engine_handle_message(text, cid, mode=mode, attachments=files)
     apply_ui_hints(result)
     if result.data and result.data.get("suggest_mode") == "cowork":
         st.session_state["suggest_switch"] = True

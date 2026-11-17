@@ -121,7 +121,9 @@ def kill_process(target: str, *, ctx: dict | None = None, token: str | None = No
     if g["protected"] or set(g["pids"]) & own:
         reason = "it is part of this assistant" if set(g["pids"]) & own else "it is a Windows system process"
         return policy.deny("process_kill", g["name"], f"{g['name']} cannot be ended because {reason}.", **_ctx(ctx))
-    shown = f"{g['name']} ({len(g['pids'])} process{'es' if len(g['pids']) != 1 else ''}, {g['ram_mb']:.0f} MB)"
+    # The confirmation is tied to this text, so it must not change between the question and the "yes":
+    # memory use and the number of processes do change, so only the name (and a pid the user gave) are used.
+    shown = f"{g['name']} (pid {target})" if str(target).strip().isdigit() else g["name"]
 
     def go() -> Result:
         import psutil

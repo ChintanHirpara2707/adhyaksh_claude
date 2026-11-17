@@ -78,13 +78,12 @@ def to_gemini_contents(messages: list[dict]) -> tuple[str, list[dict]]:
 
 def embed(texts: list[str], timeout: float = 8.0) -> list[list[float]]:
     """Embed texts with the configured Gemini embedding model (UNTESTED ON TARGET)."""
-    import requests
+    from adhyaksh import net
 
     out = []
     for t in texts:
-        r = requests.post(f"{BASE}{config.get('embedding_model')}:embedContent", timeout=timeout,
-                          headers={"x-goog-api-key": api_key("gemini")},
-                          json={"content": {"parts": [{"text": t}]}})
-        r.raise_for_status()
+        r = net.post(f"{BASE}{config.get('embedding_model')}:embedContent", timeout=timeout,
+                     headers={"x-goog-api-key": api_key("gemini")},
+                     json={"content": {"parts": [{"text": t}]}})
         out.append(r.json()["embedding"]["values"])
     return out

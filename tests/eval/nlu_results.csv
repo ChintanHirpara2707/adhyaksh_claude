@@ -47,7 +47,7 @@ P23a,polarity,P23,en,what is on my clipboard,clipboard_read,,clipboard_read,clip
 mock copied text",PASS,
 P23b,polarity,P23,en,copy hello world to the clipboard,clipboard_write,hello world,clipboard_write,clipboard_write,hello world,Copied to the clipboard: hello world,PASS,
 P24a,polarity,P24,hi,स्पॉटिफाई खोलो,open_app,spotify,app_open,,,Which application?,FAIL,"expected open_app, called nothing"
-P24b,polarity,P24,hi,स्पॉटिफाई बंद करो,close_app,spotify,voice_control,voice_command,start,Hands-free listening is on. Your browser may ask for microphone permission. Say 'stop listening' to end it.,FAIL,"expected close_app, called ['voice_command']"
+P24b,polarity,P24,hi,स्पॉटिफाई बंद करो,close_app,spotify,app_close,,,Which application?,FAIL,"expected close_app, called nothing"
 P25a,polarity,P25,gu,ક્રોમ જરા ખોલો,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
 P25b,polarity,P25,gu,ક્રોમ જરા બંધ કરો,close_app,chrome,app_close,close_app,chrome,Closed chrome.,PASS,
 S01,slots,,en,please open the notepad app for me,open_app,notepad,app_open,open_app,notepad,Opened notepad.,PASS,

@@ -1,6 +1,6 @@
 # NLU evaluation (polarity, slots, negation)
 
-Latest run: 2026-11-19 16:17 (1c baseline (before frames)). Offline path, every tool mocked. Cases: tests/eval/nlu_cases.csv. A polarity pair passes only when both of its commands pass.
+Latest run: 2026-11-19 16:45 (1c retrain (polarity pairs)). Offline path, every tool mocked. Cases: tests/eval/nlu_cases.csv. A polarity pair passes only when both of its commands pass.
 
 | Suite | Passed | Rate |
 |---|---|---|
@@ -25,7 +25,7 @@ Per language (individual commands):
 | P13a | en | open note pad | expected open_app, called nothing |
 | P13b | en | close note pad | expected close_app, called nothing |
 | P24a | hi | स्पॉटिफाई खोलो | expected open_app, called nothing |
-| P24b | hi | स्पॉटिफाई बंद करो | expected close_app, called ['voice_command'] |
+| P24b | hi | स्पॉटिफाई बंद करो | expected close_app, called nothing |
 | S09 | en | create groceries.txt in my work folder | expected create, called nothing |
 | S20 | en | go to github.com | argument 'github.com', expected 'https://github.com' |
 | S22 | en | end task for notepad.exe | argument 'for', expected 'notepad.exe' |

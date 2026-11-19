@@ -13,9 +13,11 @@ Measured 2026-11-19 on `main` at e8395cb, before any Phase 1 change:
 | `nlu.dataset validate` | valid |
 | Regression suite `tests/eval/run_eval.py` | 398/399 (C347 known) |
 | Real eval `tests/eval/run_real_eval.py` | 237/238, 99.6% (R054 known) |
-| Active model test macro-F1 (`docs/RESULTS.md`) | 0.956 |
+| Active model (TF-IDF + SVM) macro-F1 (`docs/RESULTS.md`) | test 0.932, code-mixed 0.864, validation 0.925 (an earlier inactive run reached 0.956 on its own split) |
+| NLU suites `tests/eval/run_nlu_eval.py` (added in 1c) | polarity 23/25 pairs, slots 26/30, negation 0/20 |
 
-Gate for every phase: no lower number in any row.
+Gate for every phase: no lower number in any row. The in-distribution test split is re-drawn when rows are
+added, so for model changes the comparable figures are the fixed code-mixed file and the evals.
 
 ## 1. Audit findings by subsystem
 

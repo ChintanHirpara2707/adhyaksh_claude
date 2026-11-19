@@ -4140,3 +4140,141 @@ please board par shu lakhyu che atyare,ocr_read,gujlish,latin,generated,false
 "સાંભળો, બોર્ડ પર શું લખ્યું છે જલ્દી",ocr_read,gu,gujarati,generated,false
 બોર્ડ પર શું લખ્યું છે જલ્દી,ocr_read,gu,gujarati,generated,false
 કૃપા કરીને બોર્ડ પર શું લખ્યું છે,ocr_read,gu,gujarati,generated,false
+fire up snip tool please,app_open,en,latin,generated,false
+boot up ms paint please,app_open,en,latin,generated,false
+can you fire up mspaint,app_open,en,latin,generated,false
+can you bring up chrom,app_open,en,latin,generated,false
+launch the mspaint app,app_open,en,latin,generated,false
+bring up crome,app_open,en,latin,generated,false
+start the visual studio code app,app_open,en,latin,generated,false
+स्पॉटिफाई को शुरू करो,app_open,hi,devanagari,generated,false
+केलकुलेटर को खोल दीजिए,app_open,hi,devanagari,generated,false
+ज़रा क्रोम चालू करो,app_open,hi,devanagari,generated,false
+नोट पैड खोलो,app_open,hi,devanagari,generated,false
+पेंट को चालू कर दो,app_open,hi,devanagari,generated,false
+गूगल क्रोम स्टार्ट करो,app_open,hi,devanagari,generated,false
+જરા સ્પોટીફાય ખોલવું,app_open,gu,gujarati,generated,false
+વોટ્સએપ ને ખોલવું,app_open,gu,gujarati,generated,false
+નોટપેડ ને ખોલી દો,app_open,gu,gujarati,generated,false
+ફાઇલ એક્સપ્લોરર ને ખોલવું,app_open,gu,gujarati,generated,false
+વીએસ કોડ ને ખોલો,app_open,gu,gujarati,generated,false
+જરા વીએસ કોડ શરૂ કરો,app_open,gu,gujarati,generated,false
+સ્નિપિંગ ટૂલ ને ચાલુ કરી દો,app_open,gu,gujarati,generated,false
+whatsapp start karo,app_open,hinglish,latin,generated,false
+zara calculater chalu karo,app_open,hinglish,latin,generated,false
+whatsap app kholna,app_open,hinglish,latin,generated,false
+paint app khol de,app_open,hinglish,latin,generated,false
+zara chrome khol de,app_open,hinglish,latin,generated,false
+microsoft edge khol do,app_open,hinglish,latin,generated,false
+snipping khol de,app_open,hinglish,latin,generated,false
+crome open kari do,app_open,gujlish,latin,generated,false
+chrom ne sharu karo,app_open,gujlish,latin,generated,false
+explorer app chalu kari do,app_open,gujlish,latin,generated,false
+jara calculaor kholvu,app_open,gujlish,latin,generated,false
+paint ne sharu karo,app_open,gujlish,latin,generated,false
+jara notepat kholi do,app_open,gujlish,latin,generated,false
+windows explorer open karo,app_open,gujlish,latin,generated,false
+close the crome,app_close,en,latin,generated,false
+exit chrom,app_close,en,latin,generated,false
+please shut down notepat,app_close,en,latin,generated,false
+kill ms paint,app_close,en,latin,generated,false
+can you stop code editor,app_close,en,latin,generated,false
+shut the watsapp,app_close,en,latin,generated,false
+can you shut down calculater,app_close,en,latin,generated,false
+ज़रा कैलकुलेटर ऑफ करो,app_close,hi,devanagari,generated,false
+ज़रा एज क्लोज करो,app_close,hi,devanagari,generated,false
+व्हाट्सएप बंद करो,app_close,hi,devanagari,generated,false
+कैलकुलेटर बंद करना,app_close,hi,devanagari,generated,false
+ब्रेव क्लोज करो,app_close,hi,devanagari,generated,false
+वीएस कोड ऑफ करो,app_close,hi,devanagari,generated,false
+ज़रा कैलकुलेटर बंद कर दो,app_close,hi,devanagari,generated,false
+સ્પોટીફાય ને ઓફ કરો,app_close,gu,gujarati,generated,false
+ક્રોમ ને બંધ કરો,app_close,gu,gujarati,generated,false
+નોટ પેડ બંધ કરી નાખો,app_close,gu,gujarati,generated,false
+બ્રેવ ને ઓફ કરો,app_close,gu,gujarati,generated,false
+પેન્ટ બંધ કરી દો,app_close,gu,gujarati,generated,false
+જરા સ્પોટીફાય ઓફ કરો,app_close,gu,gujarati,generated,false
+નોટ પેડ ઓફ કરો,app_close,gu,gujarati,generated,false
+calculaor bandh karo,app_close,hinglish,latin,generated,false
+notepat off kar do,app_close,hinglish,latin,generated,false
+ms paint ko close kar do,app_close,hinglish,latin,generated,false
+ms paint band kar de,app_close,hinglish,latin,generated,false
+zara calc close karo,app_close,hinglish,latin,generated,false
+vscode app band karo,app_close,hinglish,latin,generated,false
+vs code ko band kar do,app_close,hinglish,latin,generated,false
+jara ms paint close kari do,app_close,gujlish,latin,generated,false
+windows explorer app close karo,app_close,gujlish,latin,generated,false
+notepad ne band karo,app_close,gujlish,latin,generated,false
+whats app app off karo,app_close,gujlish,latin,generated,false
+whats app app off kari do,app_close,gujlish,latin,generated,false
+krome ne band karo,app_close,gujlish,latin,generated,false
+noted pad app off kari do,app_close,gujlish,latin,generated,false
+make todo.docx,file_create,en,latin,generated,false
+generate the file invoice.docx,file_create,en,latin,generated,false
+generate summary.txt,file_create,en,latin,generated,false
+create the file plan.docx,file_create,en,latin,generated,false
+create invoice.docx,file_create,en,latin,generated,false
+generate a file named list.txt,file_create,en,latin,generated,false
+please generate resume.pdf,file_create,en,latin,generated,false
+list.txt फाइल बना दो,file_create,hi,devanagari,generated,false
+data.csv नाम की फाइल बना दो,file_create,hi,devanagari,generated,false
+budget.xlsx बना दीजिए,file_create,hi,devanagari,generated,false
+list.txt फाइल बनाना,file_create,hi,devanagari,generated,false
+marks.xlsx बना दीजिए,file_create,hi,devanagari,generated,false
+diary.txt फाइल बना दीजिए,file_create,hi,devanagari,generated,false
+resume.pdf बनाना,file_create,hi,devanagari,generated,false
+invoice.docx ફાઇલ તૈયાર કરો,file_create,gu,gujarati,generated,false
+notes.txt ક્રિએટ કરો,file_create,gu,gujarati,generated,false
+budget.xlsx ફાઇલ બનાવી દો,file_create,gu,gujarati,generated,false
+plan.docx નામની ફાઇલ બનાવવું,file_create,gu,gujarati,generated,false
+summary.txt બનાવવું,file_create,gu,gujarati,generated,false
+summary.txt બનાવો,file_create,gu,gujarati,generated,false
+report.txt નામની ફાઇલ બનાવી દો,file_create,gu,gujarati,generated,false
+invoice.docx naam ki file bana de,file_create,hinglish,latin,generated,false
+invoice.docx banao,file_create,hinglish,latin,generated,false
+list.txt file create karo,file_create,hinglish,latin,generated,false
+plan.docx bana do,file_create,hinglish,latin,generated,false
+resume.pdf file bana do,file_create,hinglish,latin,generated,false
+notes.txt bana do,file_create,hinglish,latin,generated,false
+invoice.docx file create kar do,file_create,hinglish,latin,generated,false
+summary.txt naam ni file banavi aapo,file_create,gujlish,latin,generated,false
+todo.docx banavi aapo,file_create,gujlish,latin,generated,false
+resume.pdf naam ni file banavi aapo,file_create,gujlish,latin,generated,false
+todo.docx file create karo,file_create,gujlish,latin,generated,false
+diary.txt file banavi do,file_create,gujlish,latin,generated,false
+notes.txt naam ni file banavi do,file_create,gujlish,latin,generated,false
+todo.docx banavi do,file_create,gujlish,latin,generated,false
+get rid of the file summary.txt,file_delete,en,latin,generated,false
+wipe a file named budget.xlsx,file_delete,en,latin,generated,false
+discard the file plan.docx,file_delete,en,latin,generated,false
+remove a file named budget.xlsx,file_delete,en,latin,generated,false
+get rid of the file todo.docx,file_delete,en,latin,generated,false
+discard a file named budget.xlsx,file_delete,en,latin,generated,false
+budget.xlsx हटाओ,file_delete,hi,devanagari,generated,false
+plan.docx नाम की फाइल मिटाओ,file_delete,hi,devanagari,generated,false
+invoice.docx मिटा दो,file_delete,hi,devanagari,generated,false
+report.txt नाम की फाइल मिटा दो,file_delete,hi,devanagari,generated,false
+marks.xlsx हटाना,file_delete,hi,devanagari,generated,false
+invoice.docx मिटाओ,file_delete,hi,devanagari,generated,false
+diary.txt फाइल मिटाओ,file_delete,hi,devanagari,generated,false
+summary.txt નામની ફાઇલ કાઢી નાખવું,file_delete,gu,gujarati,generated,false
+budget.xlsx ડિલીટ કરો,file_delete,gu,gujarati,generated,false
+resume.pdf હટાવી દો,file_delete,gu,gujarati,generated,false
+list.txt નામની ફાઇલ કાઢી નાખવું,file_delete,gu,gujarati,generated,false
+notes.txt ડિલીટ કરો,file_delete,gu,gujarati,generated,false
+report.txt ભૂંસી નાખો,file_delete,gu,gujarati,generated,false
+marks.xlsx નામની ફાઇલ કાઢી નાખવું,file_delete,gu,gujarati,generated,false
+invoice.docx file hata do,file_delete,hinglish,latin,generated,false
+todo.docx naam ki file delete karo,file_delete,hinglish,latin,generated,false
+invoice.docx file mita do,file_delete,hinglish,latin,generated,false
+diary.txt file hata do,file_delete,hinglish,latin,generated,false
+marks.xlsx naam ki file hata do,file_delete,hinglish,latin,generated,false
+todo.docx file mita do,file_delete,hinglish,latin,generated,false
+notes.txt mita do,file_delete,hinglish,latin,generated,false
+report.txt file hatavi do,file_delete,gujlish,latin,generated,false
+summary.txt naam ni file delete kari do,file_delete,gujlish,latin,generated,false
+data.csv delete karo,file_delete,gujlish,latin,generated,false
+summary.txt bhunsi nakho,file_delete,gujlish,latin,generated,false
+data.csv naam ni file hatavi do,file_delete,gujlish,latin,generated,false
+resume.pdf naam ni file kadhi nakhvu,file_delete,gujlish,latin,generated,false
+marks.xlsx file delete karo,file_delete,gujlish,latin,generated,false

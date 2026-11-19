@@ -930,6 +930,83 @@ def augment_features(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_
     return added, tadded
 
 
+
+# ---------------------------------------------------------------------------
+# Opposite-action minimal pairs from the shared lexicon (nlu/lexicon.py): every app spelling (including
+# speech-recognition slips and native-script names) with every open and close verb form, and files with every
+# create and delete form, in all five language styles. The same target appears with both verbs, so the model must
+# use the verb, not the object, to tell opposite actions apart. Held-out evaluation sentences are never added.
+# ---------------------------------------------------------------------------
+_POLARITY_INTENTS = {("app", "open"): "app_open", ("app", "close"): "app_close",
+                     ("file", "create"): "file_create", ("file", "delete"): "file_delete"}
+_POLARITY_FRAMES = {
+    "app": {"en": ["{v} {t}", "{v} the {t}", "{v} {t} please", "please {v} {t}", "can you {v} {t}", "{v} the {t} app"],
+            "hinglish": ["{t} {v}", "{t} ko {v}", "zara {t} {v}", "{t} app {v}"],
+            "gujlish": ["{t} {v}", "{t} ne {v}", "jara {t} {v}", "{t} app {v}"],
+            "hi": ["{t} {v}", "{t} को {v}", "ज़रा {t} {v}"], "gu": ["{t} {v}", "{t} ને {v}", "જરા {t} {v}"]},
+    "file": {"en": ["{v} {t}", "{v} the file {t}", "{v} a file named {t}", "please {v} {t}"],
+             "hinglish": ["{t} {v}", "{t} file {v}", "{t} naam ki file {v}"],
+             "gujlish": ["{t} {v}", "{t} file {v}", "{t} naam ni file {v}"],
+             "hi": ["{t} {v}", "{t} फाइल {v}", "{t} नाम की फाइल {v}"], "gu": ["{t} {v}", "{t} ફાઇલ {v}", "{t} નામની ફાઇલ {v}"]},
+}
+# Verb forms too generic to teach the classifier on their own (kept for the parser).
+_POLARITY_SKIP = {"run", "end", "start a new", "set up", "khol", "band", "bandh", "chalu", "delete", "बंद", "चालू", "खोल",
+                  "બંધ", "ચાલુ", "ખોલ", "bana", "turn on", "turn off"}
+
+
+def _app_spellings(lang: str) -> list[str]:
+    from adhyaksh.nlu import lexicon
+    want = {"hi": "devanagari", "gu": "gujarati"}.get(lang, "latin")
+    return sorted({s for spellings in lexicon.APP_NAMES.values() for s in spellings if script_of(s) == want})
+
+
+def polarity_rows(seed: int = 23, per_cell: int = 7) -> list[tuple[str, str, str]]:
+    """(text, intent, language) minimal-pair rows, sampled evenly per (intent, language)."""
+    from adhyaksh.nlu import lexicon
+    rng = random.Random(seed)
+    out = []
+    for (kind, action), intent in _POLARITY_INTENTS.items():
+        for lang in lexicon.LANGS:
+            verbs = [v for v in lexicon.ACTIONS[action][lang] if v not in _POLARITY_SKIP]
+            targets = _app_spellings(lang) if kind == "app" else _FILES
+            cands = sorted({f.format(v=v, t=t) for f in _POLARITY_FRAMES[kind][lang] for v in verbs for t in targets})
+            rng.shuffle(cands)
+            out += [(text, intent, lang) for text in cands[:per_cell]]
+    return out
+
+
+def held_out_texts() -> set[str]:
+    """Every evaluation sentence (regression, real and NLU suites), lower-cased: never used for training."""
+    import csv
+    texts = set()
+    for path, column in ((config.ROOT / "tests" / "eval" / "cases.csv", "utterance"),
+                         (config.ROOT / "data" / "test_real.csv", "utterance"),
+                         (config.ROOT / "tests" / "eval" / "nlu_cases.csv", "text")):
+        if path.exists():
+            with path.open(encoding="utf-8", newline="") as f:
+                texts |= {" ".join(r[column].lower().split()) for r in csv.DictReader(f)}
+    return texts
+
+
+def augment_polarity(path: Path | str = TRAIN_CSV, test_path: Path | str = TEST_CSV, seed: int = 23,
+                     per_cell: int = 7) -> int:
+    """Append polarity_rows() to the training CSV (keeps existing rows; skips duplicates, the code-mixed test
+    file and every held-out evaluation sentence). The test file is not changed, so test scores stay comparable."""
+    df = load(path)
+    seen = {" ".join(t.split()) for t in df["text"].str.lower()} | {" ".join(t.split()) for t in load(test_path)["text"].str.lower()}
+    seen |= held_out_texts()
+    rows, added = df.to_dict("records"), 0
+    for text, intent, lang in polarity_rows(seed, per_cell):
+        key = " ".join(text.lower().split())
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append({"text": text, "intent": intent, "language": lang, "script": script_of(text),
+                     "source": "generated", "reviewed": "false"})
+        added += 1
+    write_csv(rows, path)
+    return added
+
 def main(argv: list[str]) -> int:
     cmd = argv[0] if argv else ""
     if cmd == "generate":
@@ -952,6 +1029,9 @@ def main(argv: list[str]) -> int:
         a, b = augment_features(forbidden=forbidden)
         print(f"added {a} feature training rows, {b} feature test rows")
         return 0
+    if cmd == "augment-polarity":
+        print(f"added {augment_polarity()} opposite-action training rows")
+        return 0
     if cmd == "validate":
         errs = validate()
         print("\n".join(errs) if errs else "dataset valid")
@@ -959,7 +1039,7 @@ def main(argv: list[str]) -> int:
     if cmd == "report":
         print(balance_report())
         return 0
-    print("Usage: python -m adhyaksh.nlu.dataset generate|augment|augment-knowledge|validate|report")
+    print("Usage: python -m adhyaksh.nlu.dataset generate|augment|augment-knowledge|augment-polarity|validate|report")
     return 2
 
 

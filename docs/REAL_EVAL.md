@@ -1,6 +1,6 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-19 16:05 (1a tool calling). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-19 16:42 (1c retrain (polarity pairs, 7 per cell)). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
 **Overall: 100% (237/238)**
 
@@ -49,6 +49,8 @@ Latest run: 2026-11-19 16:05 (1a tool calling). 238 hand-written commands, tools
 | 2026-11-17 21:20 |  | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-19 15:44 | Phase 0 baseline | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-19 16:05 | 1a tool calling | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-19 16:29 | 1c retrain (polarity pairs) | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-19 16:42 | 1c retrain (polarity pairs, 7 per cell) | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 
 ## Failures (1)
 

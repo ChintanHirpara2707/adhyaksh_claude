@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CASES = ROOT / "tests" / "eval" / "nlu_cases.csv"
 TOOLS = {"open_app", "close_app", "create", "read", "update", "delete", "search", "create_folder", "save_fact",
          "recall", "reminder_add", "reminder_cancel", "clipboard_read", "clipboard_write", "web_open", "process_kill",
-         "screenshot", "forget_fact", "volume_control", "brightness_control", "none"}
+         "screenshot", "forget_fact", "volume_control", "brightness_control", "radio_control", "power_action", "none"}
 
 
 def _rows():

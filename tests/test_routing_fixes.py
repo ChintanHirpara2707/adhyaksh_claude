@@ -171,7 +171,7 @@ def test_unsupported_request_cannot_do_yet():
     ws = _boot()
     cid = context.new_conversation()
     registry.set_active(_STATE["model_id"])
-    r = _say(cid, "shut down my laptop")
+    r = _say(cid, "uninstall vlc")  # shutting down became a real (confirmed) action in Phase 2b
     assert "I cannot do that yet" in r["reply"], r["reply"]
     assert "cannot" in r["reply"].lower() or "not" in r["reply"].lower(), r["reply"]
     r = _say(cid, "send an email")

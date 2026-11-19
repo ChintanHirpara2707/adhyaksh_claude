@@ -1,6 +1,6 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-19 19:46 (2b-1 volume and brightness). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-19 20:15 (2b-2 radios and power). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
 **Overall: 100% (237/238)**
 
@@ -60,6 +60,8 @@ Latest run: 2026-11-19 19:46 (2b-1 volume and brightness). 238 hand-written comm
 | 2026-11-19 18:57 | 2c structured memory | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-19 19:17 | 2a verification and recovery | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-19 19:46 | 2b-1 volume and brightness | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-19 20:08 | 2b-2 radios and power | 234/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 10/13 |
+| 2026-11-19 20:15 | 2b-2 radios and power | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 
 ## Failures (1)
 

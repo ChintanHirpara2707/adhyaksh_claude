@@ -23,7 +23,7 @@ from adhyaksh.memory import store
 from adhyaksh.result import E_ACTION_FAILED, E_BAD_ARGUMENTS, E_BLOCKED, E_NEEDS_CONFIRM, Result
 from adhyaksh.rag import answerer
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, audio, display, files, office, system
+from adhyaksh.tools import apps, audio, display, files, network, office, power, system
 
 # Actions that touch the filesystem (path validation applies).
 PATH_ACTIONS = {
@@ -551,6 +551,50 @@ register(
     {"type": "object", "properties": {}},
     0,
     _levels_read,
+)
+
+def _power_status(arguments: dict, ctx: dict) -> Result:
+    radios = network.status()
+    return Result.success({"battery": power.battery().data, "power_plan": power.power_plan(),
+                           "radios": radios.data if radios.ok else {"error": radios.message}})
+
+
+register(
+    "radio_control",
+    "Switch Wi-Fi or Bluetooth on or off. Turning a radio off needs the user's confirmation.",
+    {
+        "type": "object",
+        "properties": {
+            "radio": {"type": "string", "enum": list(network.RADIOS), "description": "wifi or bluetooth."},
+            "on": {"type": "boolean", "description": "true to switch on, false to switch off."},
+        },
+        "required": ["radio", "on"],
+    },
+    2,
+    lambda arguments, ctx: network.set_radio(arguments["radio"], arguments["on"], ctx=ctx),
+)
+
+register(
+    "power_action",
+    "Lock the PC, put it to sleep, restart or shut it down (restart and shut down wait 60 seconds), or cancel a "
+    "scheduled restart or shutdown. Sleep, restart and shut down need the user's confirmation.",
+    {
+        "type": "object",
+        "properties": {"op": {"type": "string", "enum": list(power.OPS),
+                              "description": "lock, sleep, restart, shutdown or cancel."}},
+        "required": ["op"],
+    },
+    2,
+    lambda arguments, ctx: power.act(arguments["op"], ctx=ctx),
+)
+
+register(
+    "power_status",
+    "Read the battery (percent, charging, minutes left), the power plan, and whether Wi-Fi and Bluetooth are on "
+    "(with the connected Wi-Fi network and its signal).",
+    {"type": "object", "properties": {}},
+    0,
+    _power_status,
 )
 
 register(

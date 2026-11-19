@@ -31,6 +31,8 @@ LEVELS: dict[str, int] = {
     "process_list": 0, "reminder_list": 0, "clipboard_read": 0, "ocr_read": 0,
     "reminder_add": 1, "reminder_cancel": 1, "clipboard_write": 1,
     "volume_control": 1, "brightness_control": 1,
+    # Turning a radio off can cut the network; sleep, restart and shut down can lose unsaved work: both confirm.
+    "radio_on": 1, "radio_off": 2, "screen_lock": 1, "power_off": 2, "power_cancel": 1,
     "shell_exec": 3,
 }
 PATH_ACTIONS = {

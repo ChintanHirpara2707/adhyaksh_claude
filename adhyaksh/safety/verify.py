@@ -141,6 +141,18 @@ def _brightness_reads_back(target: str, data: dict):
     return (True, "") if ok else (False, f"the brightness is {now.data['level']} percent, not {data['level']}")
 
 
+@verifier("radio_on", "radio_off")
+def _radio_reads_back(target: str, data: dict):
+    if "radio" not in data:
+        return None, ""
+    from adhyaksh.tools import network
+    now = network.radios()
+    if not now.ok or data["radio"] not in now.data:
+        return None, ""
+    ok = now.data[data["radio"]] == bool(data.get("on"))
+    return (True, "") if ok else (False, f"{data['radio']} is still {'on' if now.data[data['radio']] else 'off'}")
+
+
 def check(action: str, target: str, res: Result) -> Result:
     """The result, with data['verified'] set, or an E_UNVERIFIED failure when the effect is not there."""
     fn = _CHECKS.get(action)

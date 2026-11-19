@@ -62,6 +62,11 @@ CALL_ARGS: list[str] = []  # arguments of every mocked tool call in the current 
 CALL_DETAIL: list[tuple[str, list]] = []  # (tool, positional str/int arguments) per call, for exact slot checks
 
 
+def _needs_confirm(action: str, target: str):
+    from adhyaksh.result import E_NEEDS_CONFIRM, Result
+    return Result.failure(E_NEEDS_CONFIRM, "Needs confirmation.", {"token": "eval-token", "action": action, "target": target})
+
+
 def mocked_tools(calls: list[str]):
     """Patch every tool the engine can call. Each mock records its name and returns a plausible success."""
     from adhyaksh.chat import engine
@@ -111,6 +116,13 @@ def mocked_tools(calls: list[str]):
             "device": device, "op": op, "level": level if level is not None else 50})),
         mock.patch.object(engine.display, "control", rec("brightness_control", lambda op, level=None, **k: {
             "op": op, "level": level if level is not None else 50})),
+        # Level 2 actions behave as the real gateway does: without a confirmation nothing runs and nothing is recorded.
+        mock.patch.object(engine.network, "set_radio", lambda radio, on, **k: (
+            rec("radio_control", {"radio": radio, "on": True})(radio, on) if on else _needs_confirm("radio_off", f"{radio} off"))),
+        mock.patch.object(engine.power, "act", lambda op, **k: (
+            rec("power_action", {"op": op, "delay_seconds": 0})(op) if op in ("lock", "cancel")
+            else _needs_confirm("power_off", op))),
+        mock.patch.object(engine.power, "battery", lambda: Result.success({"present": False})),
         mock.patch.object(engine.sources, "list_sources", rec("source_list", {"notebook": "General", "sources": [
             {"id": 1, "file": "mock.pdf", "pages": 2, "passages": 5, "search": "tfidf"}]})),
         mock.patch.object(engine.sources, "summarize", rec("source_summary", {"notebook": "General", "summaries": [

@@ -32,6 +32,15 @@ for _a in VOLUME_OPS:
 for _a in BRIGHTNESS_OPS:
     INTENTS[(_a, "brightness")] = "brightness_control"
 _LEVEL_TARGETS = ("volume", "mic", "brightness")
+# Radios and power: "wifi band karo", "turn on bluetooth", "lock the screen", "shut down the laptop".
+RADIO_OPS = {"open": True, "close": False}
+POWER_OPS = {("lock", "pc"): "lock", ("lock", "screen"): "lock", ("close", "pc"): "shutdown", ("restart", "pc"): "restart",
+             ("sleep", "pc"): "sleep", ("cancel", "shutdown"): "cancel"}
+for _a in RADIO_OPS:
+    INTENTS[(_a, "wifi")] = INTENTS[(_a, "bluetooth")] = "radio_control"
+for _pair in POWER_OPS:
+    INTENTS[_pair] = "power_action"
+_SYSTEM_TARGETS = _LEVEL_TARGETS + ("wifi", "bluetooth", "pc", "screen", "shutdown")
 # Words a pure "action + target" command may contain besides the verb and the target. Anything else (content to
 # write, a destination folder, a second instruction) means the request carries more than a frame models, and the
 # richer rules handle it instead.
@@ -42,7 +51,9 @@ _FRAME_WORDS = {"named", "called", "titled", "naam", "ki", "ka", "ke", "ni", "nu
                 "thodu", "little", "bit", "more", "less", "zyada", "vadhare", "pe", "par", "per", "screen", "display",
                 "laptop", "pc", "computer", "system", "लैपटॉप", "को", "ને", "थोड़ा", "थोड़ी", "થોડું", "થોડો",
                 # "again" words do not change a command: "awaaz wapas chalu karo", "ફરી ચાલુ કરો"
-                "again", "back", "wapas", "vapas", "phir", "fir", "fari", "pachu", "pacho", "फिर", "वापस", "ફરી", "પાછું"}
+                "again", "back", "wapas", "vapas", "phir", "fir", "fari", "pachu", "pacho", "फिर", "वापस", "ફરી", "પાછું",
+                # power: "shut down the pc right now", "laptop ko sleep mode me dalo"
+                "mode", "down", "off", "on", "immediately", "turant", "abhi", "hamna", "तुरंत", "અત્યારે", "તરત"}
 # Verbs whose meaning depends on the target: only trusted with an app ("run python" is not an app launch).
 _APP_ONLY = {"run", "start", "stop", "end", "kill", "terminate", "load up", "turn on", "turn off", "shut", "chalu",
              "band", "bandh", "चालू", "बंद", "ચાલુ", "બંધ", "on karo", "off karo", "ऑन करो", "ऑफ करो", "ઓન કરો", "ઓફ કરો"}
@@ -96,6 +107,10 @@ class Frame:
                     "level": self.level}
         if self.target_type == "brightness":
             return {"op": BRIGHTNESS_OPS.get(self.action or ""), "level": self.level}
+        if self.target_type in ("wifi", "bluetooth"):
+            return {"radio": self.target_type, "on": RADIO_OPS.get(self.action or "")}
+        if (self.action, self.target_type) in POWER_OPS:
+            return {"op": POWER_OPS[(self.action, self.target_type)]}
         key = {"app": "app", "file": "file"}.get(self.target_type or "", "target")
         return {key: self.target} if self.target else {}
 
@@ -197,10 +212,26 @@ def parse(text: str) -> Frame:
     verbs = _find_actions(t, span)
     if ttype is None and verbs and {a for a, *_ in verbs} <= {"mute", "unmute"}:
         ttype = target = "volume"  # a bare "mute" / "unmute" can only mean the speakers
-    if ttype not in ("app",) + _LEVEL_TARGETS:
+    if ttype == "shutdown" and not [v for v in verbs if (v[0], "shutdown") in INTENTS]:
+        # The word is a verb here, not the scheduled shutdown: "shut down chrome" closes an app; "restart karo" and
+        # "shutdown now" act on the PC.
+        app = entities.find_app(t) or entities.find_app(t, fuzzy=True)
+        ttype, target = ("app", app) if app else ("pc", "pc")
+        span = None
+        if app:
+            low = t.casefold()
+            for spelling, key in entities.app_spellings():
+                if key == app and low.find(spelling) >= 0:
+                    i = low.find(spelling)
+                    span = (i, i + len(spelling))
+                    break
+        verbs = _find_actions(t, span)
+    if ttype is None and verbs and {a for a, *_ in verbs} <= {"lock", "restart"}:
+        ttype = target = "pc"  # "lock karo", "restart please": nothing else can be locked or restarted here
+    if ttype not in ("app",) + _SYSTEM_TARGETS:
         verbs = [v for v in verbs if v[1] not in _APP_ONLY]
-    if ttype in _LEVEL_TARGETS:
-        # Only actions that make sense for a level count ("set volume" yes; a "create" or "search" verb is noise).
+    if ttype in _SYSTEM_TARGETS:
+        # Only actions that make sense for this target count ("set volume" yes; a "create" verb is noise).
         verbs = [v for v in verbs if (v[0], ttype) in INTENTS]
     frame = Frame(target_type=ttype, target=target, actions_seen=[a for a, *_ in verbs])
     if verbs:

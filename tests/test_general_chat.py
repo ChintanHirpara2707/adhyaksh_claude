@@ -38,4 +38,6 @@ def test_general_questions_use_model_wiki_or_link(monkeypatch):
     r = engine.handle_message("explain how a transistor works", cid).data
     assert r["reply"] == "Because of scattering." and "ADHYAKSH" in seen["prompt"]
     # Tool-like requests the app cannot do are not handed to the model.
-    assert "I cannot do that yet" in engine.handle_message("shut down my laptop", cid).data["reply"]
+    assert "I cannot do that yet" in engine.handle_message("uninstall vlc", cid).data["reply"]
+    # Shutting down is a real (level 2) action since Phase 2b: it asks for confirmation and nothing runs.
+    assert engine.handle_message("shut down my laptop", cid).data["confirmation"]["action"] == "power_off"

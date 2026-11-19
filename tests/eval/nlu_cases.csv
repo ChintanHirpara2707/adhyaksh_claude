@@ -126,3 +126,10 @@ S34,slots,,en,increase volume by 15,volume_control,up|speaker|15
 N21,negation,,en,don't mute the sound,none,
 N22,negation,,hinglish,volume mat badhao,none,
 N23,negation,,gu,બ્રાઇટનેસ ઓછી ના કરો,none,
+S35,slots,,en,turn on the bluetooth please,radio_control,bluetooth
+S36,slots,,gu,વાઇફાઇ ફરી ચાલુ કરો,radio_control,wifi
+S37,slots,,hinglish,laptop lock kar do,power_action,lock
+S38,slots,,hi,शटडाउन कैंसिल करो,power_action,cancel
+N24,negation,,en,don't shut down the computer,none,
+N25,negation,,hinglish,wifi mat band karo,none,
+N26,negation,,gujlish,laptop restart na karo,none,

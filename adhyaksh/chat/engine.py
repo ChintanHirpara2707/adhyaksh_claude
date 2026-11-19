@@ -16,7 +16,7 @@ from adhyaksh.nlu import entities, factorized, frames, registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, audio, clipboard, display, features, files, office, processes, reminders, system
+from adhyaksh.tools import apps, audio, clipboard, display, features, files, network, office, power, processes, reminders, system
 from adhyaksh.voice import speech
 
 MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
@@ -25,7 +25,7 @@ OS_INTENTS = {
     "folder_create", "office_create", "app_open", "app_close",
     "special_folder_open", "web_open", "screenshot", "system_status", "pc_performance",
     "process_list", "process_kill", "clipboard_read", "clipboard_write",
-    "volume_control", "brightness_control",
+    "volume_control", "brightness_control", "radio_control", "power_action",
 }
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 YES = {"yes", "y", "confirm", "yes please", "haan", "ha", "हाँ", "हां", "હા", "ok confirm"}
@@ -100,6 +100,8 @@ _FOLDER_WORD = re.compile(r"\b(folder|directory|dir)\b(?!\.\w)", re.IGNORECASE)
 # Replies that drop a pending clarifying question ("no" may be a real answer, so it is not one of them).
 _DROP_REQUEST = {"cancel", "stop", "never mind", "nevermind", "forget it", "leave it", "rehne do", "rahne do", "jane do",
                  "javado", "jaava do", "kuch nahi", "रहने दो", "छोड़ो", "રહેવા દો", "જવા દો"}
+
+_RADIO_NAME = {"wifi": "Wi-Fi", "bluetooth": "Bluetooth"}
 
 _NEG_VERB = {"open": "open", "close": "close", "create": "create", "delete": "delete", "search": "search for"}
 
@@ -257,6 +259,7 @@ def _confirm_reply(res: Result, lang: str, ctx: context.Context, retry, intent: 
     ctx.pending_confirm = {"token": d["token"], "action": d["action"], "target": d["target"], "retry": retry}
     text = (_t("confirm_delete", lang, file=shown) if d["action"] == "file_delete"
             else _t("confirm_forget", lang, fact=shown or d["target"]) if d["action"] == "memory_delete"
+            else _t("confirm_system", lang, what=d["target"]) if d["action"] in ("radio_off", "power_off")
             else f"Confirm {d['action'].replace('_', ' ')} on {shown}? Confirm or cancel.")
     return _Reply(text, intent, action=d["action"], confirmation={"token": d["token"], "action": d["action"], "target": d["target"]})
 
@@ -576,6 +579,24 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         if not res.ok:
             return _Reply(_error_reply(res, lang), intent, action="brightness_control")
         return _Reply(_t("brightness_set", lang, level=res.data["level"]), intent, action="brightness_control")
+    if intent == "radio_control":
+        radio, on = slots.get("radio"), slots.get("on")
+        res = network.set_radio(radio, on, ctx=c)
+        if res.error_code == E_NEEDS_CONFIRM:
+            return _confirm_reply(res, lang, ctx, lambda tok: network.set_radio(radio, on, ctx=_ctx_for(text, intent, tok)),
+                                  intent, res.data["target"])
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="radio_control")
+        return _Reply(_t("radio_set", lang, radio=_RADIO_NAME[radio], state="on" if on else "off"), intent, action="radio_control")
+    if intent == "power_action":
+        op = slots.get("op")
+        res = power.act(op, ctx=c)
+        if res.error_code == E_NEEDS_CONFIRM:
+            return _confirm_reply(res, lang, ctx, lambda tok: power.act(op, ctx=_ctx_for(text, intent, tok)), intent,
+                                  res.data["target"])
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="power_action")
+        return _Reply(_t(f"power_{op}", lang, seconds=res.data.get("delay_seconds", 0)), intent, action="power_action")
     if intent == "memory_forget":
         res = store.forget(text, ctx=c)
         if res.error_code == E_NEEDS_CONFIRM:
@@ -596,9 +617,14 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         return _Reply(_t("memory_recall", lang, answer=res.data["answer"]) if res.ok else _t("memory_none", lang), intent)
     if intent == "system_status":
         res = system.status(ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="system_status")
         d = res.data
-        return _Reply(_t("status", lang, cpu=d["cpu"], ram=d["ram"], disk=d["disk"]) if res.ok else _error_reply(res, lang),
-                      intent, action="system_status")
+        text = _t("status", lang, cpu=d["cpu"], ram=d["ram"], disk=d["disk"])
+        b = power.battery().data
+        if b.get("present"):
+            text += " " + _t("battery_charging" if b["plugged"] else "battery_on", lang, percent=b["percent"])
+        return _Reply(text, intent, action="system_status")
     if intent == "folder_create":
         folder = slots.get("folder") or router.find_folder_name(text)
         if not folder:
@@ -757,6 +783,12 @@ def _finish_confirmation(ctx: context.Context, accept: bool, lang: str) -> _Repl
     if p["action"] == "file_delete":
         ctx.last_file = None
         return _Reply(_t("file_deleted", lang, path=d.get("path", p["target"])), "confirmation", action=p["action"])
+    if p["action"] == "radio_off":
+        return _Reply(_t("radio_set", lang, radio=_RADIO_NAME.get(d.get("radio"), "The radio"), state="off"), "confirmation",
+                      action=p["action"])
+    if p["action"] == "power_off":
+        return _Reply(_t(f"power_{d.get('op', 'shutdown')}", lang, seconds=d.get("delay_seconds", 0)), "confirmation",
+                      action=p["action"])
     if p["action"] == "memory_delete":
         return _Reply(_t("memory_forgotten", lang, fact=d.get("fact", p["target"])), "confirmation", action=p["action"])
     if p["action"] == "process_kill":

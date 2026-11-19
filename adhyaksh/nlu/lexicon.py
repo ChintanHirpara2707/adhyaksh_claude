@@ -23,13 +23,14 @@ ACTIONS: dict[str, dict[str, list[str]]] = {
                "સ્ટાર્ટ કરો", "ઓપન કરો", "ઓન કરો"],
     },
     "close": {
-        "en": ["close", "quit", "exit", "shut", "shut down", "stop", "kill", "end", "terminate", "turn off"],
+        "en": ["close", "quit", "exit", "shut", "shut down", "shutdown", "stop", "kill", "end", "terminate", "turn off",
+               "switch off", "power off"],
         "hinglish": ["band karo", "band kar do", "band kar de", "band karna", "band", "bandh karo", "off karo",
                      "off kar do", "close karo", "close kar do", "exit karo"],
         "gujlish": ["bandh karo", "bandh kari do", "bandh kari nakho", "bandh karvu", "bandh", "band karo",
                     "off karo", "off kari do", "close karo", "close kari do"],
-        "hi": ["बंद करो", "बंद कर दो", "बंद कर दीजिए", "बंद करना", "बंद", "ऑफ करो", "क्लोज करो"],
-        "gu": ["બંધ કરો", "બંધ કરી દો", "બંધ કરી નાખો", "બંધ કરવું", "બંધ", "ઓફ કરો", "ક્લોઝ કરો"],
+        "hi": ["बंद करो", "बंद कर दो", "बंद कर दीजिए", "बंद करना", "बंद", "ऑफ करो", "क्लोज करो", "शटडाउन करो"],
+        "gu": ["બંધ કરો", "બંધ કરી દો", "બંધ કરી નાખો", "બંધ કરવું", "બંધ", "ઓફ કરો", "ક્લોઝ કરો", "શટડાઉન કરો"],
     },
     "create": {
         "en": ["create", "make", "generate", "set up", "start a new"],
@@ -81,6 +82,26 @@ ACTIONS: dict[str, dict[str, list[str]]] = {
         "hi": ["म्यूट करो", "म्यूट कर दो", "आवाज़ बंद करो", "आवाज बंद करो"],
         "gu": ["મ્યૂટ કરો", "મ્યુટ કરો", "અવાજ બંધ કરો"],
     },
+    # Power. "shut down" and "turn off" are close verbs; with the PC as target they mean shut down.
+    "lock": {
+        "en": ["lock"], "hinglish": ["lock karo", "lock kar do"], "gujlish": ["lock karo", "lock kari do"],
+        "hi": ["लॉक करो", "लॉक कर दो"], "gu": ["લૉક કરો", "લોક કરો", "લોક કરી દો"],
+    },
+    "restart": {
+        "en": ["restart", "reboot"], "hinglish": ["restart karo", "restart kar do", "reboot karo"],
+        "gujlish": ["restart karo", "restart kari do", "reboot karo"],
+        "hi": ["रीस्टार्ट करो", "रीस्टार्ट कर दो", "दोबारा चालू करो"], "gu": ["રીસ્ટાર્ટ કરો", "રીસ્ટાર્ટ કરી દો"],
+    },
+    "sleep": {
+        "en": ["put to sleep", "sleep"], "hinglish": ["sleep mode me dalo", "sleep karo", "sula do"],
+        "gujlish": ["sleep mode ma muko", "sleep karo"], "hi": ["स्लीप मोड में डालो", "सुला दो"],
+        "gu": ["સ્લીપ મોડમાં મૂકો", "સ્લીપ કરો"],
+    },
+    "cancel": {
+        "en": ["cancel", "abort", "call off"], "hinglish": ["cancel karo", "cancel kar do", "rok do", "roko"],
+        "gujlish": ["cancel karo", "cancel kari do", "roki do", "roko"], "hi": ["कैंसिल करो", "रद्द करो", "रोक दो", "रोको"],
+        "gu": ["કેન્સલ કરો", "રદ કરો", "રોકી દો", "રોકો"],
+    },
     "unmute": {
         "en": ["unmute"],
         "hinglish": ["unmute karo", "unmute kar do", "awaaz chalu karo", "awaz chalu karo"],
@@ -116,9 +137,20 @@ TARGET_NOUNS: dict[str, dict[str, list[str]]] = {
             "hi": ["माइक", "माइक्रोफोन"], "gu": ["માઇક", "માઇક્રોફોન"]},
     "brightness": {"en": ["brightness", "screen brightness", "display brightness"], "hinglish": ["brightness", "roshni"],
                    "gujlish": ["brightness", "prakash"], "hi": ["ब्राइटनेस", "रोशनी", "चमक"], "gu": ["બ્રાઇટનેસ", "પ્રકાશ"]},
+    "wifi": {"en": ["wifi", "wi-fi", "wi fi", "wireless"], "hinglish": ["wifi", "wi-fi"], "gujlish": ["wifi", "wi-fi"],
+             "hi": ["वाईफाई", "वाई-फाई", "वायफाय"], "gu": ["વાઇફાઇ", "વાઈફાઈ", "વાઇ-ફાઇ"]},
+    "bluetooth": {"en": ["bluetooth", "blue tooth"], "hinglish": ["bluetooth"], "gujlish": ["bluetooth"],
+                  "hi": ["ब्लूटूथ"], "gu": ["બ્લૂટૂથ", "બ્લુટુથ"]},
+    "pc": {"en": ["pc", "computer", "laptop", "the system", "my system", "machine"], "hinglish": ["pc", "computer", "laptop"],
+           "gujlish": ["pc", "computer", "laptop"], "hi": ["पीसी", "कंप्यूटर", "कम्प्यूटर", "लैपटॉप"],
+           "gu": ["પીસી", "કમ્પ્યુટર", "કૉમ્પ્યુટર", "લેપટોપ", "લૅપટૉપ"]},
+    "screen": {"en": ["screen"], "hinglish": ["screen"], "gujlish": ["screen"], "hi": ["स्क्रीन"], "gu": ["સ્ક્રીન"]},
+    "shutdown": {"en": ["shutdown", "shut down", "restart", "reboot"], "hinglish": ["shutdown", "restart"],
+                 "gujlish": ["shutdown", "restart"], "hi": ["शटडाउन", "रीस्टार्ट"], "gu": ["શટડાઉન", "રીસ્ટાર્ટ"]},
 }
-# Which target nouns are system targets (checked after files, before apps).
-SYSTEM_TARGETS = ("mic", "brightness", "volume")
+# Which target nouns are system targets (checked after files, before apps), most specific first: "screen
+# brightness" is brightness, "lock the screen" is the screen, "cancel the shutdown" is the scheduled shutdown.
+SYSTEM_TARGETS = ("mic", "brightness", "volume", "wifi", "bluetooth", "pc", "screen", "shutdown")
 
 # Application names: canonical allow-list key -> spellings in every script, including speech-recognition slips.
 APP_NAMES: dict[str, list[str]] = {

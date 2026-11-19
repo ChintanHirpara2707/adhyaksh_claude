@@ -41,11 +41,19 @@ def test_names_and_content_come_from_the_right_words(text, intent, key, value):
     assert r is not None and r.intent == intent and r.slots.get(key) == value, (text, r)
 
 
-@pytest.mark.parametrize("text", ["turn off the bluetooth", "uninstall vlc", "कंप्यूटर बंद कर दो", "pc bandh kari do", "format the d drive",
-                                  "pay 200 rupees to the shop", "मम्मी को मैसेज भेजो"])
+@pytest.mark.parametrize("text", ["uninstall vlc", "format the d drive", "update windows now", "pay 200 rupees to the shop",
+                                  "मम्मी को मैसेज भेजो", "turn on airplane mode"])
 def test_unsupported_requests_are_refused(text):
     r = router.understand(text)
     assert r is not None and r.intent == "out_of_scope", (text, r)
+
+
+@pytest.mark.parametrize("text,intent", [("turn off the bluetooth", "radio_control"), ("कंप्यूटर बंद कर दो", "power_action"),
+                                         ("pc bandh kari do", "power_action")])
+def test_radio_and_power_requests_are_supported_since_phase_2b(text, intent):
+    """These were refused before Phase 2b; they now reach real tools (level 2: the user confirms first)."""
+    r = router.understand(text)
+    assert r is not None and r.intent == intent, (text, r)
 
 
 @pytest.mark.parametrize("text,intent", [("shut the notepad", "app_close"), ("google best laptops under 50000", "web_open"),

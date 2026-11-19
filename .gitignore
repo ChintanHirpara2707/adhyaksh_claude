@@ -1,7 +1,7 @@
 venv/
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
 .coverage
 .env
@@ -19,3 +19,9 @@ appmap.log
 *.log
 pytest_*.txt
 *_dbg.txt
+
+# Build output (PyInstaller)
+dist/
+build/
+*.spec
+!packaging/adhyaksh.spec

@@ -19,6 +19,13 @@ Measured 2026-11-19 on `main` at e8395cb, before any Phase 1 change:
 Gate for every phase: no lower number in any row. The in-distribution test split is re-drawn when rows are
 added, so for model changes the comparable figures are the fixed code-mixed file and the evals.
 
+## Status
+
+| Phase | State | Gate result |
+|---|---|---|
+| Phase 1 (1a, 1c, 1b) | done, 2026-11-19, commits d13e57b to e876697 | full suite 761 passed, 2 skipped (offline: tests/conftest.py blocks keys and internet); regression 398/399; real 237/238; NLU polarity 25/25, slots 30/30, negation 20/20; active model code-mixed macro-F1 0.893 |
+| Phase 2 | in progress: 2c, then 2a, then 2b, then 2d | |
+
 ## 1. Audit findings by subsystem
 
 ### 1.1 Request flow today

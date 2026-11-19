@@ -79,7 +79,20 @@ CREATE TABLE reminders(
 CREATE INDEX idx_reminders_due ON reminders(status, due_at);
 """
 
-MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2), (3, SCHEMA_V3)]
+# v4: structured memory. A fact is (subject, attribute, value); the same subject and attribute is one fact, updated
+# in place. source is "user" (said or typed) or "auto" (noticed in conversation, only with the auto_memory setting).
+# Rows from v3 keep their text; memory/store.py fills attribute and value the first time memory is used.
+SCHEMA_V4 = """
+ALTER TABLE memory_facts ADD COLUMN subject TEXT NOT NULL DEFAULT 'user';
+ALTER TABLE memory_facts ADD COLUMN attribute TEXT;
+ALTER TABLE memory_facts ADD COLUMN value TEXT;
+ALTER TABLE memory_facts ADD COLUMN source TEXT NOT NULL DEFAULT 'user';
+ALTER TABLE memory_facts ADD COLUMN confidence REAL NOT NULL DEFAULT 1.0;
+ALTER TABLE memory_facts ADD COLUMN parsed INTEGER NOT NULL DEFAULT 0;
+CREATE INDEX idx_memory_attr ON memory_facts(subject, attribute);
+"""
+
+MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2), (3, SCHEMA_V3), (4, SCHEMA_V4)]
 
 
 def utcnow() -> str:

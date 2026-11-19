@@ -8,6 +8,7 @@ import urllib.parse
 from dataclasses import dataclass, field
 
 from adhyaksh.chat import identity, numwords
+from adhyaksh.memory import facts as mem_facts
 from adhyaksh.nlu import entities, frames
 from adhyaksh.tools import apps
 
@@ -1009,6 +1010,9 @@ def match_memory(text: str) -> Rule | None:
     if not raw:
         return None
     flat = " ".join(raw.split())
+    forget = mem_facts.forget_attribute(flat)
+    if forget:
+        return Rule("memory_forget", {"attribute": forget})
     has_file = _has_file_extension(flat)
     if _MEM_RECALL_ALL.search(flat) and not has_file:
         return Rule("memory_recall", {"all": True})

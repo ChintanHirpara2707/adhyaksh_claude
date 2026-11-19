@@ -30,6 +30,21 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "hi": "यह पहले से सहेजा हुआ है: {fact}।",
         "gu": "આ પહેલેથી સાચવેલું છે: {fact}.",
     },
+    "memory_updated": {
+        "en": "Updated in memory: {fact} (was: {previous}).",
+        "hi": "स्मृति में बदला गया: {fact} (पहले: {previous})।",
+        "gu": "મેમરીમાં બદલ્યું: {fact} (પહેલાં: {previous}).",
+    },
+    "memory_forgotten": {
+        "en": "Forgotten: {fact}.",
+        "hi": "भुला दिया: {fact}।",
+        "gu": "ભૂલી ગયો: {fact}.",
+    },
+    "confirm_forget": {
+        "en": "Forget this: {fact}? Say yes to confirm or no to cancel.",
+        "hi": "क्या इसे भुला दूँ: {fact}? हाँ या नहीं कहें।",
+        "gu": "આ ભૂલી જાઉં: {fact}? હા અથવા ના કહો.",
+    },
     "unknown": {
         "en": "I could not match that request. Please rephrase it.",
         "hi": "मैं इस अनुरोध को समझ नहीं सका। कृपया दोबारा लिखें।",

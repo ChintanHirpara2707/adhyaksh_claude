@@ -26,7 +26,7 @@ MAX_STEPS = 6
 TIMEOUT = 25.0
 MAX_TOOL_TEXT = 4000
 # Tools that answer or inform without touching files, applications or the system: allowed in Chat mode.
-CHAT_MODE_TOOLS = {"memory_save", "memory_recall", "memory_list", "doc_question", "get_time", "voice_control",
+CHAT_MODE_TOOLS = {"memory_save", "memory_recall", "memory_list", "memory_forget", "doc_question", "get_time", "voice_control",
                    "open_page", "set_user_name", "source_list", "source_summary", "notebook_list", "notebook_open",
                    "reminder_add", "reminder_list", "reminder_cancel"}
 _PENDING: dict[str, dict] = {}  # confirmation token -> paused loop state
@@ -59,9 +59,14 @@ def system_prompt(mode: str) -> str:
         "6. Use the file or folder name the user gave, exactly. Do not take a name from other words of the request.",
         "7. For questions about the user's own facts call memory_recall; for questions about attached documents "
         "call doc_question; answer general knowledge yourself.",
+        "8. To remember a fact call memory_save with one short sentence such as 'my locker code is 4417'; saving the same "
+        "kind of fact again replaces the old value. To forget one call memory_forget.",
     ]
+    if config.get_bool("auto_memory"):
+        lines.append("9. Automatic memory is on: when the user states a lasting personal fact in passing (a date, a name, "
+                     "a preference), also call memory_save with it.")
     if mode == "chat":
-        lines.append("8. Chat mode is active: you can answer, remember facts and use documents, but you cannot act on files, "
+        lines.append("10. Chat mode is active: you can answer, remember facts and use documents, but you cannot act on files, "
                      "applications or the system. If the user asks for such an action, tell them to switch to Cowork mode.")
     return "\n".join(lines)
 

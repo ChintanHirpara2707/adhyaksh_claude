@@ -297,6 +297,10 @@ def _memory_recall(arguments: dict, ctx: dict) -> Result:
     return store.recall(arguments["text"])
 
 
+def _memory_forget(arguments: dict, ctx: dict) -> Result:
+    return store.forget(f"forget my {arguments['attribute']}", ctx=ctx)
+
+
 def _doc_question(arguments: dict, ctx: dict) -> Result:
     return answerer.answer(arguments["question"])
 
@@ -488,6 +492,20 @@ register(
     },
     0,
     _memory_recall,
+)
+
+register(
+    "memory_forget",
+    "Forget (delete) one remembered personal fact. Needs the user's confirmation.",
+    {
+        "type": "object",
+        "properties": {
+            "attribute": {"type": "string", "description": "What to forget, e.g. 'locker code' or 'car'."},
+        },
+        "required": ["attribute"],
+    },
+    2,
+    _memory_forget,
 )
 
 register(

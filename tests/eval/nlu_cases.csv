@@ -99,3 +99,13 @@ N17,negation,,en,I don't want to delete notes.txt,none,
 N18,negation,,en,don't take a screenshot,none,
 N19,negation,,hinglish,abhi calculator mat chalu karna,none,
 N20,negation,,en,"wait, don't open paint",none,
+P26a,polarity,P26,en,remember my locker code is 4417,save_fact,my locker code is 4417
+P26b,polarity,P26,en,forget my locker code,forget_fact,
+P27a,polarity,P27,hinglish,yaad rakhna ki meri car Audi hai,save_fact,meri car Audi hai
+P27b,polarity,P27,hinglish,meri car bhool jao,forget_fact,
+P28a,polarity,P28,hi,याद रखो कि मेरी कार ऑडी है,save_fact,मेरी कार ऑडी है
+P28b,polarity,P28,hi,मेरी कार भूल जाओ,forget_fact,
+P29a,polarity,P29,gu,યાદ રાખો કે મારો રૂમ નંબર 204 છે,save_fact,મારો રૂમ નંબર 204 છે
+P29b,polarity,P29,gu,મારો રૂમ નંબર ભૂલી જાઓ,forget_fact,
+P30a,polarity,P30,gujlish,yaad rakhjo ke maro phone number 98 che,save_fact,maro phone number 98 che
+P30b,polarity,P30,gujlish,maro phone number bhuli jao,forget_fact,

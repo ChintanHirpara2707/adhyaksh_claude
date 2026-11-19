@@ -104,6 +104,8 @@ def mocked_tools(calls: list[str]):
         mock.patch.object(engine.system, "web_open", rec("web_open", {})),
         mock.patch.object(engine.store, "save_fact", rec("save_fact", lambda t, **k: {"fact": t, "duplicate": False})),
         mock.patch.object(engine.store, "recall", rec("recall", {"answer": "mock fact"})),
+        mock.patch.object(engine.store, "forget", rec("forget_fact", lambda t, **k: {"fact": "mock fact", "id": 1})),
+        mock.patch.object(engine.store, "notice", lambda *a, **k: None),
         mock.patch.object(engine.sources, "list_sources", rec("source_list", {"notebook": "General", "sources": [
             {"id": 1, "file": "mock.pdf", "pages": 2, "passages": 5, "search": "tfidf"}]})),
         mock.patch.object(engine.sources, "summarize", rec("source_summary", {"notebook": "General", "summaries": [

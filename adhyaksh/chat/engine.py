@@ -246,6 +246,7 @@ def _confirm_reply(res: Result, lang: str, ctx: context.Context, retry, intent: 
     d = res.data
     ctx.pending_confirm = {"token": d["token"], "action": d["action"], "target": d["target"], "retry": retry}
     text = (_t("confirm_delete", lang, file=shown) if d["action"] == "file_delete"
+            else _t("confirm_forget", lang, fact=shown or d["target"]) if d["action"] == "memory_delete"
             else f"Confirm {d['action'].replace('_', ' ')} on {shown}? Confirm or cancel.")
     return _Reply(text, intent, action=d["action"], confirmation={"token": d["token"], "action": d["action"], "target": d["target"]})
 
@@ -547,8 +548,18 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         res = store.save_fact(slots.get("fact") or slots.get("content") or text)
         if not res.ok:
             return _Reply(_error_reply(res, lang), intent)
+        if res.data.get("updated"):
+            return _Reply(_t("memory_updated", lang, fact=res.data["fact"], previous=res.data["previous"]), intent, action="memory")
         key = "memory_exists" if res.data["duplicate"] else "memory_saved"
         return _Reply(_t(key, lang, fact=res.data["fact"]), intent, action="memory")
+    if intent == "memory_forget":
+        res = store.forget(text, ctx=c)
+        if res.error_code == E_NEEDS_CONFIRM:
+            return _confirm_reply(res, lang, ctx, lambda tok: store.forget(text, ctx=_ctx_for(text, intent, tok)), intent,
+                                  res.data.get("target", "") if isinstance(res.data, dict) else "")
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="memory")
+        return _Reply(_t("memory_forgotten", lang, fact=res.data["fact"]), intent, action="memory")
     if intent == "memory_recall":
         if slots.get("all") or router.match_memory(text) == router.Rule("memory_recall", {"all": True}):
             facts = store.list_facts()
@@ -722,6 +733,8 @@ def _finish_confirmation(ctx: context.Context, accept: bool, lang: str) -> _Repl
     if p["action"] == "file_delete":
         ctx.last_file = None
         return _Reply(_t("file_deleted", lang, path=d.get("path", p["target"])), "confirmation", action=p["action"])
+    if p["action"] == "memory_delete":
+        return _Reply(_t("memory_forgotten", lang, fact=d.get("fact", p["target"])), "confirmation", action=p["action"])
     if p["action"] == "process_kill":
         return _Reply(f"Ended {d.get('name', p['target'])} ({d.get('ended', 0)} process(es), about {d.get('freed_mb', 0)} MB freed).",
                       "confirmation", action=p["action"])
@@ -973,6 +986,10 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
             r = _attachment_reply(text, ok, bad, ctx, conversation_id, lang, mode, names)
         else:
             r = _process(text, ctx, conversation_id, lang, mode=mode)
+            if not r.intent.startswith("memory") and r.intent not in ("negated", "confirmation", "agent_confirm"):
+                noticed = store.notice(text)  # only with the auto_memory setting on
+                if noticed is not None and noticed.ok and not noticed.data.get("duplicate"):
+                    logging_setup.event("memory_noticed", updated=bool(noticed.data.get("updated")))
     except Exception as exc:  # never raise to the UI for expected failures
         logging_setup.event("chat_error", logging.ERROR, exc_info=exc, lang=lang, mode=mode)
         r = _Reply(_t("error", lang, reason=f"internal error ({type(exc).__name__}); details are in the log on the Health page"),

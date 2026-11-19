@@ -5,7 +5,17 @@ the tools, models and storage behind a page can change without touching the page
 """
 from __future__ import annotations
 
+from adhyaksh import config
 from adhyaksh.memory import store
+
+
+def auto_memory_enabled() -> bool:
+    return config.get_bool("auto_memory")
+
+
+def set_auto_memory(on: bool) -> None:
+    config.set_value("auto_memory", bool(on))
+
 
 # adhyaksh.memory.store
 store_delete_fact = store.delete_fact

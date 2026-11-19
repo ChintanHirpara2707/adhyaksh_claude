@@ -15,3 +15,6 @@ matplotlib
 Pillow
 pytest
 pytest-cov
+# Speaker and microphone volume (Windows Core Audio), about 3.5 MB together; Windows only.
+pycaw; sys_platform == "win32"
+comtypes; sys_platform == "win32"

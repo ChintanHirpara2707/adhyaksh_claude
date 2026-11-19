@@ -23,7 +23,7 @@ from adhyaksh.memory import store
 from adhyaksh.result import E_ACTION_FAILED, E_BAD_ARGUMENTS, E_BLOCKED, E_NEEDS_CONFIRM, Result
 from adhyaksh.rag import answerer
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, files, office, system
+from adhyaksh.tools import apps, audio, display, files, office, system
 
 # Actions that touch the filesystem (path validation applies).
 PATH_ACTIONS = {
@@ -492,6 +492,65 @@ register(
     },
     0,
     _memory_recall,
+)
+
+def _volume_control(arguments: dict, ctx: dict) -> Result:
+    return audio.control(arguments["op"], arguments.get("device", "speaker"), arguments.get("level"), ctx=ctx)
+
+
+def _brightness_control(arguments: dict, ctx: dict) -> Result:
+    return display.control(arguments["op"], arguments.get("level"), ctx=ctx)
+
+
+def _levels_read(arguments: dict, ctx: dict) -> Result:
+    out = {}
+    for device in audio.DEVICES:
+        r = audio.read(device)
+        out[device] = r.data if r.ok else {"error": r.message}
+    b = display.read()
+    out["brightness"] = b.data["level"] if b.ok else {"error": b.message}
+    return Result.success(out)
+
+
+register(
+    "volume_control",
+    "Change the speaker or microphone volume: set a level, turn it up or down, mute or unmute.",
+    {
+        "type": "object",
+        "properties": {
+            "op": {"type": "string", "enum": list(audio.OPS), "description": "set, up, down, mute or unmute."},
+            "device": {"type": "string", "enum": list(audio.DEVICES), "description": "speaker (default) or mic."},
+            "level": {"type": "integer", "minimum": 0, "maximum": 100,
+                      "description": "Percent for set; the step for up or down (default 10)."},
+        },
+        "required": ["op"],
+    },
+    1,
+    _volume_control,
+)
+
+register(
+    "brightness_control",
+    "Change the brightness of the laptop's built-in screen: set a level, or turn it up or down.",
+    {
+        "type": "object",
+        "properties": {
+            "op": {"type": "string", "enum": list(display.OPS), "description": "set, up or down."},
+            "level": {"type": "integer", "minimum": 0, "maximum": 100,
+                      "description": "Percent for set; the step for up or down (default 10)."},
+        },
+        "required": ["op"],
+    },
+    1,
+    _brightness_control,
+)
+
+register(
+    "levels_read",
+    "Read the current speaker volume, microphone volume and screen brightness (and whether they are muted).",
+    {"type": "object", "properties": {}},
+    0,
+    _levels_read,
 )
 
 register(

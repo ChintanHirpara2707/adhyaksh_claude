@@ -16,7 +16,7 @@ from adhyaksh.nlu import entities, factorized, frames, registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, clipboard, features, files, office, processes, reminders, system
+from adhyaksh.tools import apps, audio, clipboard, display, features, files, office, processes, reminders, system
 from adhyaksh.voice import speech
 
 MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
@@ -25,6 +25,7 @@ OS_INTENTS = {
     "folder_create", "office_create", "app_open", "app_close",
     "special_folder_open", "web_open", "screenshot", "system_status", "pc_performance",
     "process_list", "process_kill", "clipboard_read", "clipboard_write",
+    "volume_control", "brightness_control",
 }
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 YES = {"yes", "y", "confirm", "yes please", "haan", "ha", "हाँ", "हां", "હા", "ok confirm"}
@@ -561,6 +562,20 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
             return _Reply(_t("memory_updated", lang, fact=res.data["fact"], previous=res.data["previous"]), intent, action="memory")
         key = "memory_exists" if res.data["duplicate"] else "memory_saved"
         return _Reply(_t(key, lang, fact=res.data["fact"]), intent, action="memory")
+    if intent == "volume_control":
+        device, op = slots.get("device") or "speaker", slots.get("op")
+        res = audio.control(op, device, slots.get("level"), ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="volume_control")
+        d = res.data
+        name = "microphone" if device == "mic" else "volume"
+        key = {"mute": "muted", "unmute": "unmuted"}.get(op, "level_set")
+        return _Reply(_t(f"volume_{key}", lang, name=name, level=d.get("level")), intent, action="volume_control")
+    if intent == "brightness_control":
+        res = display.control(slots.get("op"), slots.get("level"), ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="brightness_control")
+        return _Reply(_t("brightness_set", lang, level=res.data["level"]), intent, action="brightness_control")
     if intent == "memory_forget":
         res = store.forget(text, ctx=c)
         if res.error_code == E_NEEDS_CONFIRM:

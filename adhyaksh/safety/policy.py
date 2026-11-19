@@ -30,6 +30,7 @@ LEVELS: dict[str, int] = {
     "run_python": 2, "temp_clean": 2, "source_delete": 2, "process_kill": 2, "reminder_cancel_all": 2,
     "process_list": 0, "reminder_list": 0, "clipboard_read": 0, "ocr_read": 0,
     "reminder_add": 1, "reminder_cancel": 1, "clipboard_write": 1,
+    "volume_control": 1, "brightness_control": 1,
     "shell_exec": 3,
 }
 PATH_ACTIONS = {

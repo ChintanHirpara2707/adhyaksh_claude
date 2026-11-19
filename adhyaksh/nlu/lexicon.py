@@ -52,6 +52,42 @@ ACTIONS: dict[str, dict[str, list[str]]] = {
         "hi": ["ढूंढो", "ढूँढो", "खोजो", "सर्च करो", "कहाँ है"],
         "gu": ["શોધો", "શોધી દો", "સર્ચ કરો", "ક્યાં છે"],
     },
+    # Levels (volume, brightness). "set" is also implied by a target with a number: "volume 40".
+    "increase": {
+        "en": ["increase", "raise", "turn up", "boost", "make louder", "louder", "brighter", "up"],
+        "hinglish": ["badhao", "badha do", "badhana", "tez karo", "tez kar do", "zyada karo", "upar karo"],
+        "gujlish": ["vadharo", "vadhari do", "vadharvu", "tez karo", "vadhare karo", "upar karo"],
+        "hi": ["बढ़ाओ", "बढ़ा दो", "बढ़ाना", "तेज करो", "तेज़ करो", "ज़्यादा करो", "ज्यादा करो"],
+        "gu": ["વધારો", "વધારી દો", "વધારવું", "તેજ કરો", "વધારે કરો"],
+    },
+    "decrease": {
+        "en": ["decrease", "lower", "reduce", "turn down", "dim", "quieter", "softer", "make quieter", "down"],
+        "hinglish": ["kam karo", "kam kar do", "kam karna", "ghatao", "ghata do", "dheema karo", "dheere karo", "neeche karo"],
+        "gujlish": ["ocho karo", "ochu karo", "ochhu karo", "ochi karo", "ghatado", "ghatadi do", "dhimu karo", "niche karo"],
+        "hi": ["कम करो", "कम कर दो", "कम करना", "घटाओ", "घटा दो", "धीमा करो", "धीमी करो"],
+        "gu": ["ઓછું કરો", "ઓછો કરો", "ઓછી કરો", "ઓછું કરી દો", "ઓછી કરી દો", "ઘટાડો", "ઘટાડી દો", "ધીમું કરો", "ધીમી કરો"],
+    },
+    "set": {
+        "en": ["set", "change", "adjust"],
+        "hinglish": ["set karo", "set kar do", "rakho", "kar do"],
+        "gujlish": ["set karo", "set kari do", "rakho", "kari do"],
+        "hi": ["सेट करो", "सेट कर दो", "रखो", "कर दो"],
+        "gu": ["સેટ કરો", "સેટ કરી દો", "રાખો", "કરી દો"],
+    },
+    "mute": {
+        "en": ["mute", "silence"],
+        "hinglish": ["mute karo", "mute kar do", "awaaz band karo", "awaaz band kar do", "awaz band karo"],
+        "gujlish": ["mute karo", "mute kari do", "avaj bandh karo", "awaj bandh karo"],
+        "hi": ["म्यूट करो", "म्यूट कर दो", "आवाज़ बंद करो", "आवाज बंद करो"],
+        "gu": ["મ્યૂટ કરો", "મ્યુટ કરો", "અવાજ બંધ કરો"],
+    },
+    "unmute": {
+        "en": ["unmute"],
+        "hinglish": ["unmute karo", "unmute kar do", "awaaz chalu karo", "awaz chalu karo"],
+        "gujlish": ["unmute karo", "unmute kari do", "avaj chalu karo", "awaj chalu karo"],
+        "hi": ["अनम्यूट करो", "आवाज़ चालू करो", "आवाज चालू करो"],
+        "gu": ["અનમ્યૂટ કરો", "અવાજ ચાલુ કરો"],
+    },
 }
 
 # Words that turn a command into a refusal ("don't open", "mat kholo", "ના ખોલો"). Whole-word matches only.
@@ -72,7 +108,17 @@ TARGET_NOUNS: dict[str, dict[str, list[str]]] = {
              "gu": ["ફાઇલ", "ફાઈલ"]},
     "folder": {"en": ["folder", "directory"], "hinglish": ["folder"], "gujlish": ["folder"], "hi": ["फोल्डर"],
                "gu": ["ફોલ્ડર"]},
+    # System targets: a noun names the thing ("turn up the volume", "brightness kam karo").
+    "volume": {"en": ["volume", "sound", "speaker", "speakers", "audio"], "hinglish": ["volume", "awaaz", "awaz", "aawaz", "sound"],
+               "gujlish": ["volume", "avaj", "awaj", "sound"], "hi": ["वॉल्यूम", "वोल्यूम", "आवाज़", "आवाज", "साउंड"],
+               "gu": ["વોલ્યુમ", "વોલ્યૂમ", "અવાજ", "સાઉન્ડ"]},
+    "mic": {"en": ["mic", "microphone", "mike"], "hinglish": ["mic", "microphone"], "gujlish": ["mic", "microphone"],
+            "hi": ["माइक", "माइक्रोफोन"], "gu": ["માઇક", "માઇક્રોફોન"]},
+    "brightness": {"en": ["brightness", "screen brightness", "display brightness"], "hinglish": ["brightness", "roshni"],
+                   "gujlish": ["brightness", "prakash"], "hi": ["ब्राइटनेस", "रोशनी", "चमक"], "gu": ["બ્રાઇટનેસ", "પ્રકાશ"]},
 }
+# Which target nouns are system targets (checked after files, before apps).
+SYSTEM_TARGETS = ("mic", "brightness", "volume")
 
 # Application names: canonical allow-list key -> spellings in every script, including speech-recognition slips.
 APP_NAMES: dict[str, list[str]] = {

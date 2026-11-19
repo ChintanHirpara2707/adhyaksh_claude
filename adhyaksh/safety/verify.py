@@ -117,6 +117,30 @@ def _clipboard_holds(target: str, data: dict):
     return (True, "") if now == data["text"] else (False, "the clipboard does not hold the new text")
 
 
+@verifier("volume_control")
+def _volume_reads_back(target: str, data: dict):
+    from adhyaksh.tools import audio
+    now = audio.read(data.get("device", "speaker"))
+    if not now.ok:
+        return None, ""
+    if data.get("op") in ("mute", "unmute"):
+        ok = now.data["muted"] == (data["op"] == "mute")
+        return (True, "") if ok else (False, f"the {data.get('device')} is not {'muted' if data['op'] == 'mute' else 'unmuted'}")
+    ok = abs(now.data["level"] - int(data.get("level", -100))) <= 2
+    return (True, "") if ok else (False, f"the {data.get('device')} is at {now.data['level']} percent, not {data.get('level')}")
+
+
+@verifier("brightness_control")
+def _brightness_reads_back(target: str, data: dict):
+    from adhyaksh.tools import display
+    now = display.read()
+    if not now.ok or "level" not in data:
+        return None, ""
+    # Many laptops only have brightness steps (0, 5, 10 ...): a small difference is still the requested level.
+    ok = abs(now.data["level"] - int(data["level"])) <= 10
+    return (True, "") if ok else (False, f"the brightness is {now.data['level']} percent, not {data['level']}")
+
+
 def check(action: str, target: str, res: Result) -> Result:
     """The result, with data['verified'] set, or an E_UNVERIFIED failure when the effect is not there."""
     fn = _CHECKS.get(action)

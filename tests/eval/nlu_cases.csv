@@ -109,3 +109,20 @@ P29a,polarity,P29,gu,યાદ રાખો કે મારો રૂમ નં
 P29b,polarity,P29,gu,મારો રૂમ નંબર ભૂલી જાઓ,forget_fact,
 P30a,polarity,P30,gujlish,yaad rakhjo ke maro phone number 98 che,save_fact,maro phone number 98 che
 P30b,polarity,P30,gujlish,maro phone number bhuli jao,forget_fact,
+P31a,polarity,P31,en,turn the volume up a bit,volume_control,up|speaker
+P31b,polarity,P31,en,turn the volume down a bit,volume_control,down|speaker
+P32a,polarity,P32,hinglish,awaaz band kar do,volume_control,mute|speaker
+P32b,polarity,P32,hinglish,awaaz wapas chalu karo,volume_control,unmute|speaker
+P33a,polarity,P33,hi,ब्राइटनेस थोड़ी बढ़ाओ,brightness_control,up
+P33b,polarity,P33,hi,ब्राइटनेस थोड़ी कम करो,brightness_control,down
+P34a,polarity,P34,gu,વોલ્યુમ હવે વધારો,volume_control,up|speaker
+P34b,polarity,P34,gu,વોલ્યુમ હવે ઓછું કરો,volume_control,down|speaker
+P35a,polarity,P35,gujlish,mic mute kari do,volume_control,mute|mic
+P35b,polarity,P35,gujlish,mic unmute kari do,volume_control,unmute|mic
+S31,slots,,en,set the volume to 35 percent,volume_control,set|speaker|35
+S32,slots,,hi,आवाज़ ६० कर दो,volume_control,set|speaker|60
+S33,slots,,hinglish,brightness 80 pe rakho,brightness_control,set|80
+S34,slots,,en,increase volume by 15,volume_control,up|speaker|15
+N21,negation,,en,don't mute the sound,none,
+N22,negation,,hinglish,volume mat badhao,none,
+N23,negation,,gu,બ્રાઇટનેસ ઓછી ના કરો,none,

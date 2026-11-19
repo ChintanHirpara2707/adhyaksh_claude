@@ -128,6 +128,32 @@ def normalize_url(url: str) -> str:
     return urllib.parse.urlunsplit((parts.scheme.lower(), parts.netloc.lower(), parts.path, parts.query, parts.fragment))
 
 
+_DIGITS = str.maketrans("०१२३४५६७८९૦૧૨૩૪૫૬૭૮૯", "01234567890123456789")
+_NUMBER = re.compile(r"(?<![\w.])(\d{1,3})(?:\s*(?:%|percent|per\s*cent|pratishat|takka|taka|टका|प्रतिशत|ટકા))?(?![\w.])",
+                     re.IGNORECASE)
+
+
+def number(text: str) -> int | None:
+    """The first whole number 0-100 in the text, in any script ('volume 40%', 'आवाज़ ४० करो' -> 40), else None."""
+    m = _NUMBER.search((text or "").translate(_DIGITS))
+    if not m:
+        return None
+    n = int(m.group(1))
+    return n if 0 <= n <= 100 else None
+
+
+def system_target(text: str) -> tuple[str, tuple[int, int]] | None:
+    """A system target named by a noun ('volume', 'माइक', 'brightness') and its span, else None."""
+    low = (text or "").casefold()
+    for kind in lexicon.SYSTEM_TARGETS:
+        words = sorted({w.casefold() for ws in lexicon.TARGET_NOUNS[kind].values() for w in ws}, key=len, reverse=True)
+        for w in words:
+            m = _bounded(w, low)
+            if m:
+                return kind, m.span()
+    return None
+
+
 _PROCESS_STOP = {"for", "of", "the", "process", "task", "program", "app", "please", "now"}
 
 

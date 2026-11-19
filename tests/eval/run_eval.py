@@ -106,6 +106,11 @@ def mocked_tools(calls: list[str]):
         mock.patch.object(engine.store, "recall", rec("recall", {"answer": "mock fact"})),
         mock.patch.object(engine.store, "forget", rec("forget_fact", lambda t, **k: {"fact": "mock fact", "id": 1})),
         mock.patch.object(engine.store, "notice", lambda *a, **k: None),
+        # Phase 2b system tools: never touch the real speakers, screen, radios, power or windows in an eval.
+        mock.patch.object(engine.audio, "control", rec("volume_control", lambda op, device="speaker", level=None, **k: {
+            "device": device, "op": op, "level": level if level is not None else 50})),
+        mock.patch.object(engine.display, "control", rec("brightness_control", lambda op, level=None, **k: {
+            "op": op, "level": level if level is not None else 50})),
         mock.patch.object(engine.sources, "list_sources", rec("source_list", {"notebook": "General", "sources": [
             {"id": 1, "file": "mock.pdf", "pages": 2, "passages": 5, "search": "tfidf"}]})),
         mock.patch.object(engine.sources, "summarize", rec("source_summary", {"notebook": "General", "summaries": [

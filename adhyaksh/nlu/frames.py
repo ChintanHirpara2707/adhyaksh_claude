@@ -23,11 +23,26 @@ INTENTS: dict[tuple[str, str], str] = {
     ("create", "file"): "file_create", ("delete", "file"): "file_delete",
     ("search", "file"): "file_search",
 }
+# System targets: the action becomes an operation slot of one intent per target.
+VOLUME_OPS = {"increase": "up", "decrease": "down", "set": "set", "mute": "mute", "unmute": "unmute",
+              "close": "mute", "open": "unmute"}  # "volume band karo" mutes, "awaaz chalu karo" unmutes
+BRIGHTNESS_OPS = {"increase": "up", "decrease": "down", "set": "set"}
+for _a in VOLUME_OPS:
+    INTENTS[(_a, "volume")] = INTENTS[(_a, "mic")] = "volume_control"
+for _a in BRIGHTNESS_OPS:
+    INTENTS[(_a, "brightness")] = "brightness_control"
+_LEVEL_TARGETS = ("volume", "mic", "brightness")
 # Words a pure "action + target" command may contain besides the verb and the target. Anything else (content to
 # write, a destination folder, a second instruction) means the request carries more than a frame models, and the
 # richer rules handle it instead.
 _FRAME_WORDS = {"named", "called", "titled", "naam", "ki", "ka", "ke", "ni", "nu", "no", "नाम", "की", "का", "के",
-                "નામની", "નામનું", "નામનો", "new", "a", "an", "the", "files", "file", "for", "me", "with", "of"}
+                "નામની", "નામનું", "નામનો", "new", "a", "an", "the", "files", "file", "for", "me", "with", "of",
+                # levels: "set volume to 40 percent", "thodi brightness badhao", "laptop ka volume"
+                "to", "by", "at", "percent", "pratishat", "takka", "taka", "टका", "प्रतिशत", "ટકા", "level", "thoda", "thodi",
+                "thodu", "little", "bit", "more", "less", "zyada", "vadhare", "pe", "par", "per", "screen", "display",
+                "laptop", "pc", "computer", "system", "लैपटॉप", "को", "ને", "थोड़ा", "थोड़ी", "થોડું", "થોડો",
+                # "again" words do not change a command: "awaaz wapas chalu karo", "ફરી ચાલુ કરો"
+                "again", "back", "wapas", "vapas", "phir", "fir", "fari", "pachu", "pacho", "फिर", "वापस", "ફરી", "પાછું"}
 # Verbs whose meaning depends on the target: only trusted with an app ("run python" is not an app launch).
 _APP_ONLY = {"run", "start", "stop", "end", "kill", "terminate", "load up", "turn on", "turn off", "shut", "chalu",
              "band", "bandh", "चालू", "बंद", "ચાલુ", "બંધ", "on karo", "off karo", "ऑन करो", "ऑफ करो", "ઓન કરો", "ઓફ કરો"}
@@ -73,7 +88,14 @@ class Frame:
     def complete(self) -> bool:
         return self.intent is not None and bool(self.target)
 
+    level: int | None = None
+
     def slots(self) -> dict:
+        if self.target_type in ("volume", "mic"):
+            return {"device": "mic" if self.target_type == "mic" else "speaker", "op": VOLUME_OPS.get(self.action or ""),
+                    "level": self.level}
+        if self.target_type == "brightness":
+            return {"op": BRIGHTNESS_OPS.get(self.action or ""), "level": self.level}
         key = {"app": "app", "file": "file"}.get(self.target_type or "", "target")
         return {key: self.target} if self.target else {}
 
@@ -136,11 +158,15 @@ def _negated(text: str, verbs: list[tuple[str, str, int, int]]) -> bool:
 
 
 def _target(text: str) -> tuple[str | None, str | None, tuple[int, int] | None]:
-    """(type, canonical value, span in text). A file with an extension wins; then an app."""
+    """(type, canonical value, span in text). A file with an extension wins; then a system target named by a noun
+    (volume, mic, brightness); then an app."""
     name = entities.find_file(text)
     if name:
         i = text.find(name)
         return "file", name, (i, i + len(name)) if i >= 0 else None
+    system = entities.system_target(text)
+    if system:
+        return system[0], system[0], system[1]
     app = entities.find_app(text)
     if not app and re.search(r"\bfiles?\b|फाइल|ફાઇલ", text, re.IGNORECASE):
         name = entities.named(text)
@@ -169,12 +195,21 @@ def parse(text: str) -> Frame:
     t = " ".join((text or "").split())
     ttype, target, span = _target(t)
     verbs = _find_actions(t, span)
-    if ttype != "app":
+    if ttype is None and verbs and {a for a, *_ in verbs} <= {"mute", "unmute"}:
+        ttype = target = "volume"  # a bare "mute" / "unmute" can only mean the speakers
+    if ttype not in ("app",) + _LEVEL_TARGETS:
         verbs = [v for v in verbs if v[1] not in _APP_ONLY]
+    if ttype in _LEVEL_TARGETS:
+        # Only actions that make sense for a level count ("set volume" yes; a "create" or "search" verb is noise).
+        verbs = [v for v in verbs if (v[0], ttype) in INTENTS]
     frame = Frame(target_type=ttype, target=target, actions_seen=[a for a, *_ in verbs])
     if verbs:
         frame.action, frame.verb = verbs[0][0], verbs[0][1]
         # "make sure you close it" style: when several verbs agree, keep one; disagreement is ambiguous.
+    if ttype in _LEVEL_TARGETS:
+        frame.level = entities.number(t)
+        if not verbs and frame.level is not None:
+            frame.action = "set"  # "volume 40", "brightness 70 percent"
     frame.negated = _negated(t, verbs)
     return frame
 
@@ -210,6 +245,8 @@ def _leftover(text: str, frame: Frame) -> list[str]:
     for pat, _action, _form in _verb_patterns():
         t = pat.sub(" ", t)
     allowed = entities._command_words() | _FRAME_WORDS
+    if frame.target_type in _LEVEL_TARGETS:
+        t = re.sub(r"[\d०-९૦-૯]+", " ", t)  # the level number is a slot, not a leftover
     return [w for w in re.findall(r"[\wऀ-ॿ઀-૿']+", t) if w not in allowed]
 
 

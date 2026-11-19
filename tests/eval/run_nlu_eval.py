@@ -65,8 +65,12 @@ def check(row: dict) -> dict:
         actions = [(n, a) for n, a in called if n not in READ_ONLY or n == want]
         if [n for n, _ in actions] != [want]:
             problem = f"expected {want}, called {names or 'nothing'}"
-        elif row["expect_arg"] and (not actions[0][1] or _norm(actions[0][1][0]) != _norm(row["expect_arg"])):
-            problem = f"argument {actions[0][1][0] if actions[0][1] else '(none)'!r}, expected {row['expect_arg']!r}"
+        elif row["expect_arg"]:
+            # One expected value, or several separated by "|" for tools with more arguments ("set|speaker|40").
+            want_args = [_norm(a) for a in row["expect_arg"].split("|")]
+            got = [_norm(a) for a in actions[0][1][:len(want_args)]]
+            if got != want_args:
+                problem = f"arguments {got or '(none)'}, expected {want_args}"
         called = actions
     return {**row, "intent": data.get("intent", ""), "called": ";".join(names),
             "arg": str(called[0][1][0]) if called and called[0][1] else "", "reply": (data.get("reply") or "")[:120],

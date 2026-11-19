@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CASES = ROOT / "tests" / "eval" / "nlu_cases.csv"
 TOOLS = {"open_app", "close_app", "create", "read", "update", "delete", "search", "create_folder", "save_fact",
          "recall", "reminder_add", "reminder_cancel", "clipboard_read", "clipboard_write", "web_open", "process_kill",
-         "screenshot", "forget_fact", "none"}
+         "screenshot", "forget_fact", "volume_control", "brightness_control", "none"}
 
 
 def _rows():
@@ -35,7 +35,9 @@ def test_polarity_pairs_are_opposites_on_one_target():
     for pid, members in pairs.items():
         assert len(members) == 2, pid
         a, b = members
-        assert a["expect_tool"] != b["expect_tool"] and a["language"] == b["language"], pid
+        # Opposites are two tools (open_app / close_app) or one tool with opposite operations (volume up / down).
+        opposite = a["expect_tool"] != b["expect_tool"] or a["expect_arg"].split("|")[0] != b["expect_arg"].split("|")[0]
+        assert opposite and a["language"] == b["language"], pid
 
 
 def test_every_language_style_in_every_suite():

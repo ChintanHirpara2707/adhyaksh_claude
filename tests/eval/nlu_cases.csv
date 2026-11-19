@@ -133,3 +133,13 @@ S38,slots,,hi,शटडाउन कैंसिल करो,power_action,cance
 N24,negation,,en,don't shut down the computer,none,
 N25,negation,,hinglish,wifi mat band karo,none,
 N26,negation,,gujlish,laptop restart na karo,none,
+P36a,polarity,P36,en,minimize the chrome window,window_control,minimize|chrome
+P36b,polarity,P36,en,maximize the chrome window,window_control,maximize|chrome
+P37a,polarity,P37,hinglish,notepad ko chhota karo,window_control,minimize|notepad
+P37b,polarity,P37,hinglish,notepad ko bada karo,window_control,maximize|notepad
+P38a,polarity,P38,gu,કેલ્ક્યુલેટર નાનું કરો,window_control,minimize|calculator
+P38b,polarity,P38,gu,કેલ્ક્યુલેટર મોટું કરો,window_control,maximize|calculator
+S39,slots,,en,switch to spotify,window_control,focus|spotify
+S40,slots,,hi,सारी विंडो छोटी करो,window_control,minimize_all
+S41,slots,,gujlish,vs code par jao,window_control,focus|vs code
+N27,negation,,en,don't minimize the calculator,none,

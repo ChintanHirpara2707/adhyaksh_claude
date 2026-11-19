@@ -23,7 +23,7 @@ from adhyaksh.memory import store
 from adhyaksh.result import E_ACTION_FAILED, E_BAD_ARGUMENTS, E_BLOCKED, E_NEEDS_CONFIRM, Result
 from adhyaksh.rag import answerer
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, audio, display, files, network, office, power, system
+from adhyaksh.tools import apps, audio, display, files, network, office, power, system, windows
 
 # Actions that touch the filesystem (path validation applies).
 PATH_ACTIONS = {
@@ -595,6 +595,30 @@ register(
     {"type": "object", "properties": {}},
     0,
     _power_status,
+)
+
+register(
+    "window_list",
+    "List the open windows (title and app), top-most first.",
+    {"type": "object", "properties": {}},
+    0,
+    lambda arguments, ctx: windows.list_windows(),
+)
+
+register(
+    "window_control",
+    "Focus (switch to), minimize, maximize, restore or politely close one open window, picked by app name or by words "
+    "of its title; or minimize_all / restore_all windows. 'close' lets an app with unsaved work ask to save.",
+    {
+        "type": "object",
+        "properties": {
+            "op": {"type": "string", "enum": list(windows.OPS)},
+            "target": {"type": "string", "description": "App name or title words (not needed for minimize_all / restore_all)."},
+        },
+        "required": ["op"],
+    },
+    1,
+    lambda arguments, ctx: windows.control(arguments["op"], arguments.get("target", ""), ctx=ctx),
 )
 
 register(

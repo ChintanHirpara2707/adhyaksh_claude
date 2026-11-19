@@ -16,7 +16,7 @@ from adhyaksh.nlu import entities, factorized, frames, registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, audio, clipboard, display, features, files, network, office, power, processes, reminders, system
+from adhyaksh.tools import apps, audio, clipboard, display, features, files, network, office, power, processes, reminders, system, windows
 from adhyaksh.voice import speech
 
 MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
@@ -25,7 +25,7 @@ OS_INTENTS = {
     "folder_create", "office_create", "app_open", "app_close",
     "special_folder_open", "web_open", "screenshot", "system_status", "pc_performance",
     "process_list", "process_kill", "clipboard_read", "clipboard_write",
-    "volume_control", "brightness_control", "radio_control", "power_action",
+    "volume_control", "brightness_control", "radio_control", "power_action", "window_control",
 }
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 YES = {"yes", "y", "confirm", "yes please", "haan", "ha", "हाँ", "हां", "હા", "ok confirm"}
@@ -597,6 +597,12 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         if not res.ok:
             return _Reply(_error_reply(res, lang), intent, action="power_action")
         return _Reply(_t(f"power_{op}", lang, seconds=res.data.get("delay_seconds", 0)), intent, action="power_action")
+    if intent == "window_control":
+        op, target = slots.get("op"), slots.get("target") or ""
+        res = windows.control(op, target, ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="window_control")
+        return _Reply(_t(f"window_{op}", lang, title=res.data.get("title", target)), intent, action="window_control")
     if intent == "memory_forget":
         res = store.forget(text, ctx=c)
         if res.error_code == E_NEEDS_CONFIRM:

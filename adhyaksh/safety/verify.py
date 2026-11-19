@@ -153,6 +153,24 @@ def _radio_reads_back(target: str, data: dict):
     return (True, "") if ok else (False, f"{data['radio']} is still {'on' if now.data[data['radio']] else 'off'}")
 
 
+@verifier("window_control")
+def _window_state(target: str, data: dict):
+    hwnd, op = data.get("hwnd"), data.get("op")
+    if not hwnd or op not in ("minimize", "maximize", "restore", "focus", "close"):
+        return None, ""
+    from adhyaksh.tools import windows
+    s = windows.state(hwnd)
+    if op == "close":
+        return (True, "") if not s["exists"] else (None, "")  # still open: probably asking to save
+    want = {"minimize": s["minimized"], "maximize": s["maximized"], "restore": not s["minimized"],
+            "focus": s["foreground"]}[op]
+    if want:
+        return True, ""
+    if op == "focus":
+        return None, ""  # Windows can refuse to change the foreground window; that is not a failure of the tool
+    return False, f"the window did not {op}"
+
+
 def check(action: str, target: str, res: Result) -> Result:
     """The result, with data['verified'] set, or an E_UNVERIFIED failure when the effect is not there."""
     fn = _CHECKS.get(action)

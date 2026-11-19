@@ -33,6 +33,7 @@ LEVELS: dict[str, int] = {
     "volume_control": 1, "brightness_control": 1,
     # Turning a radio off can cut the network; sleep, restart and shut down can lose unsaved work: both confirm.
     "radio_on": 1, "radio_off": 2, "screen_lock": 1, "power_off": 2, "power_cancel": 1,
+    "window_control": 1,
     "shell_exec": 3,
 }
 PATH_ACTIONS = {

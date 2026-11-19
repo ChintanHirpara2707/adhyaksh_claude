@@ -40,7 +40,12 @@ for _a in RADIO_OPS:
     INTENTS[(_a, "wifi")] = INTENTS[(_a, "bluetooth")] = "radio_control"
 for _pair in POWER_OPS:
     INTENTS[_pair] = "power_action"
-_SYSTEM_TARGETS = _LEVEL_TARGETS + ("wifi", "bluetooth", "pc", "screen", "shutdown")
+# Windows: "minimize chrome", "switch to notepad", "minimize all windows". Never "this window" (that is the assistant).
+WINDOW_OPS = {("minimize", "app"): "minimize", ("maximize", "app"): "maximize", ("focus", "app"): "focus",
+              ("restore", "app"): "restore", ("minimize", "window"): "minimize_all", ("restore", "window"): "restore_all"}
+for _pair in WINDOW_OPS:
+    INTENTS[_pair] = "window_control"
+_SYSTEM_TARGETS = _LEVEL_TARGETS + ("wifi", "bluetooth", "pc", "screen", "shutdown", "window")
 # Words a pure "action + target" command may contain besides the verb and the target. Anything else (content to
 # write, a destination folder, a second instruction) means the request carries more than a frame models, and the
 # richer rules handle it instead.
@@ -111,6 +116,8 @@ class Frame:
             return {"radio": self.target_type, "on": RADIO_OPS.get(self.action or "")}
         if (self.action, self.target_type) in POWER_OPS:
             return {"op": POWER_OPS[(self.action, self.target_type)]}
+        if (self.action, self.target_type) in WINDOW_OPS:
+            return {"op": WINDOW_OPS[(self.action, self.target_type)], "target": self.target if self.target_type == "app" else ""}
         key = {"app": "app", "file": "file"}.get(self.target_type or "", "target")
         return {key: self.target} if self.target else {}
 
@@ -202,6 +209,11 @@ def _target(text: str) -> tuple[str | None, str | None, tuple[int, int] | None]:
                     span = (i, i + len(spelling))
                     break
         return "app", app, span if not fuzzy else None
+    low = text.casefold()
+    for noun in sorted({w.casefold() for ws in lexicon.TARGET_NOUNS["window"].values() for w in ws}, key=len, reverse=True):
+        m = re.search(_B + re.escape(noun) + _E, low)
+        if m:  # "minimize all windows": the windows themselves, no app named
+            return "window", "window", m.span()
     return None, None, None
 
 
@@ -268,6 +280,10 @@ _DEFAULT_LOCATION = re.compile(r"\b(?:in|inside|into|under)\s+(?:my\s+|the\s+)?(
 def _leftover(text: str, frame: Frame) -> list[str]:
     """Words that are neither the verb, the target, a filler, a target noun nor a naming word."""
     t = _DEFAULT_LOCATION.sub(" ", text.casefold())
+    if frame.target_type in lexicon.TARGET_NOUNS:  # the noun as written: "all windows", "sab windows", "आवाज़"
+        nouns = {w.casefold() for ws in lexicon.TARGET_NOUNS[frame.target_type].values() for w in ws}
+        for noun in sorted(nouns, key=len, reverse=True):
+            t = re.sub(_B + re.escape(noun) + _E, " ", t)
     if frame.target:
         t = t.replace(frame.target.casefold(), " ")
         for spelling, key in entities.app_spellings():

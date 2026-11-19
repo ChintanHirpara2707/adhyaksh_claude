@@ -102,6 +102,25 @@ ACTIONS: dict[str, dict[str, list[str]]] = {
         "gujlish": ["cancel karo", "cancel kari do", "roki do", "roko"], "hi": ["कैंसिल करो", "रद्द करो", "रोक दो", "रोको"],
         "gu": ["કેન્સલ કરો", "રદ કરો", "રોકી દો", "રોકો"],
     },
+    # Windows of open apps.
+    "minimize": {
+        "en": ["minimize", "minimise", "hide"], "hinglish": ["minimize karo", "minimise karo", "chhota karo", "chhupa do"],
+        "gujlish": ["minimize karo", "minimise karo", "nanu karo", "santadi do"], "hi": ["मिनिमाइज़ करो", "मिनिमाइज करो", "छोटा करो", "छोटी करो", "छोटे करो"],
+        "gu": ["મિનિમાઇઝ કરો", "નાનું કરો", "નાની કરો", "નાનો કરો"],
+    },
+    "maximize": {
+        "en": ["maximize", "maximise", "make full screen", "full screen"], "hinglish": ["maximize karo", "bada karo", "full screen karo"],
+        "gujlish": ["maximize karo", "motu karo", "full screen karo"], "hi": ["मैक्सिमाइज़ करो", "मैक्सिमाइज करो", "बड़ा करो", "बड़ी करो", "बड़े करो", "फुल स्क्रीन करो"],
+        "gu": ["મેક્સિમાઇઝ કરો", "મોટું કરો", "મોટી કરો", "મોટો કરો", "ફુલ સ્ક્રીન કરો"],
+    },
+    "focus": {
+        "en": ["switch to", "go to", "focus on", "focus"], "hinglish": ["pe jao", "par jao", "pe switch karo"],
+        "gujlish": ["par jao", "pe jao", "par switch karo"], "hi": ["पर जाओ", "पे जाओ"], "gu": ["પર જાઓ"],
+    },
+    "restore": {
+        "en": ["restore", "unminimize", "bring back"], "hinglish": ["restore karo", "wapas lao"], "gujlish": ["restore karo", "pachu lavo"],
+        "hi": ["रिस्टोर करो", "वापस लाओ"], "gu": ["રિસ્ટોર કરો", "પાછું લાવો"],
+    },
     "unmute": {
         "en": ["unmute"],
         "hinglish": ["unmute karo", "unmute kar do", "awaaz chalu karo", "awaz chalu karo"],
@@ -145,6 +164,9 @@ TARGET_NOUNS: dict[str, dict[str, list[str]]] = {
            "gujlish": ["pc", "computer", "laptop"], "hi": ["पीसी", "कंप्यूटर", "कम्प्यूटर", "लैपटॉप"],
            "gu": ["પીસી", "કમ્પ્યુટર", "કૉમ્પ્યુટર", "લેપટોપ", "લૅપટૉપ"]},
     "screen": {"en": ["screen"], "hinglish": ["screen"], "gujlish": ["screen"], "hi": ["स्क्रीन"], "gu": ["સ્ક્રીન"]},
+    "window": {"en": ["window", "windows", "all windows", "every window", "everything"], "hinglish": ["window", "sab windows", "saari windows"],
+               "gujlish": ["window", "badhi windows", "badha windows"], "hi": ["विंडो", "सारी विंडो", "सब विंडो"],
+               "gu": ["વિન્ડો", "બધી વિન્ડો"]},
     "shutdown": {"en": ["shutdown", "shut down", "restart", "reboot"], "hinglish": ["shutdown", "restart"],
                  "gujlish": ["shutdown", "restart"], "hi": ["शटडाउन", "रीस्टार्ट"], "gu": ["શટડાઉન", "રીસ્ટાર્ટ"]},
 }

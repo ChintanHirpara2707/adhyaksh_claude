@@ -1,6 +1,6 @@
 """Native tool-calling agent: loop, safety gateway, confirmation, honesty guard and the three wire formats.
 
-No real model or network is used: llm.chat is replaced by a scripted fake, and requests.post by a recorder."""
+No real model or network is used: llm.chat is replaced by a scripted fake, and requests.request (used by net.py) by a recorder."""
 import json
 import os
 
@@ -139,6 +139,8 @@ def test_cloud_agent_needs_consent(monkeypatch):
 
 # ---------------------------------------------------------------------------------- wire formats
 class _Resp:
+    status_code = 200
+
     def __init__(self, data):
         self._d = data
 
@@ -161,11 +163,11 @@ def test_groq_wire_format(monkeypatch):
     sent = {}
     import requests
 
-    def post(url, timeout=None, headers=None, json=None):
+    def post(method, url, timeout=None, headers=None, json=None):
         sent.update(url=url, json=json, headers=headers)
         return _Resp({"choices": [{"message": {"content": None, "tool_calls": [
             {"id": "x9", "type": "function", "function": {"name": "file_read", "arguments": "{\"path\": \"a.txt\"}"}}]}}]})
-    monkeypatch.setattr(requests, "post", post)
+    monkeypatch.setattr(requests, "request", post)
     monkeypatch.setenv("GROQ_API_KEY", "test-key-not-real")
     out = groq.GroqProvider().chat(MSGS, TOOLS).data
     assert out["tool_calls"] == [{"id": "x9", "name": "file_read", "arguments": {"path": "a.txt"}}]
@@ -180,10 +182,10 @@ def test_gemini_wire_format(monkeypatch):
     sent = {}
     import requests
 
-    def post(url, timeout=None, headers=None, json=None):
+    def post(method, url, timeout=None, headers=None, json=None):
         sent.update(url=url, json=json)
         return _Resp({"candidates": [{"content": {"parts": [{"text": "ok "}, {"functionCall": {"name": "file_read", "args": {"path": "a.txt"}}}]}}]})
-    monkeypatch.setattr(requests, "post", post)
+    monkeypatch.setattr(requests, "request", post)
     monkeypatch.setenv("GEMINI_API_KEY", "test-key-not-real")
     out = gemini.GeminiProvider().chat(MSGS, TOOLS).data
     assert out["text"] == "ok " and out["tool_calls"][0]["name"] == "file_read" and out["tool_calls"][0]["arguments"] == {"path": "a.txt"}
@@ -201,17 +203,18 @@ def test_ollama_wire_format_and_errors(monkeypatch):
     sent = {}
     import requests
 
-    def post(url, timeout=None, headers=None, json=None):
+    def post(method, url, timeout=None, headers=None, json=None):
         sent.update(url=url, json=json)
         return _Resp({"message": {"content": "", "tool_calls": [{"function": {"name": "get_time", "arguments": {}}}]}})
-    monkeypatch.setattr(requests, "post", post)
+    monkeypatch.setattr(requests, "request", post)
     out = ollama.OllamaProvider().chat(MSGS, TOOLS).data
     assert out["tool_calls"][0]["name"] == "get_time" and sent["url"].startswith("http://127.0.0.1:11434/api/chat")
     assert sent["json"]["messages"][3]["role"] == "tool" and sent["json"]["stream"] is False
 
     def down(*a, **k):
         raise requests.ConnectionError("refused")
-    monkeypatch.setattr(requests, "post", down)
+    monkeypatch.setattr(requests, "request", down)
+    monkeypatch.setattr("adhyaksh.net.time.sleep", lambda s: None)
     res = ollama.OllamaProvider().chat(MSGS, TOOLS)
     assert not res.ok and "could not connect" in res.message
 

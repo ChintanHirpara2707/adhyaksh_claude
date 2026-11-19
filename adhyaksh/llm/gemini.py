@@ -10,17 +10,16 @@ class GeminiProvider(Provider):
     name = "gemini"
 
     def _call(self, prompt: str, timeout: float) -> str:
-        import requests
+        from adhyaksh import net
 
-        r = requests.post(f"{BASE}{self.model()}:generateContent", timeout=timeout,
+        r = net.post(f"{BASE}{self.model()}:generateContent", timeout=timeout, attempts=2,
                           headers={"x-goog-api-key": api_key("gemini")},
                           json={"contents": [{"parts": [{"text": prompt}]}],
                                 "generationConfig": {"maxOutputTokens": self.max_tokens}})
-        r.raise_for_status()
         return "".join(p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"])
 
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
-        import requests
+        from adhyaksh import net
 
         system, contents = to_gemini_contents(messages)
         payload: dict = {"contents": contents, "generationConfig": {"maxOutputTokens": self.max_tokens}}
@@ -30,9 +29,8 @@ class GeminiProvider(Provider):
             payload["tools"] = [{"functionDeclarations": [
                 {"name": t["name"], "description": t.get("description", ""), "parameters": to_gemini_schema(t["parameters"])}
                 for t in tools]}]
-        r = requests.post(f"{BASE}{self.model()}:generateContent", timeout=timeout,
+        r = net.post(f"{BASE}{self.model()}:generateContent", timeout=timeout, attempts=2,
                           headers={"x-goog-api-key": api_key("gemini")}, json=payload)
-        r.raise_for_status()
         parts = (r.json()["candidates"][0].get("content") or {}).get("parts") or []
         text = "".join(p.get("text", "") for p in parts if "text" in p)
         calls = [{"id": f"call_{i}", "name": p["functionCall"].get("name", ""), "arguments": p["functionCall"].get("args") or {}}
@@ -82,7 +80,7 @@ def embed(texts: list[str], timeout: float = 8.0) -> list[list[float]]:
 
     out = []
     for t in texts:
-        r = net.post(f"{BASE}{config.get('embedding_model')}:embedContent", timeout=timeout,
+        r = net.post(f"{BASE}{config.get('embedding_model')}:embedContent", timeout=timeout, attempts=2,
                      headers={"x-goog-api-key": api_key("gemini")},
                      json={"content": {"parts": [{"text": t}]}})
         out.append(r.json()["embedding"]["values"])

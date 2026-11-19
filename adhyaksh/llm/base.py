@@ -5,6 +5,7 @@ environment or a git-ignored .env file and are never logged or stored in the dat
 """
 from __future__ import annotations
 
+import json
 import os
 import urllib.parse
 from abc import ABC, abstractmethod
@@ -15,8 +16,9 @@ from adhyaksh import config, logging_setup
 from adhyaksh.llm import cache
 from adhyaksh.result import E_BLOCKED, E_NO_API_KEY, E_TIMEOUT, Result
 
-PROVIDERS = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY"}
+PROVIDERS = {"groq": "GROQ_API_KEY", "gemini": "GEMINI_API_KEY", "openai_compat": "OPENAI_COMPAT_API_KEY"}
 LOCAL_PROVIDERS = {"ollama"}  # run on this computer, no key, no cloud consent needed
+KEY_OPTIONAL = {"openai_compat"}  # a local OpenAI-compatible server (LM Studio, llama.cpp) needs no key
 MAX_TOKENS = 400
 ANSWER_TOKENS = 1024
 ANSWER_TIMEOUT = 25.0
@@ -43,7 +45,7 @@ def _load_env() -> None:
 
 
 def api_key(provider: str) -> str:
-    if provider in LOCAL_PROVIDERS:
+    if provider in LOCAL_PROVIDERS or provider not in PROVIDERS:
         return ""
     _load_env()
     return os.environ.get(PROVIDERS[provider], "").strip()
@@ -112,37 +114,60 @@ class Provider(ABC):
              max_tokens: int = 1024) -> Result:
         """Chat with optional tools. Neutral message format: role system/user/assistant/tool; an assistant
         message may carry tool_calls; a tool message carries tool_call_id, name and content.
-        Two attempts with a short pause; a timeout on every request; clear failure messages."""
-        import time
-
+        Transient network errors are retried in net.py; an empty reply is asked for once more. A failure carries
+        data {"status", "body", "failed_generation"} so the tool-calling layer can repair or switch strategy."""
         import requests
 
         self.max_tokens = max_tokens
-        last, code = "", "E_LLM_FAILED"
+        last, code, info = "", "E_LLM_FAILED", {}
         for attempt in range(2):
             try:
                 out = self._chat(messages, tools or [], timeout)
                 if out.get("text") or out.get("tool_calls"):
                     return Result.success(out)
                 last = "empty response"
+                continue
             except requests.Timeout:
                 last, code = "timeout", E_TIMEOUT
             except requests.HTTPError as exc:
                 status = getattr(exc.response, "status_code", 0)
-                last = f"HTTP {status}"
-                if status in (400, 401, 403, 404):  # will not succeed on retry
-                    hint = {400: "the request was rejected (the model may not support tools)", 401: "the API key was rejected",
-                            403: "access was denied", 404: "the model name was not found"}[status]
-                    logging_setup.event("llm_failed", logging.WARNING, provider=self.name, call="chat", reason=f"HTTP {status}")
-                    return Result.failure("E_LLM_FAILED", f"The language model call failed: {hint}.")
+                info = {"status": status, **_error_details(exc.response)}
+                hint = {400: "the request was rejected (the model may not support tools)", 401: "the API key was rejected",
+                        403: "access was denied", 404: "the model name was not found",
+                        429: "the provider's rate limit was reached; try again shortly"}.get(status, f"HTTP {status}")
+                last = hint
             except requests.ConnectionError:
                 last = "could not connect (is the service running and the network available?)"
             except (requests.RequestException, ValueError, KeyError, IndexError, TypeError) as exc:
                 last = f"unexpected response ({type(exc).__name__})"
-            if attempt == 0:
-                time.sleep(0.5)
-        logging_setup.event("llm_failed", logging.WARNING, provider=self.name, call="chat", reason=last)
-        return Result.failure(code, f"The language model did not respond: {last}.")
+            break
+        logging_setup.event("llm_failed", logging.WARNING, provider=self.name, call="chat", reason=last,
+                            status=info.get("status"))
+        verb = "call failed" if info.get("status") else "did not respond"
+        return Result.failure(code, f"The language model {verb}: {last}.", data=info)
+
+
+def _error_details(response) -> dict:
+    """Error body (shortened, secrets redacted) and, when the provider returns it, the model's rejected output."""
+    try:
+        payload = response.json()
+    except Exception:
+        payload = None
+    err = payload.get("error") if isinstance(payload, dict) else None
+    failed = err.get("failed_generation") if isinstance(err, dict) else None
+    body = json.dumps(payload)[:600] if payload is not None else (getattr(response, "text", "") or "")[:600]
+    return {"body": logging_setup.redact(body), "failed_generation": failed or ""}
+
+
+def provider_is_local(name: str | None = None) -> bool:
+    """Ollama always runs on this PC; an OpenAI-compatible server counts as local only at a loopback address."""
+    name = config.get("llm_provider") if name is None else name
+    if name in LOCAL_PROVIDERS:
+        return True
+    if name == "openai_compat":
+        host = (urllib.parse.urlparse(config.get("openai_compat_url")).hostname or "").casefold()
+        return host in ("127.0.0.1", "localhost", "::1")
+    return False
 
 
 def get_provider() -> Provider | None:
@@ -150,6 +175,11 @@ def get_provider() -> Provider | None:
     if name == "ollama":
         from adhyaksh.llm.ollama import OllamaProvider
         return OllamaProvider()
+    if name == "openai_compat":
+        if not config.get("openai_compat_model") or not (provider_is_local(name) or api_key(name)):
+            return None
+        from adhyaksh.llm.openai_compat import OpenAICompatProvider
+        return OpenAICompatProvider()
     if name not in PROVIDERS or not api_key(name):
         return None
     from adhyaksh.llm.gemini import GeminiProvider
@@ -158,7 +188,7 @@ def get_provider() -> Provider | None:
 
 
 def is_local() -> bool:
-    return config.get("llm_provider") in LOCAL_PROVIDERS
+    return provider_is_local()
 
 
 def available() -> bool:

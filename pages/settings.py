@@ -35,14 +35,21 @@ st.subheader("Language model and cloud use")
 st.caption(f"Document retrieval method: {'Gemini embeddings' if svc.retriever_embedding_mode() == 'gemini' else 'TF-IDF (offline)'}. "
            "Nothing leaves this computer unless you grant consent below and add a key.")
 with st.form("llm"):
-    provider = st.selectbox("Provider", ["", "groq", "gemini", "ollama"],
-                            index=["", "groq", "gemini", "ollama"].index(svc.get("llm_provider")),
-                            format_func=lambda x: {"": "None (offline mode)", "ollama": "Ollama (local, free, no key)"}.get(x, x))
+    _providers = ["", "groq", "gemini", "ollama", "openai_compat"]
+    provider = st.selectbox("Provider", _providers, index=_providers.index(svc.get("llm_provider")),
+                            format_func=lambda x: {"": "None (offline mode)", "ollama": "Ollama (local, free, no key)",
+                                                   "openai_compat": "OpenAI-compatible server (LM Studio, llama.cpp, vLLM, OpenRouter)"}.get(x, x))
     existing = svc.llm_api_key(provider) if provider else ""
     key = st.text_input("API key", type="password", placeholder=svc.llm_mask(existing) if existing else "Not set")
     groq_model = st.text_input("Groq model", value=svc.get("groq_model"))
     gemini_model = st.text_input("Gemini model", value=svc.get("gemini_model"))
     ollama_model = st.text_input("Ollama model (installed locally, e.g. llama3.2:3b)", value=svc.get("ollama_model"))
+    compat_url = st.text_input("OpenAI-compatible base URL (a 127.0.0.1 address stays on this PC)", value=svc.get("openai_compat_url"))
+    compat_model = st.text_input("OpenAI-compatible model name", value=svc.get("openai_compat_model"))
+    _modes = ["auto", "native", "json"]
+    tool_mode = st.selectbox("Tool calling", _modes, index=_modes.index(svc.get("llm_tool_mode")),
+                             format_func=lambda x: {"auto": "Automatic (native when supported, else JSON)",
+                                                    "native": "Native function calling only", "json": "JSON protocol only"}[x])
     embed_model = st.text_input("Gemini embedding model", value=svc.get("embedding_model"))
     consent = st.checkbox("Allow sending questions and passages to the selected cloud provider (Groq, Gemini, Wikipedia lookup)", value=svc.get_bool("cloud_consent"))
     agent_on = st.checkbox("Let the language model use tools (agent). Every action still passes the safety gateway",
@@ -54,6 +61,12 @@ with st.form("llm"):
         svc.set_value("gemini_model", gemini_model.strip())
         svc.set_value("ollama_model", ollama_model.strip())
         svc.set_value("embedding_model", embed_model.strip())
+        svc.set_value("openai_compat_model", compat_model.strip())
+        svc.set_value("llm_tool_mode", tool_mode)
+        try:
+            svc.set_value("openai_compat_url", compat_url.strip())
+        except svc.SettingError as exc:
+            st.error(str(exc))
         svc.set_value("cloud_consent", "true" if consent else "false")
         if provider in svc.PROVIDERS and key.strip():
             svc.llm_set_key(provider, key)

@@ -1,11 +1,9 @@
-"""Agent package for ADHYAKSH: tool registry + multi-step tool-using loop.
+"""Agent package: the tool registry and the tool-calling loop.
 
-Public entry point: :func:`adhyaksh.agent.runner.run` (or :func:`run_stream`
-for live step display in the chat UI).
+Public entry points: :func:`adhyaksh.agent.native.run` and :func:`adhyaksh.agent.native.resume`.
+Model turns go through :mod:`adhyaksh.llm.toolcall` (native tool calls or the JSON protocol).
 """
-from __future__ import annotations
-
 from adhyaksh.agent import registry  # noqa: F401
-from adhyaksh.agent.runner import MAX_STEPS, TIMEOUT, run, resume, run_stream  # noqa: F401
+from adhyaksh.agent.native import MAX_STEPS, TIMEOUT, resume, run  # noqa: F401
 
-__all__ = ["MAX_STEPS", "TIMEOUT", "run", "resume", "run_stream", "registry"]
+__all__ = ["MAX_STEPS", "TIMEOUT", "run", "resume", "registry"]

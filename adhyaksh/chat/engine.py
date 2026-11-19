@@ -10,7 +10,6 @@ from pathlib import Path
 from adhyaksh import config, logging_setup, responses
 from adhyaksh.chat import context, identity, router
 from adhyaksh.agent import native as agent_native
-from adhyaksh.agent import runner as agent_runner
 from adhyaksh.llm import base as llm
 from adhyaksh.memory import store
 from adhyaksh.nlu import registry
@@ -152,25 +151,14 @@ def _model_slots(intent: str, text: str) -> dict:
     return {}
 
 
-def _agent_dispatch(text: str, ctx: context.Context, convo_id: int, lang: str) -> _Reply:
-    """Run the agent loop and turn its result into a reply."""
-    res = agent_runner.run(text, convo_id, lang)
+def _agent_dispatch(text: str, ctx: context.Context, convo_id: int, lang: str, mode: str = "cowork") -> _Reply:
+    """Run the tool-calling agent for a request the offline path could not place."""
+    res = agent_native.run(text, convo_id, lang, mode)
     if res.get("disabled"):
         return _Reply(res.get("reason", "Agent unavailable."), "unknown", 0.0)
-    confirmation = res.get("confirmation")
-    if confirmation:
-        ctx.pending_agent_confirm = {
-            "token": confirmation["token"],
-            "action": confirmation["action"],
-            "target": confirmation["target"],
-            "text": text,
-        }
-        return _Reply("Confirm " + confirmation["action"] + " on " + confirmation["target"] +
-                      "? Confirm or cancel.", "agent_confirm", action="agent_confirm",
-                      confirmation=confirmation)
-    ctx.agent_steps = res.get("steps", [])
-    reply = res.get("reply") or "I could not complete that."
-    return _Reply(reply, "agent", 1.0)
+    if res.get("failed"):
+        return _Reply(_cannot_do_yet(lang), "unknown", 0.0, action="low_confidence")
+    return _native_reply(res, ctx, text)
 
 
 def _native_reply(res: dict, ctx: context.Context, text: str) -> _Reply:
@@ -216,15 +204,9 @@ def _finish_agent_confirmation(ctx: context.Context, accept: bool,
             agent_native.cancel(p["token"])
             return _Reply(_t("cancelled", lang), "agent_confirm", action="cancel")
         return _native_reply(agent_native.resume(p["token"]), ctx, p["text"])
-    if not accept:
-        policy.cancel_guarded(p["token"])
-        return _Reply(_t("cancelled", lang), "agent_confirm", action="cancel")
-    res = agent_runner.resume(p["text"], convo_id, p["token"], lang)
-    if res.get("disabled"):
-        return _Reply(res.get("reason", "Agent unavailable."), "unknown", 0.0)
-    ctx.agent_steps = res.get("steps", [])
-    reply = res.get("reply") or "Done."
-    return _Reply(reply, "agent", 1.0)
+    # Confirmations always come from the tool-calling agent now; an old pending entry is simply cancelled.
+    policy.cancel_guarded(p["token"])
+    return _Reply(_t("cancelled", lang), "agent_confirm", action="cancel")
 
 
 def _error_reply(res: Result, lang: str) -> str:
@@ -844,7 +826,7 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
             r.conf = conf
             return r
         if agent_enabled:
-            return _agent_dispatch(text, ctx, convo_id, lang)
+            return _agent_dispatch(text, ctx, convo_id, lang, mode)
         if llm.available() and not _UNSUPPORTED_ACTION.search(text):
             r = _llm_answer(text, convo_id, lang, "knowledge_question")
             r.conf = conf
@@ -856,7 +838,7 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
         r = _Reply(_cannot_do_yet(lang), "unknown", conf, action="low_confidence")
         return r
     if _looks_multi_step(text) and agent_enabled:
-        return _agent_dispatch(text, ctx, convo_id, lang)
+        return _agent_dispatch(text, ctx, convo_id, lang, mode)
     # Model path: extract slots using the same extractors as the rule layer.
     intent, slots = _correct_file_folder(intent, _model_slots(intent, text), text)
     r = _dispatch(intent, text, slots, ctx, convo_id, lang, mode=mode)

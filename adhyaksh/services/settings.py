@@ -24,6 +24,7 @@ get_allowed_roots = config.get_allowed_roots
 get_bool = config.get_bool
 get_float = config.get_float
 set_value = config.set_value
+SettingError = config.SettingError
 
 # adhyaksh.db
 db_export_bytes = db.export_bytes

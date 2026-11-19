@@ -103,6 +103,10 @@ DEFAULTS: dict[str, str] = {
     "groq_model": "llama-3.1-8b-instant",  # per Groq docs, checked 2026-11-06; editable in Settings
     "gemini_model": "gemini-3.5-flash-lite",  # per Google docs, checked 2026-11-06; editable in Settings
     "ollama_model": "llama3.2:3b",  # local model name for the optional Ollama provider
+    "openai_compat_url": "http://127.0.0.1:1234/v1",  # any OpenAI-compatible server; loopback counts as local
+    "openai_compat_model": "",
+    "llm_tool_mode": "auto",  # auto: native tool calls when the model supports them, else the JSON protocol
+    "llm_json_only_models": "[]",  # learned at run time: models that rejected native tool calls
     "doc_min_score": "0.15",
     "doc_min_score_embed": "0.35",  # minimum cosine similarity when embeddings are used for document search
     "active_notebook": "1",  # notebook that receives attachments and answers document questions
@@ -130,7 +134,10 @@ RULES: dict[str, tuple] = {
     "stt_engine": ("choice", {"browser", "local"}),
     "stt_model": ("choice", {"tiny", "base", "small"}),
     "tts_rate": ("float", 0.6, 1.6),
-    "llm_provider": ("choice", {"", "groq", "gemini", "ollama"}),
+    "llm_provider": ("choice", {"", "groq", "gemini", "ollama", "openai_compat"}),
+    "llm_tool_mode": ("choice", {"auto", "native", "json"}),
+    "llm_json_only_models": ("json", list),
+    "openai_compat_url": ("url",),
     "allowed_folders": ("json", list),
     "app_allowlist": ("json", dict),
     "doc_min_score": ("float", 0.0, 1.0),
@@ -173,6 +180,12 @@ def normalize(key: str, value) -> str:
     if kind == "choice":
         if text not in rule[1]:
             raise SettingError(f"{key} must be one of: {', '.join(sorted(c or '(empty)' for c in rule[1]))}.")
+        return text
+    if kind == "url":
+        from urllib.parse import urlparse
+        u = urlparse(text)
+        if u.scheme not in ("http", "https") or not u.hostname:
+            raise SettingError(f"{key} must be an http or https address, for example http://127.0.0.1:1234/v1.")
         return text
     if kind == "json":
         try:

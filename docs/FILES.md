@@ -24,7 +24,7 @@
 - `adhyaksh/logging_setup.py` — logging with secret redaction; writes to `data/logs/adhyaksh.log` (git-ignored).
 - `adhyaksh/result.py` — `Result` dataclass and error codes (`E_*`).
 - `adhyaksh/responses.py` — all user-facing reply templates (EN/HI/GU).
-- `adhyaksh/agent/` — agent loop and tool registry: `__init__.py`, `registry.py` (tool registration, safety-guarded runner, run_python sandbox), `runner.py` (agent loop: TOOL/ANSWER protocol, max 6 steps, L2 pause/resume).
+- `adhyaksh/agent/` — agent loop and tool registry: `__init__.py`, `registry.py` (tool registration, safety-guarded runner, run_python sandbox), `native.py` (agent loop, max 6 steps, L2 pause/resume, claim guard). Model turns go through `adhyaksh/llm/toolcall.py` (native tool calls or the JSON protocol, schema validation, self-repair).
 - `adhyaksh/chat/` — chat engine: `__init__.py`, `context.py` (in-memory conversation context, pending slots/confirmations), `engine.py` (message routing, mode, OS_INTENTS, dispatch), `identity.py` (name extraction/save/get), `router.py` (rule layer, slot extractors, web command parsing, safe math).
 - `adhyaksh/llm/` — LLM providers: `__init__.py`, `base.py` (Provider ABC, `ask`, `ask_with_tools`, Groq/Gemini selection, caching), `cache.py`, `groq.py`, `gemini.py`.
 - `adhyaksh/memory/` — personal fact store: `__init__.py`, `store.py` (save/recall/list/update/delete facts, keyword recall).

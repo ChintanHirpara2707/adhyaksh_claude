@@ -5,7 +5,17 @@ user's go-ahead before the next one starts. Progress is recorded in docs/UPGRADE
 
 ## Baseline (measured at the start of Phase 0)
 
-BASELINE_PLACEHOLDER
+Measured 2026-11-19 on `main` at e8395cb, before any Phase 1 change:
+
+| Check | Result |
+|---|---|
+| `pytest tests -q --ignore=tests/test_tools.py` | 646 passed, 2 skipped (9 min 26 s) |
+| `nlu.dataset validate` | valid |
+| Regression suite `tests/eval/run_eval.py` | 398/399 (C347 known) |
+| Real eval `tests/eval/run_real_eval.py` | 237/238, 99.6% (R054 known) |
+| Active model test macro-F1 (`docs/RESULTS.md`) | 0.956 |
+
+Gate for every phase: no lower number in any row.
 
 ## 1. Audit findings by subsystem
 

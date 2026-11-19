@@ -23,9 +23,9 @@ def status() -> list[str]:
     lines = []
     provider = config.get("llm_provider")
     consent = config.get_bool("cloud_consent")
-    if provider in llm.LOCAL_PROVIDERS:
+    if provider and llm.provider_is_local(provider):
         lines.append(f"Language model: {provider} (on this PC)")
-    elif provider and consent and llm.api_key(provider):
+    elif provider and consent and llm.get_provider() is not None:
         lines.append(f"Language model: {provider} (cloud)")
     else:
         lines.append("Language model: off (rules and local models)")

@@ -24,23 +24,21 @@ class OllamaProvider(Provider):
     name = "ollama"
 
     def _call(self, prompt: str, timeout: float) -> str:
-        import requests
+        from adhyaksh import net
 
-        r = requests.post(URL, timeout=timeout,
+        r = net.post(URL, timeout=timeout, attempts=2,
                           json={"model": self.model(), "prompt": prompt, "stream": False,
                                 "options": {"num_predict": self.max_tokens}})
-        r.raise_for_status()
         return r.json().get("response", "")
 
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
-        import requests
+        from adhyaksh import net
 
         payload = {"model": self.model(), "messages": to_ollama_messages(messages), "stream": False,
                    "options": {"num_predict": self.max_tokens}}
         if tools:
             payload["tools"] = [{"type": "function", "function": t} for t in tools]
-        r = requests.post(CHAT_URL, timeout=max(timeout, 60.0), json=payload)  # local models can be slow to load
-        r.raise_for_status()
+        r = net.post(CHAT_URL, timeout=max(timeout, 60.0), attempts=2, json=payload)  # local models can be slow to load
         message = r.json().get("message") or {}
         calls = []
         for i, c in enumerate(message.get("tool_calls") or []):

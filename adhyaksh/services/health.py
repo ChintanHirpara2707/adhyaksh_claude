@@ -121,9 +121,11 @@ def service_checks(probe_ollama: bool = True) -> list[dict]:
     consent = config.get_bool("cloud_consent")
     if not provider:
         rows.append(_row("Language model", "Provider", "optional", "none chosen; the app works offline with rules and local models"))
-    elif provider in llm.LOCAL_PROVIDERS:
+    elif llm.provider_is_local(provider):
         state, detail = "ok", "local, nothing leaves this computer"
-        if probe_ollama:
+        if provider == "openai_compat" and not config.get("openai_compat_model"):
+            state, detail = "problem", "set the model name for the OpenAI-compatible server in Settings"
+        elif probe_ollama and provider == "ollama":
             from adhyaksh import net
             try:
                 net.get("http://127.0.0.1:11434/api/tags", timeout=1.5, attempts=1)
@@ -131,7 +133,7 @@ def service_checks(probe_ollama: bool = True) -> list[dict]:
                 state, detail = "problem", "Ollama is not running. Start the Ollama program."
         rows.append(_row("Language model", f"Provider: {provider}", state, detail))
     else:
-        has_key = bool(llm.api_key(provider))
+        has_key = bool(llm.api_key(provider)) and (provider != "openai_compat" or bool(config.get("openai_compat_model")))
         state = "ok" if has_key and consent else "problem"
         detail = ("key present, cloud use allowed" if state == "ok" else
                   "no API key" if not has_key else "cloud use is not allowed; turn it on in Settings to use this provider")

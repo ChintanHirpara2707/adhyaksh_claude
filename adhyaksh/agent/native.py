@@ -1,7 +1,7 @@
-"""Agent loop with native tool calling (Groq, Gemini, Ollama).
+"""Agent loop with provider-agnostic tool calling (Groq, Gemini, Ollama, any OpenAI-compatible server).
 
-The model receives the tool schemas through the provider's own tool-calling interface and returns structured
-calls. Every call is executed through the tool registry, whose wrappers all go through
+Each model turn goes through :func:`adhyaksh.llm.toolcall.turn`: native function calling when the model supports
+it, otherwise a strict JSON protocol, with schema validation and self-repair either way. Every call is executed through the tool registry, whose wrappers all go through
 ``safety.policy.run_guarded``: L2 actions pause for confirmation, L3 actions are refused, and every attempt is
 audited. Tool output is passed back as data. The final answer is checked so the assistant never claims an action
 that no tool actually performed.
@@ -19,6 +19,7 @@ from adhyaksh import config
 from adhyaksh.agent import registry as tool_registry
 from adhyaksh.chat import context, identity
 from adhyaksh.llm import base as llm
+from adhyaksh.llm import toolcall
 from adhyaksh.result import E_NEEDS_CONFIRM, Result
 
 MAX_STEPS = 6
@@ -131,7 +132,7 @@ def _loop(messages: list[dict], steps: list[dict], ctx: dict, mode: str, ui: dic
     allowed = {t["name"] for t in tools}
     for _ in range(MAX_STEPS):
         t0 = time.perf_counter()
-        res = llm.chat(messages, tools, timeout=TIMEOUT)
+        res = toolcall.turn(messages, tools, timeout=TIMEOUT)
         latency = round((time.perf_counter() - t0) * 1000, 1)
         if not res.ok:
             if not steps:  # nothing was done yet: let the caller fall back to the offline path

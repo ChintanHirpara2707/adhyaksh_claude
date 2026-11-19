@@ -41,21 +41,19 @@ class GroqProvider(Provider):
     name = "groq"
 
     def _call(self, prompt: str, timeout: float) -> str:
-        import requests
+        from adhyaksh import net
 
-        r = requests.post(URL, timeout=timeout, headers={"Authorization": f"Bearer {api_key('groq')}"},
+        r = net.post(URL, timeout=timeout, attempts=2, headers={"Authorization": f"Bearer {api_key('groq')}"},
                           json={"model": self.model(), "max_tokens": self.max_tokens,
                                 "messages": [{"role": "user", "content": prompt}]})
-        r.raise_for_status()
         return r.json()["choices"][0]["message"]["content"]
 
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
-        import requests
+        from adhyaksh import net
 
         payload = {"model": self.model(), "max_tokens": self.max_tokens, "messages": to_openai_messages(messages)}
         if tools:
             payload["tools"] = [{"type": "function", "function": t} for t in tools]
             payload["tool_choice"] = "auto"
-        r = requests.post(URL, timeout=timeout, headers={"Authorization": f"Bearer {api_key('groq')}"}, json=payload)
-        r.raise_for_status()
+        r = net.post(URL, timeout=timeout, attempts=2, headers={"Authorization": f"Bearer {api_key('groq')}"}, json=payload)
         return parse_openai_message(r.json()["choices"][0]["message"])

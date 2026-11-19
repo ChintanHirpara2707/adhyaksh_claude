@@ -20,7 +20,7 @@ from typing import Callable
 
 from adhyaksh import config
 from adhyaksh.memory import store
-from adhyaksh.result import E_ACTION_FAILED, E_BLOCKED, E_NEEDS_CONFIRM, Result
+from adhyaksh.result import E_ACTION_FAILED, E_BAD_ARGUMENTS, E_BLOCKED, E_NEEDS_CONFIRM, Result
 from adhyaksh.rag import answerer
 from adhyaksh.safety import policy
 from adhyaksh.tools import apps, files, office, system
@@ -64,6 +64,13 @@ def list_tools() -> list[Tool]:
     return list(_REGISTRY.values())
 
 
+def object_schema(p: dict) -> dict:
+    """Bare property maps become object schemas (every listed property required)."""
+    if p.get("type") == "object":
+        return p
+    return {"type": "object", "properties": p, "required": list(p)}
+
+
 def schemas() -> list[dict]:
     """OpenAI-style function schemas describing every registered tool.
 
@@ -71,13 +78,8 @@ def schemas() -> list[dict]:
     """
     include_power = config.get_bool("power_mode")
 
-    def norm(p: dict) -> dict:
-        if p.get("type") == "object":
-            return p
-        return {"type": "object", "properties": p, "required": list(p)}  # bare property maps become object schemas
-
     return [
-        {"name": t.name, "description": t.description, "parameters": norm(t.parameters)}
+        {"name": t.name, "description": t.description, "parameters": object_schema(t.parameters)}
         for t in _REGISTRY.values()
         if not (t.name == "run_python" and not include_power)
     ]
@@ -105,6 +107,11 @@ def _guarded(tool: Tool, arguments: dict, ctx: dict,
     ``res.data["token"]``; we remember the call so :func:`resume` can re-run it
     after the user confirms.  Tool failures never raise.
     """
+    from adhyaksh.llm import toolcall
+
+    arguments, problems = toolcall.validate(object_schema(tool.parameters), arguments or {})
+    if problems:  # never run a tool with missing or malformed arguments; tell the caller exactly what is wrong
+        return Result.failure(E_BAD_ARGUMENTS, f"{tool.name}: " + "; ".join(problems) + ".", data={"problems": problems})
     try:
         res = runner(arguments, ctx)
     except Exception as exc:  # tool failures never raise to the agent loop

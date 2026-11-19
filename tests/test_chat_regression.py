@@ -31,8 +31,8 @@ def _boot() -> Path:
         ws.mkdir()
         config.set_value("allowed_folders", json.dumps([str(ws)]))
         config.set_value("default_work_folder", str(ws))
-        # A Gemini API key is present in this environment, so configure the provider and
-        # enable cloud consent so knowledge questions reach the knowledge answerer (LLM).
+        # A cloud provider with consent is configured, but tests never see a real key (tests/conftest.py), so
+        # every request here takes the offline path; tests that need a model answer script one.
         config.set_value("cloud_consent", "true")
         config.set_value("llm_provider", "gemini")
         train.train_all(42, kinds=["m1_logreg", "m3_svm"], write_report=False)
@@ -155,8 +155,16 @@ def test_open_whatsapp_clear_reason():
 # ---------------------------------------------------------------------------
 # Case 10: knowledge questions -> knowledge answer, not doc not found
 # ---------------------------------------------------------------------------
-def test_knowledge_questions_get_knowledge_answer():
+def test_knowledge_questions_get_knowledge_answer(monkeypatch):
+    """Knowledge questions reach the knowledge answerer. The model is scripted: tests never call a real one."""
+    from adhyaksh.llm import base as llm
+    from adhyaksh.result import Result
     ws = _boot()
+    monkeypatch.setattr(llm, "available", lambda: True)
+    monkeypatch.setattr(llm, "is_local", lambda: True)
+    monkeypatch.setattr(llm, "get_provider", lambda: object())
+    monkeypatch.setattr(llm, "chat", lambda *a, **k: Result.success({"text": "Scripted knowledge answer.", "tool_calls": []}))
+    monkeypatch.setattr(llm, "ask", lambda *a, **k: Result.success("Scripted knowledge answer."))
     cid = context.new_conversation()
     for text in ("give some details about Sundar Pichai", "I want react definition",
                  "who is the CEO of Google"):

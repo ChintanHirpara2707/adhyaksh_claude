@@ -46,9 +46,9 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "gu": "આ ભૂલી જાઉં: {fact}? હા અથવા ના કહો.",
     },
     "unknown": {
-        "en": "I could not match that request. Please rephrase it.",
-        "hi": "मैं इस अनुरोध को समझ नहीं सका। कृपया दोबारा लिखें।",
-        "gu": "હું આ વિનંતી સમજી શક્યો નથી. કૃપા કરીને ફરીથી લખો.",
+        "en": "I did not catch that. Could you say it another way?",
+        "hi": "मैं यह समझ नहीं पाया। क्या आप इसे दूसरे तरीके से कह सकते हैं?",
+        "gu": "હું આ સમજી શક્યો નહીં. શું તમે બીજી રીતે કહી શકો?",
     },
     "file_created": {
         "en": "File created: {path}.",
@@ -69,12 +69,12 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "gu": "{file} કાઢી નાખવી છે? આ ફાઇલ રિસાયકલ બિનમાં જશે. પુષ્ટિ કરો અથવા રદ કરો.",
     },
     "error": {
-        "en": "The action could not be completed. Reason: {reason}.",
-        "hi": "कार्रवाई पूरी नहीं हो सकी। कारण: {reason}।",
-        "gu": "ક્રિયા પૂર્ણ થઈ શકી નથી. કારણ: {reason}.",
+        "en": "I could not do that: {reason}.",
+        "hi": "यह नहीं हो सका: {reason}।",
+        "gu": "આ થઈ શક્યું નહીં: {reason}.",
     },
-    "greet": {"en": "Hello. How can I help you?", "hi": "नमस्ते। मैं आपकी कैसे सहायता कर सकता हूँ।",
-              "gu": "નમસ્તે. હું તમારી કેવી રીતે મદદ કરી શકું."},
+    "greet": {"en": "Hello. What can I do for you?", "hi": "नमस्ते। बताइए, क्या करूँ?",
+              "gu": "નમસ્તે. બોલો, શું કરું?"},
     "ask_name": {"en": "Should I address you as {name}?"},
     "no_name": {"en": "I do not have your name yet. You can say: my name is Priya."},
     "memory_recall": {"en": "{answer}."},
@@ -141,16 +141,12 @@ TEMPLATES: dict[str, dict[str, str]] = {
     "app_close_waiting": {"en": "Asked {app} to close. It is showing a save prompt, so answer it there to finish."},
     "app_refused": {"en": "{app} is not on the allowed applications list."},
     "status": {"en": "CPU {cpu:.0f} percent, memory {ram:.0f} percent, disk {disk:.0f} percent used."},
-    "help": {"en": "I can create, read, update, delete and search files; create Excel and Word files; "
-                   "open and close allowed applications; remember facts; answer questions from your "
-                   "documents; and report system status."},
+    "help": {"en": "{capabilities}"},
     "doc_not_found": {"en": "Not found in your documents."},
-    "llm_unavailable": {"en": "No language model is configured, so I cannot answer general questions. "
-                              "You can search the web: {link}"},
-    "llm_blocked": {"en": "Cloud use is not enabled in Settings, so I cannot send this question to a language "
-                          "model. You can search the web: {link}"},
-    "blocked": {"en": "This action is not permitted. Reason: {reason}."},
-    "cancelled": {"en": "Action cancelled."},
+    "llm_unavailable": {"en": "I need a language model for that, and none is set up. Search the web: {link}"},
+    "llm_blocked": {"en": "That needs a cloud language model, and cloud use is off in Settings. Search the web: {link}"},
+    "blocked": {"en": "That is not allowed: {reason}."},
+    "cancelled": {"en": "Cancelled. Nothing was changed.", "hi": "रद्द किया। कुछ नहीं बदला।", "gu": "રદ કર્યું. કંઈ બદલાયું નથી."},
     "ask_web_url": {"en": "Which website, or what should I search for?",
                     "hi": "कौन सी वेबसाइट खोलूं, या क्या खोजूं?",
                     "gu": "કયી વેબસાઇટ ખોલવી, અથવા શું શોધવું?"},
@@ -165,9 +161,9 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "gu": "અલવિદા. તમારો દિવસ શુભ રહે.",
     },
     "smalltalk_how_are_you": {
-        "en": "I am doing well, thank you. How can I help you?",
-        "hi": "मैं ठीक हूँ, धन्यवाद। मैं आपकी कैसे सहायता कर सकता हूँ?",
-        "gu": "હું બરાબર છું, આભાર. હું તમને કેવી રીતે મદદ કરી શકું?",
+        "en": "All good here, thank you. What do you need?",
+        "hi": "सब ठीक है, धन्यवाद। बताइए, क्या चाहिए?",
+        "gu": "બધું બરાબર છે, આભાર. બોલો, શું જોઈએ?",
     },
     "cannot_do_yet": {
         "en": "I cannot do that yet. {capabilities}",
@@ -176,8 +172,8 @@ TEMPLATES: dict[str, dict[str, str]] = {
     },
     "needs_cowork": {
         "en": "That action needs Cowork mode. Switch to Cowork to run it.",
-        "hi": "यह क्रिया करने के लिए कॉर्क मोड की आवश्यकता है। कॉर्क मोड पर स्विच करें।",
-        "gu": "આ ક્રિયા ચલાવવા માટે કોર્ક મોડની જરૂર છે. કોર્ક મોડ પર સ્વિચ કરો.",
+        "hi": "यह काम Cowork मोड में होता है। Cowork मोड चुनें और फिर कहें।",
+        "gu": "આ કામ Cowork મોડમાં થાય છે. Cowork મોડ પસંદ કરો અને ફરી કહો.",
     },
 }
 

@@ -12,7 +12,7 @@ MESSAGES: dict[str, str] = {
     "E_LOW_CONFIDENCE": "I am not sure what you meant. Please say it another way.",
     "E_UNSUPPORTED_OS": "That action is not available on this operating system.",
     "E_BLOCKED": "That action is not allowed by the safety rules.",
-    "E_ACTION_FAILED": "The action could not be completed. Details are in the log on the Health page.",
+    "E_ACTION_FAILED": "Something went wrong while doing that. Details are in the log on the Health page.",
     "E_CONFIRM_INVALID": "The confirmation is invalid or has expired. Please ask again.",
     "E_LLM_FAILED": "The language model did not answer. Try again, or check the provider on the Health page.",
     "E_NETWORK": "Could not reach the internet service. Check the connection and try again.",

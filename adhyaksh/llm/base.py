@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 
 import logging
 
-from adhyaksh import config, logging_setup
+from adhyaksh import config, logging_setup, persona
 from adhyaksh.llm import cache
 from adhyaksh.result import E_BLOCKED, E_NO_API_KEY, E_TIMEOUT, Result
 
@@ -23,11 +23,9 @@ MAX_TOKENS = 400
 ANSWER_TOKENS = 1024
 ANSWER_TIMEOUT = 25.0
 SYSTEM_PROMPT = (
-    "You are ADHYAKSH, a helpful general-purpose assistant running on the user's laptop. "
+    persona.STYLE + "\n"
     "Answer any question the user asks: facts, explanations, writing, coding, maths, advice, translation. "
-    "Reply in the language and script the user used (English, Hindi, Gujarati, Hinglish or Gujlish). "
-    "Be accurate and concise, use short paragraphs or lists when they help, and say so when you are unsure "
-    "instead of guessing. You cannot browse the web or perform actions on the computer in this reply."
+    "You cannot browse the web or perform actions on the computer in this reply."
 )
 ENV_FILE = config.ROOT / ".env"
 

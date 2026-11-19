@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from adhyaksh import config, logging_setup, responses
+from adhyaksh import config, logging_setup, persona, responses
 from adhyaksh.chat import context, identity, router
 from adhyaksh.agent import native as agent_native
 from adhyaksh.llm import base as llm
@@ -237,9 +237,7 @@ def _error_reply(res: Result, lang: str) -> str:
     return _t("error", lang, reason=res.message.rstrip(".") or "unknown error")
 
 
-_CAPABILITIES = ("I can create, read, update, delete and search files; create Excel and Word files; "
-                 "open and close allowed applications; take screenshots; check system status; "
-                 "remember facts; and answer questions from your documents or the web.")
+_CAPABILITIES = persona.CAPABILITIES
 
 
 def _cannot_do_yet(lang: str) -> str:
@@ -537,7 +535,7 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
     if intent == "math":
         return _Reply(_t("math", lang, expr=slots["expr"], value=slots["value"]), "math")
     if intent == "help":
-        return _Reply(_t("help", lang), intent)
+        return _Reply(_t("help", lang, capabilities=persona.CAPABILITIES), intent)
     if intent == "set_identity":
         name, conf = (slots.get("name"), slots.get("conf", 0)) if slots.get("name") else identity.extract_name(text)
         if not name:

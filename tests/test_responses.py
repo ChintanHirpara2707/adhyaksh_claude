@@ -6,11 +6,11 @@ def test_reference_replies_exact():
     assert r.t("identity_query", name="Chintan") == "Your name is Chintan."
     assert r.t("memory_saved", fact="my car is Audi") == "Saved to memory: my car is Audi."
     assert r.t("memory_exists", fact="x") == "This is already stored: x."
-    assert r.t("unknown") == "I could not match that request. Please rephrase it."
+    assert r.t("unknown") == "I did not catch that. Could you say it another way?"
     assert r.t("file_created", path="C:/w/a.txt") == "File created: C:/w/a.txt."
     assert r.t("confirm_delete", file="report.txt") == (
         "Delete report.txt? This moves it to the Recycle Bin. Confirm or cancel.")
-    assert r.t("error", reason="file not found") == "The action could not be completed. Reason: file not found."
+    assert r.t("error", reason="file not found") == "I could not do that: file not found."
 
 
 def test_no_exclamation_marks_in_any_variant():
@@ -29,5 +29,6 @@ def test_every_template_has_english_and_formats():
 
 
 def test_language_fallback_to_english():
-    assert r.t("cancelled", "hi") == r.t("cancelled", "en")
+    assert "hi" not in r.TEMPLATES["ask_name"]  # an English-only template falls back to English
+    assert r.t("ask_name", "hi", name="Amit") == r.t("ask_name", "en", name="Amit")
     assert r.t("identity_query", "hi", name="Amit") != r.t("identity_query", "en", name="Amit")

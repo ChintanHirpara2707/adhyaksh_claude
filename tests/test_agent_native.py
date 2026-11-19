@@ -25,6 +25,7 @@ def _setup(monkeypatch, script):
     config.set_value("allowed_folders", json.dumps([str(ws)]))
     config.set_value("default_work_folder", str(ws))
     config.set_value("llm_provider", "ollama")  # local: no consent needed
+    config.set_value("routing", "llm_first")  # these tests exercise the agent loop; local routing is in test_frames.py
     seen = []
     steps = iter(script)
 

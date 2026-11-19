@@ -12,7 +12,7 @@ from adhyaksh.chat import context, identity, router
 from adhyaksh.agent import native as agent_native
 from adhyaksh.llm import base as llm
 from adhyaksh.memory import store
-from adhyaksh.nlu import registry
+from adhyaksh.nlu import entities, frames, registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
@@ -96,10 +96,22 @@ def _looks_multi_step(text: str) -> bool:
 _FOLDER_WORD = re.compile(r"\b(folder|directory|dir)\b(?!\.\w)", re.IGNORECASE)
 
 
+_NEG_VERB = {"open": "open", "close": "close", "create": "create", "delete": "delete", "search": "search for"}
+
+
+def _negated_reply(frame, lang: str) -> _Reply:
+    """Acknowledge a request the user said not to carry out. Nothing is run."""
+    if frame.action and frame.target:
+        what = f"{_NEG_VERB.get(frame.action, frame.action)} {frame.target}"
+        return _Reply(_t("negated", lang, what=what, target=frame.target), "negated", 1.0, action="negated")
+    return _Reply(_t("negated_plain", lang), "negated", 1.0, action="negated")
+
+
 def _correct_file_folder(intent: str, slots: dict, text: str) -> tuple[str, dict]:
-    """Decide file vs folder from folder-words in the text before trusting the intent."""
+    """Decide file vs folder from folder-words in the text before trusting the intent. An explicit file name with
+    an extension ("create groceries.txt in my work folder") is always a file; the folder word is its location."""
     slots = dict(slots)
-    if _FOLDER_WORD.search(text):
+    if _FOLDER_WORD.search(text) and not entities.find_file(text):
         if intent == "file_create":
             intent = "folder_create"
             if "file" in slots and not slots.get("folder"):
@@ -585,6 +597,7 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
             # Web verb present but no site/query: keep a pending slot and ask.
             return _need(ctx, intent, "url", slots,
                          _t("ask_web_url", lang), lang)
+        url = entities.normalize_url(url)
         res = system.web_open(url, ctx=c)
         if res.ok:
             return _Reply(_t("web_opened", lang, url=url), "web_open", action="web_open")
@@ -786,7 +799,16 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
         else:
             slots["content"] = text.strip()
         return _dispatch(p["intent"], text, slots, ctx, convo_id, lang, mode=mode)
+    negated = frames.negated_command(text)
+    if negated is not None:
+        # "don't open notepad", "chrome band mat karo": never executed, on any path (rules, classifier or model).
+        return _negated_reply(negated, lang)
     if agent_native.available():
+        fast = frames.command(text) if config.get("routing") == "local_first" else None
+        if fast is not None:
+            # A complete, unambiguous single command: run it here, without a model round trip (faster, works
+            # offline, and nothing is sent to a cloud model).
+            return _dispatch(fast.intent, text, fast.slots(), ctx, convo_id, lang, mode=mode)
         # A language model is usable: the tool-calling agent handles the request. Rules and the classifier
         # below are the offline fallback (also used when the model cannot be reached).
         r = _native_dispatch(text, ctx, convo_id, lang, mode)
@@ -983,7 +1005,7 @@ def _cowork_reply(intent: str, text: str, slots: dict, ctx: context.Context, lan
         return _Reply(f"Top programs by {key} ({res.data['total']} running):\n{lines}\n"
                       "To end one, say for example: end task <name>.", intent, action="process_list")
     if intent == "process_kill":
-        target = slots.get("target")
+        target = entities.clean_process_target(slots.get("target") or "")
         if not target:
             return _need(ctx, intent, "target", slots, "Which program should I end?", lang)
         res = processes.kill_process(target, ctx=c)

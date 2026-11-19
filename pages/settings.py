@@ -50,6 +50,10 @@ with st.form("llm"):
     tool_mode = st.selectbox("Tool calling", _modes, index=_modes.index(svc.get("llm_tool_mode")),
                              format_func=lambda x: {"auto": "Automatic (native when supported, else JSON)",
                                                     "native": "Native function calling only", "json": "JSON protocol only"}[x])
+    _routes = ["local_first", "llm_first"]
+    routing = st.selectbox("Simple commands", _routes, index=_routes.index(svc.get("routing")),
+                           format_func=lambda x: {"local_first": "Run on this PC first (fast, private; the model handles the rest)",
+                                                  "llm_first": "Always ask the language model"}[x])
     embed_model = st.text_input("Gemini embedding model", value=svc.get("embedding_model"))
     consent = st.checkbox("Allow sending questions and passages to the selected cloud provider (Groq, Gemini, Wikipedia lookup)", value=svc.get_bool("cloud_consent"))
     agent_on = st.checkbox("Let the language model use tools (agent). Every action still passes the safety gateway",
@@ -63,6 +67,7 @@ with st.form("llm"):
         svc.set_value("embedding_model", embed_model.strip())
         svc.set_value("openai_compat_model", compat_model.strip())
         svc.set_value("llm_tool_mode", tool_mode)
+        svc.set_value("routing", routing)
         try:
             svc.set_value("openai_compat_url", compat_url.strip())
         except svc.SettingError as exc:

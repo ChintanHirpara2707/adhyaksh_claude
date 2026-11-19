@@ -45,6 +45,13 @@ ACTIONS: dict[str, dict[str, list[str]]] = {
         "hi": ["हटाओ", "हटा दो", "हटाना", "डिलीट करो", "डिलीट कर दो", "मिटा दो", "मिटाओ"],
         "gu": ["કાઢી નાખો", "કાઢી નાખવું", "ડિલીટ કરો", "ડિલીટ કરી દો", "હટાવી દો", "ભૂંસી નાખો"],
     },
+    "search": {
+        "en": ["search for", "search", "find", "look for", "locate", "where is"],
+        "hinglish": ["dhundo", "dhoondo", "dhund do", "search karo", "khojo", "kahan hai"],
+        "gujlish": ["shodho", "shodhi do", "search karo", "kya che"],
+        "hi": ["ढूंढो", "ढूँढो", "खोजो", "सर्च करो", "कहाँ है"],
+        "gu": ["શોધો", "શોધી દો", "સર્ચ કરો", "ક્યાં છે"],
+    },
 }
 
 # Words that turn a command into a refusal ("don't open", "mat kholo", "ના ખોલો"). Whole-word matches only.

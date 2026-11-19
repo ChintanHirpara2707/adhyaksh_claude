@@ -8,6 +8,7 @@ import urllib.parse
 from dataclasses import dataclass, field
 
 from adhyaksh.chat import identity, numwords
+from adhyaksh.nlu import entities, frames
 from adhyaksh.tools import apps
 
 _OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.Div: operator.truediv,
@@ -416,24 +417,13 @@ def match_rules(text: str) -> Rule | None:
 
 
 def find_file(text: str) -> str | None:
-    """A quoted name (may contain spaces) or the first path-like token with an extension."""
-    q = re.search(r"[\"'\u201c\u2018]([^\"'\u201d\u2019]+)[\"'\u201d\u2019]", text)
-    if q and "." in q.group(1):
-        return q.group(1).strip()
-    m = FILE_RE.search(text)
-    return m.group(1) if m else None
+    """A file name with an extension (quoted, 'called X.ext' with spaces, or the first path-like token)."""
+    return entities.find_file(text)
 
 
 def find_app(text: str) -> str | None:
-    low = text.casefold()
-    for alias, target in apps.ALIASES.items():
-        if alias in low and len(alias) > 3:
-            return target
-    names = sorted(apps.allowlist(), key=len, reverse=True) + ["notepad", "calculator", "chrome", "paint", "vs code"]
-    for n in names:
-        if re.search(rf"(?<!\w){re.escape(n)}(?!\w)", low):
-            return n
-    return None
+    """The canonical allow-list key of the app named in the text (all scripts, speech slips included)."""
+    return entities.find_app(text)
 
 
 _SPECIAL_NAMES = ["recycle bin", "recyclebin", "downloads", "documents", "desktop",
@@ -550,17 +540,7 @@ def clean_command(text: str) -> str:
 
 def find_app_fuzzy(text: str) -> str | None:
     """Like find_app, but tolerates typos ('notpad', 'calculater', 'crome')."""
-    import difflib
-    app = find_app(text)
-    if app:
-        return app
-    names = list(apps.allowlist()) + list(apps.ALIASES.values())
-    singles = {n: n for n in names if " " not in n}
-    for tok in re.findall(r"[a-z]{4,}", text.casefold()):
-        close = difflib.get_close_matches(tok, list(singles), n=1, cutoff=0.8)
-        if close:
-            return singles[close[0]]
-    return None
+    return entities.find_app(text, fuzzy=True)
 
 
 _OPEN_V = (r"(?:open|launch|start|run|fire\s+up|boot\s+up|bring\s+up|khol(?:o|\s+do)?|chalu\s+karo|"
@@ -806,6 +786,11 @@ def understand(text: str) -> Rule | None:
     src = match_sources(text)
     if src:
         return src
+    frame = frames.command(text)
+    if frame is not None:
+        # A pure action + target command ("spotify band karo", "open note pad", "delete budget.txt"): the action
+        # and the target are decided separately, so opposite actions cannot collide.
+        return Rule(frame.intent, frame.slots())
     p1 = match_p1(text)
     if p1:
         return p1
@@ -1272,7 +1257,7 @@ _PROC_LIST = re.compile(
 _PROC_SORT_CPU = re.compile(r"\bcpu\b|सीपीयू|સીપીયુ", re.IGNORECASE)
 _TOP_N = re.compile(r"\btop\s*(\d{1,2})\b", re.IGNORECASE)
 _KILL_EN = re.compile(
-    r"^(?:please\s+)?(?:kill|terminate|end|stop|force\s+(?:close|quit|stop)|end\s+task(?:\s+for)?)\s+(?:the\s+)?(?:process\s+(?:with\s+)?(?:pid\s+|id\s+)?|"
+    r"^(?:please\s+)?(?:end\s+task(?:\s+for)?|force\s+(?:close|quit|stop)|kill|terminate|end|stop)\s+(?:the\s+)?(?:process\s+(?:with\s+)?(?:pid\s+|id\s+)?|"
     r"task\s+|pid\s+|program\s+)?(?P<t>[\w.\-]+(?:\.exe)?)(?:\s+(?:process|task))?\b(?P<tail>.*)$", re.IGNORECASE)
 _KILL_CUE = re.compile(r"\bprocess\w*\b|\bpid\b|\bend\s+task\b|\bforce\s+(?:close|quit|stop)\b|\bterminate\b|\.exe\b|प्रोसेस|પ્રોસેસ",
                        re.IGNORECASE)

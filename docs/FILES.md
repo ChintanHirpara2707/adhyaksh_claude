@@ -24,6 +24,7 @@
 - `adhyaksh/logging_setup.py` — logging with secret redaction; writes to `data/logs/adhyaksh.log` (git-ignored).
 - `adhyaksh/result.py` — `Result` dataclass and error codes (`E_*`).
 - `adhyaksh/responses.py` — all user-facing reply templates (EN/HI/GU).
+- `adhyaksh/nlu/lexicon.py`, `entities.py`, `frames.py` — multilingual verb and negation lexicon (shared with the data generator), entity extractors returning canonical values, and the frame parser (action + negation + target; negated commands are never run; pure action + target commands are routed here first).
 - `adhyaksh/agent/` — agent loop and tool registry: `__init__.py`, `registry.py` (tool registration, safety-guarded runner, run_python sandbox), `native.py` (agent loop, max 6 steps, L2 pause/resume, claim guard). Model turns go through `adhyaksh/llm/toolcall.py` (native tool calls or the JSON protocol, schema validation, self-repair).
 - `adhyaksh/chat/` — chat engine: `__init__.py`, `context.py` (in-memory conversation context, pending slots/confirmations), `engine.py` (message routing, mode, OS_INTENTS, dispatch), `identity.py` (name extraction/save/get), `router.py` (rule layer, slot extractors, web command parsing, safe math).
 - `adhyaksh/llm/` — LLM providers: `__init__.py`, `base.py` (Provider ABC, `ask`, `ask_with_tools`, Groq/Gemini selection, caching), `cache.py`, `groq.py`, `gemini.py`.

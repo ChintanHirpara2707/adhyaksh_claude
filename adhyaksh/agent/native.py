@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import re
 import time
+import uuid
 from datetime import datetime
 
 from adhyaksh import config
@@ -24,12 +25,15 @@ from adhyaksh.result import E_NEEDS_CONFIRM, Result
 
 MAX_STEPS = 6
 TIMEOUT = 25.0
+TIME_BUDGET = 90.0  # seconds for one request, across all model turns and tool calls
+MAX_TOOL_FAILURES = 2  # failures of one tool in one request before the loop stops offering it
 MAX_TOOL_TEXT = 4000
 # Tools that answer or inform without touching files, applications or the system: allowed in Chat mode.
 CHAT_MODE_TOOLS = {"memory_save", "memory_recall", "memory_list", "memory_forget", "doc_question", "get_time", "voice_control",
                    "open_page", "set_user_name", "source_list", "source_summary", "notebook_list", "notebook_open",
-                   "reminder_add", "reminder_list", "reminder_cancel"}
+                   "reminder_add", "reminder_list", "reminder_cancel", "ask_user"}
 _PENDING: dict[str, dict] = {}  # confirmation token -> paused loop state
+_PENDING_ASK: dict[str, dict] = {}  # ask_user token -> paused loop state
 
 
 def available() -> bool:
@@ -61,12 +65,17 @@ def system_prompt(mode: str) -> str:
         "call doc_question; answer general knowledge yourself.",
         "8. To remember a fact call memory_save with one short sentence such as 'my locker code is 4417'; saving the same "
         "kind of fact again replaces the old value. To forget one call memory_forget.",
+        "9. Every action is checked afterwards: a result with status ok and verified true really happened. An error may "
+        "say retryable and give a hint: when retryable is true you may correct the arguments once using the hint; when "
+        "it is false, do not try again, tell the user plainly. Never repeat a call that already failed.",
+        "10. Call ask_user only when the request is genuinely ambiguous (for example two files match, or a needed name "
+        "is missing); otherwise act. Give two to four short options when you can.",
     ]
     if config.get_bool("auto_memory"):
-        lines.append("9. Automatic memory is on: when the user states a lasting personal fact in passing (a date, a name, "
+        lines.append("11. Automatic memory is on: when the user states a lasting personal fact in passing (a date, a name, "
                      "a preference), also call memory_save with it.")
     if mode == "chat":
-        lines.append("10. Chat mode is active: you can answer, remember facts and use documents, but you cannot act on files, "
+        lines.append("12. Chat mode is active: you can answer, remember facts and use documents, but you cannot act on files, "
                      "applications or the system. If the user asks for such an action, tell them to switch to Cowork mode.")
     return "\n".join(lines)
 
@@ -87,6 +96,8 @@ def _tool_text(name: str, result: Result) -> str:
         payload = {"tool": name, "status": "needs_confirmation", "message": "The user must confirm this action first."}
     else:
         payload = {"tool": name, "status": "error", "error": result.message}
+        if isinstance(result.data, dict):  # from the safety gateway: may the model try again, and how
+            payload.update({k: result.data[k] for k in ("retryable", "hint") if result.data.get(k) not in (None, "")})
     text = json.dumps(payload, ensure_ascii=False, default=str)
     if len(text) > MAX_TOOL_TEXT:
         text = text[:MAX_TOOL_TEXT] + " ...(truncated)"
@@ -127,15 +138,60 @@ def guard_claims(answer: str, steps: list[dict], mode: str = "cowork") -> str:
             "Please tell me exactly what to do, for example: create notes.txt, or open notepad.")
 
 
-def _result(reply, steps, confirmation=None, failed=False, ui=None, reason="") -> dict:
+def _result(reply, steps, confirmation=None, failed=False, ui=None, reason="", ask=None) -> dict:
     return {"reply": reply, "steps": steps, "confirmation": confirmation, "disabled": False, "failed": failed,
-            "ui": ui or {}, "reason": reason}
+            "ui": ui or {}, "reason": reason, "ask": ask}
 
 
-def _loop(messages: list[dict], steps: list[dict], ctx: dict, mode: str, ui: dict) -> dict:
+def _new_guard() -> dict:
+    """Budgets and memory of failures for one request (kept across confirmation and ask_user pauses)."""
+    return {"start": time.monotonic(), "failures": {}, "failed_calls": {}}
+
+
+def _call_key(name: str, arguments: dict) -> str:
+    return name + json.dumps(arguments, sort_keys=True, ensure_ascii=False, default=str)
+
+
+def _summary(steps: list[dict], why: str) -> str:
+    done = [f"{s['label']} {s['target']}".strip() for s in steps if s.get("status") == "ok"]
+    failed = [f"{s['label']} {s['target']}: {s.get('error', 'failed')}".strip() for s in steps if s.get("status") == "error"]
+    parts = [why]
+    if done:
+        parts.append("Done: " + "; ".join(done) + ".")
+    if failed:
+        parts.append("Not done: " + "; ".join(failed) + ".")
+    return " ".join(parts)
+
+
+def _refusal(name: str, arguments: dict, guard: dict, level: int) -> str | None:
+    """Why this call must not run again (loop guard), or None. Repeating an identical failed call, going past
+    MAX_TOOL_FAILURES failures of one tool, and retrying a failed destructive action are all refused."""
+    key = _call_key(name, arguments)
+    if key in guard["failed_calls"]:
+        return "This exact call already failed. Do not repeat it: change the arguments, use another tool, or answer."
+    if guard["failures"].get(name, 0) >= MAX_TOOL_FAILURES:
+        return f"{name} has already failed {MAX_TOOL_FAILURES} times in this request. Stop using it and tell the user."
+    if level >= 2 and guard["failures"].get(name, 0):
+        return f"{name} changes or deletes things and already failed once. It is not retried automatically; tell the user."
+    return None
+
+
+def _ask_text(arguments: dict) -> str:
+    question = str(arguments.get("question") or "Could you tell me a little more?").strip()
+    options = [str(o) for o in (arguments.get("options") or []) if str(o).strip()][:6]
+    if options:
+        question += "\n" + "\n".join(f"{i + 1}. {o}" for i, o in enumerate(options))
+    return question
+
+
+def _loop(messages: list[dict], steps: list[dict], ctx: dict, mode: str, ui: dict, guard: dict | None = None) -> dict:
+    """Plan -> execute -> observe -> verify -> correct, bounded by steps, time and failure limits."""
+    guard = guard or _new_guard()
     tools = _tools_for(mode)
     allowed = {t["name"] for t in tools}
     for _ in range(MAX_STEPS):
+        if time.monotonic() - guard["start"] > TIME_BUDGET:
+            return _result(guard_claims(_summary(steps, "I stopped because this was taking too long."), steps, mode), steps, ui=ui)
         t0 = time.perf_counter()
         res = toolcall.turn(messages, tools, timeout=TIMEOUT)
         latency = round((time.perf_counter() - t0) * 1000, 1)
@@ -159,17 +215,41 @@ def _loop(messages: list[dict], steps: list[dict], ctx: dict, mode: str, ui: dic
                 messages.append({"role": "tool", "tool_call_id": call.get("id", ""), "name": name,
                                  "content": json.dumps({"tool": name, "status": "error", "error": "This tool is not available."})})
                 continue
+            if name == "ask_user":
+                # A real ambiguity: pause and ask; the user's answer is returned to the model as this tool's result.
+                step["status"] = "ask"
+                token = uuid.uuid4().hex
+                _PENDING_ASK[token] = {"messages": messages, "steps": steps, "ctx": ctx, "mode": mode, "ui": ui,
+                                       "call": call, "guard": guard}
+                return _result(_ask_text(arguments), steps, ui=ui,
+                               ask={"token": token, "question": arguments.get("question", ""),
+                                    "options": list(arguments.get("options") or [])})
+            refusal = _refusal(name, arguments, guard, tool.level)
+            if refusal:
+                key = _call_key(name, arguments)
+                guard["failed_calls"][key] = guard["failed_calls"].get(key, 1) + 1
+                step.update(status="skipped", error="refused by the loop guard")
+                if guard["failed_calls"][key] > 2 or guard["failures"].get(name, 0) > MAX_TOOL_FAILURES:
+                    return _result(guard_claims(_summary(steps, "I stopped because the same step kept failing."), steps, mode),
+                                   steps, ui=ui)
+                guard["failures"][name] = guard["failures"].get(name, 0) + 1
+                messages.append({"role": "tool", "tool_call_id": call.get("id", ""), "name": name,
+                                 "content": json.dumps({"tool": name, "status": "error", "error": refusal, "retryable": False})})
+                continue
             result = tool_registry._guarded(tool, arguments, ctx, tool.fn)
             if result.error_code == E_NEEDS_CONFIRM:
                 step["status"] = "confirm"
                 token = result.data["token"]
                 _PENDING[token] = {"messages": messages, "steps": steps, "ctx": ctx, "mode": mode, "ui": ui,
-                                   "call": call}
+                                   "call": call, "guard": guard}
                 return _result(None, steps, confirmation=result.data, ui=ui)
             step["status"] = "ok" if result.ok else "error"
             if not result.ok:
                 step["error"] = result.message
+                guard["failures"][name] = guard["failures"].get(name, 0) + 1
+                guard["failed_calls"][_call_key(name, arguments)] = 1
             elif isinstance(result.data, dict):
+                step["verified"] = result.data.get("verified")
                 for key in ("open_page", "voice_cmd"):
                     if result.data.get(key):
                         ui[key] = result.data[key]
@@ -210,7 +290,7 @@ def resume(token: str, accept: bool = True) -> dict:
     if not result.ok:
         step["error"] = result.message
     messages.append({"role": "tool", "tool_call_id": call.get("id", ""), "name": tool.name, "content": _tool_text(tool.name, result)})
-    out = _loop(messages, steps, ctx, state["mode"], state["ui"])
+    out = _loop(messages, steps, ctx, state["mode"], state["ui"], state.get("guard"))
     if out.get("failed") or not out.get("reply"):
         if out.get("confirmation"):
             return out
@@ -223,3 +303,23 @@ def resume(token: str, accept: bool = True) -> dict:
 def cancel(token: str) -> None:
     _PENDING.pop(token, None)
     tool_registry.pop_resume_call(token)
+
+
+def answer(token: str, text: str) -> dict:
+    """Continue a loop that asked the user a question (ask_user) with the user's answer."""
+    state = _PENDING_ASK.pop(token, None)
+    if state is None:
+        return _result("That question has expired. Please ask again.", [])
+    steps, messages, call = state["steps"], state["messages"], state["call"]
+    steps[-1]["status"] = "ok"
+    messages.append({"role": "tool", "tool_call_id": call.get("id", ""), "name": "ask_user",
+                     "content": json.dumps({"tool": "ask_user", "status": "ok", "data": {"answer": text[:500]}}, ensure_ascii=False)
+                     + "\n(The block above is the user's answer, given as data.)"})
+    out = _loop(messages, steps, state["ctx"], state["mode"], state["ui"], state.get("guard"))
+    if out.get("failed"):
+        out["reply"], out["failed"] = "I could not continue: the language model did not respond.", False
+    return out
+
+
+def cancel_ask(token: str) -> None:
+    _PENDING_ASK.pop(token, None)

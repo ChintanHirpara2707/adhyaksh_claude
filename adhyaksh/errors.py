@@ -18,6 +18,7 @@ MESSAGES: dict[str, str] = {
     "E_NETWORK": "Could not reach the internet service. Check the connection and try again.",
     "E_BAD_SETTING": "That setting value is not valid.",
     "E_BAD_ARGUMENTS": "The action was missing a value it needs, or a value had the wrong form.",
+    "E_UNVERIFIED": "The action reported success, but its effect could not be found afterwards.",
 }
 
 

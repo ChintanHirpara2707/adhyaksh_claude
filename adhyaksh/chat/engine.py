@@ -96,6 +96,10 @@ def _looks_multi_step(text: str) -> bool:
 _FOLDER_WORD = re.compile(r"\b(folder|directory|dir)\b(?!\.\w)", re.IGNORECASE)
 
 
+# Replies that drop a pending clarifying question ("no" may be a real answer, so it is not one of them).
+_DROP_REQUEST = {"cancel", "stop", "never mind", "nevermind", "forget it", "leave it", "rehne do", "rahne do", "jane do",
+                 "javado", "jaava do", "kuch nahi", "रहने दो", "छोड़ो", "રહેવા દો", "જવા દો"}
+
 _NEG_VERB = {"open": "open", "close": "close", "create": "create", "delete": "delete", "search": "search for"}
 
 
@@ -176,6 +180,11 @@ def _agent_dispatch(text: str, ctx: context.Context, convo_id: int, lang: str, m
 def _native_reply(res: dict, ctx: context.Context, text: str) -> _Reply:
     """Turn a native agent result into a reply (final answer, or a pending confirmation)."""
     confirmation = res.get("confirmation")
+    if res.get("ask"):
+        ctx.pending_agent_ask = {"token": res["ask"]["token"], "text": text}
+        ctx.agent_steps = res.get("steps", [])
+        return _Reply(res.get("reply") or res["ask"]["question"], "agent_ask", 1.0, action="clarify",
+                      extra={**(res.get("ui") or {}), "options": res["ask"].get("options") or []})
     if confirmation:
         ctx.pending_agent_confirm = {"token": confirmation["token"], "action": confirmation["action"],
                                      "target": confirmation["target"], "text": text, "native": True}
@@ -780,6 +789,13 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
             identity.save_name(name)
             return _Reply(_t("identity_saved", lang, name=name), "set_identity", action="profile")
         return _Reply(_t("cancelled", lang), "set_identity")
+    if ctx.pending_agent_ask:
+        # The agent asked a clarifying question: this message is the answer (unless the user drops the request).
+        p, ctx.pending_agent_ask = ctx.pending_agent_ask, None
+        if low in _DROP_REQUEST:
+            agent_native.cancel_ask(p["token"])
+            return _Reply(_t("cancelled", lang), "agent_ask", action="cancel")
+        return _native_reply(agent_native.answer(p["token"], text), ctx, p["text"])
     # Explicit agent invocation: "agent: <request>"
     if low.startswith("agent:"):
         return _agent_dispatch(low[len("agent:"):].strip(), ctx, convo_id, lang)

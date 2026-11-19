@@ -14,6 +14,7 @@ class Context:
     pending_slot: dict | None = None      # {"intent", "need", "slots"}
     pending_confirm: dict | None = None   # {"token", "action", "target", "retry": Callable}
     pending_agent_confirm: dict | None = None  # {"token", "action", "target", "text"}
+    pending_agent_ask: dict | None = None  # {"token", "text"}: the agent asked a clarifying question
     pending_name: str | None = None
     agent_steps: list | None = None       # steps from the last agent run
     images: list | None = None            # image bytes attached to the message being handled

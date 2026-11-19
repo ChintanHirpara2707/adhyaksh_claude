@@ -119,7 +119,8 @@ def test_process_chat_flow(monkeypatch):
     monkeypatch.setattr(processes, "resolve", lambda t: ([{"name": "zoom.exe", "pids": [99999], "ram_mb": 300.0, "protected": False}], ""))
     monkeypatch.setattr(processes, "_own_pids", lambda: {1})
     import psutil
-    monkeypatch.setattr(psutil, "Process", lambda pid: killed.append(pid) or type("P", (), {"terminate": lambda s: None, "kill": lambda s: None})())
+    # Record terminate() calls (constructing a Process is not a kill; the post-condition check also looks the pid up).
+    monkeypatch.setattr(psutil, "Process", lambda pid: type("P", (), {"terminate": lambda s: killed.append(pid), "kill": lambda s: None})())
     monkeypatch.setattr(psutil, "wait_procs", lambda procs, timeout=3: (procs, []))
     r = engine.handle_message("end task zoom", cid).data
     assert r["intent"] == "process_kill" and r["confirmation"] and "Unsaved work" in r["reply"] and not killed

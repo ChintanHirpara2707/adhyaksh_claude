@@ -140,7 +140,16 @@ def _find_processes(key: str, cmd: list[str]) -> list:
     for p in psutil.process_iter(["pid", "name"]):
         if (p.info["name"] or "").casefold() in names:
             found[p.info["pid"]] = p
-    return [p for pid, p in found.items() if pid not in skip]
+    return [p for pid, p in found.items() if pid not in skip and _alive(p)]
+
+
+def _alive(p) -> bool:
+    """A process that is still running (a process that is exiting can still be listed for a moment)."""
+    import psutil
+    try:
+        return p.is_running() and p.status() != psutil.STATUS_ZOMBIE
+    except psutil.Error:
+        return False
 
 
 def _windows(pids: set[int] | None = None, class_name: str | None = None) -> list[tuple[int, int]]:

@@ -1,6 +1,6 @@
 # NLU evaluation (polarity, slots, negation)
 
-Latest run: 2026-11-19 19:00 (2c structured memory). Offline path, every tool mocked. Cases: tests/eval/nlu_cases.csv. A polarity pair passes only when both of its commands pass.
+Latest run: 2026-11-19 19:20 (2a verification and recovery). Offline path, every tool mocked. Cases: tests/eval/nlu_cases.csv. A polarity pair passes only when both of its commands pass.
 
 | Suite | Passed | Rate |
 |---|---|---|

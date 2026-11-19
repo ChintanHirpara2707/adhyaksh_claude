@@ -153,8 +153,11 @@ def run_guarded(
                             ms=round((time.perf_counter() - t0) * 1000, 1))
         return Result.failure(E_ACTION_FAILED, f"The action raised an unexpected error ({type(exc).__name__}). "
                                                "Details are in the log on the Health page.")
+    from adhyaksh.safety import verify
+    res = verify.explain(action, target, d.level, verify.check(action, target, res), base)
     logging_setup.event("tool_action", action=action, perm_level=d.level, ok=res.ok, error_code=res.error_code,
-                        confirmed=confirmed, ms=round((time.perf_counter() - t0) * 1000, 1))
+                        confirmed=confirmed, verified=(res.data or {}).get("verified") if isinstance(res.data, dict) else None,
+                        ms=round((time.perf_counter() - t0) * 1000, 1))
     log("ok" if res.ok else f"failed: {res.error_code}", confirmed)
     return res
 

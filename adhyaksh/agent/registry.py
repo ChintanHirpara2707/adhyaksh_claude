@@ -495,6 +495,22 @@ register(
 )
 
 register(
+    "ask_user",
+    "Ask the user one short clarifying question when the request is genuinely ambiguous. The loop pauses and the "
+    "user's answer comes back as this tool's result.",
+    {
+        "type": "object",
+        "properties": {
+            "question": {"type": "string", "description": "The question, in the user's language.", "minLength": 1},
+            "options": {"type": "array", "items": {"type": "string"}, "description": "Two to four short choices (optional)."},
+        },
+        "required": ["question"],
+    },
+    0,
+    lambda arguments, ctx: Result.success({"question": arguments["question"], "options": arguments.get("options") or []}),
+)
+
+register(
     "memory_forget",
     "Forget (delete) one remembered personal fact. Needs the user's confirmation.",
     {

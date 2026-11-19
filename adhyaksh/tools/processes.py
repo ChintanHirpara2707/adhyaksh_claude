@@ -127,12 +127,13 @@ def kill_process(target: str, *, ctx: dict | None = None, token: str | None = No
 
     def go() -> Result:
         import psutil
-        procs = []
+        procs, ended = [], []
         for pid in g["pids"]:
             try:
                 p = psutil.Process(pid)
                 p.terminate()
                 procs.append(p)
+                ended.append(pid)
             except psutil.Error:
                 continue
         gone, alive = psutil.wait_procs(procs, timeout=3)
@@ -143,5 +144,6 @@ def kill_process(target: str, *, ctx: dict | None = None, token: str | None = No
                 pass
         if not procs:
             return Result.failure(E_ACTION_FAILED, f"{g['name']} could not be ended (it may need administrator rights).")
-        return Result.success({"name": g["name"], "ended": len(procs), "freed_mb": round(g["ram_mb"])})
+        return Result.success({"name": g["name"], "ended": len(procs), "freed_mb": round(g["ram_mb"]),
+                               "pids": ended})
     return policy.run_guarded("process_kill", shown, go, token=token, **_ctx(ctx))

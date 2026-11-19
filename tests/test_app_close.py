@@ -82,7 +82,8 @@ def test_windows_are_closed_politely_and_a_save_prompt_is_respected(monkeypatch)
     assert res.ok and closed == [60, 61]
     assert not saved.alive and not saved.ended          # closed by WM_CLOSE, not killed
     assert unsaved.alive and not unsaved.ended          # left showing its save prompt
-    assert res.data == {"app": "notepad", "closed": 1, "waiting": 1}
+    assert {k: res.data[k] for k in ("app", "closed", "waiting")} == {"app": "notepad", "closed": 1, "waiting": 1}
+    assert res.data["verified"] is True  # the save prompt is expected to stay open
 
 
 def test_this_program_is_never_ended(monkeypatch):

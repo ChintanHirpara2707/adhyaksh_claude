@@ -121,6 +121,16 @@ ACTIONS: dict[str, dict[str, list[str]]] = {
         "en": ["restore", "unminimize", "bring back"], "hinglish": ["restore karo", "wapas lao"], "gujlish": ["restore karo", "pachu lavo"],
         "hi": ["रिस्टोर करो", "वापस लाओ"], "gu": ["રિસ્ટોર કરો", "પાછું લાવો"],
     },
+    # Looking at the screen or one window: "what's on my screen", "chrome window me kya hai", "explain my screen".
+    "look": {
+        "en": ["what's on", "what is on", "whats on", "what's in", "what is in", "look at", "describe", "explain",
+               "read out", "check"],
+        "hinglish": ["pe kya hai", "par kya hai", "me kya hai", "mein kya hai", "pe kya dikh raha hai", "dekh ke batao",
+                     "dekho"],
+        "gujlish": ["par shu che", "ma shu che", "pe shu che", "joine kaho", "juo"],
+        "hi": ["पर क्या है", "में क्या है", "पर क्या दिख रहा है", "देखकर बताओ", "देखो"],
+        "gu": ["પર શું છે", "માં શું છે", "જોઈને કહો", "જુઓ"],
+    },
     "unmute": {
         "en": ["unmute"],
         "hinglish": ["unmute karo", "unmute kar do", "awaaz chalu karo", "awaz chalu karo"],
@@ -194,10 +204,11 @@ FILLERS: dict[str, list[str]] = {
     "en": ["please", "pls", "plz", "kindly", "hey", "hi", "uh", "um", "umm", "hmm", "ok", "okay", "now", "right now",
            "for me", "can you", "could you", "would you", "will you", "just", "quickly", "the", "a", "an", "my",
            "assistant", "adhyaksh", "jarvis", "wait", "yaar"],
-    "hinglish": ["zara", "jaldi", "abhi", "please", "yaar", "bhai", "mere liye", "ek baar", "ko"],
-    "gujlish": ["jara", "jaldi", "atyare", "please", "ne", "mara mate", "ek var", "to"],
-    "hi": ["कृपया", "ज़रा", "जरा", "जल्दी", "अभी", "मेरे लिए", "प्लीज़", "प्लीज", "को", "एक बार"],
-    "gu": ["મહેરબાની કરીને", "કૃપા કરીને", "જરા", "જલ્દી", "હમણાં", "હવે", "મારા માટે", "પ્લીઝ", "ને", "એક વાર"],
+    "hinglish": ["zara", "jaldi", "abhi", "please", "yaar", "bhai", "mere liye", "ek baar", "ko", "mera", "meri", "mere"],
+    "gujlish": ["jara", "jaldi", "atyare", "please", "ne", "mara mate", "ek var", "to", "maro", "mari", "maru", "mara"],
+    "hi": ["कृपया", "ज़रा", "जरा", "जल्दी", "अभी", "मेरे लिए", "प्लीज़", "प्लीज", "को", "एक बार", "मेरा", "मेरी", "मेरे"],
+    "gu": ["મહેરબાની કરીને", "કૃપા કરીને", "જરા", "જલ્દી", "હમણાં", "હવે", "મારા માટે", "પ્લીઝ", "ને", "એક વાર", "મારો", "મારી",
+           "મારું", "મારા"],
 }
 
 # Word order per language style: English puts the verb first, the others usually after the object.

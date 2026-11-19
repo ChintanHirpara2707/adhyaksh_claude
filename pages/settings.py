@@ -56,6 +56,9 @@ with st.form("llm"):
                                                   "llm_first": "Always ask the language model"}[x])
     embed_model = st.text_input("Gemini embedding model", value=svc.get("embedding_model"))
     consent = st.checkbox("Allow sending questions and passages to the selected cloud provider (Groq, Gemini, Wikipedia lookup)", value=svc.get_bool("cloud_consent"))
+    screen_consent = st.checkbox("Also allow the text read from my screen to go to the cloud provider (for 'explain my screen'). "
+                                 "Off: only a model on this PC sees screen text; screenshots never leave the PC.",
+                                 value=svc.get_bool("cloud_screen_consent"))
     agent_on = st.checkbox("Let the language model use tools (agent). Every action still passes the safety gateway",
                            value=svc.get("agent_mode") != "off")
     if st.form_submit_button("Save language model settings", type="primary"):
@@ -73,6 +76,7 @@ with st.form("llm"):
         except svc.SettingError as exc:
             st.error(str(exc))
         svc.set_value("cloud_consent", "true" if consent else "false")
+        svc.set_value("cloud_screen_consent", "true" if screen_consent else "false")
         if provider in svc.PROVIDERS and key.strip():
             svc.llm_set_key(provider, key)
         st.toast("Saved.")

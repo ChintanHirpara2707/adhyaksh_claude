@@ -143,3 +143,9 @@ S39,slots,,en,switch to spotify,window_control,focus|spotify
 S40,slots,,hi,सारी विंडो छोटी करो,window_control,minimize_all
 S41,slots,,gujlish,vs code par jao,window_control,focus|vs code
 N27,negation,,en,don't minimize the calculator,none,
+S42,slots,,en,what is on my screen right now,screen_look,
+S43,slots,,hinglish,meri screen par kya hai,screen_look,
+S44,slots,,gu,મારી સ્ક્રીન પર શું છે,screen_look,
+S45,slots,,hi,क्रोम विंडो में क्या है,screen_look,chrome
+S46,slots,,gujlish,notepad window ma shu che,screen_look,notepad
+N28,negation,,en,don't look at my screen,none,

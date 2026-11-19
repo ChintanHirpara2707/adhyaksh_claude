@@ -45,6 +45,8 @@ WINDOW_OPS = {("minimize", "app"): "minimize", ("maximize", "app"): "maximize", 
               ("restore", "app"): "restore", ("minimize", "window"): "minimize_all", ("restore", "window"): "restore_all"}
 for _pair in WINDOW_OPS:
     INTENTS[_pair] = "window_control"
+# Looking: the whole screen, or one app's window.
+INTENTS[("look", "screen")] = INTENTS[("look", "app")] = INTENTS[("look", "window")] = "screen_look"
 _SYSTEM_TARGETS = _LEVEL_TARGETS + ("wifi", "bluetooth", "pc", "screen", "shutdown", "window")
 # Words a pure "action + target" command may contain besides the verb and the target. Anything else (content to
 # write, a destination folder, a second instruction) means the request carries more than a frame models, and the
@@ -116,6 +118,8 @@ class Frame:
             return {"radio": self.target_type, "on": RADIO_OPS.get(self.action or "")}
         if (self.action, self.target_type) in POWER_OPS:
             return {"op": POWER_OPS[(self.action, self.target_type)]}
+        if self.action == "look" and INTENTS.get(("look", self.target_type or "")) == "screen_look":
+            return {"target": self.target if self.target_type == "app" else ""}
         if (self.action, self.target_type) in WINDOW_OPS:
             return {"op": WINDOW_OPS[(self.action, self.target_type)], "target": self.target if self.target_type == "app" else ""}
         key = {"app": "app", "file": "file"}.get(self.target_type or "", "target")

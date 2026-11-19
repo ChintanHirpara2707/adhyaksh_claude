@@ -23,7 +23,7 @@ from adhyaksh.memory import store
 from adhyaksh.result import E_ACTION_FAILED, E_BAD_ARGUMENTS, E_BLOCKED, E_NEEDS_CONFIRM, Result
 from adhyaksh.rag import answerer
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, audio, display, files, network, office, power, system, windows
+from adhyaksh.tools import apps, audio, display, files, network, office, power, screen, system, windows
 
 # Actions that touch the filesystem (path validation applies).
 PATH_ACTIONS = {
@@ -595,6 +595,21 @@ register(
     {"type": "object", "properties": {}},
     0,
     _power_status,
+)
+
+register(
+    "screen_look",
+    "Look at the user's screen (or one window, by app name or title): read its text offline, find objects, and give a "
+    "short explanation. Use it for 'what is on my screen', 'explain this error on my screen', 'read the chrome window'.",
+    {
+        "type": "object",
+        "properties": {
+            "target": {"type": "string", "description": "App name or window title words; empty for the whole screen."},
+            "question": {"type": "string", "description": "What the user wants to know about the screen (optional)."},
+        },
+    },
+    0,
+    lambda arguments, ctx: screen.look(arguments.get("target", ""), arguments.get("question", ""), ctx=ctx),
 )
 
 register(

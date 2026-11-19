@@ -1,6 +1,6 @@
 # NLU evaluation (polarity, slots, negation)
 
-Latest run: 2026-11-19 17:22 (1b frames). Offline path, every tool mocked. Cases: tests/eval/nlu_cases.csv. A polarity pair passes only when both of its commands pass.
+Latest run: 2026-11-19 18:00 (1b factorised heads). Offline path, every tool mocked. Cases: tests/eval/nlu_cases.csv. A polarity pair passes only when both of its commands pass.
 
 | Suite | Passed | Rate |
 |---|---|---|

@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 
 from adhyaksh import config, db
-from adhyaksh.nlu import dataset, evaluate, models, registry
+from adhyaksh.nlu import dataset, evaluate, factorized, models, registry
 
 
 @dataclass
@@ -82,6 +82,10 @@ def train_all(seed: int = 42, progress=None, kinds=None, write_report: bool = Tr
                                              "train_seconds": round(s.train_seconds, 2), "seed": seed})})
         results.append((s, m))
         say(f"Finished {s.name}: test macro-F1 {s.test_macro_f1:.3f}")
+    say("Training the action and target heads")
+    heads = factorized.train(train, val, test, dtest, out_dir, seed)
+    say("Finished the heads: " + ", ".join(f"{h} test macro-F1 {v['test']:.3f}, code-mixed {v['codemixed']:.3f}"
+                                           for h, v in heads.items()))
     ok = [s for s, _ in results if s.status == "ok"]
     if ok:
         best = max(ok, key=lambda s: s.val_macro_f1)  # selected on validation, never on test
@@ -89,7 +93,21 @@ def train_all(seed: int = 42, progress=None, kinds=None, write_report: bool = Tr
         config.set_value("confidence_threshold", str(best.tau))
     if write_report:
         evaluate.write_results_md()
+        _append_heads_report(heads)
     return [s for s, _ in results]
+
+
+def _append_heads_report(heads: dict) -> None:
+    """Add the action and target heads (factorised cross-check) to docs/RESULTS.md."""
+    path = config.ROOT / "docs" / "RESULTS.md"
+    lines = ["", "## Action and target heads (factorised cross-check)", "",
+             "Two TF-IDF + logistic-regression heads predict the action (open, close, create, delete, ...) and the target "
+             "type (app, file, reminder, ...) of every action intent. A confident disagreement with the flat model is "
+             "not dispatched (`adhyaksh/nlu/factorized.py`).", "",
+             "| Head | Val macro-F1 | Test macro-F1 | Code-mixed macro-F1 |", "|---|---|---|---|"]
+    lines += [f"| {h} | {v['val']:.3f} | {v['test']:.3f} | {v['codemixed']:.3f} |" for h, v in heads.items()]
+    with path.open("a", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
 
 
 _POOL = ThreadPoolExecutor(max_workers=1)

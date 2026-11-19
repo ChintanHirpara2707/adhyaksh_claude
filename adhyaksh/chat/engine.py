@@ -12,7 +12,7 @@ from adhyaksh.chat import context, identity, router
 from adhyaksh.agent import native as agent_native
 from adhyaksh.llm import base as llm
 from adhyaksh.memory import store
-from adhyaksh.nlu import entities, frames, registry
+from adhyaksh.nlu import entities, factorized, frames, registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
@@ -839,7 +839,10 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
         r.conf = conf
         return r
     agent_enabled = llm.available() and not llm.is_local()
-    if conf < threshold or gap < registry.MIN_GAP:
+    agree, note = factorized.cross_check(text, intent)
+    if not agree:
+        logging_setup.event("intent_conflict", intent=intent, note=note)
+    if conf < threshold or gap < registry.MIN_GAP or not agree:
         # Low confidence or ambiguous (small gap between the top two intents): do not dispatch
         # to the nearest intent. A plain question goes to the general answerer; other requests use
         # the agent when enabled, else the knowledge answerer.

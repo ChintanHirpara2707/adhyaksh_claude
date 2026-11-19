@@ -17,6 +17,8 @@ All figures come from the latest training run. Dataset: synthetic and UNREVIEWED
 | TF-IDF + Logistic Regression | no | 0.913 | 0.953 | 0.933 | 0.895 | 0.3 | 6442 | 2.87 | 4.85 |
 | TF-IDF + Logistic Regression | no | 0.942 | 0.962 | 0.943 | 0.875 | 0.3 | 6716 | 2.91 | 4.28 |
 | TF-IDF + Logistic Regression | no | 0.949 | 0.961 | 0.943 | 0.893 | 0.3 | 6585 | 3.19 | 5.24 |
+| TF-IDF + Logistic Regression | no | 0.949 | 0.961 | 0.943 | 0.893 | 0.3 | 6585 | 2.99 | 4.61 |
+| TF-IDF + Logistic Regression | no | 0.949 | 0.961 | 0.943 | 0.893 | 0.3 | 6585 | 2.94 | 4.33 |
 | TF-IDF + PyTorch MLP | no | 0.947 | 0.939 | 0.902 | 0.640 | 0.4 | 12863 | 4.71 | 6.65 |
 | TF-IDF + PyTorch MLP | no | 0.875 | 0.929 | 0.899 | 0.901 | 0.65 | 15161 | 4.81 | 6.68 |
 | TF-IDF + PyTorch MLP | no | 0.939 | 0.929 | 0.902 | 0.904 | 0.3 | 13900 | 3.78 | 5.88 |
@@ -28,7 +30,9 @@ All figures come from the latest training run. Dataset: synthetic and UNREVIEWED
 | TF-IDF + PyTorch MLP | no | 0.917 | 0.963 | 0.946 | 0.926 | 0.5 | 20333 | 4.42 | 6.20 |
 | TF-IDF + PyTorch MLP | no | 0.917 | 0.963 | 0.946 | 0.926 | 0.5 | 20333 | 5.83 | 8.02 |
 | TF-IDF + PyTorch MLP | no | 0.942 | 0.959 | 0.940 | 0.893 | 0.35 | 21209 | 7.02 | 10.34 |
-| TF-IDF + PyTorch MLP | yes | 0.956 | 0.964 | 0.948 | 0.893 | 0.3 | 20792 | 5.17 | 13.07 |
+| TF-IDF + PyTorch MLP | no | 0.956 | 0.964 | 0.948 | 0.893 | 0.3 | 20792 | 5.17 | 13.07 |
+| TF-IDF + PyTorch MLP | no | 0.956 | 0.964 | 0.948 | 0.893 | 0.3 | 20792 | 5.49 | 7.08 |
+| TF-IDF + PyTorch MLP | yes | 0.956 | 0.964 | 0.948 | 0.893 | 0.3 | 20792 | 5.43 | 6.61 |
 | TF-IDF + calibrated linear SVM | no | 0.912 | 0.916 | 0.904 | 0.611 | 0.55 | 6333 | 20.58 | 32.49 |
 | TF-IDF + calibrated linear SVM | no | 0.936 | 0.950 | 0.926 | 0.640 | 0.45 | 7583 | 14.66 | 17.90 |
 | TF-IDF + calibrated linear SVM | no | 0.885 | 0.937 | 0.909 | 0.919 | 0.65 | 8937 | 15.01 | 17.72 |
@@ -42,6 +46,8 @@ All figures come from the latest training run. Dataset: synthetic and UNREVIEWED
 | TF-IDF + calibrated linear SVM | no | 0.925 | 0.952 | 0.932 | 0.864 | 0.45 | 18442 | 19.91 | 38.58 |
 | TF-IDF + calibrated linear SVM | no | 0.946 | 0.959 | 0.930 | 0.869 | 0.35 | 19224 | 25.39 | 36.04 |
 | TF-IDF + calibrated linear SVM | no | 0.951 | 0.963 | 0.949 | 0.869 | 0.3 | 18852 | 18.85 | 23.19 |
+| TF-IDF + calibrated linear SVM | no | 0.951 | 0.963 | 0.949 | 0.869 | 0.3 | 18852 | 18.30 | 25.76 |
+| TF-IDF + calibrated linear SVM | no | 0.951 | 0.963 | 0.949 | 0.869 | 0.3 | 18852 | 17.92 | 22.19 |
 
 Per-language test macro-F1:
 
@@ -60,6 +66,8 @@ Per-language test macro-F1:
 | TF-IDF + Logistic Regression | 0.892 | 0.784 | 0.830 | 0.904 | 0.819 |
 | TF-IDF + Logistic Regression | 0.904 | 0.861 | 0.757 | 0.877 | 0.947 |
 | TF-IDF + Logistic Regression | 0.850 | 0.888 | 0.878 | 0.900 | 0.871 |
+| TF-IDF + Logistic Regression | 0.850 | 0.888 | 0.878 | 0.900 | 0.871 |
+| TF-IDF + Logistic Regression | 0.850 | 0.888 | 0.878 | 0.900 | 0.871 |
 | TF-IDF + PyTorch MLP | 0.836 | 0.697 | 0.729 | 0.833 | 0.713 |
 | TF-IDF + PyTorch MLP | 0.832 | 0.824 | 0.713 | 0.819 | 0.877 |
 | TF-IDF + PyTorch MLP | 0.808 | 0.744 | 0.730 | 0.884 | 0.836 |
@@ -71,6 +79,8 @@ Per-language test macro-F1:
 | TF-IDF + PyTorch MLP | 0.890 | 0.826 | 0.837 | 0.949 | 0.819 |
 | TF-IDF + PyTorch MLP | 0.890 | 0.826 | 0.837 | 0.949 | 0.819 |
 | TF-IDF + PyTorch MLP | 0.904 | 0.887 | 0.758 | 0.877 | 0.929 |
+| TF-IDF + PyTorch MLP | 0.845 | 0.926 | 0.841 | 0.929 | 0.876 |
+| TF-IDF + PyTorch MLP | 0.845 | 0.926 | 0.841 | 0.929 | 0.876 |
 | TF-IDF + PyTorch MLP | 0.845 | 0.926 | 0.841 | 0.929 | 0.876 |
 | TF-IDF + calibrated linear SVM | 0.773 | 0.724 | 0.862 | 0.893 | 0.649 |
 | TF-IDF + calibrated linear SVM | 0.836 | 0.761 | 0.729 | 0.849 | 0.757 |
@@ -85,6 +95,8 @@ Per-language test macro-F1:
 | TF-IDF + calibrated linear SVM | 0.883 | 0.786 | 0.830 | 0.904 | 0.819 |
 | TF-IDF + calibrated linear SVM | 0.904 | 0.836 | 0.776 | 0.877 | 0.923 |
 | TF-IDF + calibrated linear SVM | 0.847 | 0.882 | 0.879 | 0.926 | 0.876 |
+| TF-IDF + calibrated linear SVM | 0.847 | 0.882 | 0.879 | 0.926 | 0.876 |
+| TF-IDF + calibrated linear SVM | 0.847 | 0.882 | 0.879 | 0.926 | 0.876 |
 
 Dataset hash: 29e0e312d0593d60. Target macro-F1 0.85: best test macro-F1 is 0.956 (reached).
 
@@ -96,3 +108,12 @@ by intent: app_close=200, app_open=232, bot_identity=41, clipboard_read=77, clip
 by language: en=1172, hinglish=805, gujlish=777, gu=765, hi=760
 reviewed: false=4279
 ```
+
+## Action and target heads (factorised cross-check)
+
+Two TF-IDF + logistic-regression heads predict the action (open, close, create, delete, ...) and the target type (app, file, reminder, ...) of every action intent. A confident disagreement with the flat model is not dispatched (`adhyaksh/nlu/factorized.py`).
+
+| Head | Val macro-F1 | Test macro-F1 | Code-mixed macro-F1 |
+|---|---|---|---|
+| action | 0.993 | 0.993 | 0.937 |
+| target | 0.979 | 0.988 | 0.957 |

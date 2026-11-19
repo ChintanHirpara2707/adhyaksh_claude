@@ -48,3 +48,6 @@ jobs:
 
       - name: Held-out real-command eval
         run: python tests/eval/run_real_eval.py --label ci --min-rate 95
+
+      - name: NLU eval (opposite actions, exact arguments, negation)
+        run: python tests/eval/run_nlu_eval.py --label ci --min-polarity 100 --min-slots 95 --min-negation 100

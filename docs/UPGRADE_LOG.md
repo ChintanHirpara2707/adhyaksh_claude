@@ -33,7 +33,7 @@ Commit after every phase with explicit paths (the working tree has unrelated del
 | P7 | none | | 0 | FastAPI and uvicorn are only recommended for later, not installed |
 | J1a | none | | 0 | validator and JSON parser written in the standard library |
 | J1c | none | | 0 | |
-| J1b | none | | 0 | two extra heads of about 2 MB each in models/ (git-ignored) |
+| J1b | none | | 0 | two extra heads of about 200 KB each in models/ (git-ignored) |
 | P6 | none at run time. PyInstaller is needed only to build the Windows package and is not installed here | build only | not measured (not installed) | CI uses GitHub's hosted Windows runner |
 | P5 | rapidocr_onnxruntime 1.4.4 with Shapely 2.2.0, pyclipper 1.4.0, six | optional | 23.5 MB of packages (measured; the OCR models are bundled) | Listed in requirements-optional.txt. onnxruntime, OpenCV and Pillow were already installed. Without it, OCR falls back to Tesseract if present, else says OCR is not installed |
 

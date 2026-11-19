@@ -1,0 +1,108 @@
+id,suite,pair,language,text,expect_tool,expect_arg,intent,called,arg,reply,pass,problem
+P01a,polarity,P01,en,could you open the calculator for me,open_app,calculator,app_open,open_app,calculator,Opened calculator.,PASS,
+P01b,polarity,P01,en,could you close the calculator for me,close_app,calculator,app_close,close_app,calculator,Closed calculator.,PASS,
+P02a,polarity,P02,en,launch paint please,open_app,paint,app_open,open_app,paint,Opened paint.,PASS,
+P02b,polarity,P02,en,shut paint please,close_app,paint,app_close,close_app,paint,Closed paint.,PASS,
+P03a,polarity,P03,en,start chrome,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
+P03b,polarity,P03,en,stop chrome,close_app,chrome,app_close,close_app,chrome,Closed chrome.,PASS,
+P04a,polarity,P04,en,fire up spotify,open_app,spotify,app_open,open_app,spotify,Opened spotify.,PASS,
+P04b,polarity,P04,en,exit spotify,close_app,spotify,app_close,close_app,spotify,Closed spotify.,PASS,
+P05a,polarity,P05,hi,कैलकुलेटर खोलो,open_app,calculator,app_open,open_app,calculator,Opened calculator.,PASS,
+P05b,polarity,P05,hi,कैलकुलेटर बंद करो,close_app,calculator,app_close,close_app,calculator,Closed calculator.,PASS,
+P06a,polarity,P06,hi,क्रोम चालू करो,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
+P06b,polarity,P06,hi,क्रोम बंद कर दो,close_app,chrome,app_close,close_app,chrome,Closed chrome.,PASS,
+P07a,polarity,P07,gu,પેઇન્ટ ખોલો,open_app,paint,app_open,open_app,paint,Opened paint.,PASS,
+P07b,polarity,P07,gu,પેઇન્ટ બંધ કરો,close_app,paint,app_close,close_app,paint,Closed paint.,PASS,
+P08a,polarity,P08,gu,નોટપેડ હવે ચાલુ કરો,open_app,notepad,app_open,open_app,notepad,Opened notepad.,PASS,
+P08b,polarity,P08,gu,નોટપેડ હવે બંધ કરો,close_app,notepad,app_close,close_app,notepad,Closed notepad.,PASS,
+P09a,polarity,P09,hinglish,spotify chalu karo,open_app,spotify,app_open,open_app,spotify,Opened spotify.,PASS,
+P09b,polarity,P09,hinglish,spotify band karo,close_app,spotify,app_close,close_app,spotify,Closed spotify.,PASS,
+P10a,polarity,P10,hinglish,vs code khol do yaar,open_app,vs code,app_open,open_app,vs code,Opened vs code.,PASS,
+P10b,polarity,P10,hinglish,vs code band kar do yaar,close_app,vs code,app_close,close_app,vs code,Closed vs code.,PASS,
+P11a,polarity,P11,gujlish,edge kholi do,open_app,edge,app_open,open_app,edge,Opened edge.,PASS,
+P11b,polarity,P11,gujlish,edge bandh kari do,close_app,edge,app_close,close_app,edge,Closed edge.,PASS,
+P12a,polarity,P12,gujlish,calculator chalu karo ne,open_app,calculator,app_open,open_app,calculator,Opened calculator.,PASS,
+P12b,polarity,P12,gujlish,calculator bandh karo ne,close_app,calculator,app_close,close_app,calculator,Closed calculator.,PASS,
+P13a,polarity,P13,en,open note pad,open_app,notepad,app_open,,,Which application?,FAIL,"expected open_app, called nothing"
+P13b,polarity,P13,en,close note pad,close_app,notepad,app_close,,,Which application?,FAIL,"expected close_app, called nothing"
+P14a,polarity,P14,en,open crome,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
+P14b,polarity,P14,en,close crome,close_app,chrome,app_close,close_app,chrome,Closed chrome.,PASS,
+P15a,polarity,P15,en,create a file named budget.txt,create,budget.txt,file_create,create,budget.txt,File created: budget.txt.,PASS,
+P15b,polarity,P15,en,delete the file named budget.txt,delete,budget.txt,file_delete,delete,budget.txt,Moved to the Recycle Bin: budget.txt.,PASS,
+P16a,polarity,P16,en,make notes.txt,create,notes.txt,file_create,create,notes.txt,File created: notes.txt.,PASS,
+P16b,polarity,P16,en,remove notes.txt,delete,notes.txt,file_delete,delete,notes.txt,Moved to the Recycle Bin: notes.txt.,PASS,
+P17a,polarity,P17,hi,report.txt नाम की फाइल बनाओ,create,report.txt,file_create,create,report.txt,फ़ाइल बनाई गई: report.txt।,PASS,
+P17b,polarity,P17,hi,report.txt नाम की फाइल हटाओ,delete,report.txt,file_delete,delete,report.txt,Moved to the Recycle Bin: report.txt.,PASS,
+P18a,polarity,P18,gu,todo.txt ફાઇલ બનાવો,create,todo.txt,file_create,create,todo.txt,ફાઇલ બનાવવામાં આવી: todo.txt.,PASS,
+P18b,polarity,P18,gu,todo.txt ફાઇલ કાઢી નાખો,delete,todo.txt,file_delete,delete,todo.txt,Moved to the Recycle Bin: todo.txt.,PASS,
+P19a,polarity,P19,hinglish,plan.txt bana do,create,plan.txt,file_create,create,plan.txt,File created: plan.txt.,PASS,
+P19b,polarity,P19,hinglish,plan.txt delete kar do,delete,plan.txt,file_delete,delete,plan.txt,Moved to the Recycle Bin: plan.txt.,PASS,
+P20a,polarity,P20,gujlish,list.txt banavi do,create,list.txt,file_create,create,list.txt,File created: list.txt.,PASS,
+P20b,polarity,P20,gujlish,list.txt kadhi nakho,delete,list.txt,file_delete,delete,list.txt,Moved to the Recycle Bin: list.txt.,PASS,
+P21a,polarity,P21,en,remind me to call mom at 6 pm,reminder_add,,reminder_set,reminder_add,remind me to call mom at 6 pm,"Reminder set: remind me to call mom at 6 pm, today at 6:00 PM. I will remind you while ADHYAKSH is open.",PASS,
+P21b,polarity,P21,en,cancel the reminder to call mom,reminder_cancel,,reminder_cancel,reminder_list;reminder_cancel,1,Cancelled the reminder: call mom.,PASS,
+P22a,polarity,P22,hinglish,kal subah 8 baje gym jaane ki yaad dilana,reminder_add,,reminder_set,reminder_add,kal subah 8 baje gym jaane ki yaad dilana,"Reminder set: kal subah 8 baje gym jaane ki yaad dilana, today at 6:00 PM. I will remind you while ADHYAKSH is open.",PASS,
+P22b,polarity,P22,hinglish,gym wala reminder cancel kar do,reminder_cancel,,reminder_cancel,reminder_cancel,kar do,Cancelled the reminder: call mom.,PASS,
+P23a,polarity,P23,en,what is on my clipboard,clipboard_read,,clipboard_read,clipboard_read,,"Your clipboard has:
+mock copied text",PASS,
+P23b,polarity,P23,en,copy hello world to the clipboard,clipboard_write,hello world,clipboard_write,clipboard_write,hello world,Copied to the clipboard: hello world,PASS,
+P24a,polarity,P24,hi,स्पॉटिफाई खोलो,open_app,spotify,app_open,,,Which application?,FAIL,"expected open_app, called nothing"
+P24b,polarity,P24,hi,स्पॉटिफाई बंद करो,close_app,spotify,voice_control,voice_command,start,Hands-free listening is on. Your browser may ask for microphone permission. Say 'stop listening' to end it.,FAIL,"expected close_app, called ['voice_command']"
+P25a,polarity,P25,gu,ક્રોમ જરા ખોલો,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
+P25b,polarity,P25,gu,ક્રોમ જરા બંધ કરો,close_app,chrome,app_close,close_app,chrome,Closed chrome.,PASS,
+S01,slots,,en,please open the notepad app for me,open_app,notepad,app_open,open_app,notepad,Opened notepad.,PASS,
+S02,slots,,en,hey can you launch google chrome,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
+S03,slots,,en,open visual studio code,open_app,vs code,app_open,open_app,vs code,Opened vs code.,PASS,
+S04,slots,,en,close the paint application,close_app,paint,app_close,close_app,paint,Closed paint.,PASS,
+S05,slots,,hinglish,zara whatsapp kholna,open_app,whatsapp,app_open,open_app,whatsapp,Opened whatsapp.,PASS,
+S06,slots,,hi,मेरे लिए नोटपैड खोल दो,open_app,notepad,app_open,open_app,notepad,Opened notepad.,PASS,
+S07,slots,,gu,મહેરબાની કરીને કેલ્ક્યુલેટર ખોલો,open_app,calculator,app_open,open_app,calculator,Opened calculator.,PASS,
+S08,slots,,en,create a file called meeting notes.txt,create,meeting notes.txt,file_create,create,meeting notes.txt,File created: meeting notes.txt.,PASS,
+S09,slots,,en,create groceries.txt in my work folder,create,groceries.txt,folder_create,,,Which drive or folder?,FAIL,"expected create, called nothing"
+S10,slots,,en,read the file todo.txt,read,todo.txt,file_read,read,todo.txt,"Contents of todo.txt:
+
+mock",PASS,
+S11,slots,,en,show me what is inside report.txt,read,report.txt,file_read,read,report.txt,"Contents of report.txt:
+
+mock",PASS,
+S12,slots,,hinglish,notes.txt mein kya likha hai padh ke batao,read,notes.txt,file_read,read,notes.txt,"Contents of notes.txt:
+
+mock",PASS,
+S13,slots,,en,delete old_backup.txt,delete,old_backup.txt,file_delete,delete,old_backup.txt,Moved to the Recycle Bin: old_backup.txt.,PASS,
+S14,slots,,en,make a folder called Projects 2026,create_folder,Projects 2026,folder_create,create_folder,Projects 2026,Folder created: Projects 2026.,PASS,
+S15,slots,,hi,Photos नाम का फोल्डर बनाओ,create_folder,Photos,folder_create,create_folder,Photos,फ़ोल्डर बनाया गया: Photos।,PASS,
+S16,slots,,en,remember that my locker code is 4417,save_fact,my locker code is 4417,memory_save,save_fact,my locker code is 4417,Saved to memory: my locker code is 4417.,PASS,
+S17,slots,,en,please remember my wifi password is sunflower,save_fact,my wifi password is sunflower,memory_save,save_fact,my wifi password is sunflower,Saved to memory: my wifi password is sunflower.,PASS,
+S18,slots,,hinglish,yaad rakhna ki mera birthday 12 march ko hai,save_fact,mera birthday 12 march ko hai,memory_save,save_fact,mera birthday 12 march ko hai,Saved to memory: mera birthday 12 march ko hai.,PASS,
+S19,slots,,en,copy good morning everyone to clipboard,clipboard_write,good morning everyone,clipboard_write,clipboard_write,good morning everyone,Copied to the clipboard: good morning everyone,PASS,
+S20,slots,,en,go to github.com,web_open,https://github.com,web_open,web_open,github.com,Opened github.com in the default browser.,FAIL,"argument 'github.com', expected 'https://github.com'"
+S21,slots,,en,kill the process chrome.exe,process_kill,chrome.exe,process_kill,process_kill,chrome.exe,Ended chrome.exe.,PASS,
+S22,slots,,en,end task for notepad.exe,process_kill,notepad.exe,process_kill,process_kill,for,Ended for.,FAIL,"argument 'for', expected 'notepad.exe'"
+S23,slots,,gujlish,chrome kholi aapo ne please,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
+S24,slots,,en,uh open the uh calculator,open_app,calculator,app_open,open_app,calculator,Opened calculator.,PASS,
+S25,slots,,en,Open Notepad.,open_app,notepad,app_open,open_app,notepad,Opened notepad.,PASS,
+S26,slots,,en,OPEN CHROME NOW,open_app,chrome,app_open,open_app,chrome,Opened chrome.,PASS,
+S27,slots,,hinglish,budget.xlsx naam ki file delete karo,delete,budget.xlsx,file_delete,delete,budget.xlsx,Moved to the Recycle Bin: budget.xlsx.,PASS,
+S28,slots,,en,search for files named invoice,search,invoice,voice_control,voice_command,start,Hands-free listening is on. Your browser may ask for microphone permission. Say 'stop listening' to end it.,FAIL,"expected search, called ['voice_command']"
+S29,slots,,gu,ફોટા નામનું ફોલ્ડર બનાવો,create_folder,ફોટા,folder_create,create_folder,ફોટા,ફોલ્ડર બનાવવામાં આવ્યું: ફોટા.,PASS,
+S30,slots,,en,open the snipping tool,open_app,snipping tool,app_open,open_app,snipping tool,Opened snipping tool.,PASS,
+N01,negation,,en,don't open notepad,none,,app_open,open_app,notepad,Opened notepad.,FAIL,a negated request ran ['open_app']
+N02,negation,,en,do not close chrome,none,,app_close,close_app,chrome,Closed chrome.,FAIL,a negated request ran ['close_app']
+N03,negation,,en,never delete report.txt,none,,file_delete,delete,report.txt,Moved to the Recycle Bin: report.txt.,FAIL,a negated request ran ['delete']
+N04,negation,,en,please don't launch spotify,none,,app_open,open_app,spotify,Opened spotify.,FAIL,a negated request ran ['open_app']
+N05,negation,,en,no need to open calculator,none,,app_open,open_app,calculator,Opened calculator.,FAIL,a negated request ran ['open_app']
+N06,negation,,hi,नोटपैड मत खोलो,none,,app_open,open_app,notepad,Opened notepad.,FAIL,a negated request ran ['open_app']
+N07,negation,,hi,क्रोम बंद मत करो,none,,app_close,close_app,chrome,Closed chrome.,FAIL,a negated request ran ['close_app']
+N08,negation,,hi,report.txt मत हटाओ,none,,file_delete,delete,report.txt,Moved to the Recycle Bin: report.txt.,FAIL,a negated request ran ['delete']
+N09,negation,,gu,નોટપેડ ના ખોલો,none,,app_open,open_app,notepad,Opened notepad.,FAIL,a negated request ran ['open_app']
+N10,negation,,gu,ક્રોમ બંધ ના કરો,none,,app_close,close_app,chrome,Closed chrome.,FAIL,a negated request ran ['close_app']
+N11,negation,,gu,report.txt કાઢી ના નાખો,none,,file_delete,delete,report.txt,Moved to the Recycle Bin: report.txt.,FAIL,a negated request ran ['delete']
+N12,negation,,hinglish,notepad mat kholo,none,,app_open,open_app,notepad,Opened notepad.,FAIL,a negated request ran ['open_app']
+N13,negation,,hinglish,chrome band mat karo,none,,app_close,close_app,chrome,Closed chrome.,FAIL,a negated request ran ['close_app']
+N14,negation,,hinglish,notes.txt delete nahi karni hai,none,,file_delete,delete,notes.txt,Moved to the Recycle Bin: notes.txt.,FAIL,a negated request ran ['delete']
+N15,negation,,gujlish,notepad na kholo,none,,app_open,open_app,notepad,Opened notepad.,FAIL,a negated request ran ['open_app']
+N16,negation,,gujlish,chrome bandh na karo,none,,app_close,close_app,chrome,Closed chrome.,FAIL,a negated request ran ['close_app']
+N17,negation,,en,I don't want to delete notes.txt,none,,file_delete,delete,notes.txt,Moved to the Recycle Bin: notes.txt.,FAIL,a negated request ran ['delete']
+N18,negation,,en,don't take a screenshot,none,,screenshot,screenshot,,Screenshot saved: mock.png.,FAIL,a negated request ran ['screenshot']
+N19,negation,,hinglish,abhi calculator mat chalu karna,none,,app_open,open_app,calculator,Opened calculator.,FAIL,a negated request ran ['open_app']
+N20,negation,,en,"wait, don't open paint",none,,app_open,open_app,paint,Opened paint.,FAIL,a negated request ran ['open_app']

@@ -59,6 +59,7 @@ def build_env():
 
 
 CALL_ARGS: list[str] = []  # arguments of every mocked tool call in the current case
+CALL_DETAIL: list[tuple[str, list]] = []  # (tool, positional str/int arguments) per call, for exact slot checks
 
 
 def mocked_tools(calls: list[str]):
@@ -72,6 +73,8 @@ def mocked_tools(calls: list[str]):
     def rec(name, data):
         def fn(*a, **k):
             calls.append(name)
+            CALL_DETAIL.append((name, [x for x in a if isinstance(x, (str, int))] +
+                                [v for kk, v in k.items() if kk != "ctx" and isinstance(v, (str, int))]))
             CALL_ARGS.append(" ".join(str(x) for x in a if isinstance(x, (str, int))) + " "
                              + " ".join(str(v) for kk, v in k.items() if kk != "ctx" and isinstance(v, (str, int))))
             return Result.success(data(*a, **k) if callable(data) else data)
@@ -146,6 +149,7 @@ def run_case(row: dict, calls: list[str]) -> dict:
     attachments = [("sample.txt", b"mock document text")] if "attach" in outcome else None
     calls.clear()
     CALL_ARGS.clear()
+    CALL_DETAIL.clear()
     t0 = time.perf_counter()
     try:
         res = engine.handle_message(row["utterance"], cid, attachments=attachments)

@@ -1,0 +1,101 @@
+id,suite,pair,language,text,expect_tool,expect_arg
+P01a,polarity,P01,en,could you open the calculator for me,open_app,calculator
+P01b,polarity,P01,en,could you close the calculator for me,close_app,calculator
+P02a,polarity,P02,en,launch paint please,open_app,paint
+P02b,polarity,P02,en,shut paint please,close_app,paint
+P03a,polarity,P03,en,start chrome,open_app,chrome
+P03b,polarity,P03,en,stop chrome,close_app,chrome
+P04a,polarity,P04,en,fire up spotify,open_app,spotify
+P04b,polarity,P04,en,exit spotify,close_app,spotify
+P05a,polarity,P05,hi,कैलकुलेटर खोलो,open_app,calculator
+P05b,polarity,P05,hi,कैलकुलेटर बंद करो,close_app,calculator
+P06a,polarity,P06,hi,क्रोम चालू करो,open_app,chrome
+P06b,polarity,P06,hi,क्रोम बंद कर दो,close_app,chrome
+P07a,polarity,P07,gu,પેઇન્ટ ખોલો,open_app,paint
+P07b,polarity,P07,gu,પેઇન્ટ બંધ કરો,close_app,paint
+P08a,polarity,P08,gu,નોટપેડ હવે ચાલુ કરો,open_app,notepad
+P08b,polarity,P08,gu,નોટપેડ હવે બંધ કરો,close_app,notepad
+P09a,polarity,P09,hinglish,spotify chalu karo,open_app,spotify
+P09b,polarity,P09,hinglish,spotify band karo,close_app,spotify
+P10a,polarity,P10,hinglish,vs code khol do yaar,open_app,vs code
+P10b,polarity,P10,hinglish,vs code band kar do yaar,close_app,vs code
+P11a,polarity,P11,gujlish,edge kholi do,open_app,edge
+P11b,polarity,P11,gujlish,edge bandh kari do,close_app,edge
+P12a,polarity,P12,gujlish,calculator chalu karo ne,open_app,calculator
+P12b,polarity,P12,gujlish,calculator bandh karo ne,close_app,calculator
+P13a,polarity,P13,en,open note pad,open_app,notepad
+P13b,polarity,P13,en,close note pad,close_app,notepad
+P14a,polarity,P14,en,open crome,open_app,chrome
+P14b,polarity,P14,en,close crome,close_app,chrome
+P15a,polarity,P15,en,create a file named budget.txt,create,budget.txt
+P15b,polarity,P15,en,delete the file named budget.txt,delete,budget.txt
+P16a,polarity,P16,en,make notes.txt,create,notes.txt
+P16b,polarity,P16,en,remove notes.txt,delete,notes.txt
+P17a,polarity,P17,hi,report.txt नाम की फाइल बनाओ,create,report.txt
+P17b,polarity,P17,hi,report.txt नाम की फाइल हटाओ,delete,report.txt
+P18a,polarity,P18,gu,todo.txt ફાઇલ બનાવો,create,todo.txt
+P18b,polarity,P18,gu,todo.txt ફાઇલ કાઢી નાખો,delete,todo.txt
+P19a,polarity,P19,hinglish,plan.txt bana do,create,plan.txt
+P19b,polarity,P19,hinglish,plan.txt delete kar do,delete,plan.txt
+P20a,polarity,P20,gujlish,list.txt banavi do,create,list.txt
+P20b,polarity,P20,gujlish,list.txt kadhi nakho,delete,list.txt
+P21a,polarity,P21,en,remind me to call mom at 6 pm,reminder_add,
+P21b,polarity,P21,en,cancel the reminder to call mom,reminder_cancel,
+P22a,polarity,P22,hinglish,kal subah 8 baje gym jaane ki yaad dilana,reminder_add,
+P22b,polarity,P22,hinglish,gym wala reminder cancel kar do,reminder_cancel,
+P23a,polarity,P23,en,what is on my clipboard,clipboard_read,
+P23b,polarity,P23,en,copy hello world to the clipboard,clipboard_write,hello world
+P24a,polarity,P24,hi,स्पॉटिफाई खोलो,open_app,spotify
+P24b,polarity,P24,hi,स्पॉटिफाई बंद करो,close_app,spotify
+P25a,polarity,P25,gu,ક્રોમ જરા ખોલો,open_app,chrome
+P25b,polarity,P25,gu,ક્રોમ જરા બંધ કરો,close_app,chrome
+S01,slots,,en,please open the notepad app for me,open_app,notepad
+S02,slots,,en,hey can you launch google chrome,open_app,chrome
+S03,slots,,en,open visual studio code,open_app,vs code
+S04,slots,,en,close the paint application,close_app,paint
+S05,slots,,hinglish,zara whatsapp kholna,open_app,whatsapp
+S06,slots,,hi,मेरे लिए नोटपैड खोल दो,open_app,notepad
+S07,slots,,gu,મહેરબાની કરીને કેલ્ક્યુલેટર ખોલો,open_app,calculator
+S08,slots,,en,create a file called meeting notes.txt,create,meeting notes.txt
+S09,slots,,en,create groceries.txt in my work folder,create,groceries.txt
+S10,slots,,en,read the file todo.txt,read,todo.txt
+S11,slots,,en,show me what is inside report.txt,read,report.txt
+S12,slots,,hinglish,notes.txt mein kya likha hai padh ke batao,read,notes.txt
+S13,slots,,en,delete old_backup.txt,delete,old_backup.txt
+S14,slots,,en,make a folder called Projects 2026,create_folder,Projects 2026
+S15,slots,,hi,Photos नाम का फोल्डर बनाओ,create_folder,Photos
+S16,slots,,en,remember that my locker code is 4417,save_fact,my locker code is 4417
+S17,slots,,en,please remember my wifi password is sunflower,save_fact,my wifi password is sunflower
+S18,slots,,hinglish,yaad rakhna ki mera birthday 12 march ko hai,save_fact,mera birthday 12 march ko hai
+S19,slots,,en,copy good morning everyone to clipboard,clipboard_write,good morning everyone
+S20,slots,,en,go to github.com,web_open,https://github.com
+S21,slots,,en,kill the process chrome.exe,process_kill,chrome.exe
+S22,slots,,en,end task for notepad.exe,process_kill,notepad.exe
+S23,slots,,gujlish,chrome kholi aapo ne please,open_app,chrome
+S24,slots,,en,uh open the uh calculator,open_app,calculator
+S25,slots,,en,Open Notepad.,open_app,notepad
+S26,slots,,en,OPEN CHROME NOW,open_app,chrome
+S27,slots,,hinglish,budget.xlsx naam ki file delete karo,delete,budget.xlsx
+S28,slots,,en,search for files named invoice,search,invoice
+S29,slots,,gu,ફોટા નામનું ફોલ્ડર બનાવો,create_folder,ફોટા
+S30,slots,,en,open the snipping tool,open_app,snipping tool
+N01,negation,,en,don't open notepad,none,
+N02,negation,,en,do not close chrome,none,
+N03,negation,,en,never delete report.txt,none,
+N04,negation,,en,please don't launch spotify,none,
+N05,negation,,en,no need to open calculator,none,
+N06,negation,,hi,नोटपैड मत खोलो,none,
+N07,negation,,hi,क्रोम बंद मत करो,none,
+N08,negation,,hi,report.txt मत हटाओ,none,
+N09,negation,,gu,નોટપેડ ના ખોલો,none,
+N10,negation,,gu,ક્રોમ બંધ ના કરો,none,
+N11,negation,,gu,report.txt કાઢી ના નાખો,none,
+N12,negation,,hinglish,notepad mat kholo,none,
+N13,negation,,hinglish,chrome band mat karo,none,
+N14,negation,,hinglish,notes.txt delete nahi karni hai,none,
+N15,negation,,gujlish,notepad na kholo,none,
+N16,negation,,gujlish,chrome bandh na karo,none,
+N17,negation,,en,I don't want to delete notes.txt,none,
+N18,negation,,en,don't take a screenshot,none,
+N19,negation,,hinglish,abhi calculator mat chalu karna,none,
+N20,negation,,en,"wait, don't open paint",none,

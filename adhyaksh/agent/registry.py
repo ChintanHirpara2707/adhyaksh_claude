@@ -23,7 +23,7 @@ from adhyaksh.memory import store
 from adhyaksh.result import E_ACTION_FAILED, E_BAD_ARGUMENTS, E_BLOCKED, E_NEEDS_CONFIRM, Result
 from adhyaksh.rag import answerer
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, audio, display, files, network, office, power, screen, system, windows
+from adhyaksh.tools import apps, audio, display, files, network, office, power, screen, system, web, windows
 
 # Actions that touch the filesystem (path validation applies).
 PATH_ACTIONS = {
@@ -595,6 +595,25 @@ register(
     {"type": "object", "properties": {}},
     0,
     _power_status,
+)
+
+register(
+    "web_read",
+    "Read one public web page and return its title, description, text and links. Needs cloud use to be allowed.",
+    {"type": "object", "properties": {"url": {"type": "string", "description": "The page address.", "minLength": 3}},
+     "required": ["url"]},
+    0,
+    lambda arguments, ctx: web.read(arguments["url"], ctx=ctx),
+)
+
+register(
+    "web_search",
+    "Search the web and answer from the top pages, with sources. Use it for current facts, news, prices or anything "
+    "that needs fresh information. Needs cloud use to be allowed.",
+    {"type": "object", "properties": {"query": {"type": "string", "description": "What to look up.", "minLength": 2}},
+     "required": ["query"]},
+    0,
+    lambda arguments, ctx: web.answer(arguments["query"], ctx=ctx),
 )
 
 register(

@@ -149,3 +149,9 @@ S44,slots,,gu,મારી સ્ક્રીન પર શું છે,screen_
 S45,slots,,hi,क्रोम विंडो में क्या है,screen_look,chrome
 S46,slots,,gujlish,notepad window ma shu che,screen_look,notepad
 N28,negation,,en,don't look at my screen,none,
+S47,slots,,en,summarize github.com/openai/whisper,web_read,https://github.com/openai/whisper
+S48,slots,,hinglish,https://example.com/news padh ke batao,web_read,https://example.com/news
+S49,slots,,en,search the web for the latest python version,web_answer,the latest python version
+S50,slots,,hi,आज का मौसम इंटरनेट पर खोजकर बताओ,web_answer,आज का मौसम
+S51,slots,,gujlish,gold no bhav online joi ne kaho,web_answer,gold no bhav
+N29,negation,,en,don't read https://example.com,none,

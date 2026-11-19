@@ -49,16 +49,30 @@ GENERIC_SPELLINGS = {"code", "calc", "explorer", "edge"}
 
 @lru_cache(maxsize=1)
 def _command_words() -> frozenset[str]:
-    words = {w.casefold() for by_lang in lexicon.ACTIONS.values() for verbs in by_lang.values() for v in verbs
-             for w in v.split()}
+    """Single words a command may contain besides its object. Multi-word verb forms ("what is on", "turn up") are
+    removed as whole phrases first (_strip_verb_phrases): their parts alone ("what", "is") are not command words."""
+    words = {v.casefold() for by_lang in lexicon.ACTIONS.values() for verbs in by_lang.values() for v in verbs if " " not in v}
     words |= {w.casefold() for ws in lexicon.FILLERS.values() for f in ws for w in f.split()}
-    words |= {w.casefold() for by_lang in lexicon.TARGET_NOUNS.values() for ws in by_lang.values() for w in ws}
+    words |= {w.casefold() for by_lang in lexicon.TARGET_NOUNS.values() for ws in by_lang.values() for w in ws if " " not in w}
     words |= {w.casefold() for ws in lexicon.NEGATION.values() for n in ws for w in n.split()}
-    return frozenset(words | {"to", "it", "up", "app", "on", "off", "and", "is", "me", "this", "that"})
+    return frozenset(words | {"to", "it", "up", "app", "on", "off", "and", "me", "this", "that"})
+
+
+@lru_cache(maxsize=1)
+def _verb_phrases() -> tuple[str, ...]:
+    phrases = {v.casefold() for by_lang in lexicon.ACTIONS.values() for verbs in by_lang.values() for v in verbs if " " in v}
+    phrases |= {w.casefold() for by_lang in lexicon.TARGET_NOUNS.values() for ws in by_lang.values() for w in ws if " " in w}
+    return tuple(sorted(phrases, key=len, reverse=True))
+
+
+def _strip_verb_phrases(low: str) -> str:
+    for p in _verb_phrases():
+        low = re.sub(rf"(?<!\w){re.escape(p)}(?!\w)", " ", low)
+    return low
 
 
 def _only_object(spelling: str, low: str) -> bool:
-    rest = re.sub(rf"(?<!\w){re.escape(spelling)}(?!\w)", " ", low)
+    rest = _strip_verb_phrases(re.sub(rf"(?<!\w){re.escape(spelling)}(?!\w)", " ", low))
     return all(w in _command_words() for w in re.findall(r"[\w']+", rest))
 
 
@@ -115,6 +129,17 @@ def named(text: str) -> str | None:
         return m.group("n").strip()
     m = re.search(r"(?P<n>[\w\-.]+)\s+(?:naam\s+(?:ki|ka|ke|ni|nu|no)|नाम\s+(?:की|का|के)|નામ(?:ની|નું|નો))\b", text or "", re.IGNORECASE)
     return m.group("n").strip() if m else None
+
+
+_URL = re.compile(r"\bhttps?://[^\s<>\"']+|(?<![@\w.])(?:[a-z0-9-]+\.)+(?:com|in|org|net|io|ai|dev|co|edu|gov|info|me|app|uk|wiki)"
+                  r"(?:/[^\s<>\"']*)?(?![\w])", re.IGNORECASE)
+
+
+def find_url(text: str) -> str | None:
+    """A web address in the text ('https://example.com/a', 'github.com/user/repo'), normalised, else None.
+    Email addresses are not web addresses."""
+    m = _URL.search(text or "")
+    return normalize_url(m.group(0)) if m else None
 
 
 def normalize_url(url: str) -> str:

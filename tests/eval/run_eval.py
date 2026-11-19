@@ -123,6 +123,10 @@ def mocked_tools(calls: list[str]):
             rec("power_action", {"op": op, "delay_seconds": 0})(op) if op in ("lock", "cancel")
             else _needs_confirm("power_off", op))),
         mock.patch.object(engine.power, "battery", lambda: Result.success({"present": False})),
+        mock.patch.object(engine.web, "read", rec("web_read", lambda url, **k: {
+            "url": url, "title": "Mock page", "description": "Mock description.", "text": "Mock text.", "links": []})),
+        mock.patch.object(engine.web, "answer", rec("web_answer", lambda query, **k: {
+            "query": query, "answer": "Mock web answer.", "sources": [], "by": "extract"})),
         mock.patch.object(engine.screen, "look", rec("screen_look", lambda target="", question="", **k: {
             "title": target, "text": "", "objects": "", "answer": "Mock screen summary.", "explained_by": "local"})),
         mock.patch.object(engine.windows, "control", rec("window_control", lambda op, target="", **k: {

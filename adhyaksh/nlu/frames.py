@@ -47,7 +47,9 @@ for _pair in WINDOW_OPS:
     INTENTS[_pair] = "window_control"
 # Looking: the whole screen, or one app's window.
 INTENTS[("look", "screen")] = INTENTS[("look", "app")] = INTENTS[("look", "window")] = "screen_look"
-_SYSTEM_TARGETS = _LEVEL_TARGETS + ("wifi", "bluetooth", "pc", "screen", "shutdown", "window")
+# Reading a web page (the address leaves the PC: the tool needs cloud use to be allowed).
+INTENTS[("summarize", "url")] = INTENTS[("look", "url")] = "web_read"
+_SYSTEM_TARGETS = _LEVEL_TARGETS + ("wifi", "bluetooth", "pc", "screen", "shutdown", "window", "url")
 # Words a pure "action + target" command may contain besides the verb and the target. Anything else (content to
 # write, a destination folder, a second instruction) means the request carries more than a frame models, and the
 # richer rules handle it instead.
@@ -60,7 +62,11 @@ _FRAME_WORDS = {"named", "called", "titled", "naam", "ki", "ka", "ke", "ni", "nu
                 # "again" words do not change a command: "awaaz wapas chalu karo", "ફરી ચાલુ કરો"
                 "again", "back", "wapas", "vapas", "phir", "fir", "fari", "pachu", "pacho", "फिर", "वापस", "ફરી", "પાછું",
                 # power: "shut down the pc right now", "laptop ko sleep mode me dalo"
-                "mode", "down", "off", "on", "immediately", "turant", "abhi", "hamna", "तुरंत", "અત્યારે", "તરત"}
+                "mode", "down", "off", "on", "immediately", "turant", "abhi", "hamna", "तुरंत", "અત્યારે", "તરત",
+                # light verbs ("do", "make") carry no meaning alone: "आवाज़ ४० करो" = make the volume 40
+                "karo", "kar", "karna", "kari", "karvu", "do", "करो", "कर", "करना", "दो", "કરો", "કરી", "કરવું", "દો",
+                # English phrasal verbs split around their object: "turn the volume up", "switch the wifi off"
+                "turn", "switch", "put", "bring", "shut", "make"}
 # Verbs whose meaning depends on the target: only trusted with an app ("run python" is not an app launch).
 _APP_ONLY = {"run", "start", "stop", "end", "kill", "terminate", "load up", "turn on", "turn off", "shut", "chalu",
              "band", "bandh", "चालू", "बंद", "ચાલુ", "બંધ", "on karo", "off karo", "ऑन करो", "ऑफ करो", "ઓન કરો", "ઓફ કરો"}
@@ -118,6 +124,8 @@ class Frame:
             return {"radio": self.target_type, "on": RADIO_OPS.get(self.action or "")}
         if (self.action, self.target_type) in POWER_OPS:
             return {"op": POWER_OPS[(self.action, self.target_type)]}
+        if self.target_type == "url":
+            return {"url": self.target}
         if self.action == "look" and INTENTS.get(("look", self.target_type or "")) == "screen_look":
             return {"target": self.target if self.target_type == "app" else ""}
         if (self.action, self.target_type) in WINDOW_OPS:
@@ -184,8 +192,11 @@ def _negated(text: str, verbs: list[tuple[str, str, int, int]]) -> bool:
 
 
 def _target(text: str) -> tuple[str | None, str | None, tuple[int, int] | None]:
-    """(type, canonical value, span in text). A file with an extension wins; then a system target named by a noun
-    (volume, mic, brightness); then an app."""
+    """(type, canonical value, span in text). A web address wins (it is never a local file); then a file with an
+    extension; then a system target named by a noun (volume, mic, brightness); then an app."""
+    m = entities._URL.search(text)
+    if m:  # "summarize github.com/x", "what's on https://example.com"
+        return "url", entities.normalize_url(m.group(0)), m.span()
     name = entities.find_file(text)
     if name:
         i = text.find(name)
@@ -244,6 +255,14 @@ def parse(text: str) -> Frame:
         verbs = _find_actions(t, span)
     if ttype is None and verbs and {a for a, *_ in verbs} <= {"lock", "restart"}:
         ttype = target = "pc"  # "lock karo", "restart please": nothing else can be locked or restarted here
+    if not [v for v in verbs if (v[0], ttype or "") in INTENTS]:
+        # A separable English phrasal verb: "switch the wifi off", "turn the brightness down". The head and the
+        # particle are apart, so neither matched as a verb on its own.
+        head = re.search(r"\b(?:turn|switch|put)\b", t, re.IGNORECASE)
+        part = re.search(r"\b(up|down|on|off)\b(?!\s+\w+\s+(?:up|down|on|off)\b)", t, re.IGNORECASE)
+        if head and part and part.start() > head.end():
+            action = {"up": "increase", "down": "decrease", "on": "open", "off": "close"}[part.group(1).casefold()]
+            verbs = verbs + [(action, f"{head.group(0)} ... {part.group(1)}", head.start(), part.end())]
     if ttype not in ("app",) + _SYSTEM_TARGETS:
         verbs = [v for v in verbs if v[1] not in _APP_ONLY]
     if ttype in _SYSTEM_TARGETS:
@@ -284,6 +303,8 @@ _DEFAULT_LOCATION = re.compile(r"\b(?:in|inside|into|under)\s+(?:my\s+|the\s+)?(
 def _leftover(text: str, frame: Frame) -> list[str]:
     """Words that are neither the verb, the target, a filler, a target noun nor a naming word."""
     t = _DEFAULT_LOCATION.sub(" ", text.casefold())
+    if frame.target_type == "url":
+        t = entities._URL.sub(" ", t)  # the address as typed, not its normalised form
     if frame.target_type in lexicon.TARGET_NOUNS:  # the noun as written: "all windows", "sab windows", "आवाज़"
         nouns = {w.casefold() for ws in lexicon.TARGET_NOUNS[frame.target_type].values() for w in ws}
         for noun in sorted(nouns, key=len, reverse=True):

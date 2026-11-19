@@ -1,6 +1,6 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-19 20:42 (2b-4 look at my screen). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-19 21:26 (2b-5 web read and answer). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
 **Overall: 100% (237/238)**
 
@@ -64,6 +64,9 @@ Latest run: 2026-11-19 20:42 (2b-4 look at my screen). 238 hand-written commands
 | 2026-11-19 20:15 | 2b-2 radios and power | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-19 20:27 | 2b-3 windows | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-19 20:42 | 2b-4 look at my screen | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-19 20:58 | 2b-5 web read and answer | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-19 21:12 | 2b-5 web read and answer | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-19 21:26 | 2b-5 web read and answer | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 
 ## Failures (1)
 

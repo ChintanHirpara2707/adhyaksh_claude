@@ -776,6 +776,28 @@ def fix_verb_typo(text: str) -> str:
     return (close[0] + (" " + parts[1] if len(parts) > 1 else "")) if close else text
 
 
+# "Look it up and tell me": a web answer, not a browser tab. ("google X" and "search X on google" still open the
+# browser through web_open.) The query is free text, so this is one pattern per word order, not a frame.
+_WEB_ANSWER = [
+    re.compile(r"^(?:(?:please|hey|can\s+you|could\s+you)[\s,]+)*(?:search\s+(?:the\s+)?(?:web|internet|net|online)\s+(?:for|about)|"
+               r"look\s+up|find\s+out|research|check\s+online)\s+(?P<q>.{3,}?)[\s?.!]*$", re.IGNORECASE),
+    re.compile(r"^(?P<q>.{3,}?)\s+(?:online|internet\s+(?:par|pe|pr)|net\s+(?:par|pe))\s+(?:search\s+kar\s*ke|dhund\s*ke|dekh\s*ke|"
+               r"khoj\s*ke|shodhi\s*ne|joi\s*ne)\s+(?:batao|bata\s+do|kaho|janavo)[\s?.!]*$", re.IGNORECASE),
+    re.compile(r"^(?P<q>.{3,}?)\s+(?:इंटरनेट|ऑनलाइन)\s+(?:पर|पे)\s+(?:खोजकर|खोज\s+कर|देखकर)\s+(?:बताओ|बता\s+दो)[\s?.।!]*$"),
+    re.compile(r"^(?P<q>.{3,}?)\s+(?:ઇન્ટરનેટ|ઓનલાઇન)\s+(?:પર)\s+(?:શોધીને|જોઈને)\s+(?:કહો|જણાવો)[\s?.।!]*$"),
+]
+
+
+def match_web_answer(text: str) -> Rule | None:
+    """'search the web for X', 'look up X', 'X online dekh ke batao', 'X इंटरनेट पर खोजकर बताओ' -> web_answer."""
+    t = " ".join((text or "").split())
+    for pat in _WEB_ANSWER:
+        m = pat.match(t)
+        if m and not _has_file_extension(m.group("q")):
+            return Rule("web_answer", {"query": m.group("q").strip(" ,")})
+    return None
+
+
 def understand(text: str) -> Rule | None:
     """Rules on the raw text, then on the cleaned text, then the extended rules on both."""
     mem = match_memory(text)  # on the raw text: multi-line data must keep its line breaks
@@ -787,6 +809,9 @@ def understand(text: str) -> Rule | None:
     src = match_sources(text)
     if src:
         return src
+    web_q = match_web_answer(text)
+    if web_q:
+        return web_q
     frame = frames.command(text)
     if frame is not None:
         # A pure action + target command ("spotify band karo", "open note pad", "delete budget.txt"): the action

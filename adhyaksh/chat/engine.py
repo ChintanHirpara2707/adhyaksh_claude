@@ -16,7 +16,7 @@ from adhyaksh.nlu import entities, factorized, frames, registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
 from adhyaksh.safety import policy
-from adhyaksh.tools import apps, audio, clipboard, display, features, files, network, office, power, processes, reminders, screen, system, windows
+from adhyaksh.tools import apps, audio, clipboard, display, features, files, network, office, power, processes, reminders, screen, system, web, windows
 from adhyaksh.voice import speech
 
 MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
@@ -25,7 +25,7 @@ OS_INTENTS = {
     "folder_create", "office_create", "app_open", "app_close",
     "special_folder_open", "web_open", "screenshot", "system_status", "pc_performance",
     "process_list", "process_kill", "clipboard_read", "clipboard_write",
-    "volume_control", "brightness_control", "radio_control", "power_action", "window_control", "screen_look",
+    "volume_control", "brightness_control", "radio_control", "power_action", "window_control", "screen_look", "web_read", "web_answer",
 }
 IMAGE_EXT = {".jpg", ".jpeg", ".png", ".webp"}
 YES = {"yes", "y", "confirm", "yes please", "haan", "ha", "हाँ", "हां", "હા", "ok confirm"}
@@ -597,6 +597,23 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         if not res.ok:
             return _Reply(_error_reply(res, lang), intent, action="power_action")
         return _Reply(_t(f"power_{op}", lang, seconds=res.data.get("delay_seconds", 0)), intent, action="power_action")
+    if intent == "web_read":
+        res = web.read(slots.get("url") or "", ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="web_read")
+        d = res.data
+        body = (d["description"] or " ".join(d["text"].split()[:120])).strip()
+        more = "..." if not d["description"] and len(d["text"].split()) > 120 else ""
+        return _Reply((d["title"] or d["url"]) + "\n\n" + body + more, intent, action="web_read",
+                      sources=[{"title": d["title"] or d["url"], "url": d["url"]}])
+    if intent == "web_answer":
+        res = web.answer(slots.get("query") or text, ctx=c)
+        if not res.ok:
+            return _Reply(_error_reply(res, lang), intent, action="web_answer")
+        srcs = res.data["sources"]
+        listed = "\n".join(f"[{i + 1}] {s['title']}: {s['url']}" for i, s in enumerate(srcs))
+        return _Reply(res.data["answer"] + ("\n\nSources:\n" + listed if listed else ""), intent, action="web_answer",
+                      sources=srcs)
     if intent == "screen_look":
         res = screen.look(slots.get("target") or "", text, ctx=c)
         if not res.ok:

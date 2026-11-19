@@ -131,6 +131,13 @@ ACTIONS: dict[str, dict[str, list[str]]] = {
         "hi": ["पर क्या है", "में क्या है", "पर क्या दिख रहा है", "देखकर बताओ", "देखो"],
         "gu": ["પર શું છે", "માં શું છે", "જોઈને કહો", "જુઓ"],
     },
+    # Reading a web page: "summarize github.com/x", "read https://...", "is page ka summary do".
+    "summarize": {
+        "en": ["summarize", "summarise", "read", "give me the gist of", "tl;dr", "what does it say on"],
+        "hinglish": ["summary do", "summary batao", "padh ke batao", "padho"],
+        "gujlish": ["summary aapo", "vanchi ne kaho", "vancho"], "hi": ["सारांश बताओ", "पढ़कर बताओ", "पढ़ो"],
+        "gu": ["સારાંશ આપો", "વાંચીને કહો", "વાંચો"],
+    },
     "unmute": {
         "en": ["unmute"],
         "hinglish": ["unmute karo", "unmute kar do", "awaaz chalu karo", "awaz chalu karo"],
@@ -174,6 +181,8 @@ TARGET_NOUNS: dict[str, dict[str, list[str]]] = {
            "gujlish": ["pc", "computer", "laptop"], "hi": ["पीसी", "कंप्यूटर", "कम्प्यूटर", "लैपटॉप"],
            "gu": ["પીસી", "કમ્પ્યુટર", "કૉમ્પ્યુટર", "લેપટોપ", "લૅપટૉપ"]},
     "screen": {"en": ["screen"], "hinglish": ["screen"], "gujlish": ["screen"], "hi": ["स्क्रीन"], "gu": ["સ્ક્રીન"]},
+    "url": {"en": ["page", "web page", "webpage", "website", "site", "link", "article"], "hinglish": ["page", "website", "link"],
+            "gujlish": ["page", "website", "link"], "hi": ["पेज", "वेबसाइट", "लिंक"], "gu": ["પેજ", "વેબસાઇટ", "લિંક"]},
     "window": {"en": ["window", "windows", "all windows", "every window", "everything"], "hinglish": ["window", "sab windows", "saari windows"],
                "gujlish": ["window", "badhi windows", "badha windows"], "hi": ["विंडो", "सारी विंडो", "सब विंडो"],
                "gu": ["વિન્ડો", "બધી વિન્ડો"]},

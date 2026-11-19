@@ -157,3 +157,13 @@ S44,slots,,gu,મારી સ્ક્રીન પર શું છે,screen_
 S45,slots,,hi,क्रोम विंडो में क्या है,screen_look,chrome,screen_look,screen_look,chrome,Mock screen summary.,PASS,
 S46,slots,,gujlish,notepad window ma shu che,screen_look,notepad,screen_look,screen_look,notepad,Mock screen summary.,PASS,
 N28,negation,,en,don't look at my screen,none,,negated,,,"Okay, I won't look screen. Nothing was changed.",PASS,
+S47,slots,,en,summarize github.com/openai/whisper,web_read,https://github.com/openai/whisper,web_read,web_read,https://github.com/openai/whisper,"Mock page
+
+Mock description.",PASS,
+S48,slots,,hinglish,https://example.com/news padh ke batao,web_read,https://example.com/news,web_read,web_read,https://example.com/news,"Mock page
+
+Mock description.",PASS,
+S49,slots,,en,search the web for the latest python version,web_answer,the latest python version,web_answer,web_answer,the latest python version,Mock web answer.,PASS,
+S50,slots,,hi,आज का मौसम इंटरनेट पर खोजकर बताओ,web_answer,आज का मौसम,web_answer,web_answer,आज का मौसम,Mock web answer.,PASS,
+S51,slots,,gujlish,gold no bhav online joi ne kaho,web_answer,gold no bhav,web_answer,web_answer,gold no bhav,Mock web answer.,PASS,
+N29,negation,,en,don't read https://example.com,none,,negated,,,"Okay, I won't summarize https://example.com. Nothing was changed.",PASS,

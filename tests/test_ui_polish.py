@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def test_every_page_is_in_exactly_one_sidebar_section():
     slugs = [s for s, _ in shell.pages()]
-    files = sorted(p.stem for p in (ROOT / "pages").glob("*.py"))
+    files = sorted(p.stem for p in (ROOT / "app_pages").glob("*.py"))
     assert sorted(slugs) == files and len(slugs) == len(set(slugs))
     assert shell.pages()[0] == ("chat", "Chat") and [n for n, _ in shell.NAV] == ["Assistant", "Tools", "System"]
 
@@ -65,14 +65,14 @@ def test_human_size():
 
 def test_pages_do_not_override_the_theme():
     """Only app.py injects the theme; a page injecting 'light' broke the follow-the-OS default in dark mode."""
-    for p in (ROOT / "pages").glob("*.py"):
+    for p in (ROOT / "app_pages").glob("*.py"):
         assert "theme.inject" not in p.read_text(encoding="utf-8"), p.name
     css = theme.build_css("")
     assert "prefers-color-scheme: dark" in css and ".adhy-nav-section" in css and ".adhy-status" in css
 
 
 def test_no_deprecated_width_option():
-    for p in list((ROOT / "pages").glob("*.py")) + list((ROOT / "adhyaksh" / "ui").glob("*.py")):
+    for p in list((ROOT / "app_pages").glob("*.py")) + list((ROOT / "adhyaksh" / "ui").glob("*.py")):
         assert "use_container_width" not in p.read_text(encoding="utf-8"), p.name
 
 
@@ -81,7 +81,7 @@ def test_activity_page_renders_with_filters():
     fresh_env()
     policy.run_guarded("perf_stats", "system", lambda: Result.success({}))
     policy.deny("app_open", "regedit", "not on the allow-list")
-    at = AppTest.from_file(str(ROOT / "pages" / "activity.py"), default_timeout=60).run()
+    at = AppTest.from_file(str(ROOT / "app_pages" / "activity.py"), default_timeout=60).run()
     assert not at.exception
     assert [m.value for m in at.metric][:3] == ["1", "0", "1"]
     at.multiselect[0].set_value(["blocked"]).run()

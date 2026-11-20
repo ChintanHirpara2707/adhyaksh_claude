@@ -221,4 +221,4 @@ if prompt:
 
 _goto = st.session_state.pop("goto_page", None)
 if _goto in ("vision", "performance"):
-    st.switch_page(f"pages/{_goto}.py")
+    st.switch_page(f"app_pages/{_goto}.py")

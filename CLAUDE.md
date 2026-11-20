@@ -2,7 +2,7 @@
 
 Goal: ADHYAKSH is a private, local-first, multilingual (English, Hindi, Gujarati, Hinglish, Gujlish) assistant for a Windows laptop. It understands typed or spoken commands and safely controls files, apps, processes, reminders, clipboard and system status; answers from notebook sources with citations; remembers facts; reads text and objects in images; and uses an optional language model (Ollama local, or Groq/Gemini with consent) for open questions.
 
-Stack: Streamlit UI (pages/ call adhyaksh/services/, never tools directly), Python 3.11/3.12, SQLite, scikit-learn intent models (TF-IDF + LogReg, calibrated SVM; PyTorch MLP untested on target), rule layer plus native tool-calling agent, YOLOv8 vision, optional local faster-whisper, fastembed and rapidocr (see requirements-optional.txt).
+Stack: Streamlit UI (app_pages/ call adhyaksh/services/, never tools directly), Python 3.11/3.12, SQLite, scikit-learn intent models (TF-IDF + LogReg, calibrated SVM; PyTorch MLP untested on target), rule layer plus native tool-calling agent, YOLOv8 vision, optional local faster-whisper, fastembed and rapidocr (see requirements-optional.txt).
 
 ## Run, test, train
 - Run: `.\run.bat` (Windows) or `./run.sh`; starts `streamlit run app.py`. Background engine: `python -m adhyaksh.server` (127.0.0.1:8765, token in data/server_token); desktop HUD: `python -m hud`.
@@ -12,7 +12,7 @@ Stack: Streamlit UI (pages/ call adhyaksh/services/, never tools directly), Pyth
 
 ## Map (one line per area)
 - `app.py` entry and navigation; sidebar groups come from `adhyaksh/services/shell.py`.
-- `pages/` chat, memory, tools, vision, performance, model_lab, activity, health, settings.
+- `app_pages/` chat, memory, tools, vision, performance, model_lab, activity, health, settings.
 - `adhyaksh/services/` the only layer pages may call; wraps chat, memory, tools, settings, health.
 - `adhyaksh/chat/` engine.handle_message (mode chat or cowork), router (rules and slot extractors), identity, context.
 - `adhyaksh/agent/` native.py tool-calling loop (budgets, loop guard, ask_user), registry.py tools (schema-validated).

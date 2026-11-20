@@ -19,7 +19,7 @@ _boot()
 
 PAGES = shell.pages()
 pages = {
-    slug: st.Page(f"pages/{slug}.py", title=title, icon=icons.page_icon(slug), url_path=slug,
+    slug: st.Page(f"app_pages/{slug}.py", title=title, icon=icons.page_icon(slug), url_path=slug,
                   default=(slug == "chat"))
     for slug, title in PAGES
 }

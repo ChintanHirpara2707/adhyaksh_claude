@@ -35,7 +35,7 @@ def test_no_emoji_in_source_templates_or_docs():
 def _app_sources():
     for p in ROOT.rglob("*.py"):
         rel = p.relative_to(ROOT).parts
-        if rel[0] in {"adhyaksh", "pages"} or p.name == "app.py":
+        if rel[0] in {"adhyaksh", "app_pages"} or p.name == "app.py":
             yield p
 
 

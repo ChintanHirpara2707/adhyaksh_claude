@@ -18,7 +18,7 @@ ROOT = Path(SPECPATH).parent
 
 datas = [
     (str(ROOT / "app.py"), "."),
-    (str(ROOT / "pages"), "pages"),
+    (str(ROOT / "app_pages"), "app_pages"),
     (str(ROOT / "adhyaksh"), "adhyaksh"),
     (str(ROOT / ".streamlit"), ".streamlit"),
     (str(ROOT / "data" / "intents.csv"), "data"),

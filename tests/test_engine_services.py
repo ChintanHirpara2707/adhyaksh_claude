@@ -144,7 +144,7 @@ def test_settings_page_renders_the_engine_section():
     from pathlib import Path
 
     from streamlit.testing.v1 import AppTest
-    at = AppTest.from_file(str(Path(__file__).resolve().parent.parent / "pages" / "settings.py"), default_timeout=60).run()
+    at = AppTest.from_file(str(Path(__file__).resolve().parent.parent / "app_pages" / "settings.py"), default_timeout=60).run()
     assert not at.exception
     assert any("Engine: not running" in c.value for c in at.caption)
     assert any("Start the engine when Windows starts" == t.label for t in at.toggle)

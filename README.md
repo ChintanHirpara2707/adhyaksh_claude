@@ -120,7 +120,7 @@ downloaded models are kept in `data` and `models` next to the program. The `.env
 
 | Folder | Contents |
 |---|---|
-| `app.py`, `pages/` | Streamlit entry point and pages (pages call only `adhyaksh.services` and `adhyaksh.ui`) |
+| `app.py`, `app_pages/` | Streamlit entry point and pages (pages call only `adhyaksh.services` and `adhyaksh.ui`) |
 | `adhyaksh/services/` | One service module per page: the functions that page may use |
 | `adhyaksh/chat/`, `adhyaksh/agent/` | Message handling, rules, the tool-calling agent |
 | `adhyaksh/nlu/` | Training data generator, intent models, evaluation |

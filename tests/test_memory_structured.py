@@ -162,5 +162,5 @@ def test_memory_page_renders():
     from pathlib import Path
     from streamlit.testing.v1 import AppTest
     store.save_fact("my locker code is 4417")
-    at = AppTest.from_file(str(Path(__file__).resolve().parent.parent / "pages" / "memory.py"), default_timeout=60).run()
+    at = AppTest.from_file(str(Path(__file__).resolve().parent.parent / "app_pages" / "memory.py"), default_timeout=60).run()
     assert not at.exception and any("locker code: 4417" in e.label for e in at.expander)

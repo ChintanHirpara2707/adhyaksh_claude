@@ -14,7 +14,7 @@ from adhyaksh.services import health
 from tests.helpers import fresh_env
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = sorted((ROOT / "pages").glob("*.py"))
+PAGES = sorted((ROOT / "app_pages").glob("*.py"))
 ALLOWED_FOR_PAGES = ("adhyaksh.services", "adhyaksh.ui")
 
 
@@ -234,7 +234,7 @@ def test_health_lists_every_dependency_and_never_shows_a_key(monkeypatch):
 def test_health_page_renders():
     from streamlit.testing.v1 import AppTest
     fresh_env()
-    at = AppTest.from_file(str(ROOT / "pages" / "health.py"), default_timeout=60).run()
+    at = AppTest.from_file(str(ROOT / "app_pages" / "health.py"), default_timeout=60).run()
     assert not at.exception
     assert any("OK" == m.label for m in at.metric)
 

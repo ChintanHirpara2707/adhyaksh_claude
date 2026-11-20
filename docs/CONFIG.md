@@ -24,4 +24,4 @@ All settings in `adhyaksh/config.py`, `DEFAULTS` dict. Values stored in SQLite (
 
 Helper functions: `get_float(key)`, `get_bool(key)`, `get_allowed_roots()` (resolved Paths), `configure_folders(paths, default)` (validates no system paths, default inside a root, saves), `models_dir()`, `data_dir()`, `db_path()`, `uploads_dir()`, `logs_dir()`, `backups_dir()`, `default_workspace()`, `default_app_allowlist()` (OS-specific defaults), `default_special_folders()` (Windows: Recycle Bin, Downloads, Documents, Desktop, Explorer).
 
-Settings page (`pages/settings.py`) exposes: folders, assistant (threshold, model, voice), language model (provider, key, model names, cloud_consent), power mode, apps allow-list JSON, your data (export/wipe).
+Settings page (`app_pages/settings.py`) exposes: folders, assistant (threshold, model, voice), language model (provider, key, model names, cloud_consent), power mode, apps allow-list JSON, your data (export/wipe).

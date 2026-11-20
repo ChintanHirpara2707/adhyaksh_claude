@@ -84,14 +84,14 @@ An analogy: think of a capable office assistant sitting at your desk. They can o
 
 ## Part B. The pages: what the user sees
 
-The app opens in your browser. A left sidebar has a Light/Dark switch and links to eight pages. (An earlier "Documents" page was removed: documents are now attached inside Chat.) The pages are Python files in the `pages/` folder, and `app.py` lists them. Streamlit is the tool that draws them; each page is a short script that runs from top to bottom every time you click something.
+The app opens in your browser. A left sidebar has a Light/Dark switch and links to eight pages. (An earlier "Documents" page was removed: documents are now attached inside Chat.) The pages are Python files in the `app_pages/` folder, and `app.py` lists them. Streamlit is the tool that draws them; each page is a short script that runs from top to bottom every time you click something.
 
 ### B1. Sidebar and first run
 
 - **Theme switch.** Light or Dark. The choice is saved in the database, not in the web address.
 - **First run.** If the app does not know your name yet, Chat shows a small form asking for it. You can change it later by saying "my name is ...".
 
-### B2. Chat (`pages/chat.py`)
+### B2. Chat (`app_pages/chat.py`)
 
 This is the main page. You see:
 
@@ -108,15 +108,15 @@ This is the main page. You see:
 
 Useful things to try: "create notes.txt", "remember that my car is Audi", "what is my car", "show system status", "open notepad", "take a screenshot", "which apps use the most RAM", "stop listening", or ask any general question. Answers from the general-question path and the agent are shown word by word.
 
-### B3. Memory (`pages/memory.py`)
+### B3. Memory (`app_pages/memory.py`)
 
 A list of facts the assistant remembers. You can add a fact, search, edit a fact, or delete it. Facts saved by chat ("remember ...") appear here.
 
-### B4. Tools (`pages/tools.py`)
+### B4. Tools (`app_pages/tools.py`)
 
 Three plain sections: a CPU, memory and disk readout with a Refresh button; a table of files in your workspace folder; and a list of allowed applications with Open and Close buttons. Closing asks for confirmation. Everything here goes through the same safety gateway as chat.
 
-### B5. Model Lab (`pages/model_lab.py`)
+### B5. Model Lab (`app_pages/model_lab.py`)
 
 For people who want to see how the understanding works. Three tabs:
 
@@ -124,11 +124,11 @@ For people who want to see how the understanding works. Three tabs:
 - **Dataset.** How many training rows each intent has; a form to add or correct an example sentence; the latest rows.
 - **Training.** One button, "Train all models", which trains in the background while you keep chatting, with a live log.
 
-### B6. Activity (`pages/activity.py`)
+### B6. Activity (`app_pages/activity.py`)
 
 A table of the most recent 50 actions: time, action, target, level, whether it was confirmed, and the result. The log cannot be edited or erased by the app (Part G).
 
-### B7. Settings (`pages/settings.py`)
+### B7. Settings (`app_pages/settings.py`)
 
 | Section | What it controls |
 |---|---|
@@ -139,7 +139,7 @@ A table of the most recent 50 actions: time, action, target, level, whether it w
 | Applications allow-list | The apps the assistant may open or close, as editable JSON; minimum document match score |
 | Your data | Download a copy of the database, or delete all data (needs a tick-box) |
 
-### B8. Object Detection (`pages/vision.py`)
+### B8. Object Detection (`app_pages/vision.py`)
 
 Take a camera snapshot or upload an image. Choose a model size (Fast, Balanced, Accurate), an image size, a confidence threshold, and a mode:
 
@@ -149,7 +149,7 @@ Take a camera snapshot or upload an image. Choose a model size (Fast, Balanced, 
 
 An option adds general category guesses (1,000 ImageNet classes). The page draws red boxes, groups results ("3 cups, best confidence 91%"), gives a two-sentence description of each object, and has a "Details" box with technical facts.
 
-### B9. PC Performance (`pages/performance.py`)
+### B9. PC Performance (`app_pages/performance.py`)
 
 Four live gauges (CPU, RAM, disk, size of old temp files) that refresh every 3 seconds, and a "Boost PC" button that scans for temp files older than a day, then offers "Clean now" or "Cancel".
 
@@ -286,7 +286,7 @@ Follow the sentence "delete old.txt" from the keyboard to the screen. Files name
 
 | Step | Where | What happens |
 |---|---|---|
-| 1 | `pages/chat.py` | You press Enter. The page calls `engine.handle_message(text, conversation_id, mode, attachments)`. For speech, the browser converts your voice to text first and the page passes that text in the same way |
+| 1 | `app_pages/chat.py` | You press Enter. The page calls `engine.handle_message(text, conversation_id, mode, attachments)`. For speech, the browser converts your voice to text first and the page passes that text in the same way |
 | 2 | `engine.handle_message` | Trims the text (up to 8,000 characters), detects the script (Devanagari means Hindi, Gujarati script means Gujarati, otherwise English), saves your message to the `messages` table. Photos in attachments go straight to the vision handler; documents are indexed first (Part H) |
 | 3 | `engine._process` | Checks whether you are answering an earlier question: "yes" or "no" to a confirmation card, a missing detail ("Which file name?"), or "my name is X, confirm?" If so, it continues that earlier action |
 | 4 | `router.understand` | The rule layer. Tries, in this order: memory commands (save, list), conversational rules (name questions, thanks, goodbye, help), feature rules (voice, vision, performance, unsupported actions such as "shut down my laptop"), the classic rules (greetings, maths, web commands, "create a file named ...", screenshots, special folders, apps), and finally the extended rules (synonyms, typos, Hindi and Gujarati phrasings, time and date, notes). It also tries a cleaned copy of the text with politeness removed ("hey assistant, can you ... please") and a copy with a mistyped first verb repaired ("clse" becomes "close"). A hit gives an intent and slots, with certainty |
@@ -295,11 +295,11 @@ Follow the sentence "delete old.txt" from the keyboard to the screen. Files name
 | 7 | `engine._model_slots` | Fills the details the model cannot give: file name, folder name, app name, URL, voice action |
 | 8 | `engine._dispatch` | Checks the mode (Chat mode refuses action intents and offers Cowork), then runs the handler for the intent |
 | 9 | `tools/*` through `safety/policy.run_guarded` | The handler calls a tool. The gateway authorises it (Part G). For "delete old.txt" the level is L2, so the first call returns "needs confirmation" and no file is touched |
-| 10 | `engine._confirm_reply` and `pages/chat.py` | The engine stores the pending action and returns a confirmation question. The page shows a Confirm and Cancel card |
+| 10 | `engine._confirm_reply` and `app_pages/chat.py` | The engine stores the pending action and returns a confirmation question. The page shows a Confirm and Cancel card |
 | 11 | You press Confirm | `engine.confirm` re-runs the tool with the one-time token. The file goes to the Recycle Bin (`send2trash`) |
 | 12 | `responses.t` | The reply text comes from a template in your language: "File deleted: ..." |
 | 13 | `engine.handle_message` | Saves the reply with its intent, confidence and time taken, returns it plus any UI hint (open a page, a voice command) |
-| 14 | `pages/chat.py` | Redraws the chat. If voice replies are on, the reply text (stripped of markdown and links, limited to about 500 characters) is sent to the browser to be spoken |
+| 14 | `app_pages/chat.py` | Redraws the chat. If voice replies are on, the reply text (stripped of markdown and links, limited to about 500 characters) is sent to the browser to be spoken |
 
 ### D2. The order of trust
 

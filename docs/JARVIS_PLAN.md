@@ -25,6 +25,7 @@ added, so for model changes the comparable figures are the fixed code-mixed file
 |---|---|---|
 | Phase 1 (1a, 1c, 1b) | done, 2026-11-19, commits d13e57b to e876697 | full suite 761 passed, 2 skipped (offline: tests/conftest.py blocks keys and internet); regression 398/399; real 237/238; NLU polarity 25/25, slots 30/30, negation 20/20; active model code-mixed macro-F1 0.893 |
 | Phase 2 (2c, 2a, 2b, 2d, fixes) | done, 2026-11-20, commits 8a8b451 to 441951a (on branch jarvis-upgrade, not pushed) | full suite 966 passed, 2 skipped, offline; regression 398/399; real 237/238; NLU polarity 38/38, slots 51/51, negation 29/29 |
+| Phase 4 (4a to 4f) | in progress on branch phase4: 4a, 4b, then stop for approval | |
 | Phase 3 (3a, 3b, 3c) | done, 2026-11-20, commits db7dee8 to 27a5d4f (on branch jarvis-upgrade, not pushed) | full suite 1025 passed, 2 skipped, offline; regression 398/399; real 237/238; NLU polarity 38/38, slots 51/51, negation 29/29 |
 
 ## 1. Audit findings by subsystem
@@ -213,6 +214,51 @@ Every new dependency gets its disk size recorded. Free and light tools only.
 - tkinter (standard library, 0 MB): frameless, always on top, transparent background, animated ring per state.
 - Global hotkey with `RegisterHotKey` (ctypes, no dependency); WebSocket sync with the server.
 - Rejected: PySide6 (150 to 250 MB) and Electron or Tauri (Node toolchain), both against the light-tools rule.
+
+## 5. Phase 4: product UI (branch phase4 from main)
+
+Keep Streamlit (no React, no Node). Pages call only `adhyaksh/services/` and `adhyaksh/ui/`. No change to the safety
+gateway, the tools or the NLU. Commit after every sub-step; stop for approval after 4b. Gates: changed-file tests per
+sub-step; the full suite and all three evals after 4b and at the end. Before and after screenshots in `docs/screens/`.
+
+Read for this plan: `app_pages/chat.py` (224 lines: fake word-by-word replay of finished answers, mode radio above the
+input, notebook expander, browser voice component, confirmation card), `app.py` (st.navigation, sidebar groups from
+`services/shell.py`, CSS theme injected by `ui/theme.py`), `.streamlit/config.toml` (base = "light", which locks native
+widgets to light), `adhyaksh/events.py` (state bus) and `adhyaksh/server.py` (GET /v1/state, voice endpoints).
+
+**4a. Streaming replies.** `Provider.stream()` for Groq and any OpenAI-compatible server (SSE `stream: true`),
+Gemini (`streamGenerateContent?alt=sse`) and Ollama (NDJSON `stream: true`), through `net.py` with a timeout. Fallback:
+if streaming fails before the first piece, the whole reply comes from `complete()`; if it breaks midway, the text so
+far is kept with a one-line note. `llm.stream_ask()` keeps the consent gate. The engine gets `stream=True` from the
+console only: a general question that no rule, memory or document answers is streamed; everything else (commands,
+the tool-calling agent, voice, the server, the evals) still returns whole replies. The assistant message is saved
+when the stream ends. The chat page shows it with `st.write_stream`; the fake replay is removed.
+
+**4b. Voice page.** A new page (`app_pages/voice.py`, entry in `services/shell.py`, icon in `ui/icons.py`) with a large
+orb whose colour and motion follow the engine state (idle, listening, thinking, speaking, executing), read every
+second by a fragment from the event bus (in-process) or GET /v1/state (when the background engine runs). A live
+transcript of the conversation, a stop-speaking button, spoken replies, and voice confirmations (the question is read
+aloud; large Yes and No buttons; a spoken yes or no works too). Microphone: the existing browser voice component, or
+push-to-talk on the engine's native voice when it runs. `services/voice.py` is the page's only door.
+
+**4c. Chat composer.** Mode pill (Chat or Cowork, `st.segmented_control`) and notebook picker beside the input,
+attachments through the input's plus button, the mic button in the input (local speech model), a clean empty state
+with example prompts as suggestion chips.
+
+**4d. Conversations sidebar.** List (newest first, titles from the first message), search, rename, delete (with an
+"are you sure"), new chat. Service functions over the existing `conversations` and `messages` tables.
+
+**4e. Message actions.** Copy, regenerate, edit and resend, and a collapsed step line under an agent reply
+(`st.status(type="step")`) showing which tool ran and its result.
+
+**4f. One design-token theme.** Tokens for both modes in `ui/theme.py`; `.streamlit/config.toml` gets light and dark
+theme sections with no locked base, so native widgets (chat input, camera input, progress bars, metric pills,
+checkboxes, select arrows, dataframes) follow the toggle. Checked by screenshots of every page in both modes.
+
+**Screenshots.** Playwright is not installed; it would add the package plus a Chromium download (about 150 MB or more),
+against the light-tools rule. `tests/screens/capture.py` instead drives the Microsoft Edge already on the PC in
+headless mode (0 MB) against a running app on a scratch data folder, one PNG per page and mode. If Playwright is
+wanted anyway, it replaces only that script.
 
 ## 4. Risks and what cannot be verified here
 - Volume, brightness, radios, power, window control, microphone, wake word, TTS and the HUD need the real laptop.

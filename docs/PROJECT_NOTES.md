@@ -15,23 +15,23 @@ Requirements files: `requirements-core.txt` (streamlit, numpy, pandas, scikit-le
 
 ## 2. Folder map
 
-See [docs/FILES.md](./docs/FILES.md) for the complete folder and file listing. The project root contains `app.py`, `run.bat`, `run.sh`, `pytest.ini`, `.env` (git-ignored), `.gitignore`, source files (`CHANGELOG.md`, `README.md`, `requirements-core.txt`, `requirements-optional.txt`), and the `pages/`, `adhyaksh/`, `tests/`, `data/`, `models/`, `docs/` directories.
+See [docs/FILES.md](./docs/FILES.md) for the complete folder and file listing. The project root contains `app.py`, `run.bat`, `run.sh`, `pytest.ini`, `.env` (git-ignored), `.gitignore`, source files (`CHANGELOG.md`, `README.md`, `requirements-core.txt`, `requirements-optional.txt`), and the `app_pages/`, `adhyaksh/`, `tests/`, `data/`, `models/`, `docs/` directories.
 
 ## 3. Pages and features
 
 Each page file calls `ui.page_header(title, description)` and `theme.inject(config.get("theme") or "light")`.
 
-- **Chat** (`pages/chat.py`): Type or speak a command. Shows message history with streaming for agent replies. "Wrong intent?" correction button per assistant reply (writes to `feedback` table). Voice input via `bridge.voice_input` (speak replies aloud if `voice_reply` enabled). Mode toggle (Chat/Cowork) stored in `st.session_state["mode"]`, passed to `engine.handle_message(..., mode=mode)`. When the engine returns `suggest_mode == "cowork"`, shows a "Switch to Cowork" button. Calls `engine.handle_message`, `engine.confirm`, `context.history`, `context.get`, `bridge.voice_input`, `dataset.INTENTS`.
+- **Chat** (`app_pages/chat.py`): Type or speak a command. Shows message history with streaming for agent replies. "Wrong intent?" correction button per assistant reply (writes to `feedback` table). Voice input via `bridge.voice_input` (speak replies aloud if `voice_reply` enabled). Mode toggle (Chat/Cowork) stored in `st.session_state["mode"]`, passed to `engine.handle_message(..., mode=mode)`. When the engine returns `suggest_mode == "cowork"`, shows a "Switch to Cowork" button. Calls `engine.handle_message`, `engine.confirm`, `context.history`, `context.get`, `bridge.voice_input`, `dataset.INTENTS`.
 - **Cowork**: Not a separate page; it is a mode (`mode="cowork"`) on the Chat page. In Cowork mode all OS_INTENTS (file/app/system tools) are allowed. In Chat mode they are refused with a `needs_cowork` reply and a "Switch to Cowork" button.
 - **Voice**: Built into Chat via `adhyaksh/voice/bridge.py` and `adhyaksh/voice/component/index.html` (Web Speech API recognition + synthesis, wake word not implemented in the current HTML). Untested on target.
-- **Chat attachments** (`pages/chat.py`, replaces the removed Documents page): attach PDF/DOCX/TXT (up to 25 MB each), index them, list indexed documents, remove documents, ask questions with cited sources. Calls `loader.ingest_bytes`, `loader.list_documents`, `loader.delete_document`, `answerer.answer`, `retriever.embedding_mode`.
-- **Memory** (`pages/memory.py`): Add facts ("remember that my car is Audi"), list/search facts, edit or delete facts. Calls `store.save_fact`, `store.list_facts`, `store.update_fact`, `store.delete_fact`.
-- **Tools** (`pages/tools.py`): System status (CPU/RAM/disk), workspace file listing, app open/close with confirmation. Calls `system.status`, `files.list_dir`, `apps.open_app`, `apps.close_app`, `ui.confirmation_card`, `policy.cancel_guarded`.
-- **Model Lab** (`pages/model_lab.py`): Model comparison table, confusion matrix, per-language metrics, add/correct dataset examples, background training. Calls `evaluate.latest_runs`, `registry.set_active`, `dataset.load`, `dataset.add_example`, `train.start_background`, `train.status`, `theme.resolve`.
-- **Activity** (`pages/activity.py`): Append-only audit log of every action (ts, action, target, level, confirmed, result). Calls `audit.list_recent`.
-- **Settings** (`pages/settings.py`): Folders (allowed roots, default work folder), Assistant (confidence threshold, active model, voice reply), Language model and cloud use (provider, API key, model names, cloud_consent), Power mode toggle, Applications allow-list JSON, Your data (export/wipe). Calls `config.*`, `db.*`, `evaluate.latest_runs`, `registry.set_active`, `llm.*`, `retriever.embedding_mode`, `apps.*`.
-- **Object Detection** (`pages/vision.py`): Camera snapshot or file upload (JPG/PNG/WEBP). YOLOv8 detection with model choice (fast/balanced/accurate), image size slider, confidence slider, annotated image, grouped detection list with counts and best confidence, two-sentence descriptions, optional Wikipedia lookup, collapsible Details (size, file size, brightness, model, confidence, camera bytes, raw detections at 0.05). Classifier fallback ("Closest match") when detection finds nothing. Calls `detector.detect`, `detector.classify`, `detector.detect_raw`, `detector.average_brightness`, `descriptions.describe`, `descriptions.wikipedia`.
-- **PC Performance** (`pages/performance.py`): Live gauges (fragment, refreshes every 3s): CPU %, RAM %, Disk %, Temp files MB. Boost PC button: scan_temp, then Clean now/Cancel buttons, shows freed MB and skipped count. Calls `boost.stats`, `boost.scan_temp`, `boost.clean_temp`.
+- **Chat attachments** (`app_pages/chat.py`, replaces the removed Documents page): attach PDF/DOCX/TXT (up to 25 MB each), index them, list indexed documents, remove documents, ask questions with cited sources. Calls `loader.ingest_bytes`, `loader.list_documents`, `loader.delete_document`, `answerer.answer`, `retriever.embedding_mode`.
+- **Memory** (`app_pages/memory.py`): Add facts ("remember that my car is Audi"), list/search facts, edit or delete facts. Calls `store.save_fact`, `store.list_facts`, `store.update_fact`, `store.delete_fact`.
+- **Tools** (`app_pages/tools.py`): System status (CPU/RAM/disk), workspace file listing, app open/close with confirmation. Calls `system.status`, `files.list_dir`, `apps.open_app`, `apps.close_app`, `ui.confirmation_card`, `policy.cancel_guarded`.
+- **Model Lab** (`app_pages/model_lab.py`): Model comparison table, confusion matrix, per-language metrics, add/correct dataset examples, background training. Calls `evaluate.latest_runs`, `registry.set_active`, `dataset.load`, `dataset.add_example`, `train.start_background`, `train.status`, `theme.resolve`.
+- **Activity** (`app_pages/activity.py`): Append-only audit log of every action (ts, action, target, level, confirmed, result). Calls `audit.list_recent`.
+- **Settings** (`app_pages/settings.py`): Folders (allowed roots, default work folder), Assistant (confidence threshold, active model, voice reply), Language model and cloud use (provider, API key, model names, cloud_consent), Power mode toggle, Applications allow-list JSON, Your data (export/wipe). Calls `config.*`, `db.*`, `evaluate.latest_runs`, `registry.set_active`, `llm.*`, `retriever.embedding_mode`, `apps.*`.
+- **Object Detection** (`app_pages/vision.py`): Camera snapshot or file upload (JPG/PNG/WEBP). YOLOv8 detection with model choice (fast/balanced/accurate), image size slider, confidence slider, annotated image, grouped detection list with counts and best confidence, two-sentence descriptions, optional Wikipedia lookup, collapsible Details (size, file size, brightness, model, confidence, camera bytes, raw detections at 0.05). Classifier fallback ("Closest match") when detection finds nothing. Calls `detector.detect`, `detector.classify`, `detector.detect_raw`, `detector.average_brightness`, `descriptions.describe`, `descriptions.wikipedia`.
+- **PC Performance** (`app_pages/performance.py`): Live gauges (fragment, refreshes every 3s): CPU %, RAM %, Disk %, Temp files MB. Boost PC button: scan_temp, then Clean now/Cancel buttons, shows freed MB and skipped count. Calls `boost.stats`, `boost.scan_temp`, `boost.clean_temp`.
 
 ## 4. Chat engine flow
 
@@ -124,7 +124,7 @@ Not supported yet: wake word ("Adhyaksh"/"Hey Adhyaksh"), follow-up window, barg
 
 ## 9. Vision
 
-Object Detection page (`pages/vision.py`) + `adhyaksh/vision/`:
+Object Detection page (`app_pages/vision.py`) + `adhyaksh/vision/`:
 - **detector** (`detector.py`): `detect(image_bytes, conf=0.4, imgsz=640, model_choice="balanced")` — lazy imports `ultralytics.YOLO`, loads and caches the model per choice. Model choices: `fast` = yolov8n.pt, `balanced` = yolov8s.pt, `accurate` = yolov8m.pt. Weights stored under `models/` (git-ignored). Rejects files > 10 MB and non-JPG/PNG/WEBP. Decodes bytes via `Image.open(io.BytesIO(...)).convert("RGB")`; unreadable images return "The image could not be read.". Passes PIL Image to `model.predict(img, conf=conf, imgsz=imgsz, verbose=False)`. Results cached by `sha1(bytes):conf:imgsz:model_choice`. Returns `[{"label", "confidence", "box"}]` or `[{"error": ...}]`.
 - `detect_raw(image_bytes, model_choice, imgsz)` — top-5 detections at confidence 0.05, using the same imgsz as main detection. Cached separately.
 - `average_brightness(image_bytes)` — PIL `ImageStat.Stat` on grayscale, returns 0-255 or None.
@@ -136,7 +136,7 @@ Page flow: model selector + image size slider + confidence slider. Camera and Up
 
 ## 10. Config and settings
 
-See [docs/CONFIG.md](./docs/CONFIG.md) for the complete settings reference. All settings in `adhyaksh/config.py`, `DEFAULTS` dict. Values stored in SQLite (`settings` table); `get(key)` returns the DB value or the default; `set_value(key, value)` writes to DB. Unknown keys raise `KeyError`. Settings page (`pages/settings.py`) exposes: folders, assistant (threshold, model, voice), language model (provider, key, model names, cloud_consent), power mode, apps allow-list JSON, your data (export/wipe).
+See [docs/CONFIG.md](./docs/CONFIG.md) for the complete settings reference. All settings in `adhyaksh/config.py`, `DEFAULTS` dict. Values stored in SQLite (`settings` table); `get(key)` returns the DB value or the default; `set_value(key, value)` writes to DB. Unknown keys raise `KeyError`. Settings page (`app_pages/settings.py`) exposes: folders, assistant (threshold, model, voice), language model (provider, key, model names, cloud_consent), power mode, apps allow-list JSON, your data (export/wipe).
 
 ## 11. Tests
 

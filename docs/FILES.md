@@ -16,7 +16,7 @@
 - `.venv/` — git-ignored virtual environment (generated).
 - `.streamlit/` — Streamlit config (generated).
 - `.pytest_cache/` — git-ignored pytest cache (generated).
-- `pages/` — Streamlit page modules (one per UI page).
+- `app_pages/` — Streamlit page modules (one per UI page).
 - `adhyaksh/` — Python package root.
 - `adhyaksh/__init__.py` — package marker, `__version__ = "0.1.0"`.
 - `adhyaksh/config.py` — paths, constants, settings loader (all settings stored in SQLite).

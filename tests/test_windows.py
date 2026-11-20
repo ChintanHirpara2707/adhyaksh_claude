@@ -58,6 +58,28 @@ def desk(monkeypatch):
     return u
 
 
+def test_hidden_tool_shell_and_duplicate_windows_are_not_listed(monkeypatch):
+    """Real-test bug: the count and list included background windows (Cortana, Settings, Calculator duplicates)."""
+    fresh_env()
+    raw = [
+        {"hwnd": 1, "title": "Inbox - Google Chrome", "pid": 11, "process": "chrome.exe", "cloaked": False, "tool": False},
+        {"hwnd": 2, "title": "Cortana", "pid": 12, "process": "Cortana.exe", "cloaked": True, "tool": False},
+        {"hwnd": 3, "title": "Settings", "pid": 13, "process": "ApplicationFrameHost.exe", "cloaked": True, "tool": False},
+        {"hwnd": 4, "title": "Calculator", "pid": 14, "process": "ApplicationFrameHost.exe", "cloaked": False, "tool": False},
+        {"hwnd": 5, "title": "Calculator", "pid": 15, "process": "CalculatorApp.exe", "cloaked": False, "tool": False},
+        {"hwnd": 6, "title": "Calculator", "pid": 16, "process": "ApplicationFrameHost.exe", "cloaked": True, "tool": False},
+        {"hwnd": 7, "title": "Color picker", "pid": 17, "process": "paint.exe", "cloaked": False, "tool": True},
+        {"hwnd": 8, "title": "Program Manager", "pid": 18, "process": "explorer.exe", "cloaked": False, "tool": False},
+        {"hwnd": 9, "title": "notes.txt  -  Notepad", "pid": 19, "process": "notepad.exe", "cloaked": False, "tool": False},
+    ]
+    monkeypatch.setattr(windows, "_raw_windows", lambda: raw)
+    monkeypatch.setattr(windows.os, "name", "nt")
+    shown = windows.list_windows().data["windows"]
+    assert [w["title"] for w in shown] == ["Inbox - Google Chrome", "Calculator", "notes.txt - Notepad"]
+    assert shown[1]["app"] == "ApplicationFrameHost.exe"  # the top-most Calculator frame is the one kept
+    assert [w["hwnd"] for w in windows._enum()] == [1, 4, 9]
+
+
 def test_find_by_app_store_app_and_title(desk):
     assert windows.find("chrome")["hwnd"] == 101
     assert windows.find("calculator")["hwnd"] == 303  # the ApplicationFrameHost frame of a Store app

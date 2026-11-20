@@ -26,13 +26,24 @@ def _user32():
     return ctypes.windll.user32  # type: ignore[attr-defined]
 
 
-def _enum() -> list[dict]:
-    """Visible top-level windows with a title, top of the stack first: hwnd, title, pid, process name."""
+_DWMWA_CLOAKED = 14
+_GWL_EXSTYLE = -20
+_WS_EX_TOOLWINDOW = 0x00000080
+# Shell surfaces that are not app windows a user would count or switch to.
+_SHELL_TITLES = {"Program Manager", "Windows Input Experience", "Microsoft Text Input Application", "Windows Shell Experience Host",
+                 "Search", "Start", "Cortana", "Task View", "Action center", "Notification Center", "NVIDIA GeForce Overlay"}
+
+
+def _raw_windows() -> list[dict]:
+    """Every visible top-level window with a title, top of the stack first, with what is needed to judge it:
+    cloaked (hidden by the window manager although 'visible': suspended Store apps, Settings, Cortana) and tool
+    (a palette or helper window, not in Alt+Tab)."""
     import ctypes
     from ctypes import wintypes
 
     import psutil
     user32 = _user32()
+    dwm = ctypes.windll.dwmapi  # type: ignore[attr-defined]
     out: list[dict] = []
 
     @ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
@@ -42,15 +53,41 @@ def _enum() -> list[dict]:
             user32.GetWindowTextW(hwnd, buf, 512)
             pid = wintypes.DWORD()
             user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+            cloaked = wintypes.DWORD(0)
+            if dwm.DwmGetWindowAttribute(hwnd, _DWMWA_CLOAKED, ctypes.byref(cloaked), ctypes.sizeof(cloaked)) != 0:
+                cloaked.value = 0  # attribute not available: treat as shown
+            exstyle = user32.GetWindowLongW(hwnd, _GWL_EXSTYLE)
             try:
                 name = psutil.Process(pid.value).name()
             except psutil.Error:
                 name = ""
-            out.append({"hwnd": int(hwnd), "title": buf.value, "pid": pid.value, "process": name})
+            out.append({"hwnd": int(hwnd), "title": buf.value, "pid": pid.value, "process": name,
+                        "cloaked": bool(cloaked.value), "tool": bool(exstyle & _WS_EX_TOOLWINDOW)})
         return True
 
     user32.EnumWindows(cb, 0)
-    return [w for w in out if w["title"] not in ("Program Manager", "Windows Input Experience") and w["pid"] != os.getpid()]
+    return out
+
+
+def user_windows(raw: list[dict]) -> list[dict]:
+    """The windows a person would see and count: not cloaked, not tool windows, not shell surfaces, not this
+    program, and each title once (the top-most window with that title is kept)."""
+    seen: set[str] = set()
+    out = []
+    for w in raw:
+        title = " ".join(w["title"].split())
+        if w.get("cloaked") or w.get("tool") or title in _SHELL_TITLES or w["pid"] == os.getpid():
+            continue
+        if title.casefold() in seen:
+            continue
+        seen.add(title.casefold())
+        out.append({"hwnd": w["hwnd"], "title": title, "pid": w["pid"], "process": w["process"]})
+    return out
+
+
+def _enum() -> list[dict]:
+    """Open app windows, top-most first: hwnd, title, pid, process name."""
+    return user_windows(_raw_windows())
 
 
 def list_windows() -> Result:

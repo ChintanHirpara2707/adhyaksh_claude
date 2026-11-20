@@ -66,6 +66,25 @@ def confirm(conversation_id: int, accept: bool) -> Result:
     return _call("POST", "/v1/confirm", {"conversation_id": conversation_id, "accept": accept})
 
 
+def state() -> dict | None:
+    """The engine's current state ({"state", "detail", "since"}), or None when it does not answer."""
+    res = _call("GET", "/v1/state", timeout=2.0)
+    return res.data if res.ok else None
+
+
+def voice_status() -> dict:
+    res = _call("GET", "/v1/voice", timeout=2.0)
+    return res.data if res.ok else {"running": False}
+
+
+def voice_listen() -> Result:
+    return _call("POST", "/v1/voice/listen", timeout=5.0)
+
+
+def voice_quiet() -> Result:
+    return _call("POST", "/v1/voice/stop_speaking", timeout=5.0)
+
+
 def pending(conversation_id: int) -> dict | None:
     res = _call("GET", f"/v1/pending/{int(conversation_id)}", timeout=5.0)
     return res.data.get("pending") if res.ok else None

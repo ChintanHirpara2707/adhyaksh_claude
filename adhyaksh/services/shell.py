@@ -5,7 +5,7 @@ from adhyaksh import config
 
 # Sidebar sections, in order. Every page appears exactly once (tests/test_ui_polish.py checks this).
 NAV: list[tuple[str, list[tuple[str, str]]]] = [
-    ("Assistant", [("chat", "Chat"), ("memory", "Memory")]),
+    ("Assistant", [("chat", "Chat"), ("voice", "Voice"), ("memory", "Memory")]),
     ("Tools", [("tools", "Tools"), ("vision", "Object Detection"), ("performance", "PC Performance")]),
     ("System", [("model_lab", "Model Lab"), ("activity", "Activity"), ("health", "Health"), ("settings", "Settings")]),
 ]

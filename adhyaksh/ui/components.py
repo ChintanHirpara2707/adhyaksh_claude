@@ -46,6 +46,39 @@ def chat_width(px: int = 820) -> None:
     )
 
 
+ORB = {  # one hue per state, readable from across the room; calm motion, no flashing
+    "idle": ("#5b8a98", "Ready", "none"),
+    "listening": ("#2bb6e0", "Listening", "adhy-breathe 1.6s ease-in-out infinite"),
+    "thinking": ("#e0a030", "Thinking", "adhy-spin 1.4s linear infinite"),
+    "speaking": ("#3cbf74", "Speaking", "adhy-breathe 0.9s ease-in-out infinite"),
+    "executing": ("#5b7cf0", "Working", "adhy-spin 0.8s linear infinite"),
+}
+
+
+def orb_html(state: str, detail: str = "") -> str:
+    """A large microphone orb for the Voice page. Pure CSS (no script); colour and motion follow the state."""
+    color, label, motion = ORB.get(state, ORB["idle"])
+    detail = html.escape(detail)[:80]
+    return f"""
+<style>
+@keyframes adhy-breathe {{0%,100% {{transform:scale(1);opacity:.85}} 50% {{transform:scale(1.07);opacity:1}}}}
+@keyframes adhy-spin {{to {{transform:rotate(360deg)}}}}
+.adhy-orb-wrap {{display:flex;flex-direction:column;align-items:center;gap:.7rem;padding:1.2rem 0 .4rem}}
+.adhy-orb {{position:relative;width:190px;height:190px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 42%, {color}33 0%, {color}14 55%, transparent 72%)}}
+.adhy-orb-ring {{position:absolute;inset:8px;border-radius:50%;border:6px solid {color};
+  border-top-color:{color}{'55' if 'spin' in motion else ''};animation:{motion}}}
+.adhy-orb-core {{width:96px;height:96px;border-radius:50%;background:{color};opacity:.92;display:flex;align-items:center;
+  justify-content:center;color:#fff;font-weight:600;letter-spacing:.02em;font-size:.95rem}}
+.adhy-orb-label {{font-size:1.05rem;color:var(--text, inherit);opacity:.85}}
+.adhy-orb-detail {{font-size:.85rem;opacity:.6;min-height:1.1em}}
+</style>
+<div class="adhy-orb-wrap" role="status" aria-live="polite" aria-label="Assistant state: {label}">
+  <div class="adhy-orb"><div class="adhy-orb-ring"></div><div class="adhy-orb-core">{label}</div></div>
+  <div class="adhy-orb-detail">{detail}</div>
+</div>"""
+
+
 def confirmation_card(action: str, target: str, key: str) -> str | None:
     """Two-step confirmation card. Returns 'confirm', 'cancel' or None."""
     with st.container(border=True):

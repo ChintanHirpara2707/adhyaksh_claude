@@ -1,6 +1,7 @@
 """Navigation icons (Streamlit Material Symbols; simple line style, no emoji)."""
 PAGE_ICONS = {
     "chat": ":material/chat_bubble:",
+    "voice": ":material/mic:",
     "memory": ":material/psychology:",
     "tools": ":material/build:",
     "model_lab": ":material/science:",

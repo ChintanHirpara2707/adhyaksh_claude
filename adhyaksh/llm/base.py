@@ -28,6 +28,7 @@ SYSTEM_PROMPT = (
     "You cannot browse the web or perform actions on the computer in this reply."
 )
 ENV_FILE = config.ROOT / ".env"
+CUT_OFF_NOTE = "\n\n(The answer was cut off: the connection to the language model broke.)"
 
 
 def _load_env() -> None:
@@ -102,6 +103,46 @@ class Provider(ABC):
 
     def model(self) -> str:
         return config.get(f"{self.name}_model")
+
+    # ---- streaming ------------------------------------------------------------------------------------------
+    def _stream(self, prompt: str, timeout: float):
+        """Provider-specific: yield the reply in pieces as the model writes it."""
+        raise NotImplementedError
+
+    def stream(self, prompt: str, timeout: float = 25.0, max_tokens: int = MAX_TOKENS):
+        """Yield the reply piece by piece. If streaming fails before the first piece, the whole reply is fetched
+        with complete() and yielded at once; if it breaks midway, the text so far stays and a short note follows.
+        The finished reply is cached like complete()."""
+        import requests
+
+        self.max_tokens = max_tokens
+        model = self.model()
+        hit = cache.get(self.name, model, prompt)
+        if hit is not None:
+            yield hit
+            return
+        parts: list[str] = []
+        try:
+            for piece in self._stream(prompt, timeout):
+                if piece:
+                    parts.append(piece)
+                    yield piece
+        except (NotImplementedError, requests.RequestException, ValueError, KeyError, IndexError, TypeError) as exc:
+            reason = "timeout" if isinstance(exc, requests.Timeout) else type(exc).__name__
+            logging_setup.event("llm_stream_failed", logging.WARNING, provider=self.name, reason=reason,
+                                after_pieces=len(parts))
+            if not parts:
+                res = self.complete(prompt, timeout=timeout, max_tokens=max_tokens)  # fall back to a whole reply
+                yield res.data if res.ok else res.message
+                return
+            yield CUT_OFF_NOTE
+            return
+        text = "".join(parts).strip()
+        if text:
+            cache.put(text, self.name, model, prompt)
+        else:
+            res = self.complete(prompt, timeout=timeout, max_tokens=max_tokens)
+            yield res.data if res.ok else res.message
 
     # ---- native tool calling -------------------------------------------------------------
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
@@ -205,6 +246,28 @@ def chat(messages: list[dict], tools: list[dict] | None = None, timeout: float =
     if provider is None:
         return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
     return provider.chat(messages, tools, timeout=timeout, max_tokens=max_tokens)
+
+
+def iter_sse(response):
+    """The JSON payloads of a server-sent-events response ("data: {...}" lines), stopping at [DONE]."""
+    import json as _json
+    for line in response.iter_lines(decode_unicode=True):
+        if not line or not line.startswith("data:"):
+            continue
+        payload = line[5:].strip()
+        if payload == "[DONE]":
+            return
+        yield _json.loads(payload)
+
+
+def stream_ask(prompt: str, timeout: float = ANSWER_TIMEOUT, max_tokens: int = ANSWER_TOKENS) -> Result:
+    """Like ask(), but the data is a generator of reply pieces (same consent gate; nothing is sent without it)."""
+    if not is_local() and not config.get_bool("cloud_consent"):
+        return Result.failure(E_BLOCKED, "Cloud use is not enabled in Settings.")
+    provider = get_provider()
+    if provider is None:
+        return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
+    return Result.success(provider.stream(prompt, timeout=timeout, max_tokens=max_tokens))
 
 
 def ask(prompt: str, timeout: float = 8.0, max_tokens: int = MAX_TOKENS) -> Result:

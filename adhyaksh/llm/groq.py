@@ -37,6 +37,22 @@ def parse_openai_message(message: dict) -> dict:
     return {"text": message.get("content") or "", "tool_calls": calls}
 
 
+def stream_openai(url: str, headers: dict, model: str, prompt: str, max_tokens: int, timeout: float):
+    """Streamed chat completion in the OpenAI format (Groq and OpenAI-compatible servers): server-sent events whose
+    choices[0].delta.content holds the next piece."""
+    from adhyaksh import net
+    from adhyaksh.llm.base import iter_sse
+    r = net.post(url, timeout=timeout, attempts=1, stream=True, headers=headers,
+                 json={"model": model, "max_tokens": max_tokens, "stream": True,
+                       "messages": [{"role": "user", "content": prompt}]})
+    with r:
+        for event in iter_sse(r):
+            choices = event.get("choices") or [{}]
+            piece = (choices[0].get("delta") or {}).get("content")
+            if piece:
+                yield piece
+
+
 class GroqProvider(Provider):
     name = "groq"
 
@@ -47,6 +63,10 @@ class GroqProvider(Provider):
                           json={"model": self.model(), "max_tokens": self.max_tokens,
                                 "messages": [{"role": "user", "content": prompt}]})
         return r.json()["choices"][0]["message"]["content"]
+
+    def _stream(self, prompt: str, timeout: float):
+        yield from stream_openai(URL, {"Authorization": f"Bearer {api_key('groq')}"}, self.model(), prompt,
+                                 self.max_tokens, timeout)
 
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
         from adhyaksh import net

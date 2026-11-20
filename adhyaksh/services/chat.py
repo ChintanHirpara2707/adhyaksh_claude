@@ -31,13 +31,15 @@ INTENTS = dataset.INTENTS
 
 # adhyaksh.chat.engine, or the background engine when it is running (adhyaksh.client): one conversation state for the
 # console, the HUD and voice. Attachments are always handled here (the files are in this process).
-def engine_handle_message(text, conversation_id, voice=False, mode="cowork", attachments=None):
+def engine_handle_message(text, conversation_id, voice=False, mode="cowork", attachments=None, stream=False):
+    """stream=True: a general question may come back as data["stream"] (pieces to show as they arrive). Through the
+    background engine replies always arrive whole (the HTTP API is not streamed)."""
     from adhyaksh import client
     if not attachments and client.available():
         res = client.message(text, conversation_id, voice=voice, mode=mode)
         if res.ok or res.error_code != "E_NETWORK":
             return res
-    return engine.handle_message(text, conversation_id, voice=voice, mode=mode, attachments=attachments)
+    return engine.handle_message(text, conversation_id, voice=voice, mode=mode, attachments=attachments, stream=stream)
 
 
 def engine_confirm(conversation_id, accept):

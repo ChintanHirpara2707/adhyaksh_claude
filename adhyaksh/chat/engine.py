@@ -1,6 +1,7 @@
 """Chat engine: message in, reply out. Rules, then the trained model, then tools via safety."""
 from __future__ import annotations
 
+import contextvars
 import logging
 import re
 import time
@@ -20,7 +21,8 @@ from adhyaksh.safety import policy
 from adhyaksh.tools import apps, audio, clipboard, display, features, files, network, office, power, processes, reminders, screen, system, web, windows
 from adhyaksh.voice import speech
 
-MAX_MESSAGE = 8000  # long notes and pasted text can be saved to memory
+MAX_MESSAGE = 8000
+_STREAM: contextvars.ContextVar[bool] = contextvars.ContextVar("adhyaksh_stream", default=False)  # long notes and pasted text can be saved to memory
 OS_INTENTS = {
     "file_create", "file_read", "file_update", "file_delete", "file_search",
     "folder_create", "office_create", "app_open", "app_close",
@@ -251,6 +253,7 @@ class _Reply:
         self.extra = extra or {}  # UI hints: open_page, voice_cmd
         self.text, self.intent, self.conf, self.action = text, intent, conf, action
         self.confirmation, self.sources, self.suggest_mode = confirmation, sources or [], suggest_mode
+        self.stream = None  # a generator of reply pieces, when the reply is streamed
 
 
 def _confirm_reply(res: Result, lang: str, ctx: context.Context, retry, intent: str, shown: str) -> _Reply:
@@ -288,6 +291,12 @@ def _llm_answer(text: str, convo_id: int, lang: str, intent: str) -> _Reply:
         return _Reply(_t("llm_blocked", lang, link=llm.search_link(text)), intent)
     if llm.get_provider() is None:
         return _wiki_or_link(text, lang, intent)
+    if _STREAM.get():
+        streamed = llm.stream_ask(_general_prompt(text, convo_id), timeout=llm.ANSWER_TIMEOUT, max_tokens=llm.ANSWER_TOKENS)
+        if streamed.ok:
+            r = _Reply("", intent, action="llm")
+            r.stream = streamed.data
+            return r
     res = llm.ask(_general_prompt(text, convo_id), timeout=llm.ANSWER_TIMEOUT, max_tokens=llm.ANSWER_TOKENS)
     if res.ok:
         # A plain chat model has no tools: it must not claim to have done anything.
@@ -942,6 +951,11 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
     if negated is not None:
         # "don't open notepad", "chrome band mat karo": never executed, on any path (rules, classifier or model).
         return _negated_reply(negated, lang)
+    if _STREAM.get() and llm.available() and _is_general_question(text) and router.understand(text) is None             and not router.split_steps(text):
+        # The console can show a reply as it is written: a plain question (no command, no rule) is answered by a
+        # streamed model reply, after the user's own memory and documents had their chance to answer it.
+        hit = _context_answer(text, ctx, lang)
+        return hit if hit is not None else _llm_answer(text, convo_id, lang, "knowledge_question")
     if agent_native.available():
         fast = frames.command(text) if config.get("routing") == "local_first" else None
         if fast is not None:
@@ -1085,10 +1099,22 @@ def _attachment_reply(text: str, ok: list[str], bad: list[str], ctx: context.Con
 
 
 def handle_message(text: str, conversation_id: int, voice: bool = False, mode: str = "cowork",
-                   attachments: list[tuple[str, bytes]] | None = None) -> Result:
+                   attachments: list[tuple[str, bytes]] | None = None, stream: bool = False) -> Result:
     """Process one user message and return reply, intent, confidence, action, timing.
 
-    attachments: optional (filename, bytes) pairs; they are indexed and used for document Q&A."""
+    attachments: optional (filename, bytes) pairs; they are indexed and used for document Q&A.
+    stream: the caller can show a reply as it is written (the console). A general question then returns
+    data["stream"], a generator of reply pieces, and data["reply"] is empty; the reply is saved when the stream
+    ends. Everything else, and every caller that does not ask, gets the whole reply as before."""
+    token = _STREAM.set(bool(stream))
+    try:
+        return _handle_message(text, conversation_id, voice, mode, attachments)
+    finally:
+        _STREAM.reset(token)
+
+
+def _handle_message(text: str, conversation_id: int, voice: bool, mode: str,
+                    attachments: list[tuple[str, bytes]] | None) -> Result:
     t0 = time.perf_counter()
     text = (text or "").strip()[:MAX_MESSAGE]
     attachments = attachments or []
@@ -1125,6 +1151,11 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
         ctx.images = None
         events.set_state("idle")
     ms = (time.perf_counter() - t0) * 1000
+    if r.stream is not None:
+        result = {"reply": "", "stream": _finish_stream(r, conversation_id, lang, mode, voice, t0), "intent": r.intent,
+                  "confidence": round(r.conf, 3), "action": r.action, "latency_ms": round(ms, 1), "confirmation": None,
+                  "sources": [], "lang": lang, "voice": voice, "mode": mode}
+        return Result.success(result)
     events.publish("reply", conversation_id=conversation_id, intent=r.intent, text=r.text[:600],
                    confirmation=bool(r.confirmation))
     logging_setup.event("chat_message", intent=r.intent, confidence=round(r.conf, 3), action=r.action or "",
@@ -1137,6 +1168,25 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
         result["suggest_mode"] = r.suggest_mode
     result.update(r.extra)
     return Result.success(result)
+
+
+def _finish_stream(r: _Reply, conversation_id: int, lang: str, mode: str, voice: bool, t0: float):
+    """Pass the reply pieces through, then save the finished reply (guarded against claimed actions) and report it."""
+    parts: list[str] = []
+    try:
+        for piece in r.stream:
+            parts.append(piece)
+            yield piece
+    finally:
+        text = "".join(parts).strip()
+        guarded = agent_native.guard_claims(text, []) if text else _t("error", lang, reason="the language model gave no answer")
+        if guarded != text:
+            yield "\n\n" + guarded  # a plain chat model has no tools: correct any claim that it did something
+        ms = (time.perf_counter() - t0) * 1000
+        events.publish("reply", conversation_id=conversation_id, intent=r.intent, text=guarded[:600], confirmation=False)
+        logging_setup.event("chat_message", intent=r.intent, confidence=round(r.conf, 3), action=r.action or "",
+                            lang=lang, mode=mode, voice=voice, ms=round(ms, 1), streamed=True)
+        context.save_message(conversation_id, "assistant", guarded, r.intent, r.conf, ms)
 
 
 # ---------------------------------------------------------------------------

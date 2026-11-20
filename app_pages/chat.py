@@ -35,24 +35,9 @@ history = svc.context_history(cid, 50)
 if not history:
     ui.empty_state("No messages yet. Try: create notes.txt, remember that my car is Audi, or show system status.")
 
-# Stream the final answer of the latest agent turn, once per new message.
-last_assistant = next((m for m in reversed(history) if m["role"] == "assistant"), None)
-streaming = False
-if last_assistant and last_assistant.get("intent") in ("agent", "knowledge_question"):
-    if st.session_state.get("streamed_agent_msg_id") != last_assistant["id"]:
-        streaming = True
-        st.session_state["streamed_agent_msg_id"] = last_assistant["id"]
-
 for m in history:
     with st.chat_message(m["role"]):
-        if streaming and m is last_assistant:
-            def _gen(text: str = m["content"]):
-                for word in text.split():
-                    yield word + " "
-                    time.sleep(0.015)
-            st.write_stream(_gen())
-        else:
-            st.markdown(m["content"])
+        st.markdown(m["content"])
         if m["role"] == "assistant":
             intent_val = m.get("intent") or "unknown"
             key_prefix = f"wrong_{m['id']}"
@@ -212,8 +197,14 @@ if prompt:
             st.session_state["voice_status"] = _tr.message
     files = [] if isinstance(prompt, str) else [(f.name, f.getvalue()) for f in (prompt.files or [])]
     st.session_state["suggest_switch"] = False
+    if text:
+        with st.chat_message("user"):
+            st.markdown(text)
     with st.spinner("Working"):
-        result = svc.engine_handle_message(text, cid, mode=mode, attachments=files)
+        result = svc.engine_handle_message(text, cid, mode=mode, attachments=files, stream=not files)
+    if result.ok and result.data.get("stream") is not None:
+        with st.chat_message("assistant"):
+            st.write_stream(result.data["stream"])  # the model's answer, word by word as it is written; saved at the end
     apply_ui_hints(result)
     if result.data and result.data.get("suggest_mode") == "cowork":
         st.session_state["suggest_switch"] = True

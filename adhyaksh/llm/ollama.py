@@ -31,6 +31,24 @@ class OllamaProvider(Provider):
                                 "options": {"num_predict": self.max_tokens}})
         return r.json().get("response", "")
 
+    def _stream(self, prompt: str, timeout: float):
+        """/api/generate with stream true: one JSON object per line, each with the next "response" piece."""
+        import json
+
+        from adhyaksh import net
+        r = net.post(URL, timeout=max(timeout, 60.0), attempts=1, stream=True,
+                     json={"model": self.model(), "prompt": prompt, "stream": True,
+                           "options": {"num_predict": self.max_tokens}})
+        with r:
+            for line in r.iter_lines(decode_unicode=True):
+                if not line:
+                    continue
+                event = json.loads(line)
+                if event.get("response"):
+                    yield event["response"]
+                if event.get("done"):
+                    return
+
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
         from adhyaksh import net
 

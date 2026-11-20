@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from adhyaksh import config
 from adhyaksh.llm.base import Provider, api_key
-from adhyaksh.llm.groq import parse_openai_message, to_openai_messages
+from adhyaksh.llm.groq import parse_openai_message, stream_openai, to_openai_messages
 
 
 def chat_url() -> str:
@@ -32,6 +32,9 @@ class OpenAICompatProvider(Provider):
                      json={"model": self.model(), "max_tokens": self.max_tokens,
                            "messages": [{"role": "user", "content": prompt}]})
         return r.json()["choices"][0]["message"]["content"]
+
+    def _stream(self, prompt: str, timeout: float):
+        yield from stream_openai(chat_url(), _headers(), self.model(), prompt, self.max_tokens, max(timeout, 60.0))
 
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
         from adhyaksh import net

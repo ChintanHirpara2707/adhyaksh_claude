@@ -18,6 +18,21 @@ class GeminiProvider(Provider):
                                 "generationConfig": {"maxOutputTokens": self.max_tokens}})
         return "".join(p.get("text", "") for p in r.json()["candidates"][0]["content"]["parts"])
 
+    def _stream(self, prompt: str, timeout: float):
+        """streamGenerateContent with alt=sse: each event carries the next text parts."""
+        from adhyaksh import net
+        from adhyaksh.llm.base import iter_sse
+        r = net.post(f"{BASE}{self.model()}:streamGenerateContent?alt=sse", timeout=timeout, attempts=1, stream=True,
+                     headers={"x-goog-api-key": api_key("gemini")},
+                     json={"contents": [{"parts": [{"text": prompt}]}],
+                           "generationConfig": {"maxOutputTokens": self.max_tokens}})
+        with r:
+            for event in iter_sse(r):
+                for cand in event.get("candidates") or []:
+                    for part in (cand.get("content") or {}).get("parts") or []:
+                        if part.get("text"):
+                            yield part["text"]
+
     def _chat(self, messages: list[dict], tools: list[dict], timeout: float) -> dict:
         from adhyaksh import net
 

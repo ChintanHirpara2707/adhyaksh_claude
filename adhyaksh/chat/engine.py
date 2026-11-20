@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from adhyaksh import config, logging_setup, persona, responses
+from adhyaksh import config, events, logging_setup, persona, responses
 from adhyaksh.chat import context, identity, router
 from adhyaksh.agent import native as agent_native
 from adhyaksh.llm import base as llm
@@ -15,6 +15,7 @@ from adhyaksh.memory import store
 from adhyaksh.nlu import entities, factorized, frames, registry
 from adhyaksh.rag import answerer, sources
 from adhyaksh.result import (E_BLOCKED, E_LOW_CONFIDENCE, E_NEEDS_CONFIRM, E_NO_API_KEY, Result)
+from adhyaksh.safety import confirm as confirm_store
 from adhyaksh.safety import policy
 from adhyaksh.tools import apps, audio, clipboard, display, features, files, network, office, power, processes, reminders, screen, system, web, windows
 from adhyaksh.voice import speech
@@ -503,8 +504,34 @@ def _voice_reply(text: str, slots: dict, c: dict, intent: str) -> _Reply:
 
 
 def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_id: int, lang: str,
-              mode: str = "cowork") -> _Reply:
-    c = _ctx_for(text, intent)
+              mode: str = "cowork", token: str | None = None) -> _Reply:
+    """Run one understood request. A request that stops at a confirmation is also saved (intent, text, slots), so a
+    "yes" after a restart of the background engine can run it again with the same token."""
+    r = _dispatch_inner(intent, text, slots, ctx, convo_id, lang, mode, token)
+    if r.confirmation and not token and r.confirmation.get("token"):
+        try:
+            confirm_store.save_replay(r.confirmation["token"], convo_id, intent, text, slots, mode, lang)
+        except Exception as exc:  # persistence is a convenience: the confirmation itself still works in memory
+            logging_setup.event("replay_not_saved", logging.WARNING, error=type(exc).__name__)
+    return r
+
+
+def _finish_replay(ctx: context.Context, convo_id: int, accept: bool, lang: str) -> _Reply | None:
+    """Answer a confirmation that only the database still knows about (the engine restarted since it was asked)."""
+    rep = confirm_store.latest_replay(convo_id)
+    if rep is None:
+        return None
+    confirm_store.drop_replay(rep["token"])
+    if not accept:
+        policy.cancel_guarded(rep["token"])
+        return _Reply(_t("cancelled", lang), "confirmation", action="cancel")
+    return _dispatch(rep["intent"], rep["text"], rep["slots"], ctx, convo_id, rep["lang"] or lang, mode=rep["mode"],
+                     token=rep["token"])
+
+
+def _dispatch_inner(intent: str, text: str, slots: dict, ctx: context.Context, convo_id: int, lang: str,
+                    mode: str = "cowork", token: str | None = None) -> _Reply:
+    c = _ctx_for(text, intent, token)
     if mode == "chat" and intent in OS_INTENTS:
         return _Reply(_t("needs_cowork", lang), intent, action="needs_cowork", suggest_mode="cowork")
     if intent == "vision_detect":
@@ -834,7 +861,11 @@ def confirm(conversation_id: int, accept: bool) -> Result:
     """Called by the UI confirmation card buttons."""
     ctx = context.get(conversation_id)
     if not ctx.pending_confirm and not ctx.pending_agent_confirm:
-        return Result.failure(E_BLOCKED, "There is nothing to confirm.")
+        r = _finish_replay(ctx, conversation_id, accept, "en")  # asked before a restart of the background engine
+        if r is None:
+            return Result.failure(E_BLOCKED, "There is nothing to confirm.")
+        context.save_message(conversation_id, "assistant", r.text, r.intent, 1.0, 0.0)
+        return Result.success({"reply": r.text, "intent": r.intent, "action": r.action, "confirmation": None})
     if ctx.pending_agent_confirm:
         r = _finish_agent_confirmation(ctx, accept, conversation_id, "en")
         context.save_message(conversation_id, "assistant", r.text, r.intent, 1.0, 0.0)
@@ -870,6 +901,14 @@ def _process(text: str, ctx: context.Context, convo_id: int, lang: str, mode: st
     # Explicit agent invocation: "agent: <request>"
     if low.startswith("agent:"):
         return _agent_dispatch(low[len("agent:"):].strip(), ctx, convo_id, lang)
+    if ctx.pending_confirm:
+        # A new request drops the open confirmation: cancel its token too, so a later "yes" can never revive it.
+        policy.cancel_guarded(ctx.pending_confirm["token"])
+        confirm_store.drop_replay(ctx.pending_confirm["token"])
+    elif answer is not None and not ctx.pending_agent_confirm and not ctx.pending_agent_ask:
+        r = _finish_replay(ctx, convo_id, answer, lang)  # "yes" to a confirmation asked before a restart
+        if r is not None:
+            return r
     ctx.pending_confirm = None
     ctx.pending_agent_confirm = None
     ctx.pending_name = None
@@ -1065,6 +1104,7 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
     context.save_message(conversation_id, "user", shown)
     ctx = context.get(conversation_id)
     ctx.images = images or None
+    events.set_state("thinking")
     try:
         if images and not attachments:
             r = _vision_reply(text, {}, ctx, _ctx_for(text, "vision_detect"))
@@ -1083,7 +1123,10 @@ def handle_message(text: str, conversation_id: int, voice: bool = False, mode: s
                    "error", 0.0)
     finally:
         ctx.images = None
+        events.set_state("idle")
     ms = (time.perf_counter() - t0) * 1000
+    events.publish("reply", conversation_id=conversation_id, intent=r.intent, text=r.text[:600],
+                   confirmation=bool(r.confirmation))
     logging_setup.event("chat_message", intent=r.intent, confidence=round(r.conf, 3), action=r.action or "",
                         lang=lang, mode=mode, voice=voice, ms=round(ms, 1))
     context.save_message(conversation_id, "assistant", r.text, r.intent, r.conf, ms)

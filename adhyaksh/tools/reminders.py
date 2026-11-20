@@ -74,6 +74,7 @@ def find(query: str) -> list[dict]:
 
 def cancel(query: str = "", *, all_pending: bool = False, ctx: dict | None = None, token: str | None = None) -> Result:
     """Cancel one reminder (L1) or every pending reminder (L2, needs confirmation)."""
+    token = token or (ctx or {}).get("token")
     if all_pending:
         n = len(db.query_all("SELECT id FROM reminders WHERE status='pending'"))
         if not n:

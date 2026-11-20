@@ -92,7 +92,18 @@ ALTER TABLE memory_facts ADD COLUMN parsed INTEGER NOT NULL DEFAULT 0;
 CREATE INDEX idx_memory_attr ON memory_facts(subject, attribute);
 """
 
-MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2), (3, SCHEMA_V3), (4, SCHEMA_V4)]
+# v5: confirmations that survive a restart of the background engine. A token is valid for confirm.TTL_SECONDS of
+# wall-clock time; a replay row lets a "yes" after a restart run the same request again with that token.
+SCHEMA_V5 = """
+CREATE TABLE pending_confirmations(
+  token TEXT PRIMARY KEY, action TEXT NOT NULL, target TEXT NOT NULL, user_text TEXT, intent TEXT, created_at REAL NOT NULL);
+CREATE TABLE confirm_replays(
+  token TEXT PRIMARY KEY, conversation_id INTEGER NOT NULL, intent TEXT NOT NULL, text TEXT NOT NULL,
+  slots_json TEXT NOT NULL, mode TEXT NOT NULL, lang TEXT NOT NULL, created_at REAL NOT NULL);
+CREATE INDEX idx_replays_convo ON confirm_replays(conversation_id, created_at);
+"""
+
+MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2), (3, SCHEMA_V3), (4, SCHEMA_V4), (5, SCHEMA_V5)]
 
 
 def utcnow() -> str:

@@ -149,6 +149,9 @@ def run_guarded(
         confirmed = "confirmed"
 
     t0 = time.perf_counter()
+    if d.level >= 1:
+        from adhyaksh import events
+        events.set_state("executing", action)
     try:
         res = runner()
     except Exception as exc:  # expected tool failures must not reach the UI as exceptions

@@ -110,6 +110,7 @@ def resolve(target: str) -> tuple[list[dict], str]:
 
 def kill_process(target: str, *, ctx: dict | None = None, token: str | None = None) -> Result:
     """End every process of one program (or one pid). L2: the first call returns a confirmation token."""
+    token = token or (ctx or {}).get("token")
     try:
         groups, problem = resolve(str(target))
     except ImportError:

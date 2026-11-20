@@ -122,6 +122,7 @@ def find_source(name: str, notebook_id: int | None = None) -> dict | None:
 
 def delete_source(name: str, *, ctx: dict | None = None, token: str | None = None) -> Result:
     """Remove one source (its index and the stored copy) from the active notebook. L2: needs confirmation."""
+    token = token or (ctx or {}).get("token")
     row = find_source(name)
     if row is None:
         return Result.failure(E_FILE_NOT_FOUND, f"No source named {name} is in this notebook.")

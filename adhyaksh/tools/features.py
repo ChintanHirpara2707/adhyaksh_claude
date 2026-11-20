@@ -52,6 +52,7 @@ def temp_scan(*, ctx: dict | None = None) -> Result:
 
 def temp_clean(*, ctx: dict | None = None, token: str | None = None) -> Result:
     """Delete temp files older than a day. L2: the first call returns a confirmation token."""
+    token = token or (ctx or {}).get("token")
     def go() -> Result:
         from adhyaksh.tools import boost
         r = boost.clean_temp()

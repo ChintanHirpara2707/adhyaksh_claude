@@ -1,6 +1,6 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-20 15:16 (Windows test fixes). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-20 16:00 (3a-1 events and confirmations). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
 **Overall: 100% (237/238)**
 
@@ -69,6 +69,7 @@ Latest run: 2026-11-20 15:16 (Windows test fixes). 238 hand-written commands, to
 | 2026-11-19 21:26 | 2b-5 web read and answer | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-19 21:44 | 2d persona | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-20 15:16 | Windows test fixes | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-20 16:00 | 3a-1 events and confirmations | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 
 ## Failures (1)
 

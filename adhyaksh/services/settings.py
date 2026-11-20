@@ -5,12 +5,19 @@ the tools, models and storage behind a page can change without touching the page
 """
 from __future__ import annotations
 
-from adhyaksh import __version__, config, db
+from adhyaksh import __version__, autostart, client, config, db
 from adhyaksh.llm import base as llm
 from adhyaksh.nlu import evaluate, registry
 from adhyaksh.rag import embedder, retriever
 from adhyaksh.tools import apps
 from adhyaksh.voice import stt
+
+# adhyaksh.client and adhyaksh.autostart (background engine)
+client_available = client.available
+client_forget_cache = client.forget_cache
+autostart_enabled = autostart.enabled
+autostart_enable = autostart.enable
+autostart_disable = autostart.disable
 
 # adhyaksh.tools.apps
 apps_allowlist = apps.allowlist

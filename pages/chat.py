@@ -121,7 +121,7 @@ with st.expander(f"Notebook: {_active['name']} ({svc.sources_count()} sources)")
     st.caption("Search method: " + {"local": "local embeddings (multilingual)", "gemini": "Gemini embeddings (cloud)",
                                     "tfidf": "TF-IDF keywords (offline)"}[svc.retriever_embedding_mode()])
 
-pending = svc.context_get(cid).pending_confirm
+pending = svc.pending_confirm(cid)  # here or in the background engine, wherever the conversation runs
 if pending:
     choice = ui.confirmation_card(pending["action"].replace("_", " "), pending["target"], key=f"c_{pending['token']}")
     if choice:

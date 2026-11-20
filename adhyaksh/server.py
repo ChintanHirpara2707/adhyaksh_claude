@@ -122,6 +122,14 @@ def create_app():
             return JSONResponse({"error": res.message, "code": res.error_code}, status_code=400)
         return res.data
 
+    @app.get("/v1/pending/{conversation_id}")
+    def pending(conversation_id: int):
+        """The confirmation this conversation is waiting for (without anything executable), or null."""
+        from adhyaksh.chat import context
+        ctx = context.get(conversation_id)
+        p = ctx.pending_confirm or ctx.pending_agent_confirm
+        return {"pending": {k: p.get(k) for k in ("token", "action", "target")} if p else None}
+
     @app.websocket("/v1/events")
     async def stream(ws: WebSocket):
         refused = _check(ws.headers, ws.query_params.get("token"))
@@ -155,6 +163,8 @@ def main() -> int:
     db.init()
     token()
     logging_setup.event("server_start", port=port())
+    from adhyaksh import watchdog
+    watchdog.start()
     uvicorn.run(create_app(), host="127.0.0.1", port=port(), log_level="warning", access_log=False)
     return 0
 

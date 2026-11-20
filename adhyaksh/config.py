@@ -108,7 +108,9 @@ DEFAULTS: dict[str, str] = {
     "llm_tool_mode": "auto",  # auto: native tool calls when the model supports them, else the JSON protocol
     "routing": "local_first",  # local_first: complete single commands run here without a model round trip
     "server_port": "8765",  # the background engine (python -m adhyaksh.server), 127.0.0.1 only
-    "console_port": "8501",  # the Streamlit console, the only browser origin the engine accepts
+    "console_port": "8501",
+    "background_engine": "auto",  # auto: the console uses the background engine when it is running; off: never
+    "watch_battery": "15",  # the watchdog warns when the battery drops to this percent while unplugged  # the Streamlit console, the only browser origin the engine accepts
     "cloud_screen_consent": "false",  # screen text may go to a CLOUD model only with this, on top of cloud_consent
     "auto_memory": "false",  # keep personal facts stated in passing ("my exam is on friday"); off by default
     "llm_json_only_models": "[]",  # learned at run time: models that rejected native tool calls
@@ -154,6 +156,8 @@ RULES: dict[str, tuple] = {
     "vision_imgsz": ("int", 160, 1920),
     "server_port": ("int", 1024, 65535),
     "console_port": ("int", 1024, 65535),
+    "background_engine": ("choice", {"auto", "off"}),
+    "watch_battery": ("int", 5, 50),
 }
 
 

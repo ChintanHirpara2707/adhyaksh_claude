@@ -115,6 +115,21 @@ if svc.get("stt_engine") == "local":
     else:
         st.caption(f"Local speech model '{svc.stt_model_size()}' is ready. Audio never leaves this laptop.")
 
+st.subheader("Background engine")
+st.caption("The engine keeps voice, reminders and the desktop HUD working without this browser tab. It listens on "
+           f"127.0.0.1:{svc.get('server_port')} only and needs this PC's private token. Start it with: "
+           "python -m adhyaksh.server")
+st.caption("Engine: running. This console uses it." if svc.client_available() else "Engine: not running. This console works on its own.")
+_use = st.toggle("Use the background engine when it is running", value=svc.get("background_engine") == "auto")
+if _use != (svc.get("background_engine") == "auto"):
+    svc.set_value("background_engine", "auto" if _use else "off")
+    svc.client_forget_cache()
+_auto = st.toggle("Start the engine when Windows starts", value=svc.autostart_enabled(),
+                  help="Adds one small file to your own Startup folder; no administrator rights. Turning it off deletes the file.")
+if _auto != svc.autostart_enabled():
+    _res = svc.autostart_enable() if _auto else svc.autostart_disable()
+    st.toast("Done." if _res.ok else _res.message)
+
 st.subheader("Document search")
 _mode = svc.retriever_embedding_mode()
 st.caption("Current method: " + {"local": "local multilingual embeddings", "gemini": "Gemini embeddings (cloud)",

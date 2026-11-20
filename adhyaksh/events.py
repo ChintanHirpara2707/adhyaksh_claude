@@ -32,8 +32,9 @@ def unsubscribe(q: queue.Queue) -> None:
             _subs.remove(q)
 
 
-def publish(kind: str, **data) -> None:
-    event = {"type": kind, "ts": round(time.time(), 3), **data}
+def publish(event_type: str, /, **data) -> None:
+    """Positional-only type, so the data may have its own 'kind' field (watchdog notices do)."""
+    event = {"type": event_type, "ts": round(time.time(), 3), **data}
     with _lock:
         subs = list(_subs)
     for q in subs:

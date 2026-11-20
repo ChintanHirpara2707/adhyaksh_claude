@@ -29,9 +29,33 @@ context_new_conversation = context.new_conversation
 # adhyaksh.nlu.dataset
 INTENTS = dataset.INTENTS
 
-# adhyaksh.chat.engine
-engine_confirm = engine.confirm
-engine_handle_message = engine.handle_message
+# adhyaksh.chat.engine, or the background engine when it is running (adhyaksh.client): one conversation state for the
+# console, the HUD and voice. Attachments are always handled here (the files are in this process).
+def engine_handle_message(text, conversation_id, voice=False, mode="cowork", attachments=None):
+    from adhyaksh import client
+    if not attachments and client.available():
+        res = client.message(text, conversation_id, voice=voice, mode=mode)
+        if res.ok or res.error_code != "E_NETWORK":
+            return res
+    return engine.handle_message(text, conversation_id, voice=voice, mode=mode, attachments=attachments)
+
+
+def engine_confirm(conversation_id, accept):
+    from adhyaksh import client
+    if client.available():
+        res = client.confirm(conversation_id, accept)
+        if res.ok or res.error_code != "E_NETWORK":
+            return res
+    return engine.confirm(conversation_id, accept)
+
+
+def pending_confirm(conversation_id):
+    """The confirmation the conversation waits for ({token, action, target}) or None, wherever it is held."""
+    from adhyaksh import client
+    if client.available():
+        return client.pending(conversation_id)
+    p = context.get(conversation_id).pending_confirm
+    return {k: p.get(k) for k in ("token", "action", "target")} if p else None
 
 # adhyaksh.chat.identity
 identity_get_name = identity.get_name

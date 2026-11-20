@@ -5,7 +5,7 @@ Goal: ADHYAKSH is a private, local-first, multilingual (English, Hindi, Gujarati
 Stack: Streamlit UI (pages/ call adhyaksh/services/, never tools directly), Python 3.11/3.12, SQLite, scikit-learn intent models (TF-IDF + LogReg, calibrated SVM; PyTorch MLP untested on target), rule layer plus native tool-calling agent, YOLOv8 vision, optional local faster-whisper, fastembed and rapidocr (see requirements-optional.txt).
 
 ## Run, test, train
-- Run: `.\run.bat` (Windows) or `./run.sh`; starts `streamlit run app.py`.
+- Run: `.\run.bat` (Windows) or `./run.sh`; starts `streamlit run app.py`. Background engine: `python -m adhyaksh.server` (127.0.0.1:8765, token in data/server_token); desktop HUD: `python -m hud`.
 - Test (changed files only): `.venv\Scripts\python.exe -m pytest tests\test_<name>.py -q`.
 - Full suite and both evals: once at the end of a phase only: `python -m pytest tests -q --ignore=tests/test_tools.py`, `python tests/eval/run_eval.py` (must stay at least 398/399), `python tests/eval/run_real_eval.py --label "<phase>"` (must not drop).
 - Train: `python -m adhyaksh.nlu.dataset validate`, then `python -m adhyaksh.nlu.train --all` (rewrites docs/RESULTS.md).
@@ -21,6 +21,7 @@ Stack: Streamlit UI (pages/ call adhyaksh/services/, never tools directly), Pyth
 - `adhyaksh/tools/` files, office, apps, processes, reminders, clipboard, system, boost, features, when, audio, display, network, power, windows, screen, web.
 - `adhyaksh/safety/` policy (levels L0 read, L1 reversible, L2 destructive needs confirmation, L3 blocked), verify (post-condition checks, retryable and hint), confirm, audit.
 - `adhyaksh/rag/` notebook sources: loader, chunker, embedder, retriever, answerer, sources.
+- `adhyaksh/server.py` local engine (FastAPI, host/origin/token checks), `events.py` state bus, `watchdog.py`, `client.py` (console uses the engine when running), `autostart.py`; `adhyaksh/voice/pipeline.py` native voice (off by default); `hud/` desktop ring (tkinter, Ctrl+Alt+A).
 - `adhyaksh/memory/` (facts.py structured parser, store.py update, recall, forget), `adhyaksh/vision/`, `adhyaksh/voice/` (bridge, speech, stt, browser component); `adhyaksh/persona.py` one voice for prompts and replies.
 - `tests/` pytest; `tests/eval/` regression and real-world evals; `data/test_real.csv` 238 hand-written commands.
 - `packaging/` PyInstaller spec; `.github/workflows/ci.yml`; `docs/` all detail.
@@ -37,7 +38,7 @@ Stack: Streamlit UI (pages/ call adhyaksh/services/, never tools directly), Pyth
 ## Status
 Branch history: P0 to P7 done and merged to main (agent with native tool calling, notebooks, local voice, Cowork tools, OCR and vision, service layer, Health page, CI, packaging). Real eval 237/238 offline (tuned by the same agent, so optimistic).
 Untested on the Windows target: agent with a real model, local speech recognition, wake word, PDF loading, process end, reminders, PyInstaller build, CI. Hand-test list: docs/UPGRADE_LOG.md.
-Branch jarvis-upgrade (not merged): Phase 1 (universal brain and NLU) and Phase 2 (structured memory, verification and recovery, OS and web tools, persona) done; see docs/JARVIS_PLAN.md Status and docs/UPGRADE_LOG.md. Tests are offline by construction (tests/conftest.py). Next: Phase 3 background engine, voice and HUD, after approval.
+Branch jarvis-upgrade (not merged): Phases 1 (universal brain and NLU), 2 (structured memory, verification and recovery, OS and web tools, persona) and 3 (background engine, native voice, desktop HUD) done; see docs/JARVIS_PLAN.md Status and docs/UPGRADE_LOG.md (hand-test list). Tests are offline by construction (tests/conftest.py).
 Evals: regression 398/399, real 237/238, NLU eval (tests/eval/run_nlu_eval.py) must stay at 100% polarity and negation.
 
 Details (read only when needed): docs/PROJECT_NOTES.md, FILES.md, CONFIG.md, DATABASE.md, TESTS.md, ROADMAP.md, UPGRADE_LOG.md, JARVIS_PLAN.md.

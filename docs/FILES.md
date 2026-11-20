@@ -25,6 +25,9 @@
 - `adhyaksh/result.py` — `Result` dataclass and error codes (`E_*`).
 - `adhyaksh/responses.py` — all user-facing reply templates (EN/HI/GU).
 - `adhyaksh/nlu/lexicon.py`, `entities.py`, `frames.py` — multilingual verb and negation lexicon (shared with the data generator), entity extractors returning canonical values, and the frame parser (action + negation + target; negated commands are never run; pure action + target commands are routed here first).
+- `adhyaksh/server.py` — background engine (FastAPI on 127.0.0.1; Host, Origin and token checks; /v1/message, /v1/confirm, /v1/pending, /v1/voice, WebSocket /v1/events). `adhyaksh/events.py` — in-process state and notice bus. `adhyaksh/watchdog.py` — battery, CPU, disk and reminder notices. `adhyaksh/client.py` — the console's link to the engine. `adhyaksh/autostart.py` — optional Startup-folder entry.
+- `adhyaksh/voice/pipeline.py` — native voice: microphone, speech detection, local speech-to-text, wake words, push-to-talk, Windows voices, barge-in.
+- `hud/` — desktop HUD: `core.py` (state, captions, backoff; no window), `app.py` (tkinter ring, engine link, global hotkey), `__main__.py`.
 - `adhyaksh/agent/` — agent loop and tool registry: `__init__.py`, `registry.py` (tool registration, safety-guarded runner, run_python sandbox), `native.py` (agent loop, max 6 steps, L2 pause/resume, claim guard). Model turns go through `adhyaksh/llm/toolcall.py` (native tool calls or the JSON protocol, schema validation, self-repair).
 - `adhyaksh/chat/` — chat engine: `__init__.py`, `context.py` (in-memory conversation context, pending slots/confirmations), `engine.py` (message routing, mode, OS_INTENTS, dispatch), `identity.py` (name extraction/save/get), `router.py` (rule layer, slot extractors, web command parsing, safe math).
 - `adhyaksh/llm/` — LLM providers: `__init__.py`, `base.py` (Provider ABC, `ask`, `ask_with_tools`, Groq/Gemini selection, caching), `cache.py`, `groq.py`, `gemini.py`.

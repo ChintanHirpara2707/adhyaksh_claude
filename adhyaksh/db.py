@@ -104,6 +104,8 @@ CREATE INDEX idx_replays_convo ON confirm_replays(conversation_id, created_at);
 """
 
 MIGRATIONS: list[tuple[int, str]] = [(1, SCHEMA_V1), (2, SCHEMA_V2), (3, SCHEMA_V3), (4, SCHEMA_V4), (5, SCHEMA_V5)]
+# Other modules catch database errors through this name: only this module imports sqlite3 (tests/test_static.py).
+OperationalError = sqlite3.OperationalError
 
 
 def utcnow() -> str:

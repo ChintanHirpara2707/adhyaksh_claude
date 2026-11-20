@@ -19,7 +19,7 @@ from adhyaksh import __version__, config, db, logging_setup
 
 # (distribution name, import name)
 CORE = [("streamlit", "streamlit"), ("numpy", "numpy"), ("pandas", "pandas"), ("scikit-learn", "sklearn"),
-        ("openpyxl", "openpyxl"), ("python-docx", "docx"), ("PyMuPDF", "fitz"), ("psutil", "psutil"), ("pycaw", "pycaw"),
+        ("openpyxl", "openpyxl"), ("python-docx", "docx"), ("PyMuPDF", "fitz"), ("psutil", "psutil"), ("pycaw", "pycaw"), ("fastapi", "fastapi"), ("uvicorn", "uvicorn"),
         ("Send2Trash", "send2trash"), ("python-dotenv", "dotenv"), ("requests", "requests"),
         ("matplotlib", "matplotlib"), ("Pillow", "PIL")]
 OPTIONAL = [("torch", "torch", "MLP intent model (M2)"),

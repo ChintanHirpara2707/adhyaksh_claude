@@ -18,3 +18,6 @@ pytest-cov
 # Speaker and microphone volume (Windows Core Audio), about 3.5 MB together; Windows only.
 pycaw; sys_platform == "win32"
 comtypes; sys_platform == "win32"
+# Background engine (python -m adhyaksh.server): about 12 MB with pydantic; uvicorn about 1 MB.
+fastapi
+uvicorn

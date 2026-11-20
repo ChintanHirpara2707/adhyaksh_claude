@@ -11,6 +11,7 @@ data/*.db-shm
 data/uploads/
 data/logs/
 data/backups/
+data/server_token
 models/*
 !models/.gitkeep
 *.zip

@@ -68,15 +68,13 @@ class DbConfirmationStore(ConfirmationStore):
         super().__init__(ttl, clock)
 
     def _db(self, sql: str, params=(), one: bool = False, write: bool = False):
-        import sqlite3
-
         from adhyaksh import db
         for attempt in range(2):
             try:
                 if write:
                     return db.execute(sql, params)
                 return db.query_one(sql, params) if one else db.query_all(sql, params)
-            except sqlite3.OperationalError:
+            except db.OperationalError:
                 if attempt:
                     raise
                 db.init()  # first use in a fresh data folder: create the tables, then try again

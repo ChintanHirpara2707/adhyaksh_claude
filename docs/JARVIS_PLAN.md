@@ -24,7 +24,7 @@ added, so for model changes the comparable figures are the fixed code-mixed file
 | Phase | State | Gate result |
 |---|---|---|
 | Phase 1 (1a, 1c, 1b) | done, 2026-11-19, commits d13e57b to e876697 | full suite 761 passed, 2 skipped (offline: tests/conftest.py blocks keys and internet); regression 398/399; real 237/238; NLU polarity 25/25, slots 30/30, negation 20/20; active model code-mixed macro-F1 0.893 |
-| Phase 2 | 2c and 2a done; next 2b, then 2d (waiting for approval) | 2c and 2a: regression 398/399, real 237/238, NLU 30/30 pairs, 30/30, 20/20 |
+| Phase 2 (2c, 2a, 2b, 2d, fixes) | done, 2026-11-20, commits 8a8b451 to 441951a (on branch jarvis-upgrade, not pushed) | full suite 966 passed, 2 skipped, offline; regression 398/399; real 237/238; NLU polarity 38/38, slots 51/51, negation 29/29 |
 
 ## 1. Audit findings by subsystem
 

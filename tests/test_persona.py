@@ -9,7 +9,8 @@ from adhyaksh.llm import base as llm
 from tests.helpers import fresh_env
 
 _FILLER = re.compile(r"certainly|great question|as an ai|i'd be happy|no problem|awesome|absolutely", re.IGNORECASE)
-_EMOJI = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
+# Built from code points so this source file itself contains no emoji-range characters (tests/test_static.py).
+_EMOJI = re.compile("[" + chr(0x1F300) + "-" + chr(0x1FAFF) + chr(0x2600) + "-" + chr(0x27BF) + "]")
 
 
 def test_both_prompts_use_the_persona():

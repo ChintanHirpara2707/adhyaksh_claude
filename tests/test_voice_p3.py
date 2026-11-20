@@ -74,7 +74,9 @@ def test_spoken_no_in_gujarati_cancels_and_unclear_reply_asks_again():
     r = engine.handle_message("hmm", cid, voice=True).data
     assert r["reply"] == "Please say yes to confirm or no to cancel." and (ws / "keep.txt").exists()
     r = engine.handle_message("ના, રહેવા દો", cid, voice=True).data
-    assert "cancel" in r["reply"].lower() and (ws / "keep.txt").exists()
+    # cancelled, and said in the user's language (Gujarati since Phase 2d)
+    from adhyaksh import responses
+    assert r["reply"] == responses.t("cancelled", "gu") and r["action"] == "cancel" and (ws / "keep.txt").exists()
     # a clear new request while a confirmation is open drops the confirmation and is handled normally
     engine.handle_message("delete keep.txt", cid)
     r = engine.handle_message("what is 2 + 3", cid).data

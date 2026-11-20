@@ -130,6 +130,30 @@ def create_app():
         p = ctx.pending_confirm or ctx.pending_agent_confirm
         return {"pending": {k: p.get(k) for k in ("token", "action", "target")} if p else None}
 
+    @app.get("/v1/voice")
+    def voice_status():
+        from adhyaksh.voice import pipeline
+        return pipeline.status()
+
+    @app.post("/v1/voice/listen")
+    def voice_listen():
+        """Push-to-talk (the HUD hotkey): the next phrase is a command, no wake word needed."""
+        from adhyaksh.voice import pipeline
+        pipe = pipeline._state["pipeline"]
+        if pipe is None or not pipeline.status()["running"]:
+            return JSONResponse({"error": "Native voice is not running. Turn it on in Settings and restart the engine."},
+                                status_code=409)
+        pipe.listen_now()
+        return {"listening": True}
+
+    @app.post("/v1/voice/stop_speaking")
+    def voice_quiet():
+        from adhyaksh.voice import pipeline
+        pipe = pipeline._state["pipeline"]
+        if pipe is not None and pipe.speaker is not None:
+            pipe.speaker.stop()
+        return {"ok": True}
+
     @app.websocket("/v1/events")
     async def stream(ws: WebSocket):
         refused = _check(ws.headers, ws.query_params.get("token"))
@@ -165,6 +189,11 @@ def main() -> int:
     logging_setup.event("server_start", port=port())
     from adhyaksh import watchdog
     watchdog.start()
+    if config.get_bool("voice_engine"):
+        from adhyaksh.voice import pipeline
+        ok, why = pipeline.start()
+        if not ok:
+            logging_setup.event("voice_not_started", reason=why)
     uvicorn.run(create_app(), host="127.0.0.1", port=port(), log_level="warning", access_log=False)
     return 0
 

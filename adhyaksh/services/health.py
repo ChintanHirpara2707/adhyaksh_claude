@@ -27,7 +27,8 @@ OPTIONAL = [("torch", "torch", "MLP intent model (M2)"),
             ("onnxruntime", "onnxruntime", "local embeddings and OCR"),
             ("fastembed", "fastembed", "local multilingual document search"),
             ("faster-whisper", "faster_whisper", "local speech-to-text"),
-            ("rapidocr-onnxruntime", "rapidocr_onnxruntime", "reading text in images (OCR)")]
+            ("rapidocr-onnxruntime", "rapidocr_onnxruntime", "reading text in images (OCR)"),
+            ("sounddevice", "sounddevice", "native voice in the background engine (microphone)")]
 
 version = __version__
 

@@ -8,3 +8,5 @@
 # faster-whisper
 # Offline text reading (OCR) from photos and the screen (about 24 MB of packages; models are bundled).
 # rapidocr_onnxruntime
+# Native voice in the background engine: microphone access (about 2 MB with PortAudio). Needs faster-whisper too.
+# sounddevice

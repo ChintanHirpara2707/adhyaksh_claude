@@ -110,7 +110,8 @@ DEFAULTS: dict[str, str] = {
     "server_port": "8765",  # the background engine (python -m adhyaksh.server), 127.0.0.1 only
     "console_port": "8501",
     "background_engine": "auto",  # auto: the console uses the background engine when it is running; off: never
-    "watch_battery": "15",  # the watchdog warns when the battery drops to this percent while unplugged  # the Streamlit console, the only browser origin the engine accepts
+    "watch_battery": "15",
+    "voice_engine": "false",  # the background engine listens for the wake word (local speech model only)  # the watchdog warns when the battery drops to this percent while unplugged  # the Streamlit console, the only browser origin the engine accepts
     "cloud_screen_consent": "false",  # screen text may go to a CLOUD model only with this, on top of cloud_consent
     "auto_memory": "false",  # keep personal facts stated in passing ("my exam is on friday"); off by default
     "llm_json_only_models": "[]",  # learned at run time: models that rejected native tool calls
@@ -135,7 +136,7 @@ RULES: dict[str, tuple] = {
     "confidence_threshold": ("float", 0.0, 1.0),
     "conversation_turns": ("int", 1, 50),
     "cloud_consent": _BOOL, "voice_reply": _BOOL, "voice_handsfree": _BOOL, "voice_wake_word": _BOOL,
-    "voice_barge_in": _BOOL, "power_mode": _BOOL, "auto_memory": _BOOL, "cloud_screen_consent": _BOOL,
+    "voice_barge_in": _BOOL, "power_mode": _BOOL, "auto_memory": _BOOL, "cloud_screen_consent": _BOOL, "voice_engine": _BOOL,
     "agent_mode": ("choice", {"auto", "off"}),
     "voice_lang": ("choice", {"en-IN", "hi-IN", "gu-IN"}),
     "stt_engine": ("choice", {"browser", "local"}),

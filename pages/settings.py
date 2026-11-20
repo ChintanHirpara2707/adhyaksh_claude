@@ -124,6 +124,12 @@ _use = st.toggle("Use the background engine when it is running", value=svc.get("
 if _use != (svc.get("background_engine") == "auto"):
     svc.set_value("background_engine", "auto" if _use else "off")
     svc.client_forget_cache()
+_voice = st.toggle("Listen for the wake word in the engine (native voice, local speech model only)",
+                   value=svc.get_bool("voice_engine"),
+                   help="Off by default. When on, the engine keeps the microphone open and acts only on phrases that start with "
+                        "a wake word (Adhyaksh, ...). Audio never leaves this PC. Takes effect when the engine starts.")
+if _voice != svc.get_bool("voice_engine"):
+    svc.set_value("voice_engine", _voice)
 _auto = st.toggle("Start the engine when Windows starts", value=svc.autostart_enabled(),
                   help="Adds one small file to your own Startup folder; no administrator rights. Turning it off deletes the file.")
 if _auto != svc.autostart_enabled():

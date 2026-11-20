@@ -15,13 +15,13 @@ Stack: Streamlit UI (pages/ call adhyaksh/services/, never tools directly), Pyth
 - `pages/` chat, memory, tools, vision, performance, model_lab, activity, health, settings.
 - `adhyaksh/services/` the only layer pages may call; wraps chat, memory, tools, settings, health.
 - `adhyaksh/chat/` engine.handle_message (mode chat or cowork), router (rules and slot extractors), identity, context.
-- `adhyaksh/agent/` native.py tool-calling loop, registry.py tools; runner.py is the old text protocol.
-- `adhyaksh/llm/` providers groq, gemini, ollama, wiki fallback; consent-gated; calls go through net.py.
-- `adhyaksh/nlu/` dataset, features, models, train, evaluate, registry (MIN_GAP rejection).
-- `adhyaksh/tools/` files, office, apps, processes, reminders, clipboard, system, boost, features, when.
-- `adhyaksh/safety/` policy (levels L0 read, L1 reversible, L2 destructive needs confirmation, L3 blocked), confirm, audit.
+- `adhyaksh/agent/` native.py tool-calling loop (budgets, loop guard, ask_user), registry.py tools (schema-validated).
+- `adhyaksh/llm/` toolcall.py (native or JSON tool calling, validation, self-repair); providers groq, gemini, ollama, openai_compat, wiki; consent-gated; calls go through net.py.
+- `adhyaksh/nlu/` lexicon, entities, frames (action + negation + target), factorized heads, dataset, features, models, train, evaluate, registry (MIN_GAP rejection).
+- `adhyaksh/tools/` files, office, apps, processes, reminders, clipboard, system, boost, features, when, audio, display, network, power, windows, screen, web.
+- `adhyaksh/safety/` policy (levels L0 read, L1 reversible, L2 destructive needs confirmation, L3 blocked), verify (post-condition checks, retryable and hint), confirm, audit.
 - `adhyaksh/rag/` notebook sources: loader, chunker, embedder, retriever, answerer, sources.
-- `adhyaksh/memory/`, `adhyaksh/vision/`, `adhyaksh/voice/` (bridge, speech, stt, browser component).
+- `adhyaksh/memory/` (facts.py structured parser, store.py update, recall, forget), `adhyaksh/vision/`, `adhyaksh/voice/` (bridge, speech, stt, browser component); `adhyaksh/persona.py` one voice for prompts and replies.
 - `tests/` pytest; `tests/eval/` regression and real-world evals; `data/test_real.csv` 238 hand-written commands.
 - `packaging/` PyInstaller spec; `.github/workflows/ci.yml`; `docs/` all detail.
 
@@ -37,6 +37,7 @@ Stack: Streamlit UI (pages/ call adhyaksh/services/, never tools directly), Pyth
 ## Status
 Branch history: P0 to P7 done and merged to main (agent with native tool calling, notebooks, local voice, Cowork tools, OCR and vision, service layer, Health page, CI, packaging). Real eval 237/238 offline (tuned by the same agent, so optimistic).
 Untested on the Windows target: agent with a real model, local speech recognition, wake word, PDF loading, process end, reminders, PyInstaller build, CI. Hand-test list: docs/UPGRADE_LOG.md.
-Next: docs/JARVIS_PLAN.md (branch jarvis-upgrade): Phase 1 universal brain and NLU, Phase 2 autonomy and OS tools, Phase 3 background engine, voice and HUD. One phase at a time; stop for approval after each.
+Branch jarvis-upgrade (not merged): Phase 1 (universal brain and NLU) and Phase 2 (structured memory, verification and recovery, OS and web tools, persona) done; see docs/JARVIS_PLAN.md Status and docs/UPGRADE_LOG.md. Tests are offline by construction (tests/conftest.py). Next: Phase 3 background engine, voice and HUD, after approval.
+Evals: regression 398/399, real 237/238, NLU eval (tests/eval/run_nlu_eval.py) must stay at 100% polarity and negation.
 
 Details (read only when needed): docs/PROJECT_NOTES.md, FILES.md, CONFIG.md, DATABASE.md, TESTS.md, ROADMAP.md, UPGRADE_LOG.md, JARVIS_PLAN.md.

@@ -133,6 +133,7 @@ TEMPLATES: dict[str, dict[str, str]] = {
     "brightness_set": {"en": "Brightness is at {level} percent.", "hi": "ब्राइटनेस अब {level} प्रतिशत है।",
                        "gu": "બ્રાઇટનેસ હવે {level} ટકા છે."},
     "app_closed": {"en": "Closed {app}."},
+    "ocr_missing": {"en": "Text reading needs rapidocr_onnxruntime: pip install rapidocr_onnxruntime"},
     "negated": {"en": "Okay, I won't {what}. Nothing was changed.",
                 "hi": "ठीक है, {target} के साथ कुछ नहीं किया गया।",
                 "gu": "બરાબર, {target} સાથે કંઈ કરવામાં આવ્યું નથી."},

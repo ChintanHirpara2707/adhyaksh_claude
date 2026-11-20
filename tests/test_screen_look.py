@@ -22,7 +22,29 @@ def desk(monkeypatch):
     monkeypatch.setattr(features, "read_text", lambda png, ctx=None: Result.success({"text": "FileNotFoundError: notes.txt\nline 3"}))
     monkeypatch.setattr(features, "analyze_image", lambda png, req="", ctx=None: Result.success({"summary": "I can see 1 laptop."}))
     monkeypatch.setattr(llm, "ask", lambda prompt, **k: seen["prompts"].append(prompt) or Result.success("The file notes.txt is missing."))
+    monkeypatch.setattr(screen, "ocr_available", lambda: True)
     return seen
+
+
+def test_missing_ocr_is_named_not_reported_as_no_text(desk, monkeypatch):
+    """Real-test bug: without the OCR package the reply said it 'could not find readable text'."""
+    monkeypatch.setattr(screen, "ocr_available", lambda: False)
+    called = []
+    monkeypatch.setattr(features, "read_text", lambda png, ctx=None: called.append(1) or Result.success({"text": ""}))
+    monkeypatch.setattr(features, "analyze_image", lambda png, req="", ctx=None: Result.success({"summary": ""}))
+    res = screen.look()
+    assert res.data["ocr_missing"] and not called
+    assert "Text reading needs rapidocr_onnxruntime: pip install rapidocr_onnxruntime" in res.data["answer"]
+    assert "could not find readable text" not in res.data["answer"]
+
+
+def test_missing_ocr_still_reports_objects_and_survives_a_model(desk, monkeypatch):
+    monkeypatch.setattr(screen, "ocr_available", lambda: False)
+    a = screen.look().data["answer"]
+    assert "1 laptop" in a and a.endswith("pip install rapidocr_onnxruntime")
+    config.set_value("llm_provider", "ollama")  # a local model explains the objects; the note is still added
+    a = screen.look().data["answer"]
+    assert a.startswith("The file notes.txt is missing.") and a.endswith("pip install rapidocr_onnxruntime")
 
 
 def test_local_summary_without_a_model(desk):

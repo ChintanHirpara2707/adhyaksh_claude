@@ -69,14 +69,23 @@ def may_use_model() -> bool:
     return llm.is_local() or config.get_bool("cloud_screen_consent")
 
 
-def _local_summary(title: str, text: str, objects: str) -> str:
+def ocr_available() -> bool:
+    """True when an offline text reader is installed (rapidocr, or Tesseract as the fallback)."""
+    from adhyaksh.vision import ocr
+    return ocr.installed() or ocr.tesseract_available()
+
+
+def _local_summary(title: str, text: str, objects: str, ocr_ready: bool = True) -> str:
     parts = [f"The window is {title}." if title else "Here is what is on your screen."]
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     if lines:
         parts.append("Text on it: " + " | ".join(lines[:8])[:400] + ("..." if len(lines) > 8 else ""))
     if objects:
         parts.append(objects)
-    if len(parts) == 1:
+    if not ocr_ready:
+        from adhyaksh import responses
+        parts.append(responses.t("ocr_missing"))  # say what is missing, not that the screen has no text
+    elif len(parts) == 1:
         parts.append("I could not find readable text or objects on it.")
     return " ".join(parts)
 
@@ -88,11 +97,14 @@ def look(target: str = "", question: str = "", *, ctx: dict | None = None) -> Re
         if not shot.ok:
             return shot
         from adhyaksh.tools import features
-        ocr = features.read_text(shot.data["png"], ctx=ctx)
-        text = (ocr.data.get("text") or "")[:MAX_TEXT] if ocr.ok else ""
+        ocr_ready = ocr_available()
+        text = ""
+        if ocr_ready:
+            ocr = features.read_text(shot.data["png"], ctx=ctx)
+            text = (ocr.data.get("text") or "")[:MAX_TEXT] if ocr.ok else ""
         seen = features.analyze_image(shot.data["png"], question, ctx=ctx)
         objects = seen.data.get("summary", "") if seen.ok else ""
-        answer, by = _local_summary(shot.data["title"], text, objects), "local"
+        answer, by = _local_summary(shot.data["title"], text, objects, ocr_ready), "local"
         if may_use_model() and (text or objects):
             from adhyaksh.llm import base as llm
             prompt = ("You are looking at the user's screen through extracted text and detected objects (you cannot see "
@@ -103,6 +115,10 @@ def look(target: str = "", question: str = "", *, ctx: dict | None = None) -> Re
             res = llm.ask(prompt, timeout=20.0, max_tokens=350)
             if res.ok and res.data:
                 answer, by = str(res.data).strip(), "model"
-        return Result.success({"title": shot.data["title"], "text": text, "objects": objects, "answer": answer, "explained_by": by})
+                if not ocr_ready:
+                    from adhyaksh import responses
+                    answer += " " + responses.t("ocr_missing")
+        return Result.success({"title": shot.data["title"], "text": text, "objects": objects, "answer": answer, "explained_by": by,
+                               "ocr_missing": not ocr_ready})
 
     return policy.run_guarded("screen_look", target or "screen", go, **_ctx(ctx))

@@ -85,11 +85,15 @@ class _Cdp:
         ready = ("(() => { const m = document.querySelector('[data-testid=\"stMain\"]');"
                  " const run = document.querySelector('[data-testid=\"stStatusWidget\"]');"
                  " const skel = document.querySelector('[data-testid=\"stSkeleton\"]');"
-                 " return !!m && m.innerText.trim().length > 20 && !run && !skel; })()")
-        deadline, stable = time.time() + timeout_s, 0
+                 " const n = m ? m.innerText.trim().length : 0;"
+                 " return (n > 20 && !run && !skel) ? n : -1; })()")
+        deadline, stable, last = time.time() + timeout_s, 0, None
         while time.time() < deadline:
-            stable = stable + 1 if self._eval(ready) else 0
-            if stable >= 3:  # three quiet checks in a row: the script has finished drawing
+            n = self._eval(ready)
+            # Quiet and no longer growing (a page with a timed fragment never shows "running" for long).
+            stable = stable + 1 if isinstance(n, int) and n > 0 and n == last else 0
+            last = n
+            if stable >= 4:
                 break
             time.sleep(0.5)
         time.sleep(0.6)

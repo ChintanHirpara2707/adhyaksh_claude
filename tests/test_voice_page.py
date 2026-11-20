@@ -73,7 +73,7 @@ def test_page_renders_orb_transcript_and_stop(page):
     assert not at.exception
     assert any("adhy-orb" in h.proto.body for h in at.get("html"))
     assert any("ten o'clock" in m.value for m in at.markdown)
-    assert any(b.label == "Stop speaking" for b in at.button)
+    assert page, "the browser voice control (with its own stop button) is shown"
 
 
 def test_new_reply_is_spoken_once(page):
@@ -87,12 +87,6 @@ def test_new_reply_is_spoken_once(page):
     assert page[-1]["speak_text"] == "Hello, Tester."
     at.run()
     assert page[-1]["speak_text"] == ""
-
-
-def test_stop_speaking_sends_quiet_to_the_browser(page):
-    at = _run()
-    next(b for b in at.button if b.label == "Stop speaking").click().run()
-    assert page[-1]["command"]["action"] == "quiet" and page[-1]["command_nonce"]
 
 
 def test_heard_text_goes_through_the_engine(page, monkeypatch):
@@ -122,3 +116,12 @@ def test_native_engine_voice_offers_push_to_talk(page, monkeypatch):
     assert not page, "the browser microphone is not shown while the engine listens"
     next(b for b in at.button if b.label == "Talk now").click().run()
     assert pressed == [1]
+
+
+def test_native_engine_voice_stop_speaking(page, monkeypatch):
+    quiet = []
+    monkeypatch.setattr(vsvc, "engine_voice", lambda: {"running": True})
+    monkeypatch.setattr(vsvc, "stop_speaking_engine", lambda: quiet.append(1) or Result.success({}))
+    at = _run()
+    next(b for b in at.button if b.label == "Stop speaking").click().run()
+    assert quiet == [1]

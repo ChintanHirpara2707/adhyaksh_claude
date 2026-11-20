@@ -142,6 +142,15 @@ def _result(reply, steps, confirmation=None, failed=False, ui=None, reason="", a
             "ui": ui or {}, "reason": reason, "ask": ask}
 
 
+def _with_web_sources(text: str, steps: list[dict]) -> str:
+    """A reply that used web_search always ends with the Sources list of the pages used, even if the model left it out."""
+    sources = [s for step in steps if step.get("status") == "ok" for s in step.get("sources") or []]
+    if not sources:
+        return text
+    from adhyaksh.tools import web
+    return web.with_sources(text, sources)
+
+
 def _new_guard() -> dict:
     """Budgets and memory of failures for one request (kept across confirmation and ask_user pauses)."""
     return {"start": time.monotonic(), "failures": {}, "failed_calls": {}}
@@ -201,7 +210,8 @@ def _loop(messages: list[dict], steps: list[dict], ctx: dict, mode: str, ui: dic
         out = res.data
         calls = out.get("tool_calls") or []
         if not calls:
-            return _result(guard_claims((out.get("text") or "").strip(), steps, mode) or "I have no answer for that.", steps, ui=ui)
+            final = guard_claims((out.get("text") or "").strip(), steps, mode) or "I have no answer for that."
+            return _result(_with_web_sources(final, steps), steps, ui=ui)
         messages.append({"role": "assistant", "content": out.get("text") or "", "tool_calls": calls})
         for call in calls:
             name, arguments = call.get("name", ""), call.get("arguments") or {}
@@ -249,6 +259,8 @@ def _loop(messages: list[dict], steps: list[dict], ctx: dict, mode: str, ui: dic
                 guard["failed_calls"][_call_key(name, arguments)] = 1
             elif isinstance(result.data, dict):
                 step["verified"] = result.data.get("verified")
+                if result.data.get("sources_block"):
+                    step["sources"] = result.data.get("sources") or []
                 for key in ("open_page", "voice_cmd"):
                     if result.data.get(key):
                         ui[key] = result.data[key]
@@ -258,7 +270,7 @@ def _loop(messages: list[dict], steps: list[dict], ctx: dict, mode: str, ui: dic
     res = llm.chat(messages, [], timeout=TIMEOUT)
     text = (res.data.get("text") if res.ok else "") or "I reached the step limit before finishing. Here is what was done: " + \
         ", ".join(f"{s['tool']} ({s['status']})" for s in steps)
-    return _result(guard_claims(text.strip(), steps, mode), steps, ui=ui)
+    return _result(_with_web_sources(guard_claims(text.strip(), steps, mode), steps), steps, ui=ui)
 
 
 def run(text: str, convo_id: int, lang: str = "en", mode: str = "cowork") -> dict:

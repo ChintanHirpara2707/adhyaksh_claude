@@ -139,6 +139,34 @@ def test_existing_behaviour_is_kept(text, intent):
     assert router.understand(text).intent == intent
 
 
+def test_answer_reply_ends_with_the_sources_used(internet):
+    """Real-test bug: web_search replies did not say where the answer came from."""
+    internet["pages"]["https://html.duckduckgo.com/html/"] = _Resp(200, SEARCH)
+    internet["pages"]["https://a.example/python"] = _Resp(200, b"<p>The latest Python version is 3.14 now.</p>")
+    d = web.answer("latest python version").data
+    assert d["reply"].endswith("Sources:\n[1] Python 3.14 released: https://a.example/python")  # the page that was read
+    assert web.with_sources(d["reply"], d["sources"]) == d["reply"]  # never listed twice
+
+
+def test_agent_reply_gets_the_sources_even_if_the_model_drops_them(internet, monkeypatch):
+    from adhyaksh.agent import native
+    internet["pages"]["https://html.duckduckgo.com/html/"] = _Resp(200, SEARCH)
+    internet["pages"]["https://a.example/python"] = _Resp(200, b"<p>The latest Python version is 3.14 now.</p>")
+    config.set_value("llm_provider", "ollama")
+    script = iter([{"text": "", "tool_calls": [{"id": "s", "name": "web_search", "arguments": {"query": "latest python"}}]},
+                   {"text": "The latest Python is 3.14.", "tool_calls": []}])
+    monkeypatch.setattr(llm, "chat", lambda *a, **k: Result.success(next(script)))
+    monkeypatch.setattr(llm, "ask", lambda *a, **k: Result.failure("E_LLM_FAILED", "not used"))
+    r = native.run("what is the latest python", context.new_conversation())
+    assert r["reply"] == "The latest Python is 3.14.\n\nSources:\n[1] Python 3.14 released: https://a.example/python"
+
+
+def test_sources_list_is_short():
+    many = [{"title": f"Page {i}", "url": f"https://p{i}.example/"} for i in range(6)]
+    block = web.sources_block(many)
+    assert block.count("\n[") == web.MAX_SOURCES == 3 and "[3]" in block and "[4]" not in block
+
+
 def test_chat_reply_lists_sources(internet):
     internet["pages"]["https://html.duckduckgo.com/html/"] = _Resp(200, SEARCH)
     internet["pages"]["https://a.example/python"] = _Resp(200, b"<p>The latest Python version is 3.14 now.</p>")

@@ -553,6 +553,15 @@ register(
     _levels_read,
 )
 
+def _web_search(arguments: dict, ctx: dict) -> Result:
+    """web.answer, with the finished reply (answer + Sources list) and the Sources block itself, so the agent loop
+    can make sure the user's reply ends with the pages used."""
+    res = web.answer(arguments["query"], ctx=ctx)
+    if res.ok:
+        res.data["sources_block"] = web.sources_block(res.data.get("sources") or [])
+    return res
+
+
 def _power_status(arguments: dict, ctx: dict) -> Result:
     radios = network.status()
     return Result.success({"battery": power.battery().data, "power_plan": power.power_plan(),
@@ -609,11 +618,12 @@ register(
 register(
     "web_search",
     "Search the web and answer from the top pages, with sources. Use it for current facts, news, prices or anything "
-    "that needs fresh information. Needs cloud use to be allowed.",
+    "that needs fresh information. Needs cloud use to be allowed. Your reply must end with the Sources list from the "
+    "result, unchanged.",
     {"type": "object", "properties": {"query": {"type": "string", "description": "What to look up.", "minLength": 2}},
      "required": ["query"]},
     0,
-    lambda arguments, ctx: web.answer(arguments["query"], ctx=ctx),
+    lambda arguments, ctx: _web_search(arguments, ctx),
 )
 
 register(

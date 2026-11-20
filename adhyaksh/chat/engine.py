@@ -609,9 +609,7 @@ def _dispatch(intent: str, text: str, slots: dict, ctx: context.Context, convo_i
         if not res.ok:
             return _Reply(_error_reply(res, lang), intent, action="web_answer")
         srcs = res.data["sources"]
-        listed = "\n".join(f"[{i + 1}] {s['title']}: {s['url']}" for i, s in enumerate(srcs))
-        return _Reply(res.data["answer"] + ("\n\nSources:\n" + listed if listed else ""), intent, action="web_answer",
-                      sources=srcs)
+        return _Reply(web.with_sources(res.data["answer"], srcs), intent, action="web_answer", sources=srcs)
     if intent == "screen_look":
         res = screen.look(slots.get("target") or "", text, ctx=c)
         if not res.ok:

@@ -21,11 +21,45 @@ def _ctx(ctx: dict | None) -> dict:
 
 
 def _endpoint(device: str):
-    """The IAudioEndpointVolume of the default speaker or microphone."""
+    """The IAudioEndpointVolume of the default speaker or microphone. Built fresh on every call: COM objects belong to
+    the thread (and COM session) that created them, and Streamlit runs each request on a different thread."""
     from pycaw.pycaw import AudioUtilities
     if device == "mic":
         return AudioUtilities.CreateDevice(AudioUtilities.GetMicrophone()).EndpointVolume
     return AudioUtilities.GetSpeakers().EndpointVolume
+
+
+def _co_initialize() -> bool:
+    """Start COM in this thread. True when this call started it (and must stop it); False when the thread already runs
+    COM in another mode, which is fine to use as it is."""
+    import comtypes
+    try:
+        comtypes.CoInitialize()
+        return True
+    except OSError:
+        return False
+
+
+def _co_uninitialize() -> None:
+    import comtypes
+    comtypes.CoUninitialize()
+
+
+def _with_endpoint(device: str, work):
+    """Run work(endpoint) with COM initialised in the calling thread. Every COM reference is released before COM is
+    stopped again (releasing one afterwards would crash), so nothing is cached between calls."""
+    import gc
+    started = _co_initialize()
+    try:
+        ep = _endpoint(device)
+        try:
+            return work(ep)
+        finally:
+            del ep
+            gc.collect()  # drop the device wrappers pycaw created, while COM is still running
+    finally:
+        if started:
+            _co_uninitialize()
 
 
 def _unavailable() -> Result | None:
@@ -46,8 +80,8 @@ def read(device: str = "speaker") -> Result:
     if bad:
         return bad
     try:
-        ep = _endpoint(device)
-        return Result.success({"device": device, "level": round(ep.GetMasterVolumeLevelScalar() * 100), "muted": bool(ep.GetMute())})
+        return _with_endpoint(device, lambda ep: Result.success(
+            {"device": device, "level": round(ep.GetMasterVolumeLevelScalar() * 100), "muted": bool(ep.GetMute())}))
     except Exception as exc:  # no audio device, driver error
         return Result.failure(E_ACTION_FAILED, f"The {device} could not be read ({type(exc).__name__}).")
 
@@ -68,7 +102,9 @@ def control(op: str, device: str = "speaker", level: int | None = None, *, ctx: 
     target = f"{device} {op}" + (f" {level}" if level is not None else "")
 
     def go() -> Result:
-        ep = _endpoint(device)
+        return _with_endpoint(device, change)
+
+    def change(ep) -> Result:
         now = round(ep.GetMasterVolumeLevelScalar() * 100)
         if op in ("mute", "unmute"):
             ep.SetMute(1 if op == "mute" else 0, None)

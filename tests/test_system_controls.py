@@ -35,7 +35,65 @@ def speakers(monkeypatch):
     eps = {"speaker": _Endpoint(0.5), "mic": _Endpoint(0.3)}
     monkeypatch.setattr(audio, "_endpoint", lambda device: eps[device])
     monkeypatch.setattr(audio, "_unavailable", lambda: None)
+    monkeypatch.setattr(audio, "_co_initialize", lambda: True)  # no real COM in tests
+    monkeypatch.setattr(audio, "_co_uninitialize", lambda: None)
     return eps
+
+
+def test_volume_works_repeatedly_from_different_threads(monkeypatch):
+    """Real-test bug: the first volume command worked, every later one failed with OSError, because Streamlit runs each
+    request on another thread and COM was not initialised there. Each call must start COM in its own thread and build
+    a fresh endpoint."""
+    import threading
+    fresh_env()
+    com = threading.local()
+    log = {"init": 0, "uninit": 0, "built": 0}
+    level = {"v": 0.5}
+
+    def fake_init():
+        com.on = True
+        log["init"] += 1
+        return True
+
+    def fake_uninit():
+        com.on = False
+        log["uninit"] += 1
+
+    def fake_endpoint(device):
+        if not getattr(com, "on", False):
+            raise OSError("[WinError -2147221008] CoInitialize has not been called")
+        log["built"] += 1
+        ep = _Endpoint(level["v"])
+        orig = ep.SetMasterVolumeLevelScalar
+        ep.SetMasterVolumeLevelScalar = lambda v, c: (orig(v, c), level.update(v=v))
+        return ep
+    monkeypatch.setattr(audio, "_co_initialize", fake_init)
+    monkeypatch.setattr(audio, "_co_uninitialize", fake_uninit)
+    monkeypatch.setattr(audio, "_endpoint", fake_endpoint)
+    monkeypatch.setattr(audio, "_unavailable", lambda: None)
+    results = []
+    for value in (20, 40, 60):  # three commands, each on its own new thread, like three Streamlit reruns
+        t = threading.Thread(target=lambda v=value: results.append(audio.control("set", "speaker", v)))
+        t.start()
+        t.join()
+    assert [r.ok for r in results] == [True, True, True], [r.message for r in results]
+    assert [r.data["level"] for r in results] == [20, 40, 60] and all(r.data["verified"] for r in results)
+    assert log["init"] == log["uninit"] and log["init"] >= 3 and log["built"] >= 3  # balanced, fresh each time
+
+
+def test_com_is_stopped_even_when_the_device_fails(monkeypatch):
+    fresh_env()
+    log = []
+    monkeypatch.setattr(audio, "_co_initialize", lambda: log.append("init") or True)
+    monkeypatch.setattr(audio, "_co_uninitialize", lambda: log.append("uninit"))
+    monkeypatch.setattr(audio, "_unavailable", lambda: None)
+    monkeypatch.setattr(audio, "_endpoint", lambda d: (_ for _ in ()).throw(OSError("no audio device")))
+    res = audio.read("speaker")
+    assert not res.ok and "could not be read" in res.message and log == ["init", "uninit"]
+    log.clear()
+    monkeypatch.setattr(audio, "_co_initialize", lambda: log.append("init") or False)  # thread already runs COM
+    audio.read("speaker")
+    assert log == ["init"]  # not ours to stop
 
 
 @pytest.fixture

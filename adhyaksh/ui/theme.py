@@ -133,8 +133,24 @@ button[data-baseweb="tab"][aria-selected="true"]{{color:var(--text)}}
 [data-testid="stTable"] td{{border-bottom:1px solid var(--border);color:var(--text)}}
 [data-testid="stProgress"] div[role="progressbar"]{{height:4px;background:var(--border)}}
 [data-testid="stChatMessage"]{{background:transparent}}
-[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]){{
- background:var(--subtle);border-radius:var(--radius)}}
+/* Chat layout as in ChatGPT, Claude and Gemini: a reply is plain text on the left; the user's message is a rounded
+   bubble on the right (avatar on the far right), at most 75% of the column, with its actions under it. */
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]){{flex-direction:row-reverse;
+ background:transparent}}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [data-testid="stChatMessageContent"]{{
+ display:flex;flex-direction:column;align-items:flex-end;min-width:0}}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [data-testid="stChatMessageContent"]>[data-testid="stVerticalBlock"]{{
+ align-items:flex-end;width:100%}}
+[data-testid="stLayoutWrapper"]:has(>[class*="st-key-ububble_"]){{width:auto!important;max-width:75%;align-self:flex-end}}
+[class*="st-key-ububble_"]{{background:var(--subtle);color:var(--text);border:1px solid var(--border);
+ border-radius:18px 18px 4px 18px;padding:.55rem .95rem;width:auto!important;overflow-wrap:anywhere}}
+[class*="st-key-ububble_"] [data-testid="stMarkdown"],[class*="st-key-ububble_"] [data-testid="stElementContainer"],
+[class*="st-key-ububble_"] [data-testid="stMarkdownContainer"]{{margin:0!important}}
+[class*="st-key-ububble_"] [data-testid="stMarkdownContainer"] p:last-child{{margin-bottom:0}}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [data-testid="stLayoutWrapper"]:has(>[class*="st-key-actions_"]){{
+ width:auto!important;align-self:flex-end}}
+[data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) [class*="st-key-actions_"]{{justify-content:flex-end}}
+@media (max-width:640px){{[data-testid="stLayoutWrapper"]:has(>[class*="st-key-ububble_"]){{max-width:88%}}}}
 [data-testid="stBottom"]>div,[data-testid="stChatInput"]{{background:var(--bg)}}
 [data-testid="stChatInput"] textarea{{background:var(--surface)!important}}
 .adhy-nav-section{{color:var(--muted);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;

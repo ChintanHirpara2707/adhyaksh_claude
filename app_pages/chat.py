@@ -123,6 +123,16 @@ def copy_button(m: dict) -> None:
         st.caption("Use the copy icon at the top right of the box.")
 
 
+def message_text(role: str, text: str, key: str) -> None:
+    """A user's message sits in a rounded bubble on the right (CSS on st-key-ububble_*); a reply is plain text on
+    the left, as in ChatGPT, Claude and Gemini."""
+    if role == "user":
+        with st.container(key=f"ububble_{key}"):
+            st.markdown(text)
+    else:
+        st.markdown(text)
+
+
 for m in history:
     if hide_from is not None and m["id"] >= hide_from:
         break
@@ -145,7 +155,7 @@ for m in history:
                     st.code(s["target"], language=None, wrap_lines=True)
                 st.caption(f"Result: {s['result']}. {s['level']}"
                            + (f", {s['confirmed']}" if s["confirmed"] != "none" else "") + ".")
-        st.markdown(m["content"])
+        message_text(m["role"], m["content"], str(m["id"]))
         with st.container(horizontal=True, gap="small", key=f"actions_{m['id']}"):
             copy_button(m)
             if m["role"] == "user" and last_user is not None and m["id"] == last_user["id"]:
@@ -281,7 +291,7 @@ if prompt or suggested:
     with live:
         if text:
             with st.chat_message("user"):
-                st.markdown(text)
+                message_text("user", text, "live")
         with st.spinner("Working"):
             result = svc.engine_handle_message(text, cid, mode=mode, attachments=files, stream=not files)
         if result.ok and result.data.get("stream") is not None:
@@ -297,7 +307,7 @@ if _act:  # Regenerate or Edit and send, chosen on a message above
     with live:
         if _act[0] == "edit":
             with st.chat_message("user"):
-                st.markdown(_act[2])
+                message_text("user", _act[2], "edited")
         with st.spinner("Working"):
             result = (svc.regenerate(cid, mode) if _act[0] == "regenerate"
                       else svc.edit_and_resend(cid, _act[1], _act[2], mode))

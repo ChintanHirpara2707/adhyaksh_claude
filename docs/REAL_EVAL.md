@@ -1,6 +1,6 @@
 # Real-world evaluation (data/test_real.csv)
 
-Latest run: 2026-11-21 14:39 (phase4 feedback fixes). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
+Latest run: 2026-11-21 16:40 (cleanup 2). 238 hand-written commands, tools mocked, offline path (rules and the trained classifier; no language model).
 
 **Overall: 100% (237/238)**
 
@@ -74,6 +74,7 @@ Latest run: 2026-11-21 14:39 (phase4 feedback fixes). 238 hand-written commands,
 | 2026-11-20 17:28 | phase4 gate 4b | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-21 13:43 | phase4 final | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 | 2026-11-21 14:39 | phase4 feedback fixes | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
+| 2026-11-21 16:40 | cleanup 2 | 237/238 | 37/37 | 19/20 | 32/32 | 22/22 | 15/15 | 16/16 | 20/20 | 9/9 | 20/20 | 12/12 | 12/12 | 10/10 | 13/13 |
 
 ## Failures (1)
 

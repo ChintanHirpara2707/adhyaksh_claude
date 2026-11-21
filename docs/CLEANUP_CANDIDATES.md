@@ -43,7 +43,7 @@ These are one-line re-exports in the service layer that no page, other module or
 |---|---|
 | `pytest-cov` (requirements-core.txt) | Never imported and no command uses `--cov`. It could move out of the core list, or stay if coverage reports are wanted. |
 | `pytest` (requirements-core.txt) | Used by the tests only; a runtime install does not need it. Consider a separate requirements-dev.txt. |
-| `websockets` (not listed) | Imported by `hud/app.py` (and the screenshot tool). It is installed here, but a clean install from the requirements files would lack it and the HUD would not start. Consider adding it to requirements-core.txt. |
+| `websockets` (not listed) | Imported by `hud/app.py` (and the screenshot tool). Streamlit itself requires it, so a clean install has it (checked in a fresh venv). Fine as is. |
 | `torch` (comment only) | Needed only for the PyTorch MLP (M2), installed by hand as the comment says. Fine as is. |
 | `pytesseract`, `clip` (not listed) | Optional fallbacks inside try/except (OCR without RapidOCR; YOLO-World). Fine as is. |
 | `joblib`, `pydantic` (not listed) | Come in with scikit-learn and fastapi. Fine as is. |

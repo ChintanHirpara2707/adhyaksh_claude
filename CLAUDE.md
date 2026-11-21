@@ -39,6 +39,7 @@ Stack: Streamlit UI (app_pages/ call adhyaksh/services/, never tools directly), 
 Branch history: P0 to P7 done and merged to main (agent with native tool calling, notebooks, local voice, Cowork tools, OCR and vision, service layer, Health page, CI, packaging). Real eval 237/238 offline (tuned by the same agent, so optimistic).
 Untested on the Windows target: agent with a real model, local speech recognition, wake word, PDF loading, process end, reminders, PyInstaller build, CI. Hand-test list: docs/UPGRADE_LOG.md.
 Branch jarvis-upgrade (not merged): Phases 1 (universal brain and NLU), 2 (structured memory, verification and recovery, OS and web tools, persona) and 3 (background engine, native voice, desktop HUD) done; see docs/JARVIS_PLAN.md Status and docs/UPGRADE_LOG.md (hand-test list). Tests are offline by construction (tests/conftest.py).
+Branch phase4 (from main, not merged): product UI 4a to 4f done (streaming, Voice page, composer, conversations sidebar, message actions, light and dark theme for native widgets from ui/theme.py TOKENS); screenshots with `python tests/screens/capture.py <label>` (installed Edge, no Playwright); hand checks in docs/UPGRADE_LOG.md.
 Evals: regression 398/399, real 237/238, NLU eval (tests/eval/run_nlu_eval.py) must stay at 100% polarity and negation.
 
 Details (read only when needed): docs/PROJECT_NOTES.md, FILES.md, CONFIG.md, DATABASE.md, TESTS.md, ROADMAP.md, UPGRADE_LOG.md, JARVIS_PLAN.md.

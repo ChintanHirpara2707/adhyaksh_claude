@@ -25,7 +25,7 @@ pages = {
 }
 current = st.navigation(list(pages.values()), position="hidden")
 saved_theme = theme.sidebar_header()
-theme.inject(saved_theme)
+theme.inject(saved_theme, ["/"] + [f"/{slug}" for slug, _ in PAGES])
 for section, group in shell.NAV:
     st.sidebar.markdown(f'<p class="adhy-nav-section">{section}</p>', unsafe_allow_html=True)
     for slug, _ in group:

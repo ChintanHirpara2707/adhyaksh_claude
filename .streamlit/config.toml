@@ -1,7 +1,42 @@
+# Native widget colours for light and dark. Generated from adhyaksh/ui/theme.py TOKENS
+# (python -m adhyaksh.ui.theme); tests/test_theme.py fails if they differ. No base: the sidebar
+# Dark mode switch picks the variant (adhyaksh/ui/theme.py sync_native).
 [theme]
-base = "light"
-primaryColor = "#A8502F"
 font = "sans serif"
+
+[theme.light]
+backgroundColor = "#FAF9F5"
+secondaryBackgroundColor = "#F3F1EA"
+textColor = "#1F1E1D"
+borderColor = "#E8E5DC"
+primaryColor = "#A8502F"
+linkColor = "#C96442"
+codeBackgroundColor = "#F3F1EA"
+dataframeHeaderBackgroundColor = "#F3F1EA"
+dataframeBorderColor = "#E8E5DC"
+
+[theme.light.sidebar]
+backgroundColor = "#F3F1EA"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1F1E1D"
+borderColor = "#E8E5DC"
+
+[theme.dark]
+backgroundColor = "#262624"
+secondaryBackgroundColor = "#3A3936"
+textColor = "#F5F4EE"
+borderColor = "#44433F"
+primaryColor = "#A8502F"
+linkColor = "#C96442"
+codeBackgroundColor = "#3A3936"
+dataframeHeaderBackgroundColor = "#3A3936"
+dataframeBorderColor = "#44433F"
+
+[theme.dark.sidebar]
+backgroundColor = "#3A3936"
+secondaryBackgroundColor = "#30302E"
+textColor = "#F5F4EE"
+borderColor = "#44433F"
 
 [server]
 headless = true

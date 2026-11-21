@@ -14,6 +14,34 @@ TOKENS: dict[str, dict[str, str]] = {
     },
 }
 
+# Streamlit's own widgets (chat input, camera input, progress bars, checkboxes, select arrows, metric pills,
+# dataframes, which draw on a canvas that CSS cannot reach) take their colours from .streamlit/config.toml,
+# [theme.light] / [theme.dark] and their .sidebar parts. Those values are these tokens; tests/test_theme.py checks
+# that config.toml matches, and `python -m adhyaksh.ui.theme` prints the sections to paste after changing a token.
+NATIVE = {
+    "main": {"backgroundColor": "bg", "secondaryBackgroundColor": "subtle", "textColor": "text",
+             "borderColor": "border", "primaryColor": "accent_strong", "linkColor": "accent",
+             "codeBackgroundColor": "subtle", "dataframeHeaderBackgroundColor": "subtle",
+             "dataframeBorderColor": "border"},
+    "sidebar": {"backgroundColor": "subtle", "secondaryBackgroundColor": "surface", "textColor": "text",
+                "borderColor": "border"},
+}
+
+
+def native_sections() -> dict[str, dict[str, str]]:
+    """{"light": {...}, "light.sidebar": {...}, "dark": {...}, "dark.sidebar": {...}} for config.toml."""
+    out = {}
+    for mode in ("light", "dark"):
+        out[mode] = {k: TOKENS[mode][t] for k, t in NATIVE["main"].items()}
+        out[f"{mode}.sidebar"] = {k: TOKENS[mode][t] for k, t in NATIVE["sidebar"].items()}
+    return out
+
+
+def native_toml() -> str:
+    return "\n".join(f"[theme.{name}]\n" + "\n".join(f'{k} = "{v}"' for k, v in vals.items()) + "\n"
+                     for name, vals in native_sections().items())
+
+
 FONT_UI = ('Inter, system-ui, "Segoe UI", "Noto Sans Devanagari", "Noto Sans Gujarati", '
            '"Nirmala UI", sans-serif')
 FONT_SERIF = 'Georgia, "Source Serif 4", "Noto Serif Devanagari", "Noto Serif Gujarati", serif'
@@ -137,7 +165,33 @@ def sidebar_header() -> str:
     return saved
 
 
-def inject(theme: str) -> None:
+NATIVE_CHOICE = {"light": "Light", "dark": "Dark", "": "System"}
+
+
+def sync_script(theme: str, paths: list[str]) -> str:
+    """Make Streamlit's own widgets use the same mode as the sidebar switch. Streamlit keeps the chosen appearance
+    ("Light", "Dark" or "System") in the browser's localStorage, one key per page address, and reads it when the
+    page loads; this writes the wanted value for every page and reloads once if the open page was showing the
+    other one. Never chosen: "System", so both the CSS and the widgets follow Windows."""
+    import json
+    want = json.dumps(NATIVE_CHOICE.get(theme, "System"))
+    keys = json.dumps([f"stActiveTheme-{p}-v2" for p in paths])
+    return (f"<script>(() => {{ try {{ const want = {json.dumps(want)}, keys = {keys};"
+            " const here = 'stActiveTheme-' + window.location.pathname + '-v2';"
+            " const before = window.localStorage.getItem(here);"
+            " for (const k of keys.concat([here])) { if (window.localStorage.getItem(k) !== want) window.localStorage.setItem(k, want); }"
+            " if (before !== want && !window.sessionStorage.getItem('adhyThemeReload')) {"
+            "  window.sessionStorage.setItem('adhyThemeReload', '1'); window.location.reload(); }"
+            " else { window.sessionStorage.removeItem('adhyThemeReload'); }"
+            " } catch (e) {} })();</script>")
+
+
+def inject(theme: str, paths: list[str] | None = None) -> None:
     import streamlit as st
 
     st.markdown(build_css(theme), unsafe_allow_html=True)
+    st.html(sync_script(theme, paths or ["/"]), unsafe_allow_javascript=True)
+
+
+if __name__ == "__main__":  # print the native theme sections for .streamlit/config.toml
+    print(native_toml())

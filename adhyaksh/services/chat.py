@@ -184,3 +184,94 @@ def conversation_new(current: int | None = None) -> int:
 
 def conversation_exists(conversation_id: int) -> bool:
     return db.query_one("SELECT 1 FROM conversations WHERE id = ?", (int(conversation_id),)) is not None
+
+
+# ---- message actions: tool steps, regenerate, edit and resend -----------------------------------------------------------
+def _step(row: dict) -> dict:
+    from adhyaksh.services import activity
+    out = activity.outcome(row.get("result", ""))
+    return {"action": (row.get("action") or "").replace("_", " "), "target": row.get("target") or "",
+            "outcome": out, "result": row.get("result") or "", "level": activity.LEVELS.get(row.get("level"), ""),
+            "confirmed": row.get("confirmed") or "none", "ts": row.get("ts") or "",
+            "state": "complete" if out in ("done", "cancelled") else "error"}
+
+
+def turn_steps(messages: list[dict]) -> dict[int, list[dict]]:
+    """Which tools ran for each reply: {assistant message id: [step]} from the append-only audit log (every tool
+    action passes the safety gateway, which writes one row). A row belongs to the first reply written at or after it,
+    within that turn (from the user's message to the reply). Read only; the engine is not involved."""
+    msgs = [m for m in messages if m.get("created_at")]
+    if not any(m["role"] == "assistant" for m in msgs):
+        return {}
+    rows = db.query_all("SELECT * FROM audit_log WHERE ts >= ? AND ts <= ? ORDER BY id",
+                        (msgs[0]["created_at"], msgs[-1]["created_at"]))
+    out: dict[int, list[dict]] = {}
+
+    def norm(s: str) -> str:
+        return " ".join((s or "").casefold().split())
+
+    for r in rows:
+        said = norm(r.get("user_text"))
+        start, asked = None, []  # the turn's start, and what the user said in this conversation so far
+        for m in msgs:
+            if m["role"] == "user":
+                start = m["created_at"]
+                asked.append(norm(m["content"]))
+            elif start is not None and start <= r["ts"] <= m["created_at"]:
+                # The tool records the request it served (one step of a multi-step message; the original request
+                # after a typed "yes"), so a row from another conversation in the same second is left out.
+                # Turns within one second share a window, so a turn whose words do not match is passed over.
+                if not said or said == norm(r.get("action")) or any(said in a or a in said for a in asked if a):
+                    out.setdefault(m["id"], []).append(_step(r))
+                    break
+    return out
+
+
+def _last_turn(conversation_id: int) -> tuple[dict | None, dict | None, list[dict]]:
+    """(last user message, the reply after it or None, recent history)."""
+    hist = context.history(int(conversation_id), 50)
+    user = next((m for m in reversed(hist) if m["role"] == "user"), None)
+    reply = None
+    if user is not None:
+        reply = next((m for m in hist if m["id"] > user["id"] and m["role"] == "assistant"), None)
+    return user, reply, hist
+
+
+def can_regenerate(conversation_id: int) -> bool:
+    """Only the last reply, only when nothing is waiting for confirmation and no tool ran in that turn (asking
+    again must never repeat an action)."""
+    user, reply, hist = _last_turn(conversation_id)
+    if user is None or reply is None or pending_confirm(conversation_id):
+        return False
+    return reply["id"] not in turn_steps(hist)
+
+
+def _drop_from(conversation_id: int, message_id: int) -> None:
+    db.execute("DELETE FROM messages WHERE conversation_id = ? AND id >= ?", (int(conversation_id), int(message_id)))
+
+
+def regenerate(conversation_id: int, mode: str = "cowork"):
+    """Ask the last question again for a new answer (the old turn is replaced; the model's cache is skipped).
+    Runs in this process so a streamed answer can be shown; returns what engine_handle_message returns."""
+    from adhyaksh.result import E_BLOCKED, Result
+    if not can_regenerate(conversation_id):
+        return Result.failure(E_BLOCKED, "This reply cannot be regenerated: a tool ran or it is not the last reply.")
+    user, _, _ = _last_turn(conversation_id)
+    _drop_from(conversation_id, user["id"])
+    from adhyaksh.llm import base as llm
+    with llm.fresh():
+        return engine.handle_message(user["content"], int(conversation_id), mode=mode, stream=True)
+
+
+def edit_and_resend(conversation_id: int, message_id: int, text: str, mode: str = "cowork"):
+    """Send an edited version of the last user message. If no tool ran in that turn the old turn is replaced;
+    if one did, it stays in the history (it really happened) and the edit is sent as a new message."""
+    from adhyaksh.result import E_BAD_ARGUMENTS, Result
+    text = (text or "").strip()
+    user, reply, hist = _last_turn(conversation_id)
+    if not text or user is None or user["id"] != int(message_id):
+        return Result.failure(E_BAD_ARGUMENTS, "Only the last message can be edited, and it cannot be empty.")
+    ran_tool = reply is not None and reply["id"] in turn_steps(hist)
+    if not ran_tool and not pending_confirm(conversation_id):
+        _drop_from(conversation_id, user["id"])
+    return engine_handle_message(text, int(conversation_id), mode=mode, stream=True)

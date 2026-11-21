@@ -99,14 +99,69 @@ if not history:
         if picked:
             suggested = options[picked]
 
+steps = svc.turn_steps(history)  # which tools ran for each reply, from the audit log
+last_user = next((m for m in reversed(history) if m["role"] == "user"), None)
+last_reply = next((m for m in reversed(history) if m["role"] == "assistant"), None)
+regen_ok = last_reply is not None and svc.can_regenerate(cid)
+# While Regenerate or Edit runs (below, where typed messages are handled), the turn it replaces is not drawn.
+_act = st.session_state.get("msg_action")
+hide_from = None
+if _act and _act[0] == "regenerate" and last_reply is not None:
+    hide_from = last_reply["id"]
+elif _act and _act[0] == "edit" and last_reply is not None and last_reply["id"] not in steps and not svc.pending_confirm(cid):
+    hide_from = _act[1]
+elif _act and _act[0] == "edit" and last_reply is None:
+    hide_from = _act[1]
+
+
+def copy_button(m: dict) -> None:
+    """Copy: the text in a code box whose own copy icon puts it on the clipboard (no script needed)."""
+    with st.popover("", icon=":material/content_copy:", type="tertiary", help="Copy"):
+        st.code(m["content"], language=None, wrap_lines=True)
+        st.caption("Use the copy icon at the top right of the box.")
+
+
 for m in history:
+    if hide_from is not None and m["id"] >= hide_from:
+        break
     with st.chat_message(m["role"]):
+        if m["role"] == "user" and st.session_state.get("editing") == m["id"]:
+            with st.form(f"edit_{m['id']}", border=False):
+                new_text = st.text_area("Edit message", value=m["content"], label_visibility="collapsed")
+                e1, e2, _ = st.columns([1, 1, 4])
+                if e1.form_submit_button("Send", type="primary"):
+                    st.session_state.pop("editing", None)
+                    st.session_state["msg_action"] = ("edit", m["id"], new_text)
+                    st.rerun()
+                if e2.form_submit_button("Cancel"):
+                    st.session_state.pop("editing", None)
+                    st.rerun()
+            continue
+        for s in steps.get(m["id"], []):  # one collapsed line per tool that ran, with its result
+            with st.status(f"{s['action'].capitalize()}: {s['outcome']}", type="step", state=s["state"]):
+                if s["target"]:
+                    st.code(s["target"], language=None, wrap_lines=True)
+                st.caption(f"Result: {s['result']}. {s['level']}"
+                           + (f", {s['confirmed']}" if s["confirmed"] != "none" else "") + ".")
         st.markdown(m["content"])
-        if m["role"] == "assistant":
-            intent_val = m.get("intent") or "unknown"
-            if st.button("Wrong intent?", key=f"wrong_{m['id']}", type="tertiary"):
+        with st.container(horizontal=True, gap="small", key=f"actions_{m['id']}"):
+            copy_button(m)
+            if m["role"] == "user" and last_user is not None and m["id"] == last_user["id"]:
+                if st.button("", icon=":material/edit:", type="tertiary", key=f"editbtn_{m['id']}",
+                             help="Edit and send again"):
+                    st.session_state["editing"] = m["id"]
+                    st.rerun()
+            if m["role"] == "assistant" and regen_ok and m["id"] == last_reply["id"]:
+                if st.button("", icon=":material/refresh:", type="tertiary", key=f"regen_{m['id']}",
+                             help="Regenerate: ask again for a new answer"):
+                    st.session_state["msg_action"] = ("regenerate",)
+                    st.rerun()
+            if m["role"] == "assistant" and st.button("", icon=":material/flag:", type="tertiary",
+                                                      key=f"wrong_{m['id']}", help="Wrong intent? Correct it"):
                 st.session_state[f"correcting_{m['id']}"] = True
                 st.rerun()
+        if m["role"] == "assistant":
+            intent_val = m.get("intent") or "unknown"
             if st.session_state.get(f"correcting_{m['id']}"):
                 st.caption(f"Detected intent: {intent_val}")
                 correct = st.selectbox("Correct intent", svc.INTENTS,
@@ -263,6 +318,26 @@ if prompt or suggested:
     if result.data and result.data.get("suggest_mode") == "cowork":
         st.session_state["suggest_switch"] = True
     st.rerun()
+
+_act = st.session_state.pop("msg_action", None)
+if _act:  # Regenerate or Edit and send, chosen on a message above
+    with live:
+        if _act[0] == "edit":
+            with st.chat_message("user"):
+                st.markdown(_act[2])
+        with st.spinner("Working"):
+            result = (svc.regenerate(cid, mode) if _act[0] == "regenerate"
+                      else svc.edit_and_resend(cid, _act[1], _act[2], mode))
+        if result.ok and result.data.get("stream") is not None:
+            with st.chat_message("assistant"):
+                st.write_stream(result.data["stream"])
+        elif not result.ok and result.error_code in ("E_BLOCKED", "E_BAD_ARGUMENTS"):
+            st.session_state["action_note"] = result.message
+    if result.ok:
+        apply_ui_hints(result)
+    st.rerun()
+if st.session_state.get("action_note"):
+    st.toast(st.session_state.pop("action_note"))
 
 _goto = st.session_state.pop("goto_page", None)
 if _goto in ("vision", "performance", "voice"):

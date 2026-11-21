@@ -34,14 +34,26 @@ def _free_port() -> int:
 def _seed(data: Path, models: Path) -> None:
     """A demo user and a short conversation, in the scratch folder only."""
     env = {**os.environ, "ADHYAKSH_DATA_DIR": str(data), "ADHYAKSH_MODELS_DIR": str(models)}
+    work = data.parent / "workspace"  # demo files go here, never into the user's Documents workspace
+    work.mkdir(exist_ok=True)
     code = ("from adhyaksh import db; db.init()\n"
+            "from adhyaksh import config\n"
+            f"assert config.configure_folders([{str(work)!r}], {str(work)!r})[0]\n"
+            "from adhyaksh.nlu import registry\n"
+            f"svm = {str(models / 'm3_svm.joblib')!r}\n"
+            "import os\n"
+            "if os.path.exists(svm):  # the copied intent model, made active in the scratch database\n"
+            "    mid = db.execute(\"INSERT INTO model_registry(name,kind,path,dataset_hash,trained_at,is_active)\"\n"
+            "                     \" VALUES('SVM','m3_svm',?,'',?,0)\", (svm, db.utcnow()))\n"
+            "    registry.set_active(mid)\n"
             "from adhyaksh.chat import identity, context, engine\n"
             "identity.save_name('Demo')\n"
             "engine.handle_message('show system status', context.new_conversation())\n"
             "old = context.new_conversation('Shopping list')\n"
             "engine.handle_message('create shopping.txt with milk and eggs', old)\n"
             "cid = context.new_conversation()\n"
-            "for t in ('hello', 'what is 12 * 7', 'remember that my car is Audi', 'what is my car'):\n"
+            "for t in ('hello', 'what is 12 * 7', 'remember that my car is Audi', 'what is my car',\n"
+            "          'create notes.txt with buy milk'):\n"
             "    engine.handle_message(t, cid)\n")
     subprocess.run([sys.executable, "-c", code], cwd=ROOT, env=env, check=True, capture_output=True)
 
@@ -91,8 +103,9 @@ class _Cdp:
     def _eval(self, expr: str):
         return self.call("Runtime.evaluate", expression=expr, returnByValue=True).get("result", {}).get("value")
 
-    def shot(self, url: str, path: Path, timeout_s: float) -> bool:
-        """Open the page, wait until Streamlit has drawn it and stopped running, then save a PNG."""
+    def shot(self, url: str, path: Path, timeout_s: float, to_end: bool = False) -> bool:
+        """Open the page, wait until Streamlit has drawn it and stopped running, then save a PNG. to_end scrolls to
+        the bottom first (a chat is read at its latest turn)."""
         import base64
         self.call("Page.navigate", url=url)
         ready = ("(() => { const m = document.querySelector('[data-testid=\"stMain\"]');"
@@ -111,6 +124,9 @@ class _Cdp:
             if stable >= 4:
                 break
             time.sleep(0.5)
+        if to_end:
+            self._eval("(() => { const m = document.querySelector('[data-testid=\"stMain\"]');"
+                       " if (m) m.scrollTop = m.scrollHeight; })()")
         time.sleep(1.5)  # let pinned parts (the chat composer) paint
         data = self.call("Page.captureScreenshot", format="png", fromSurface=True, captureBeyondViewport=False).get("data")
         if not data:
@@ -172,7 +188,7 @@ def capture(label: str, pages: list[str] | None = None, wait_ms: int = 25000) ->
                     if empty:
                         _empty_chat(data, models, True)
                     url_path = "" if slug in (default, "chat-empty") else slug  # the default page lives at "/"
-                    if cdp.shot(f"http://127.0.0.1:{port}/{url_path}", path, wait_ms / 1000):
+                    if cdp.shot(f"http://127.0.0.1:{port}/{url_path}", path, wait_ms / 1000, to_end=slug == default):
                         shots.append(path)
                     if empty:
                         _empty_chat(data, models, False)

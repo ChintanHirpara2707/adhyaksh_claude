@@ -1,10 +1,13 @@
 """Optional LLM providers over plain HTTPS. The app works fully without any key.
 
-Streaming (F01) is NOT implemented: replies are returned whole. API keys are read from the
-environment or a git-ignored .env file and are never logged or stored in the database.
+Replies can be streamed (Provider.stream, stream_ask) or returned whole (complete, ask); answers are cached per
+prompt, except inside fresh() (Regenerate). API keys are read from the environment or a git-ignored .env file and
+are never logged or stored in the database.
 """
 from __future__ import annotations
 
+import contextlib
+import contextvars
 import json
 import os
 import urllib.parse
@@ -29,6 +32,17 @@ SYSTEM_PROMPT = (
 )
 ENV_FILE = config.ROOT / ".env"
 CUT_OFF_NOTE = "\n\n(The answer was cut off: the connection to the language model broke.)"
+_FRESH = contextvars.ContextVar("adhyaksh_llm_fresh", default=False)
+
+
+@contextlib.contextmanager
+def fresh():
+    """Inside this block answers are not read from the cache (Regenerate); new answers are still cached."""
+    tok = _FRESH.set(True)
+    try:
+        yield
+    finally:
+        _FRESH.reset(tok)
 
 
 def _load_env() -> None:
@@ -82,7 +96,7 @@ class Provider(ABC):
 
         self.max_tokens = max_tokens
         model = self.model()
-        hit = cache.get(self.name, model, prompt)
+        hit = None if _FRESH.get() else cache.get(self.name, model, prompt)
         if hit is not None:
             return Result.success(hit)
         last = ""
@@ -109,7 +123,7 @@ class Provider(ABC):
         """Provider-specific: yield the reply in pieces as the model writes it."""
         raise NotImplementedError
 
-    def stream(self, prompt: str, timeout: float = 25.0, max_tokens: int = MAX_TOKENS):
+    def stream(self, prompt: str, timeout: float = 25.0, max_tokens: int = MAX_TOKENS, use_cache: bool = True):
         """Yield the reply piece by piece. If streaming fails before the first piece, the whole reply is fetched
         with complete() and yielded at once; if it breaks midway, the text so far stays and a short note follows.
         The finished reply is cached like complete()."""
@@ -117,7 +131,7 @@ class Provider(ABC):
 
         self.max_tokens = max_tokens
         model = self.model()
-        hit = cache.get(self.name, model, prompt)
+        hit = cache.get(self.name, model, prompt) if use_cache else None
         if hit is not None:
             yield hit
             return
@@ -132,7 +146,8 @@ class Provider(ABC):
             logging_setup.event("llm_stream_failed", logging.WARNING, provider=self.name, reason=reason,
                                 after_pieces=len(parts))
             if not parts:
-                res = self.complete(prompt, timeout=timeout, max_tokens=max_tokens)  # fall back to a whole reply
+                with contextlib.nullcontext() if use_cache else fresh():
+                    res = self.complete(prompt, timeout=timeout, max_tokens=max_tokens)  # fall back to a whole reply
                 yield res.data if res.ok else res.message
                 return
             yield CUT_OFF_NOTE
@@ -141,7 +156,8 @@ class Provider(ABC):
         if text:
             cache.put(text, self.name, model, prompt)
         else:
-            res = self.complete(prompt, timeout=timeout, max_tokens=max_tokens)
+            with contextlib.nullcontext() if use_cache else fresh():
+                res = self.complete(prompt, timeout=timeout, max_tokens=max_tokens)
             yield res.data if res.ok else res.message
 
     # ---- native tool calling -------------------------------------------------------------
@@ -267,7 +283,8 @@ def stream_ask(prompt: str, timeout: float = ANSWER_TIMEOUT, max_tokens: int = A
     provider = get_provider()
     if provider is None:
         return Result.failure(E_NO_API_KEY, "No language model provider and key are configured.")
-    return Result.success(provider.stream(prompt, timeout=timeout, max_tokens=max_tokens))
+    # The generator runs later (while the page shows it), so the "fresh" choice is taken now.
+    return Result.success(provider.stream(prompt, timeout=timeout, max_tokens=max_tokens, use_cache=not _FRESH.get()))
 
 
 def ask(prompt: str, timeout: float = 8.0, max_tokens: int = MAX_TOKENS) -> Result:

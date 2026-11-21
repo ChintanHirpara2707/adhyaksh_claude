@@ -84,6 +84,9 @@ input,textarea,[data-baseweb="input"],[data-baseweb="textarea"],[data-baseweb="s
  text-overflow:ellipsis}}
 [data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button[kind="secondary"]{{background:var(--subtle)}}
 [data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button:hover{{background:var(--subtle)}}
+[class*="st-key-actions_"]{{opacity:.55;transition:opacity .15s;margin-top:-.4rem}}
+[class*="st-key-actions_"]:hover,[class*="st-key-actions_"]:focus-within{{opacity:1}}
+[class*="st-key-actions_"] button{{padding:.15rem .35rem;min-height:1.8rem;border:none;background:transparent}}
 button[data-baseweb="tab"]{{color:var(--muted)}}
 button[data-baseweb="tab"][aria-selected="true"]{{color:var(--text)}}
 [data-baseweb="tab-highlight"]{{background:var(--text)}}

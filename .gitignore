@@ -26,3 +26,8 @@ dist/
 build/
 *.spec
 !packaging/adhyaksh.spec
+
+# Eval outputs, rewritten on every run (the *_history.csv files and the baseline and previous runs stay tracked)
+tests/eval/results.csv
+tests/eval/real_results.csv
+tests/eval/nlu_results.csv

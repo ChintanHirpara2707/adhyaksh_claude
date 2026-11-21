@@ -14,6 +14,15 @@ def page_header(title: str, description: str) -> None:
     )
 
 
+def chat_welcome(title: str, subtitle: str) -> None:
+    """The empty-conversation greeting: a large serif line and one muted line, centred."""
+    st.markdown(
+        f'<div class="adhy-welcome"><h2>{html.escape(title)}</h2><p class="adhy-muted">{html.escape(subtitle)}</p></div>'
+        '<style>.adhy-welcome{text-align:center;padding:12vh 0 1.2rem}.adhy-welcome h2{font-size:2rem;margin:0 0 .4rem}</style>',
+        unsafe_allow_html=True,
+    )
+
+
 def empty_state(message: str) -> None:
     st.markdown(f'<div class="adhy-card"><p>{html.escape(message)}</p></div>', unsafe_allow_html=True)
 
@@ -41,7 +50,7 @@ def wide(px: int = 1240) -> None:
 
 def chat_width(px: int = 820) -> None:
     st.markdown(
-        f'<style>[data-testid="stMainBlockContainer"]{{max-width:{int(px)}px}}</style>',
+        f'<style>[data-testid="stMainBlockContainer"],[data-testid="stBottomBlockContainer"]{{max-width:{int(px)}px}}</style>',
         unsafe_allow_html=True,
     )
 

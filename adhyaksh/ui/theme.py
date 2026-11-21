@@ -74,6 +74,8 @@ input,textarea,[data-baseweb="input"],[data-baseweb="textarea"],[data-baseweb="s
 [data-testid="stBaseButton-primary"]{{background:var(--accent-strong);color:var(--on-accent);
  border:1px solid var(--accent-strong)}}
 [data-testid="stBaseButton-primary"] *{{color:var(--on-accent)!important}}
+.stButton>button[data-testid="stBaseButton-tertiary"]{{background:transparent;border:none;color:var(--muted);padding:.2rem .5rem}}
+.stButton>button[data-testid="stBaseButton-tertiary"]:hover{{background:var(--subtle);color:var(--text)}}
 button[data-baseweb="tab"]{{color:var(--muted)}}
 button[data-baseweb="tab"][aria-selected="true"]{{color:var(--text)}}
 [data-baseweb="tab-highlight"]{{background:var(--text)}}

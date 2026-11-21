@@ -2,6 +2,7 @@
 
     python tests/screens/capture.py before        -> docs/screens/before/<page>-<mode>.png
     python tests/screens/capture.py after-4b      -> docs/screens/after-4b/...
+    python tests/screens/capture.py x chat,chat-empty   -> only those (chat-empty: Chat with a new, empty conversation)
 
 Uses the Microsoft Edge that ships with Windows, in headless mode (no new package; Playwright would add a Chromium
 download of about 150 MB). The app runs on a free 127.0.0.1 port with a scratch data folder seeded with a short
@@ -39,6 +40,15 @@ def _seed(data: Path, models: Path) -> None:
             "cid = context.new_conversation()\n"
             "for t in ('hello', 'what is 12 * 7', 'remember that my car is Audi', 'what is my car'):\n"
             "    engine.handle_message(t, cid)\n")
+    subprocess.run([sys.executable, "-c", code], cwd=ROOT, env=env, check=True, capture_output=True)
+
+
+def _empty_chat(data: Path, models: Path, make: bool) -> None:
+    """For the 'chat-empty' shot: add a newest, empty conversation (the Chat page opens the newest), or remove it."""
+    env = {**os.environ, "ADHYAKSH_DATA_DIR": str(data), "ADHYAKSH_MODELS_DIR": str(models)}
+    code = ("from adhyaksh import db; from adhyaksh.chat import context; context.new_conversation()" if make else
+            "from adhyaksh import db; db.execute('DELETE FROM conversations WHERE id NOT IN "
+            "(SELECT DISTINCT conversation_id FROM messages)')")
     subprocess.run([sys.executable, "-c", code], cwd=ROOT, env=env, check=True, capture_output=True)
 
 
@@ -83,7 +93,9 @@ class _Cdp:
         import base64
         self.call("Page.navigate", url=url)
         ready = ("(() => { const m = document.querySelector('[data-testid=\"stMain\"]');"
-                 " const run = document.querySelector('[data-testid=\"stStatusWidget\"]');"
+                 " const app = document.querySelector('[data-test-script-state]');"
+                 " const run = document.querySelector('[data-testid=\"stStatusWidget\"]')"
+                 "   || !app || app.getAttribute('data-test-script-state') !== 'notRunning';"
                  " const skel = document.querySelector('[data-testid=\"stSkeleton\"]');"
                  " const n = m ? m.innerText.trim().length : 0;"
                  " return (n > 20 && !run && !skel) ? n : -1; })()")
@@ -96,8 +108,8 @@ class _Cdp:
             if stable >= 4:
                 break
             time.sleep(0.5)
-        time.sleep(0.6)
-        data = self.call("Page.captureScreenshot", format="png").get("data")
+        time.sleep(1.5)  # let pinned parts (the chat composer) paint
+        data = self.call("Page.captureScreenshot", format="png", fromSurface=True, captureBeyondViewport=False).get("data")
         if not data:
             return False
         path.write_bytes(base64.b64decode(data))
@@ -140,6 +152,7 @@ def capture(label: str, pages: list[str] | None = None, wait_ms: int = 25000) ->
         default = shell.pages()[0][0]
         if pages is None:
             pages = [slug for slug, _ in shell.pages()]
+            pages.insert(pages.index(default) + 1, "chat-empty")  # the Chat page of a new conversation
         cdp_port = _free_port()
         browser = subprocess.Popen([str(edge), "--headless=new", "--disable-gpu", "--hide-scrollbars", "--no-first-run",
                                     f"--remote-debugging-port={cdp_port}", f"--user-data-dir={scratch / 'edge'}",
@@ -152,9 +165,14 @@ def capture(label: str, pages: list[str] | None = None, wait_ms: int = 25000) ->
                 cdp.call("Emulation.setEmulatedMedia", features=[{"name": "prefers-color-scheme", "value": mode}])
                 for slug in pages:
                     path = out_dir / f"{slug}-{mode}.png"
-                    url_path = "" if slug == default else slug  # the default page lives at "/"
+                    empty = slug == "chat-empty"
+                    if empty:
+                        _empty_chat(data, models, True)
+                    url_path = "" if slug in (default, "chat-empty") else slug  # the default page lives at "/"
                     if cdp.shot(f"http://127.0.0.1:{port}/{url_path}", path, wait_ms / 1000):
                         shots.append(path)
+                    if empty:
+                        _empty_chat(data, models, False)
             cdp.close()
         finally:
             browser.terminate()

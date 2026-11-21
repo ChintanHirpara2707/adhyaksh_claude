@@ -27,6 +27,12 @@ def orb() -> None:
 
 orb()
 
+# The same setting as Settings, Voice replies: on, replies are read aloud; off, text only.
+_speak_on = st.toggle("Reply with voice", value=svc.get_bool("voice_reply"), key="voice_page_reply",
+                      help="Off: replies stay text only, even after a spoken command. Same switch as in Settings.")
+if _speak_on != svc.get_bool("voice_reply"):
+    svc.set_value("voice_reply", "true" if _speak_on else "false")
+
 history = svc.history(cid, 10)
 last = next((m for m in reversed(history) if m["role"] == "assistant"), None)
 last_id = last["id"] if last else 0
@@ -59,17 +65,23 @@ if pending:
             st.rerun()
 
 if not native:
-    # Speak each new reply (this page is for voice, so replies are always read out).
+    # Each new reply is read out when "Reply with voice" is on; off, it is shown as text only.
     new_reply = last is not None and last_id != st.session_state["voice_seen"]
-    speak_text = last["content"] if new_reply else ""
-    if new_reply and pending and "say yes" not in speak_text.lower():
+    speak = new_reply and _speak_on
+    speak_text = last["content"] if speak else ""
+    if speak and pending and "say yes" not in speak_text.lower():
         speak_text = speak_text.replace("Confirm or cancel.", "").strip() + " " + svc.confirm_prompt(svc.get("voice_lang"))
     heard = svc.voice_input(theme_name=svc.get("theme") or "light", lang=svc.get("voice_lang") or "en-IN",
-                            speak_text=speak_text, speak_nonce=str(last_id) if new_reply else "", key="voice_page",
+                            speak_text=speak_text, speak_nonce=str(last_id) if speak else "", key="voice_page",
                             status=st.session_state.pop("voice_page_status", ""),
                             handsfree_default=svc.get_bool("voice_handsfree"), wake_default=svc.get_bool("voice_wake_word"))
     if new_reply:
         st.session_state["voice_seen"] = last_id
+    if heard and heard.get("nonce") != st.session_state.get("voice_page_nonce") and heard.get("setting"):
+        # Hands-free or the wake word was switched in the control: remember it for next time.
+        st.session_state["voice_page_nonce"] = heard["nonce"]
+        svc.set_value("voice_handsfree", "true" if heard.get("handsfree") else "false")
+        svc.set_value("voice_wake_word", "true" if heard.get("wake") else "false")
     if heard and heard.get("nonce") != st.session_state.get("voice_page_nonce") and not heard.get("setting"):
         st.session_state["voice_page_nonce"] = heard["nonce"]
         if heard.get("audio_b64"):

@@ -33,6 +33,16 @@ class FakeSpeaker:
         self.speaking.clear()
 
 
+@pytest.fixture(autouse=True)
+def _replies_spoken(monkeypatch):
+    """'Reply with voice' on (no real setting is read or changed); a test can switch it off."""
+    from adhyaksh import config
+    real = config.get_bool
+    state = {"voice_reply": True}
+    monkeypatch.setattr(config, "get_bool", lambda key: state[key] if key in state else real(key))
+    return state
+
+
 def _pipe(heard, replies=None):
     """A pipeline whose recogniser 'hears' the given texts in order and whose assistant answers from replies."""
     texts = iter(heard)
@@ -72,6 +82,12 @@ def test_wake_word_and_command_in_one_phrase():
     p, asked = _pipe(["Adhyaksh, open notepad"])
     assert p.on_utterance(SPEECH) == "open notepad" and asked == ["open notepad"]
     assert p.speaker.said == [("Done: open notepad.", "en")]
+
+
+def test_with_reply_with_voice_off_the_command_runs_but_nothing_is_spoken(_replies_spoken):
+    _replies_spoken["voice_reply"] = False
+    p, asked = _pipe(["Adhyaksh, open notepad"])
+    assert p.on_utterance(SPEECH) == "open notepad" and asked == ["open notepad"] and p.speaker.said == []
 
 
 def test_speech_not_meant_for_the_assistant_is_ignored():

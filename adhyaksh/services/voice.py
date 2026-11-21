@@ -55,6 +55,7 @@ pending_confirm = chat_svc.pending_confirm
 # voice building blocks
 get = config.get
 get_bool = config.get_bool
+set_value = config.set_value
 voice_input = bridge.voice_input
 handle_audio = bridge.handle_audio
 confirm_prompt = speech.confirm_prompt

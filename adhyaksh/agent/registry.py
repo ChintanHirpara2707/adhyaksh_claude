@@ -666,6 +666,20 @@ register(
 )
 
 register(
+    "tab_close",
+    "Close one browser tab by its site name or address (for example Gmail, YouTube, https://mail.google.com/...). "
+    "Works on the tab each browser window is showing; never closes the whole browser. Use this, not window_control "
+    "or app_close, when the user asks to close a website or tab.",
+    {
+        "type": "object",
+        "properties": {"site": {"type": "string", "description": "Site name or web address of the tab."}},
+        "required": ["site"],
+    },
+    1,
+    lambda arguments, ctx: windows.close_tab(arguments["site"], ctx=ctx),
+)
+
+register(
     "ask_user",
     "Ask the user one short clarifying question when the request is genuinely ambiguous. The loop pauses and the "
     "user's answer comes back as this tool's result.",

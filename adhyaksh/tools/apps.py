@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 
@@ -48,6 +49,39 @@ def set_allowlist(text: str) -> Result:
     return Result.success()
 
 
+_STORE_ID = re.compile(r"^[A-Za-z0-9.\-]+_[a-z0-9]{13}![A-Za-z0-9.\-]+$")  # Publisher.App_hash!Entry
+_START_APPS: dict[str, str] | None = None
+
+
+def _start_apps() -> dict[str, str]:
+    """Start menu apps that come from the Microsoft Store: {name casefold: app id}. Read once with a fixed
+    PowerShell command (no user text in it); empty when that fails."""
+    global _START_APPS
+    if _START_APPS is None:
+        _START_APPS = {}
+        try:
+            out = subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command",
+                                  "Get-StartApps | Select-Object Name,AppID | ConvertTo-Json -Compress"],
+                                 capture_output=True, text=True, timeout=20,
+                                 creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            rows = json.loads(out.stdout or "[]")
+            for r in rows if isinstance(rows, list) else [rows]:
+                name, app_id = str(r.get("Name") or "").strip(), str(r.get("AppID") or "").strip()
+                if name and _STORE_ID.match(app_id):
+                    _START_APPS.setdefault(name.casefold(), app_id)
+        except (OSError, ValueError, subprocess.SubprocessError):
+            pass
+    return _START_APPS
+
+
+def store_app_id(key: str) -> str | None:
+    """The Store app id of an allow-listed app whose Start menu name is the key (WhatsApp, Spotify, ...)."""
+    if os.name != "nt":
+        return None
+    apps = _start_apps()
+    return apps.get(key.casefold()) or apps.get(key.replace(" ", "").casefold())
+
+
 def resolve_name(name: str) -> str:
     key = (name or "").strip().casefold()
     return ALIASES.get(key, key)
@@ -71,13 +105,15 @@ def open_app(name: str, *, ctx: dict | None = None) -> Result:
             _LAUNCHED.setdefault(key, []).append(proc.pid)
             return Result.success({"app": key, "pid": proc.pid})
         except (OSError, AttributeError):
-            # Fallback for WhatsApp: try the whatsapp: URI scheme, then give a clear reason.
-            if key == "whatsapp":
+            # Microsoft Store apps (WhatsApp, Spotify from the Store, ...) have no exe on the path: start them by
+            # their Start menu id, then try the whatsapp: link, then give a clear reason.
+            app_id = store_app_id(key)
+            for target in ([f"shell:AppsFolder\\{app_id}"] if app_id else []) + (["whatsapp:"] if key == "whatsapp" else []):
                 try:
-                    os.startfile("whatsapp:")  # type: ignore[attr-defined]
-                    return Result.success({"app": key})
+                    os.startfile(target)  # type: ignore[attr-defined]
+                    return Result.success({"app": key, "store_app": bool(app_id)})
                 except (OSError, AttributeError):
-                    pass
+                    continue
             return Result.failure(E_ACTION_FAILED, "The application was not found on this computer.")
 
     return policy.run_guarded("app_open", key, go, user_text=ctx.get("user_text", ""), intent=ctx.get("intent", ""))
@@ -238,6 +274,10 @@ def close_app(name: str, *, ctx: dict | None = None) -> Result:
     ctx = ctx or {}
     key, apps = resolve_name(name), allowlist()
     if key not in apps:
+        if os.name == "nt":
+            from adhyaksh.tools import windows
+            if windows.find_tab(name) is not None:  # "close gmail": a site open in a browser tab, not an app
+                return windows.close_tab(name, ctx=ctx)
         return policy.deny("app_close", name, f"{name} is not on the allowed applications list.",
                            user_text=ctx.get("user_text", ""), intent=ctx.get("intent", ""))
 

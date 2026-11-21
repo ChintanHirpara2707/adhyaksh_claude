@@ -171,6 +171,18 @@ def _window_state(target: str, data: dict):
     return False, f"the window did not {op}"
 
 
+@verifier("tab_close")
+def _tab_gone(target: str, data: dict):
+    hwnd, words = data.get("hwnd"), data.get("words") or []
+    if not hwnd or not words:
+        return None, ""
+    from adhyaksh.tools import windows
+    if not windows.state(hwnd)["exists"]:
+        return True, ""  # it was the last tab, so the browser window closed with it
+    title = windows.window_title(hwnd).casefold()
+    return (True, "") if not all(w in title for w in words) else (False, "the tab still seems to be open")
+
+
 def check(action: str, target: str, res: Result) -> Result:
     """The result, with data['verified'] set, or an E_UNVERIFIED failure when the effect is not there."""
     fn = _CHECKS.get(action)

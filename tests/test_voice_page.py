@@ -76,7 +76,27 @@ def test_page_renders_orb_transcript_and_stop(page):
     assert page, "the browser voice control (with its own stop button) is shown"
 
 
+def test_with_reply_with_voice_off_nothing_is_spoken(page):
+    cid = context.new_conversation()
+    at = AppTest.from_file(PAGE, default_timeout=60)
+    at.session_state["cid"] = cid
+    at.run()
+    context.save_message(cid, "user", "hello")
+    context.save_message(cid, "assistant", "Hello, Tester.")
+    at.run()
+    assert page[-1]["speak_text"] == "" and any("Hello, Tester." in m.value for m in at.markdown)
+
+
+def test_the_page_switch_is_the_settings_switch(page):
+    from adhyaksh import config
+    at = _run()
+    at.toggle(key="voice_page_reply").set_value(True).run()
+    assert config.get_bool("voice_reply")
+
+
 def test_new_reply_is_spoken_once(page):
+    from adhyaksh import config
+    config.set_value("voice_reply", "true")
     cid = context.new_conversation()
     at = AppTest.from_file(PAGE, default_timeout=60)
     at.session_state["cid"] = cid

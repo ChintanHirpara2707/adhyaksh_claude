@@ -183,8 +183,10 @@ def classify(image_bytes: bytes, imgsz: int = 640) -> list[dict] | str:
         if probs is None:
             continue
         names = r.names
-        top5 = probs.top5 or []
-        top5conf = probs.top5conf or []
+        # top5conf is a tensor: never test it for truth ("Boolean value of Tensor ... is ambiguous").
+        top5 = list(probs.top5) if probs.top5 is not None else []
+        conf = getattr(probs, "top5conf", None)
+        top5conf = [] if conf is None else (conf.tolist() if hasattr(conf, "tolist") else list(conf))
         for cls, conf in zip(top5, top5conf):
             guesses.append({
                 "label": names.get(int(cls), str(cls)),

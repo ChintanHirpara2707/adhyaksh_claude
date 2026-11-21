@@ -23,13 +23,20 @@ with st.form("assistant"):
     options = {r["name"]: r["model_id"] for r in runs}
     current = next((r["name"] for r in runs if r["is_active"]), None)
     model = st.selectbox("Active intent model", list(options) or ["No trained model"], index=list(options).index(current) if current else 0)
-    voice = st.checkbox("Speak replies aloud (browser voice)", value=svc.get_bool("voice_reply"))
     if st.form_submit_button("Save assistant settings", type="primary"):
         svc.set_value("confidence_threshold", f"{tau:.2f}")
-        svc.set_value("voice_reply", "true" if voice else "false")
         if model in options:
             svc.registry_set_active(options[model])
         st.toast("Saved.")
+
+st.subheader("Voice replies")
+_voice_on = st.toggle("Reply with voice", value=svc.get_bool("voice_reply"), key="voice_reply_toggle",
+                      help="On: every reply is also read aloud (Chat, the Voice page and the background engine's voice). "
+                           "Off: replies are text only, even after a spoken command.")
+if _voice_on != svc.get_bool("voice_reply"):
+    svc.set_value("voice_reply", "true" if _voice_on else "false")
+    st.toast("Replies will be spoken." if _voice_on else "Replies will be text only.")
+st.caption("Replies are read aloud." if _voice_on else "Replies are text only.")
 
 st.subheader("Language model and cloud use")
 st.caption(f"Document retrieval method: {'Gemini embeddings' if svc.retriever_embedding_mode() == 'gemini' else 'TF-IDF (offline)'}. "

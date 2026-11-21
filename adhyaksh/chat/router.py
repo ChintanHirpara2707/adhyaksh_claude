@@ -798,6 +798,22 @@ def match_web_answer(text: str) -> Rule | None:
     return None
 
 
+_TAB_CLOSE = re.compile(r"\b(?:close|shut|band|bandh)\b|बंद|બંધ", re.IGNORECASE)
+_TAB_NOUN = re.compile(r"\btab[es]?\b|टैब|ટેબ|https?://|\bwww\.|\b[a-z0-9-]+\.(?:com|in|org|net|io|co|ai|dev)\b",
+                       re.IGNORECASE)
+
+
+def match_tab_close(text: str) -> Rule | None:
+    """Close a site's browser tab: a close verb plus "tab" or a web address, naming the site ("close the gmail tab",
+    "close https://mail.google.com/... this tab", "youtube tab band karo"). Goes through app_close, whose tool closes
+    the tab when the name is not an allowed app. Without a site name ("close this tab") it does not match."""
+    if not (_TAB_CLOSE.search(text) and _TAB_NOUN.search(text)):
+        return None
+    from adhyaksh.tools import windows
+    words = windows.tab_words(text)
+    return Rule("app_close", {"app": " ".join(words)}) if words else None
+
+
 def understand(text: str) -> Rule | None:
     """Rules on the raw text, then on the cleaned text, then the extended rules on both."""
     mem = match_memory(text)  # on the raw text: multi-line data must keep its line breaks
@@ -812,6 +828,9 @@ def understand(text: str) -> Rule | None:
     web_q = match_web_answer(text)
     if web_q:
         return web_q
+    tab = match_tab_close(text)  # before frames: "close gmail which you opened in chrome tab" is not "open chrome"
+    if tab:
+        return tab
     frame = frames.command(text)
     if frame is not None:
         # A pure action + target command ("spotify band karo", "open note pad", "delete budget.txt"): the action

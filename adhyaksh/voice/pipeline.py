@@ -188,7 +188,9 @@ class VoicePipeline:
         reply = self.handle(command)
         if reply.get("confirmation") or (reply.get("intent") in ("agent_ask",) or reply.get("action") == "clarify"):
             self.open_until = time.monotonic() + COMMAND_WINDOW_S  # the answer to a question needs no wake word
-        if self.speaker is not None and reply.get("reply"):
+        from adhyaksh import config
+        # Spoken only with "Reply with voice" on (Settings); off, the reply is text only (console, HUD caption).
+        if self.speaker is not None and reply.get("reply") and config.get_bool("voice_reply"):
             spoken = bridge.speakable(reply["reply"])
             if reply.get("confirmation"):
                 spoken += " " + speech.confirm_prompt(self.lang)

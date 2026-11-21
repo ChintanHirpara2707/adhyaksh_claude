@@ -112,6 +112,7 @@ input,textarea,[data-baseweb="input"],[data-baseweb="textarea"],[data-baseweb="s
  text-overflow:ellipsis}}
 [data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button[kind="secondary"]{{background:var(--subtle)}}
 [data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button:hover{{background:var(--subtle)}}
+.st-key-voice_speaker{{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}}
 [class*="st-key-actions_"]{{opacity:.55;transition:opacity .15s;margin-top:-.4rem}}
 [class*="st-key-actions_"]:hover,[class*="st-key-actions_"]:focus-within{{opacity:1}}
 [class*="st-key-actions_"] button{{padding:.15rem .35rem;min-height:1.8rem;border:none;background:transparent}}

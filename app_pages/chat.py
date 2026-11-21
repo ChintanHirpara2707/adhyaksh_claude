@@ -16,6 +16,8 @@ def apply_ui_hints(res) -> None:
     cmd = data.get("voice_cmd")
     if cmd:
         st.session_state["voice_cmd"] = {**cmd, "nonce": str(time.time_ns())}
+        if cmd.get("action") in ("start", "wake_on"):
+            st.session_state["goto_page"] = "voice"  # listening happens on the Voice page
     page = data.get("open_page")
     if page:
         st.session_state["goto_page"] = page
@@ -180,57 +182,29 @@ if pending:
         svc.engine_confirm(cid, choice == "confirm")
         st.rerun()
 
-live = st.container()  # the turn being answered now is drawn here, above the voice control
+live = st.container()  # the turn being answered now is drawn here
 
-# Browser voice: spoken replies, hands-free and the wake word.
+# Spoken replies, only when "Reply with voice" is on in Settings. Listening (microphone, hands-free, wake word) lives
+# on the Voice page; here a hidden speaker reads each new reply aloud and never listens.
 last = next((m for m in reversed(history) if m["role"] == "assistant"), None)
 last_id = last["id"] if last else 0
 st.session_state.setdefault("seen_assistant", last_id)
-# Replies are spoken when "Speak replies aloud" is on, or when the reply answers a spoken command.
 new_reply = last is not None and last_id != st.session_state["seen_assistant"]
-speak = new_reply and (svc.get_bool("voice_reply") or st.session_state.pop("voice_reply_pending", False))
-vcmd = st.session_state.get("voice_cmd") or {}
-_speak_text = last["content"] if speak else ""
-if speak and (last.get("intent") == "agent_confirm" or "Confirm or cancel" in _speak_text) and "say yes" not in _speak_text.lower():
-    # Spoken confirmation: the question is read out and answered with a spoken yes or no.
-    _speak_text = _speak_text.replace("Confirm or cancel.", "").strip() + " " + svc.speech_confirm_prompt(svc.get("voice_lang"))
-# Folded away unless hands-free or the wake word is on; it keeps speaking replies while folded.
-_voice_on = svc.get_bool("voice_handsfree") or svc.get_bool("voice_wake_word")
-with st.expander("Voice controls", icon=":material/settings_voice:", expanded=_voice_on):
-    heard = svc.bridge_voice_input(theme_name=svc.get("theme") or "light", lang=svc.get("voice_lang") or "en-IN",
-                                   speak_text=_speak_text,
-                                   status=st.session_state.pop("voice_status", ""),
-                                   speak_nonce=str(last_id) if speak else "",
-                                   command=vcmd or None, command_nonce=vcmd.get("nonce", ""),
-                                   handsfree_default=svc.get_bool("voice_handsfree"),
-                                   wake_default=svc.get_bool("voice_wake_word"))
+if svc.get_bool("voice_reply"):
+    speak = new_reply
+    vcmd = st.session_state.get("voice_cmd") or {}
+    if vcmd.get("action") not in ("quiet", "lang"):
+        vcmd = {}  # only "stop speaking" and the language reach the speaker; listening is on the Voice page
+    _speak_text = last["content"] if speak else ""
+    if speak and (last.get("intent") == "agent_confirm" or "Confirm or cancel" in _speak_text) and "say yes" not in _speak_text.lower():
+        _speak_text = _speak_text.replace("Confirm or cancel.", "").strip() + " " + svc.speech_confirm_prompt(svc.get("voice_lang"))
+    with st.container(key="voice_speaker"):
+        svc.bridge_voice_input(theme_name=svc.get("theme") or "light", lang=svc.get("voice_lang") or "en-IN",
+                               speak_text=_speak_text, speak_nonce=str(last_id) if speak else "",
+                               command=vcmd or None, command_nonce=vcmd.get("nonce", ""),
+                               handsfree_default=False, wake_default=False, key="chat_speaker")
 if new_reply:
     st.session_state["seen_assistant"] = last_id
-if heard and heard.get("nonce") != st.session_state.get("voice_nonce"):
-    st.session_state["voice_nonce"] = heard["nonce"]
-    svc.set_value("voice_handsfree", "true" if heard.get("handsfree") else "false")
-    svc.set_value("voice_wake_word", "true" if heard.get("wake") else "false")
-    if not heard.get("setting") and heard.get("audio_b64"):
-        with st.spinner("Transcribing on this laptop"):
-            _out = svc.bridge_handle_audio(heard["audio_b64"], heard.get("lang", "en-IN"), bool(heard.get("handsfree")), bool(heard.get("wake")))
-        if _out.get("text"):
-            heard["text"] = _out["text"]
-        elif _out.get("error"):
-            st.session_state["voice_status"] = _out["error"]
-            st.rerun()
-        else:
-            st.session_state["voice_status"] = "Waiting for the wake word 'Adhyaksh'" if _out.get("ignore") == "no wake word" else "Yes? I am listening"
-            st.rerun()
-    if not heard.get("setting") and heard.get("text"):
-        st.caption(f"Heard: {heard['text']}")
-        st.session_state["suggest_switch"] = False
-        with st.spinner("Working"):
-            result = svc.engine_handle_message(heard["text"], cid, voice=True, mode=mode)
-        st.session_state["voice_reply_pending"] = True
-        apply_ui_hints(result)
-        if result.data and result.data.get("suggest_mode") == "cowork":
-            st.session_state["suggest_switch"] = True
-        st.rerun()
 
 if mode == "chat" and st.session_state.get("suggest_switch"):
     st.info("That action needs Cowork mode. Switch to Cowork to run it.")
@@ -299,9 +273,8 @@ if prompt or suggested:
             _tr = svc.stt_transcribe(_audio.getvalue(), svc.get("voice_lang"))
         if _tr.ok:
             text = svc.speech_clean_transcript(_tr.data["text"])
-            st.session_state["voice_reply_pending"] = True
         else:
-            st.session_state["voice_status"] = _tr.message
+            st.session_state["action_note"] = _tr.message
     files = [] if suggested or isinstance(prompt, str) else [(f.name, f.getvalue()) for f in (prompt.files or [])]
     st.session_state["suggest_switch"] = False
     suggestions.empty()

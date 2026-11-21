@@ -119,6 +119,13 @@ def find(query: str) -> dict | None:
     return None
 
 
+def window_title(hwnd: int) -> str:
+    import ctypes
+    buf = ctypes.create_unicode_buffer(512)
+    _user32().GetWindowTextW(hwnd, buf, 512)
+    return buf.value
+
+
 def state(hwnd: int) -> dict:
     user32 = _user32()
     if not user32.IsWindow(hwnd):
@@ -134,6 +141,74 @@ def _focus(hwnd: int) -> None:
     user32.keybd_event(0x12, 0, 0, 0)  # a tap of Alt lets this program move another window to the front
     user32.SetForegroundWindow(hwnd)
     user32.keybd_event(0x12, 0, 2, 0)
+
+
+# ---- browser tabs ------------------------------------------------------------------------------------------------------
+# A browser window's title is the title of its active tab ("Inbox (3) - Gmail - Google Chrome"), so the tab a user
+# names can be closed with Ctrl+W once that window is in front. Ctrl+W closes one tab, never the whole window, and
+# Ctrl+Shift+T brings it back (level 1). Tabs that are not the active one in their window cannot be seen this way.
+BROWSERS = {"chrome.exe", "msedge.exe", "brave.exe", "firefox.exe", "opera.exe", "vivaldi.exe"}
+SITE_NAMES = {"mail.google.com": "gmail", "gmail.com": "gmail", "web.whatsapp.com": "whatsapp", "x.com": "x",
+              "docs.google.com": "google docs", "drive.google.com": "google drive", "music.youtube.com": "youtube music"}
+_TAB_FILLER = {"the", "a", "an", "tab", "tabs", "page", "site", "website", "window", "in", "on", "of", "from", "which",
+               "that", "you", "u", "opened", "open", "this", "my", "please", "close", "browser", "chrome", "edge",
+               "brave", "firefox", "tabe", "band", "bandh", "karo", "kar", "do", "ko", "wala", "wali", "and", "all",
+               "every", "other", "new", "current", "last", "first", "it", "is", "now", "shut"}
+_OWN_TITLE = "adhyaksh"  # the console itself runs in a browser tab: never close it
+
+
+def tab_words(target: str) -> list[str]:
+    """What to look for in a browser title: a site's usual name for an address, else the words that name the site."""
+    import re
+    t = " ".join((target or "").casefold().split())
+    m = re.search(r"(?:https?://)?(?:www\.)?((?:[a-z0-9-]+\.)+[a-z]{2,})(?:[/:?#]\S*)?", t)
+    if m:
+        host = m.group(1)
+        name = SITE_NAMES.get(host)
+        if name is None:
+            parts = host.split(".")
+            name = parts[-3] if len(parts) >= 3 and parts[-2] in ("co", "com", "org", "gov", "ac") else parts[-2]
+        return name.split()
+    return [w for w in re.findall(r"[\w.]+", t) if w not in _TAB_FILLER and len(w) > 1]
+
+
+def find_tab(target: str) -> dict | None:
+    """The top-most browser window whose active tab's title has the site's name (never the console's own tab)."""
+    words = tab_words(target)
+    if not words:
+        return None
+    for w in _enum():
+        title = w["title"].casefold()
+        if w["process"].casefold() in BROWSERS and _OWN_TITLE not in title and all(x in title for x in words):
+            return w
+    return None
+
+
+def close_tab(target: str, *, ctx: dict | None = None) -> Result:
+    if os.name != "nt":
+        return Result.failure(E_UNSUPPORTED_OS, "Closing browser tabs works on Windows only.")
+    words = tab_words(target)
+    if not words:
+        return Result.failure(E_BAD_ARGUMENTS, "Say which tab: a site name such as Gmail or YouTube, or its address.")
+    w = find_tab(target)
+    if w is None:
+        name = " ".join(words)
+        return Result.failure(E_FILE_NOT_FOUND, f"No browser window is showing {name} right now. A browser only shows "
+                                                "the title of its active tab, so switch to that tab and ask again.")
+
+    def go() -> Result:
+        user32, hwnd = _user32(), w["hwnd"]
+        _focus(hwnd)
+        time.sleep(0.3)
+        if int(user32.GetForegroundWindow() or 0) != hwnd:  # Ctrl+W must never reach another window
+            return Result.failure(E_ACTION_FAILED, "Windows did not let me bring the browser to the front, so nothing "
+                                                   "was closed.")
+        for vk, up in ((0x11, 0), (0x57, 0), (0x57, 2), (0x11, 2)):  # Ctrl down, W down, W up, Ctrl up
+            user32.keybd_event(vk, 0, up, 0)
+        time.sleep(0.6)
+        return Result.success({"title": w["title"], "app": w["process"], "hwnd": hwnd, "words": words})
+
+    return policy.run_guarded("tab_close", w["title"][:80], go, **_ctx(ctx))
 
 
 def control(op: str, target: str = "", *, ctx: dict | None = None) -> Result:

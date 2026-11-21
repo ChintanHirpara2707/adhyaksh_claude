@@ -104,3 +104,8 @@ if not history:
 for m in history:
     with st.chat_message(m["role"]):
         st.markdown(m["content"])
+ui.scroll_anchor("adhy-voice-end")
+# Bring the newest line into view when an exchange arrives or the log is (re)loaded, once per newest line.
+if history and st.session_state.get("voice_scrolled_to") != history[-1]["id"]:
+    st.session_state["voice_scrolled_to"] = history[-1]["id"]
+    ui.scroll_to("adhy-voice-end", f"voice-{history[-1]['id']}")

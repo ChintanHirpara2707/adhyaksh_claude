@@ -173,3 +173,21 @@ def test_transcript_is_blank_after_the_server_starts_and_keeps_this_runs_talk(pa
     assert not any("ten o'clock" in m.value for m in at.markdown)
     assert db.query_one("SELECT COUNT(*) AS n FROM messages WHERE conversation_id = ?", (cid,))["n"] == 4, \
         "nothing is deleted: the older talk stays in the database"
+
+
+def _voice_scrolls(at):
+    return [h for h in at.get("html") if "adhy-voice-end" in h.proto.body and "scrollIntoView" in h.proto.body]
+
+
+def test_transcript_scrolls_to_the_newest_line_when_loaded_and_when_a_new_exchange_arrives(page):
+    cid = context.new_conversation()
+    open_chat(cid)
+    at = _run()
+    assert not _voice_scrolls(at), "nothing to scroll to in an empty transcript"
+    context.save_message(cid, "user", "what time is it")
+    context.save_message(cid, "assistant", "It is ten o'clock.")
+    at.run()
+    assert len(_voice_scrolls(at)) == 1, "a new exchange scrolls to it"
+    at.run()
+    assert not _voice_scrolls(at), "the same newest line does not scroll again"
+    assert len(_voice_scrolls(_run())) == 1, "a reloaded page (F5) scrolls to the newest line"

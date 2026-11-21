@@ -38,6 +38,7 @@ mode = st.session_state["mode"]
 def open_conversation(conversation_id: int | None) -> None:
     svc.set_current_chat(conversation_id)
     st.session_state.pop("conv_action", None)
+    st.session_state["scroll_chat"] = str(time.time_ns())  # show its latest message, just above the message box
     if conversation_id is None:
         st.session_state["new_chat_n"] = st.session_state.get("new_chat_n", 0) + 1  # fresh example pills
     st.rerun()
@@ -193,6 +194,7 @@ if pending:
         svc.engine_confirm(cid, choice == "confirm")
         st.rerun()
 
+ui.scroll_anchor("adhy-chat-end")  # after the latest message (and a waiting confirmation)
 live = st.container()  # the turn being answered now is drawn here
 
 # Spoken replies, only when "Reply with voice" is on in Settings. Listening (microphone, hands-free, wake word) lives
@@ -325,6 +327,10 @@ if _act:  # Regenerate or Edit and send, chosen on a message above
     st.rerun()
 if st.session_state.get("action_note"):
     st.toast(st.session_state.pop("action_note"))
+
+_scroll = st.session_state.pop("scroll_chat", None)
+if _scroll and history:
+    ui.scroll_to("adhy-chat-end", _scroll)
 
 _goto = st.session_state.pop("goto_page", None)
 if _goto in ("vision", "performance", "voice"):

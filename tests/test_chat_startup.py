@@ -87,3 +87,16 @@ def test_a_deleted_current_chat_becomes_a_new_chat(env):
     cid = svc.ensure_chat()
     svc.conversation_delete(cid)
     assert svc.current_chat() is None
+
+
+def test_opening_a_conversation_scrolls_to_its_latest_message(env):
+    old = context.new_conversation()
+    context.save_message(old, "user", "an old question")
+    context.save_message(old, "assistant", "an old answer")
+    at = _session()
+    assert not [h for h in at.get("html") if "adhy-chat-end" in h.proto.body and "scrollIntoView" in h.proto.body]
+    next(b for b in at.sidebar.button if b.label == "an old question").click().run()
+    scripts = [h for h in at.get("html") if "adhy-chat-end" in h.proto.body and "scrollIntoView" in h.proto.body]
+    assert len(scripts) == 1 and any('id="adhy-chat-end"' in m.value for m in at.markdown)
+    at.run()  # an ordinary rerun afterwards does not scroll again
+    assert not [h for h in at.get("html") if "scrollIntoView" in h.proto.body and "adhy-chat-end" in h.proto.body]

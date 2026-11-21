@@ -23,6 +23,29 @@ def chat_welcome(title: str, subtitle: str) -> None:
     )
 
 
+def scroll_anchor(anchor_id: str) -> None:
+    """An invisible mark; scroll_to(anchor_id, ...) brings it into view."""
+    st.markdown(f'<div id="{html.escape(anchor_id)}" class="adhy-anchor"></div>', unsafe_allow_html=True)
+
+
+def scroll_to(anchor_id: str, nonce: str) -> None:
+    """Scroll the page so the anchor sits just above the pinned message box (or at the bottom of the view when there
+    is none). Runs once per nonce; retries for a moment while the page is still being drawn. A short script in the
+    page itself (st.html with JavaScript; components.v1.html is deprecated in this Streamlit and runs in a frame)."""
+    import json
+    st.html(f"""<script>/* {html.escape(nonce)} */(() => {{
+  let tries = 0;
+  const go = () => {{
+    const a = document.getElementById({json.dumps(anchor_id)});
+    if (!a) {{ if (tries++ < 40) setTimeout(go, 75); return; }}
+    const bar = document.querySelector('[data-testid="stBottom"]');
+    a.style.scrollMarginBottom = ((bar ? bar.offsetHeight : 0) + 12) + 'px';
+    a.scrollIntoView({{block: 'end', behavior: 'smooth'}});
+  }};
+  setTimeout(go, 120);
+}})();</script>""", unsafe_allow_javascript=True)
+
+
 def empty_state(message: str) -> None:
     st.markdown(f'<div class="adhy-card"><p>{html.escape(message)}</p></div>', unsafe_allow_html=True)
 

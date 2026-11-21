@@ -30,6 +30,8 @@ for section, group in shell.NAV:
     st.sidebar.markdown(f'<p class="adhy-nav-section">{section}</p>', unsafe_allow_html=True)
     for slug, _ in group:
         st.sidebar.page_link(pages[slug])
+# A page's own sidebar part (the Chat page's conversations) goes here: after the links, above the status line.
+st.session_state["page_sidebar"] = st.sidebar.container()
 
 
 @st.fragment(run_every=20)

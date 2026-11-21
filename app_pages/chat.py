@@ -27,18 +27,66 @@ if name is None:
     ui.first_run_form()
     st.stop()
 
-if "cid" not in st.session_state:
+if "cid" not in st.session_state or not svc.conversation_exists(st.session_state["cid"]):
     st.session_state["cid"] = svc.context_latest_conversation()
 cid = st.session_state["cid"]
 st.session_state.setdefault("mode", "cowork")
 mode = st.session_state["mode"]
 
-history = svc.context_history(cid, 50)
 
-top = st.container(horizontal=True, horizontal_alignment="right")
-if top.button("New conversation", icon=":material/add:", type="tertiary"):
-    st.session_state["cid"] = svc.context_new_conversation()
+def open_conversation(conversation_id: int) -> None:
+    st.session_state["cid"] = conversation_id
+    st.session_state.pop("conv_action", None)
     st.rerun()
+
+
+# Conversations in the sidebar: new chat, search, then the list; each row has a menu with Rename and Delete.
+with st.session_state.get("page_sidebar") or st.sidebar:
+    st.markdown('<p class="adhy-nav-section">Conversations</p>', unsafe_allow_html=True)
+    if st.button("New chat", icon=":material/edit_square:", key="conv_new", width="stretch"):
+        open_conversation(svc.conversation_new(cid))
+    _q = st.text_input("Search conversations", key="conv_search", placeholder="Search conversations",
+                       label_visibility="collapsed", icon=":material/search:", type="search")
+    _convs = svc.conversations_list(_q, keep=cid)
+    if not _convs:
+        st.caption("No conversation matches." if _q.strip() else "No conversations yet.")
+    _action = st.session_state.get("conv_action") or (None, None)
+    for _c in _convs:
+        with st.container(horizontal=True, vertical_alignment="center", gap=None, key=f"convrow_{_c['id']}"):
+            if st.button(_c["title"], key=f"conv_{_c['id']}", type="secondary" if _c["id"] == cid else "tertiary",
+                         width="stretch"):
+                open_conversation(_c["id"])
+            _do = st.menu_button("", ["Rename", "Delete"], icon=":material/more_horiz:", type="tertiary",
+                                 key=f"convmenu_{_c['id']}", help="Rename or delete")
+            if _do:
+                st.session_state["conv_action"] = _action = (_do, _c["id"])
+        if _action == ("Rename", _c["id"]):
+            with st.form(f"rename_{_c['id']}", border=False):
+                _t = st.text_input("New name", value=_c["title"], max_chars=60)
+                _r1, _r2 = st.columns(2)
+                if _r1.form_submit_button("Save", type="primary", width="stretch"):
+                    if svc.conversation_rename(_c["id"], _t):
+                        st.session_state.pop("conv_action", None)
+                        st.rerun()
+                    st.error("Enter a name.")
+                if _r2.form_submit_button("Cancel", width="stretch"):
+                    st.session_state.pop("conv_action", None)
+                    st.rerun()
+        if _action == ("Delete", _c["id"]):
+            with st.container(border=True):
+                st.markdown(f"Delete **{_c['title']}**? Its messages are removed for good.")
+                _d1, _d2 = st.columns(2)
+                if _d1.button("Delete", type="primary", key=f"convdel_{_c['id']}", width="stretch"):
+                    svc.conversation_delete(_c["id"])
+                    if _c["id"] == cid:
+                        _rest = [c["id"] for c in _convs if c["id"] != cid]
+                        cid = _rest[0] if _rest else svc.conversation_new()
+                    open_conversation(cid)
+                if _d2.button("Cancel", key=f"convkeep_{_c['id']}", width="stretch"):
+                    st.session_state.pop("conv_action", None)
+                    st.rerun()
+
+history = svc.context_history(cid, 50)
 
 # Empty conversation: a greeting and example prompts; a chosen example is sent like a typed message.
 suggested = None

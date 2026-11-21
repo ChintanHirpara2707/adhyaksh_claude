@@ -113,3 +113,74 @@ def save_intent_correction(message_id: int, correct_intent: str, note: str = "")
     """Store the user's correction of a misread message (used as training feedback)."""
     db.execute("INSERT INTO feedback(message_id, correct_intent, note, created_at) VALUES(?,?,?,?)",
                (message_id, correct_intent, note, db.utcnow()))
+
+
+# ---- conversations (Chat sidebar) -------------------------------------------------------------------------------------
+DEFAULT_TITLE = "Chat"  # the title every new conversation gets; shown as its first message until renamed
+TITLE_CHARS = 48
+
+
+def _title(row: dict) -> str:
+    stored = (row.get("title") or "").strip()
+    if stored and stored != DEFAULT_TITLE:
+        return stored
+    first = " ".join((row.get("first") or "").split())
+    if not first:
+        return "New chat"
+    return first if len(first) <= TITLE_CHARS else first[:TITLE_CHARS - 1].rstrip() + "..."
+
+
+def conversations_list(query: str = "", limit: int = 50, keep: int | None = None) -> list[dict]:
+    """Conversations with at least one message (plus `keep`, the open one), most recently used first:
+    [{"id", "title", "updated_at", "count"}]. `query` matches the title or any message, ignoring case."""
+    q = " ".join((query or "").split())[:100]
+    like = "%" + q.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%"  # '!' escapes LIKE wildcards
+    rows = db.query_all(
+        "SELECT c.id, c.title, c.created_at,"
+        " COALESCE(MAX(m.created_at), c.created_at) AS updated_at, COUNT(m.id) AS count,"
+        " (SELECT content FROM messages f WHERE f.conversation_id = c.id AND f.role = 'user' ORDER BY f.id LIMIT 1) AS first"
+        " FROM conversations c LEFT JOIN messages m ON m.conversation_id = c.id"
+        " GROUP BY c.id"
+        " HAVING (COUNT(m.id) > 0 OR c.id = ?)"
+        "  AND (? = '' OR c.title LIKE ? ESCAPE '!' OR EXISTS (SELECT 1 FROM messages s WHERE s.conversation_id = c.id"
+        "       AND s.content LIKE ? ESCAPE '!'))"
+        # newest activity first (message ids grow; timestamps share seconds); an empty open chat on top
+        " ORDER BY COUNT(m.id) = 0 DESC, MAX(m.id) DESC, c.id DESC LIMIT ?",
+        (int(keep or 0), q, like, like, int(limit)))
+    # A title made from the first message is matched through the message search above.
+    return [{"id": r["id"], "title": _title(r), "updated_at": r["updated_at"], "count": r["count"]} for r in rows]
+
+
+def conversation_title(conversation_id: int) -> str:
+    row = db.query_one("SELECT c.title, (SELECT content FROM messages f WHERE f.conversation_id = c.id AND f.role = 'user'"
+                       " ORDER BY f.id LIMIT 1) AS first FROM conversations c WHERE c.id = ?", (int(conversation_id),))
+    return _title(row) if row else "New chat"
+
+
+def conversation_rename(conversation_id: int, title: str) -> bool:
+    """Rename a conversation. An empty title is refused; long titles are cut to 60 characters."""
+    title = " ".join((title or "").split())[:60]
+    if not title:
+        return False
+    db.execute("UPDATE conversations SET title = ? WHERE id = ?", (title, int(conversation_id)))
+    return True
+
+
+def conversation_delete(conversation_id: int) -> None:
+    """Delete a conversation, its messages (cascade) and its saved confirmation replays. Cannot be undone."""
+    cid = int(conversation_id)
+    db.execute("DELETE FROM confirm_replays WHERE conversation_id = ?", (cid,))
+    db.execute("DELETE FROM conversations WHERE id = ?", (cid,))
+    context._CTX.pop(cid, None)
+
+
+def conversation_new(current: int | None = None) -> int:
+    """A new chat; reuses `current` when it is still empty, so repeated clicks do not pile up empty chats."""
+    if current and not db.query_one("SELECT 1 FROM messages WHERE conversation_id = ? LIMIT 1", (int(current),)) \
+            and db.query_one("SELECT 1 FROM conversations WHERE id = ?", (int(current),)):
+        return int(current)
+    return context.new_conversation()
+
+
+def conversation_exists(conversation_id: int) -> bool:
+    return db.query_one("SELECT 1 FROM conversations WHERE id = ?", (int(conversation_id),)) is not None

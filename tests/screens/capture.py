@@ -37,6 +37,9 @@ def _seed(data: Path, models: Path) -> None:
     code = ("from adhyaksh import db; db.init()\n"
             "from adhyaksh.chat import identity, context, engine\n"
             "identity.save_name('Demo')\n"
+            "engine.handle_message('show system status', context.new_conversation())\n"
+            "old = context.new_conversation('Shopping list')\n"
+            "engine.handle_message('create shopping.txt with milk and eggs', old)\n"
             "cid = context.new_conversation()\n"
             "for t in ('hello', 'what is 12 * 7', 'remember that my car is Audi', 'what is my car'):\n"
             "    engine.handle_message(t, cid)\n")

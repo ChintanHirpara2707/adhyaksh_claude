@@ -76,6 +76,14 @@ input,textarea,[data-baseweb="input"],[data-baseweb="textarea"],[data-baseweb="s
 [data-testid="stBaseButton-primary"] *{{color:var(--on-accent)!important}}
 .stButton>button[data-testid="stBaseButton-tertiary"]{{background:transparent;border:none;color:var(--muted);padding:.2rem .5rem}}
 .stButton>button[data-testid="stBaseButton-tertiary"]:hover{{background:var(--subtle);color:var(--text)}}
+[data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button{{width:100%;justify-content:flex-start;
+ padding:.3rem .6rem;min-height:2rem;border-color:transparent;background:transparent;color:var(--text)}}
+[data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button>div{{width:100%;justify-content:flex-start;
+ text-align:left;overflow:hidden}}
+[data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button p{{white-space:nowrap;overflow:hidden;
+ text-overflow:ellipsis}}
+[data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button[kind="secondary"]{{background:var(--subtle)}}
+[data-testid="stSidebar"] [class*="st-key-convrow_"] [data-testid="stButton"] button:hover{{background:var(--subtle)}}
 button[data-baseweb="tab"]{{color:var(--muted)}}
 button[data-baseweb="tab"][aria-selected="true"]{{color:var(--text)}}
 [data-baseweb="tab-highlight"]{{background:var(--text)}}

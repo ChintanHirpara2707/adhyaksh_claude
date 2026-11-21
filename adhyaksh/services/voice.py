@@ -49,6 +49,17 @@ new_conversation = context.new_conversation
 history = context.history
 current_chat = chat_svc.current_chat  # the chat open in this server run (shared with the Chat page)
 ensure_chat = chat_svc.ensure_chat
+
+
+def transcript(conversation_id: int | None, limit: int = 200) -> list[dict]:
+    """This server run's exchanges in the open chat, oldest first: blank after the server starts, kept across F5.
+    Earlier messages stay in the database (Chat history, Activity page); they are only left out here."""
+    if not conversation_id:
+        return []
+    from adhyaksh import db
+    rows = db.query_all("SELECT * FROM messages WHERE conversation_id = ? AND id > ? ORDER BY id DESC LIMIT ?",
+                        (int(conversation_id), chat_svc.run_started_after(), int(limit)))
+    return rows[::-1]
 identity_get_name = identity.get_name
 handle_message = chat_svc.engine_handle_message
 confirm = chat_svc.engine_confirm

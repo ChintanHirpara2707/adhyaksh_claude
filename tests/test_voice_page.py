@@ -20,6 +20,8 @@ def page(monkeypatch):
     fresh_env()
     events.reset()
     identity.save_name("Tester")
+    from adhyaksh.services import chat as chat_svc
+    chat_svc.run_started_after()  # the server run starts here: messages saved by a test belong to it
     calls = []
 
     def fake_voice_input(**kw):
@@ -146,3 +148,28 @@ def test_native_engine_voice_stop_speaking(page, monkeypatch):
     at = _run()
     next(b for b in at.button if b.label == "Stop speaking").click().run()
     assert quiet == [1]
+
+
+# ---- the Transcript shows this server run only ------------------------------------------------------------------------
+def test_transcript_is_blank_after_the_server_starts_and_keeps_this_runs_talk(page):
+    from adhyaksh import db
+    from adhyaksh.services import chat as chat_svc
+    cid = context.new_conversation()
+    context.save_message(cid, "user", "yesterday's question")
+    context.save_message(cid, "assistant", "yesterday's answer")
+    chat_svc.reset_process_store()  # the server starts
+    chat_svc.run_started_after()  # the run begins now (the page does this on its first load)
+    open_chat(cid)
+    at = _run()
+    assert not any("yesterday" in m.value for m in at.markdown), "older talk is not in this run's transcript"
+    context.save_message(cid, "user", "what time is it")
+    context.save_message(cid, "assistant", "It is ten o'clock.")
+    at = _run()  # F5: a new browser session, same server run
+    shown = [m.value for m in at.markdown]
+    assert any("ten o'clock" in v for v in shown) and not any("yesterday" in v for v in shown)
+    chat_svc.reset_process_store()  # the server is restarted
+    open_chat(cid)
+    at = _run()
+    assert not any("ten o'clock" in m.value for m in at.markdown)
+    assert db.query_one("SELECT COUNT(*) AS n FROM messages WHERE conversation_id = ?", (cid,))["n"] == 4, \
+        "nothing is deleted: the older talk stays in the database"

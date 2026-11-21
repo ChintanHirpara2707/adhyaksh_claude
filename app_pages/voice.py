@@ -31,7 +31,8 @@ _speak_on = st.toggle("Reply with voice", value=svc.get_bool("voice_reply"), key
 if _speak_on != svc.get_bool("voice_reply"):
     svc.set_value("voice_reply", "true" if _speak_on else "false")
 
-history = svc.history(cid, 10) if cid else []
+# Only this server run: blank after the server starts, kept across F5 (older talk stays in Chat and Activity).
+history = svc.transcript(cid)
 last = next((m for m in reversed(history) if m["role"] == "assistant"), None)
 last_id = last["id"] if last else 0
 st.session_state.setdefault("voice_seen", last_id)
@@ -98,7 +99,8 @@ if not native:
 # Transcript
 st.subheader("Transcript")
 if not history:
-    ui.empty_state("Nothing said yet. Try: what time is it, open notepad, or remember that my car is Audi.")
+    ui.empty_state("Nothing said yet in this session. Try: what time is it, open notepad, or remember that my car "
+                   "is Audi. Earlier conversations are in the Chat sidebar and on the Activity page.")
 for m in history:
     with st.chat_message(m["role"]):
         st.markdown(m["content"])

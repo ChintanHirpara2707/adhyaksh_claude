@@ -1,23 +1,25 @@
-# Lower bounds only. After the first successful install, run `pip freeze` and pin exact versions here.
-# CPU-only PyTorch (installed in Phase P2): pip install torch --index-url https://download.pytorch.org/whl/cpu
-streamlit>=1.46
-numpy
-pandas
-scikit-learn
-openpyxl
-python-docx
-PyMuPDF
-psutil
-send2trash
-python-dotenv
-requests
-matplotlib
-Pillow
-pytest
-pytest-cov
+# Exact versions from a clean Python 3.12.4 virtual environment on Windows (2026-11-21):
+# python -m venv venv, pip install of the unpinned list, then pip freeze for these packages.
+# Other Python versions may need other versions; change a pin only after testing it.
+# CPU-only PyTorch (optional, for the third intent model): pip install torch --index-url https://download.pytorch.org/whl/cpu
+streamlit==1.67.0
+numpy==2.5.5
+pandas==3.1.1
+scikit-learn==1.9.1
+openpyxl==3.1.5
+python-docx==1.2.0
+PyMuPDF==2.1
+psutil==7.2.2
+send2trash==2.2.0
+python-dotenv==1.2.4
+requests==2.34.2
+matplotlib==3.11.2
+Pillow==13.0.0
+pytest==9.2.0
+pytest-cov==7.1.0
 # Speaker and microphone volume (Windows Core Audio), about 3.5 MB together; Windows only.
-pycaw; sys_platform == "win32"
-comtypes; sys_platform == "win32"
+pycaw==20260927; sys_platform == "win32"
+comtypes==1.5.0; sys_platform == "win32"
 # Background engine (python -m adhyaksh.server): about 12 MB with pydantic; uvicorn about 1 MB.
-fastapi
-uvicorn
+fastapi==0.165.0
+uvicorn==0.54.0

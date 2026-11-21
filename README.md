@@ -29,18 +29,80 @@ Built with Streamlit, scikit-learn intent models, SQLite and a safety gateway th
 
 ## Install
 
-Double-click `run.bat`. On first start it creates a virtual environment, installs `requirements-core.txt` and
-starts the app.
+The versions in `requirements-core.txt` are pinned and were tested with Python 3.12.4 on Windows. On a laptop the
+install takes about 5 to 8 minutes and training the intent models about 30 seconds.
 
-By hand:
+### Windows: the short way
 
-```bash
-python -m venv venv
+Clone the repository and double-click `run.bat`. On the first start it creates a virtual environment, installs
+`requirements-core.txt`, trains the intent models once (when none exist yet) and starts the app. Later starts skip
+the install and the training.
+
+### Windows: step by step (Command Prompt or PowerShell)
+
+```powershell
+git clone https://github.com/ChintanHirpara2707/adhyaksh_claude.git
+cd adhyaksh_claude
+py -3.12 -m venv venv
 venv\Scripts\activate
+python -m pip install --upgrade pip
 pip install -r requirements-core.txt
+python -m adhyaksh.nlu.train --all
+streamlit run app.py
 ```
 
-Optional parts (each is listed with its size in `requirements-optional.txt`; install only what you need):
+### macOS or Linux
+
+```bash
+git clone https://github.com/ChintanHirpara2707/adhyaksh_claude.git
+cd adhyaksh_claude
+python3.12 -m venv venv
+source venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements-core.txt
+python -m adhyaksh.nlu.train --all
+streamlit run app.py
+```
+
+`python -m adhyaksh.nlu.train --all` trains the intent models once. It needs no PyTorch: that model is skipped with
+"No module named 'torch'" and the other two (logistic regression and SVM) are trained; the better one on the
+validation split becomes active. It also rewrites `docs/RESULTS.md`.
+
+## Run
+
+Inside the virtual environment run `streamlit run app.py` (or double-click `run.bat` on Windows), then open
+http://localhost:8501 in your browser. On the first visit, enter your name and choose the folder ADHYAKSH may work
+in.
+
+### Keys for a cloud language model (optional)
+
+The app works fully offline without any key. To use Groq or Gemini, copy the example file and fill in your own key:
+
+```powershell
+copy .env.example .env
+```
+
+(`cp .env.example .env` on macOS or Linux.) Then turn on cloud use in Settings. `.env` is ignored by git; never
+commit it. Ollama runs on your own computer and needs no key.
+
+### Troubleshooting
+
+- `py` or `python3.12` is not found: install Python 3.12 from python.org (on Windows tick "Add python.exe to PATH"),
+  then open a new terminal.
+- PowerShell refuses `venv\Scripts\activate`: run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` in
+  that window first, or use Command Prompt.
+- `pip install` fails to build a package: check that the virtual environment uses Python 3.12
+  (`python --version`); the pins were tested with 3.12.4.
+- The chat answers "No trained model is active": run `python -m adhyaksh.nlu.train --all` inside the virtual
+  environment, then restart the app.
+- Port 8501 is already in use (another copy is running): Streamlit moves to the next free port such as 8502 and
+  prints the address, or choose one with `streamlit run app.py --server.port 8502`.
+- `git status` shows `docs/RESULTS.md` changed after training: that is the new training report. Keep it, or
+  discard it with `git checkout docs/RESULTS.md`.
+
+### Optional parts
+
+Each is listed with its size in `requirements-optional.txt`; install only what you need:
 
 | Package | Enables | Packages | Model download |
 |---|---|---|---|
@@ -52,23 +114,18 @@ Optional parts (each is listed with its size in `requirements-optional.txt`; ins
 
 No model is ever downloaded unless you press the download button or use the feature that needs it.
 
-## Run
+## Retrain the intent models
 
-```bash
-streamlit run app.py
-```
-
-Then open http://localhost:8501. On the first visit, choose the folders ADHYAKSH may work in.
-
-## Train the intent models
+After changing `data/intents.csv`, check it and train again (inside the virtual environment):
 
 ```bash
 python -m adhyaksh.nlu.dataset validate
 python -m adhyaksh.nlu.train --all
 ```
 
-Training takes about three minutes on a laptop CPU and rewrites `docs/RESULTS.md`. The Model Lab page can also
-retrain and switch models.
+Without PyTorch this took 30 seconds on a laptop CPU (measured on a fresh clone); with PyTorch installed the MLP is
+trained as well and it takes longer. It rewrites `docs/RESULTS.md`. The Model Lab page can also retrain and switch
+models.
 
 ## Tests
 

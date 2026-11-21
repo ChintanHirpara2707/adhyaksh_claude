@@ -16,7 +16,7 @@ from adhyaksh.rag import answerer
 from adhyaksh.result import Result
 from adhyaksh.services import chat as chat_svc
 from adhyaksh.tools import apps, windows
-from tests.helpers import fresh_env
+from tests.helpers import current_chat, fresh_env, open_chat
 
 
 # ---- notebook answers do not swallow general requests ------------------------------------------------------------------
@@ -206,7 +206,7 @@ def chat(monkeypatch):
 
 def test_chat_has_no_voice_controls(chat):
     at = AppTest.from_file(CHAT, default_timeout=60)
-    at.session_state["cid"] = context.new_conversation()
+    open_chat(context.new_conversation())
     at.run()
     assert not any(e.label == "Voice controls" for e in at.expander)
     assert chat == [], "with voice replies off, nothing voice-related is on the page"
@@ -218,7 +218,7 @@ def test_with_voice_replies_on_chat_only_speaks_and_never_listens(chat):
     config.set_value("voice_wake_word", "true")
     cid = context.new_conversation()
     at = AppTest.from_file(CHAT, default_timeout=60)
-    at.session_state["cid"] = cid
+    open_chat(cid)
     at.run()
     context.save_message(cid, "user", "hello")
     context.save_message(cid, "assistant", "Hello, Tester.")
@@ -236,7 +236,7 @@ def test_a_spoken_command_is_not_read_out_when_voice_replies_are_off(chat, monke
         return Result.success({"reply": "Done."})
     monkeypatch.setattr(chat_svc, "engine_handle_message", fake)
     at = AppTest.from_file(CHAT, default_timeout=60)
-    at.session_state["cid"] = cid
+    open_chat(cid)
     at.run()
     at.chat_input(key="composer").set_value("open notepad").run()
     assert chat == []

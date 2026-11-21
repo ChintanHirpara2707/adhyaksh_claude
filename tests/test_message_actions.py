@@ -12,7 +12,7 @@ from adhyaksh.llm import cache
 from adhyaksh.result import Result
 from adhyaksh.safety import audit
 from adhyaksh.services import chat as svc
-from tests.helpers import fresh_env
+from tests.helpers import current_chat, fresh_env, open_chat
 
 PAGE = str(Path(__file__).resolve().parent.parent / "app_pages" / "chat.py")
 
@@ -214,7 +214,7 @@ def test_only_the_last_message_can_be_edited_and_not_to_empty(sent):
 # ---- the page ------------------------------------------------------------------------------------------------------------
 def _page(cid):
     at = AppTest.from_file(PAGE, default_timeout=60)
-    at.session_state["cid"] = cid
+    open_chat(cid)
     return at.run()
 
 

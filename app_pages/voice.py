@@ -12,9 +12,7 @@ if svc.identity_get_name() is None:
     ui.first_run_form()
     st.stop()
 
-if "cid" not in st.session_state:
-    st.session_state["cid"] = svc.latest_conversation()
-cid = st.session_state["cid"]
+cid = svc.current_chat()  # the chat open in this server run, shared with Chat; None until the first message
 mode = st.session_state.get("mode", "cowork")
 native = bool(svc.engine_voice().get("running"))
 
@@ -33,7 +31,7 @@ _speak_on = st.toggle("Reply with voice", value=svc.get_bool("voice_reply"), key
 if _speak_on != svc.get_bool("voice_reply"):
     svc.set_value("voice_reply", "true" if _speak_on else "false")
 
-history = svc.history(cid, 10)
+history = svc.history(cid, 10) if cid else []
 last = next((m for m in reversed(history) if m["role"] == "assistant"), None)
 last_id = last["id"] if last else 0
 st.session_state.setdefault("voice_seen", last_id)
@@ -50,7 +48,7 @@ if native:
         svc.stop_speaking_engine()
 
 # Spoken confirmation: large Yes and No, and the question is read out.
-pending = svc.pending_confirm(cid)
+pending = svc.pending_confirm(cid) if cid else None
 if pending:
     with st.container(border=True):
         st.markdown(f"**{pending['action'].replace('_', ' ').capitalize()}**")
@@ -94,7 +92,7 @@ if not native:
                 st.rerun()
         if heard.get("text"):
             with st.spinner("Working"):
-                svc.handle_message(heard["text"], cid, voice=True, mode=mode)
+                svc.handle_message(heard["text"], svc.ensure_chat(), voice=True, mode=mode)
             st.rerun()
 
 # Transcript

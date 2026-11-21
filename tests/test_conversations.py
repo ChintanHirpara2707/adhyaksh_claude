@@ -7,7 +7,7 @@ from streamlit.testing.v1 import AppTest
 from adhyaksh import client, db
 from adhyaksh.chat import context, identity
 from adhyaksh.services import chat as svc
-from tests.helpers import fresh_env
+from tests.helpers import current_chat, fresh_env, open_chat
 
 PAGE = str(Path(__file__).resolve().parent.parent / "app_pages" / "chat.py")
 
@@ -88,7 +88,7 @@ def test_new_chat_reuses_an_empty_open_conversation(env):
 # ---- page ------------------------------------------------------------------------------------------------------------
 def _page(cid):
     at = AppTest.from_file(PAGE, default_timeout=60)
-    at.session_state["cid"] = cid
+    open_chat(cid)
     return at.run()
 
 
@@ -103,7 +103,7 @@ def test_sidebar_lists_conversations_and_opens_one(env):
     assert not at.exception
     assert "New chat" in _sidebar_labels(at) and "plan my trip to Goa" in _sidebar_labels(at)
     next(x for x in at.sidebar.button if x.label == "plan my trip to Goa").click().run()
-    assert at.session_state["cid"] == a and any("Sure, when?" in m.value for m in at.markdown)
+    assert current_chat() == a and any("Sure, when?" in m.value for m in at.markdown)
 
 
 def test_sidebar_search_filters_the_list(env):
@@ -119,7 +119,7 @@ def test_new_chat_opens_an_empty_conversation(env):
     b = _convo("hello", "Hello.")
     at = _page(b)
     next(x for x in at.sidebar.button if x.label == "New chat").click().run()
-    assert at.session_state["cid"] != b and at.pills, "the new chat shows the greeting and examples"
+    assert current_chat() is None and at.pills, "the new chat shows the greeting and examples"
 
 
 def test_rename_from_the_row_menu(env):
@@ -142,4 +142,4 @@ def test_delete_asks_first_and_moves_to_another_conversation(env):
     assert svc.conversation_exists(b)
     at.get_by_key("convmenu_%d" % b).set_value("Delete").run()
     next(x for x in at.sidebar.button if x.label == "Delete").click().run()
-    assert not svc.conversation_exists(b) and at.session_state["cid"] == a
+    assert not svc.conversation_exists(b) and current_chat() == a

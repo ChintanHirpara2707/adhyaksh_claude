@@ -47,6 +47,8 @@ def stop_speaking_engine():
 latest_conversation = context.latest_conversation
 new_conversation = context.new_conversation
 history = context.history
+current_chat = chat_svc.current_chat  # the chat open in this server run (shared with the Chat page)
+ensure_chat = chat_svc.ensure_chat
 identity_get_name = identity.get_name
 handle_message = chat_svc.engine_handle_message
 confirm = chat_svc.engine_confirm

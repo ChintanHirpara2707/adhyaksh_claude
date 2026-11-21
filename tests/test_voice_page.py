@@ -10,7 +10,7 @@ from adhyaksh.chat import context, identity
 from adhyaksh.result import Result
 from adhyaksh.services import voice as vsvc
 from adhyaksh.ui import components as ui
-from tests.helpers import fresh_env
+from tests.helpers import current_chat, fresh_env, open_chat
 
 PAGE = str(Path(__file__).resolve().parent.parent / "app_pages" / "voice.py")
 
@@ -68,7 +68,7 @@ def test_page_renders_orb_transcript_and_stop(page):
     context.save_message(cid, "user", "what time is it")
     context.save_message(cid, "assistant", "It is ten o'clock.")
     at = AppTest.from_file(PAGE, default_timeout=60)
-    at.session_state["cid"] = cid
+    open_chat(cid)
     at.run()
     assert not at.exception
     assert any("adhy-orb" in h.proto.body for h in at.get("html"))
@@ -79,7 +79,7 @@ def test_page_renders_orb_transcript_and_stop(page):
 def test_with_reply_with_voice_off_nothing_is_spoken(page):
     cid = context.new_conversation()
     at = AppTest.from_file(PAGE, default_timeout=60)
-    at.session_state["cid"] = cid
+    open_chat(cid)
     at.run()
     context.save_message(cid, "user", "hello")
     context.save_message(cid, "assistant", "Hello, Tester.")
@@ -99,7 +99,7 @@ def test_new_reply_is_spoken_once(page):
     config.set_value("voice_reply", "true")
     cid = context.new_conversation()
     at = AppTest.from_file(PAGE, default_timeout=60)
-    at.session_state["cid"] = cid
+    open_chat(cid)
     at.run()
     context.save_message(cid, "user", "hello")
     context.save_message(cid, "assistant", "Hello, Tester.")
@@ -121,6 +121,7 @@ def test_confirmation_has_large_yes_and_no(page, monkeypatch):
     answers = []
     monkeypatch.setattr(vsvc, "pending_confirm", lambda cid: {"action": "delete_file", "target": "C:/x/notes.txt", "token": "t1"})
     monkeypatch.setattr(vsvc, "confirm", lambda cid, accept: answers.append(accept) or Result.success({}))
+    open_chat(context.new_conversation())  # a confirmation belongs to a chat that exists
     at = _run()
     labels = [b.label for b in at.button]
     assert "Yes, do it" in labels and "No, cancel" in labels

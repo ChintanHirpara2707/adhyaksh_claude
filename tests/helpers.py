@@ -21,7 +21,20 @@ def fresh_env() -> Path:
     logging_setup.reset()  # the structured log follows the fresh data folder
     from adhyaksh.chat import context
     context._CTX.clear()  # conversation ids restart in a fresh database; drop stale pending state
+    from adhyaksh.services import chat as chat_svc
+    chat_svc.reset_process_store()  # like a new server process: no current chat, the run starts now
     return d
+
+
+def open_chat(conversation_id) -> None:
+    """Make a conversation the current chat of this 'server run' (what clicking it in the sidebar does)."""
+    from adhyaksh.services import chat as chat_svc
+    chat_svc.set_current_chat(conversation_id)
+
+
+def current_chat():
+    from adhyaksh.services import chat as chat_svc
+    return chat_svc.current_chat()
 
 
 def make_roots(base: Path) -> tuple[Path, Path]:

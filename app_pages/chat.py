@@ -29,16 +29,17 @@ if name is None:
     ui.first_run_form()
     st.stop()
 
-if "cid" not in st.session_state or not svc.conversation_exists(st.session_state["cid"]):
-    st.session_state["cid"] = svc.context_latest_conversation()
-cid = st.session_state["cid"]
+# The open chat belongs to the server run, not to this browser page: F5 keeps it, a new server run starts a new chat.
+cid = svc.current_chat()  # None: a new chat, stored only when its first message is sent
 st.session_state.setdefault("mode", "cowork")
 mode = st.session_state["mode"]
 
 
-def open_conversation(conversation_id: int) -> None:
-    st.session_state["cid"] = conversation_id
+def open_conversation(conversation_id: int | None) -> None:
+    svc.set_current_chat(conversation_id)
     st.session_state.pop("conv_action", None)
+    if conversation_id is None:
+        st.session_state["new_chat_n"] = st.session_state.get("new_chat_n", 0) + 1  # fresh example pills
     st.rerun()
 
 
@@ -46,10 +47,10 @@ def open_conversation(conversation_id: int) -> None:
 with st.session_state.get("page_sidebar") or st.sidebar:
     st.markdown('<p class="adhy-nav-section">Conversations</p>', unsafe_allow_html=True)
     if st.button("New chat", icon=":material/edit_square:", key="conv_new", width="stretch"):
-        open_conversation(svc.conversation_new(cid))
+        open_conversation(None)
     _q = st.text_input("Search conversations", key="conv_search", placeholder="Search conversations",
                        label_visibility="collapsed", icon=":material/search:", type="search")
-    _convs = svc.conversations_list(_q, keep=cid)
+    _convs = svc.conversations_list(_q, keep=cid or 0)
     if not _convs:
         st.caption("No conversation matches." if _q.strip() else "No conversations yet.")
     _action = st.session_state.get("conv_action") or (None, None)
@@ -82,13 +83,13 @@ with st.session_state.get("page_sidebar") or st.sidebar:
                     svc.conversation_delete(_c["id"])
                     if _c["id"] == cid:
                         _rest = [c["id"] for c in _convs if c["id"] != cid]
-                        cid = _rest[0] if _rest else svc.conversation_new()
+                        cid = _rest[0] if _rest else None
                     open_conversation(cid)
                 if _d2.button("Cancel", key=f"convkeep_{_c['id']}", width="stretch"):
                     st.session_state.pop("conv_action", None)
                     st.rerun()
 
-history = svc.context_history(cid, 50)
+history = svc.context_history(cid, 50) if cid else []
 
 # Empty conversation: a greeting and example prompts; a chosen example is sent like a typed message.
 suggested = None
@@ -97,7 +98,7 @@ if not history:
     with suggestions.container():
         ui.chat_welcome(svc.greeting(name), "What should we do? Type below, attach a file, or pick an example.")
         options = dict(svc.SUGGESTIONS[mode])
-        picked = st.pills("Examples", list(options), label_visibility="collapsed", key=f"suggest_{cid}_{mode}")
+        picked = st.pills("Examples", list(options), label_visibility="collapsed", key=f"suggest_{cid or 'new'}_{st.session_state.get('new_chat_n', 0)}_{mode}")
         if picked:
             suggested = options[picked]
 
@@ -185,7 +186,7 @@ for m in history:
                     st.success("Correction saved. Retrain to use it.")
                     st.rerun()
 
-pending = svc.pending_confirm(cid)  # here or in the background engine, wherever the conversation runs
+pending = svc.pending_confirm(cid) if cid else None  # here or in the background engine, wherever the chat runs
 if pending:
     choice = ui.confirmation_card(pending["action"].replace("_", " "), pending["target"], key=f"c_{pending['token']}")
     if choice:
@@ -287,12 +288,15 @@ if prompt or suggested:
             st.session_state["action_note"] = _tr.message
     files = [] if suggested or isinstance(prompt, str) else [(f.name, f.getvalue()) for f in (prompt.files or [])]
     st.session_state["suggest_switch"] = False
+    if not (text or files):
+        st.rerun()  # nothing to send (for example a recording that could not be transcribed): store nothing
     suggestions.empty()
     with live:
         if text:
             with st.chat_message("user"):
                 message_text("user", text, "live")
         with st.spinner("Working"):
+            cid = svc.ensure_chat()  # a new chat's row is created with its first message
             result = svc.engine_handle_message(text, cid, mode=mode, attachments=files, stream=not files)
         if result.ok and result.data.get("stream") is not None:
             with st.chat_message("assistant"):

@@ -8,7 +8,7 @@ from adhyaksh import client
 from adhyaksh.chat import context, identity
 from adhyaksh.result import Result
 from adhyaksh.services import chat as svc
-from tests.helpers import fresh_env
+from tests.helpers import current_chat, fresh_env, open_chat
 
 PAGE = str(Path(__file__).resolve().parent.parent / "app_pages" / "chat.py")
 
@@ -33,7 +33,7 @@ def sent(monkeypatch):
 def _page(cid=None):
     at = AppTest.from_file(PAGE, default_timeout=60)
     if cid is not None:
-        at.session_state["cid"] = cid
+        open_chat(cid)
     return at.run()
 
 

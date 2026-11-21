@@ -186,6 +186,67 @@ def conversation_exists(conversation_id: int) -> bool:
     return db.query_one("SELECT 1 FROM conversations WHERE id = ?", (int(conversation_id),)) is not None
 
 
+# ---- the current chat, for the life of the server process ------------------------------------------------------------
+# Kept in st.cache_resource (one per `streamlit run`), not in st.session_state (one per browser page): pressing F5 or
+# reopening the tab keeps the same chat, while starting the server again opens a fresh, empty New chat. The
+# conversation row is created only when the first message is sent, so empty chats are never stored.
+def _max_message_id() -> int:
+    row = db.query_one("SELECT COALESCE(MAX(id), 0) AS n FROM messages")
+    return int(row["n"]) if row else 0
+
+
+def _new_process_store() -> dict:
+    return {"cid": None, "since": _max_message_id()}
+
+
+def _store() -> dict:
+    return _process_store()
+
+
+try:
+    import streamlit as _st
+    _process_store = _st.cache_resource(show_spinner=False)(_new_process_store)
+except Exception:  # pragma: no cover - streamlit is always installed with the console
+    _PROCESS: dict = {}
+
+    def _process_store() -> dict:
+        return _PROCESS.setdefault("store", _new_process_store())
+
+
+def reset_process_store() -> None:
+    """Forget the current chat and the run start, as a new server process would (tests)."""
+    if hasattr(_process_store, "clear"):
+        _process_store.clear()
+    else:  # pragma: no cover
+        _PROCESS.clear()
+
+
+def current_chat() -> int | None:
+    """The chat open in this server run, or None for a new chat whose row does not exist yet."""
+    s = _store()
+    if s["cid"] is not None and not conversation_exists(s["cid"]):
+        s["cid"] = None  # deleted (here or elsewhere): back to a new chat
+    return s["cid"]
+
+
+def set_current_chat(conversation_id: int | None) -> None:
+    _store()["cid"] = int(conversation_id) if conversation_id else None
+
+
+def ensure_chat() -> int:
+    """The current chat's id, creating its row now (on the first message of a new chat)."""
+    cid = current_chat()
+    if cid is None:
+        cid = context.new_conversation()
+        set_current_chat(cid)
+    return cid
+
+
+def run_started_after() -> int:
+    """The newest message id that existed when this server run started (later ids belong to this run)."""
+    return int(_store()["since"])
+
+
 # ---- message actions: tool steps, regenerate, edit and resend -----------------------------------------------------------
 def _step(row: dict) -> dict:
     from adhyaksh.services import activity
